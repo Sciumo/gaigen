@@ -1,0 +1,28 @@
+#!/bin/sh
+
+rm -rf /tmp/g25_package_tmp
+
+mkdir /tmp/g25_package_tmp
+mkdir /tmp/g25_package_tmp/usr
+mkdir /tmp/g25_package_tmp/usr/bin
+mkdir /tmp/g25_package_tmp/usr/share/
+mkdir /tmp/g25_package_tmp/usr/share/g25/
+mkdir /tmp/g25_package_tmp/usr/share/g25/bin
+
+cp g25 /tmp/g25_package_tmp/usr/bin
+cp g25_diff /tmp/g25_package_tmp/usr/bin
+cp g25_test_generator /tmp/g25_package_tmp/usr/bin
+
+cp ../vs2008/bin/Release/g25.exe /tmp/g25_package_tmp/usr/share/g25/bin
+cp ../vs2008/bin/Release/*.dll /tmp/g25_package_tmp/usr/share/g25/bin
+cp ../../g25_test_generator/vs2008/bin/Release/g25_test_generator.exe /tmp/g25_package_tmp/usr/share/g25/bin
+cp ../../g25_diff/vs2008/bin/Release/g25_diff.exe /tmp/g25_package_tmp/usr/share/g25/bin
+
+rm g25.pkg
+
+/Developer/usr/bin/packagemaker --doc g25_package.pmdoc
+
+mv g25package.pkg g25.pkg
+
+chown fontijne:staff g25.pkg
+

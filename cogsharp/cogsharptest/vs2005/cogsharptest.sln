@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cogsharptest", "cogsharptest.csproj", "{B5D24846-1124-4D0A-9CA7-94540057BE99}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939} = {CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cogsharp", "..\..\cogsharp\vs2005\cogsharp.csproj", "{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5D24846-1124-4D0A-9CA7-94540057BE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5D24846-1124-4D0A-9CA7-94540057BE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5D24846-1124-4D0A-9CA7-94540057BE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5D24846-1124-4D0A-9CA7-94540057BE99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

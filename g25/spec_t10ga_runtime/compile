@@ -1,0 +1,2 @@
+g25 sample_spec_10D.xml
+gcc t10ga.c t10ga_mt.c t10ga_parse_mv.c t10ga_test_main.c

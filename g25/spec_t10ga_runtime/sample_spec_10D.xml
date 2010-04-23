@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<g25spec 
+    license="gpl" 
+    language="c"
+    namespace="t10ga"
+    coordStorage="variables"
+    defaultOperatorBindings="true"
+    dimension="10"
+    reportUsage="true" 
+    gmvCode="runtime" 
+    parser="builtin"
+    testSuite="true"
+    copyright="Copyright (C) 2008 Some Random Person"
+>
+
+ <inline 
+	constructors="false" 
+	set="false" 
+	assign="false" 
+	operators="false" 
+	functions="false"
+	/>
+
+
+<floatType type="double" suffix=""/>
+<floatType type="float" suffix="_f"/>
+
+<unaryOperator symbol="-" prefix="true" function="negate"/>
+<binaryOperator symbol="^" function="op"/>
+
+<basisVectorNames 
+	name1="e1"
+	name2="e2"
+	name3="e3"
+	name4="e4"
+	name5="e5"
+	name6="e6"
+	name7="e7"
+	name8="e8"
+	name9="e9"
+	name10="e10"
+	/>
+	
+<metric name="default">e1.e1=e2.e2=e3.e3=e4.e4=e7.e7=e8.e8=e9.e9=e10.e10=1</metric>
+
+  <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="parityPure"/>
+
+
+  <function name="add" arg1="mv" arg2="mv" />
+  <function name="subtract" arg1="mv" arg2="mv"/>
+
+  <function name="applyVersor" arg1="mv" arg2="mv" metric="default"  floatType="double"/>
+  <function name="applyUnitVersor" arg1="mv" arg2="mv" metric="default"  floatType="double"/>
+  <function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  floatType="double"/>
+
+  
+  <function name="gp" arg1="float" arg2="mv" floatType="float"/>
+  <function name="gp" arg1="mv" arg2="double" floatType="double"/>
+  <function name="gp" arg1="mv" arg2="float" floatType="float"/>
+  <function name="gp" arg1="mv" arg2="mv" floatType="double"/>
+  <function name="gp" arg1="mv" arg2="mv" floatType="float"/>
+  <function name="gp" outputName="gpem" arg1="mv" arg2="mv" metric="default"/>
+
+  <function name="gp" arg1="double" arg2="double" floatType="double"/>
+
+  <function name="div" arg1="mv" arg2="double" floatType="double"/>
+
+  <function name="extractGrade" arg1="mv"/>
+  <function name="extractGrade2" arg1="mv" floatType="float"/>
+
+  <function name="norm" outputName="normE" arg1="mv" metric="default"/>
+  <function name="norm" arg1="mv" metric="default"/>
+
+  <function name="norm2" outputName="normE2" arg1="mv" metric="default" floatType="double"/>
+  <function name="norm2" outputName="normE2" arg1="mv" metric="default" floatType="float"/>
+  <function name="norm2" arg1="mv" metric="default" floatType="double"/>
+  <function name="norm2" arg1="mv" metric="default" floatType="float"/>
+  <function name="op" arg1="mv" arg2="mv"/>
+
+  <function name="sas" arg1="mv" arg2="double" arg3="double" floatType="double"/>
+
+  <function name="negate" arg1="mv" floatType="double"/>
+  <function name="reverse" arg1="mv" floatType="double"/>
+  <function name="cliffordConjugate" arg1="mv" floatType="double"/>
+  <function name="gradeInvolution" arg1="mv" floatType="double"/>
+
+  <function name="reverse" arg1="double" floatType="double"/>
+  <function name="reverse" arg1="mv" floatType="float"/>
+
+  <function name="cliffordConjugate" arg1="double" floatType="double"/>
+  
+  <function name="gradeInvolution" arg1="double" floatType="double"/>
+  
+
+  <function name="unit" arg1="mv" floatType="double"/>
+  <function name="unit" outputName="unitE" arg1="mv" metric="default" floatType="double"/>
+
+  <function name="versorInverse" arg1="mv" metric="default" />
+  
+  <function name="random_double" optionGen="mt"/>
+  <function name="random_float" optionGen="mt"/>
+  <function name="random_blade" floatType="double" metric="default" />
+  <function name="random_versor" floatType="double" metric="default" />
+  
+  
+  <function name="hp" arg1="mv" arg2="mv" floatType="double"/>
+    
+</g25spec>

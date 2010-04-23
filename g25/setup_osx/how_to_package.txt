@@ -1,0 +1,11 @@
+Log in as root (only possible when root account is enabled).
+
+Run 'sudo ./package_script' to copy the directory tree to /tmp and start packagemanager to package.
+
+Copy the .pkg file to where you need it to be.
+
+----
+
+Note:
+Logging in as root seems to be the only way to get packagemaker
+to get the ownership right.

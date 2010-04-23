@@ -1,0 +1,209 @@
+<!--
+
+<verbatim filename="c3ga.h" position="top">#include "blah.h"
+</verbatim>
+<verbatim filename="c3ga.h" filename2="c3ga.c" position="bottom">const int x = 1;
+</verbatim>
+<verbatim filename="c3ga.h" position="before" marker="#ifndef">#define WHEEEE
+</verbatim>
+<verbatim filename="c3ga.h" position="after" marker="#ifndef" codeFilename="blah.txt" />
+<verbatim filename="c3ga.h" position="after" marker="argggg!" codeFilename="blah.txt" />
+	
+
+<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="parityPure"/>
+
+<mv compress="byGrade" coordinateOrder="custom" memAlloc="parityPure">
+scalar
+no e1 e2 e3 ni
+no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+e2^e3^ni e3^e1^ni e1^e2^ni no^e3^ni no^e1^ni no^e2^ni no^e2^e3 no^e1^e3 no^e1^e2 e1^e2^e3
+e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+no^e1^e2^e3^ni
+</mv>
+
+  
+<mv compress="byGroup" coordinateOrder="custom" memAlloc="parityPure">
+<group>scalar</group>
+<group>no</group>
+<group>e1 e2 e3</group>
+<group>ni</group>
+<group>no^e1 no^e2 no^e3</group>
+<group>e1^e2 e2^e3 e3^e1</group> 
+<group>e1^ni e2^ni e3^ni</group>
+<group>no^ni</group>
+<group>e2^e3^ni e3^e1^ni e1^e2^ni</group>
+<group>no^e3^ni no^e1^ni no^e2^ni</group>
+<group>no^e2^e3 no^e1^e3 no^e1^e2</group>
+<group>e1^e2^e3</group>
+<group>e1^e2^e3^ni</group>
+<group>no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni</group>
+<group>no^e1^e2^e3</group>
+<group>no^e1^e2^e3^ni</group>
+</mv>
+-->
+
+<!--
+<om name="om" coordinateOrder="custom"/>
+<domain>
+scalar
+no e1 e2 e3 ni
+no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+e2^e3^ni e3^e1^ni e1^e2^ni no^e3^ni no^e1^ni no^e2^ni no^e2^e3 no^e1^e3 no^e1^e2 e1^e2^e3
+e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+no^e1^e2^e3^ni
+</domain>
+</om>
+
+-->
+
+<smv name="dualSphere" type="blade">no e1 e2 e3 ni</smv>
+
+<function name="gp" arg1="vectorE3GA" arg2="vectorE3GA" floatType="float"/>
+<function name="gp" arg1="float" arg2="float" floatType="float"/>
+
+
+
+<function name="gp" arg1="e1_t" arg2="e1_t" returnType="scalar"/> 
+<function name="gp"/> 
+<function name="op"/>
+<function name="lc"/>
+<function name="rc"/>
+<function name="factor" outputName="factorize" />
+<function name="_vectorE3GA" arg1="normalizedPoint" argName1="P" floatType="float"/>
+<function name="gp" arg1="float" arg2="normalizedPoint" floatType="float"/>
+<function name="op" arg1="vectorE3GA" arg2="normalizedPoint" /> 
+<function name="exp" arg1="bivectorE3GA" returnType="rotorE3GA"/>
+
+<smv name="rotor" type="versor">
+  scalar
+  no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+  e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+</smv>
+<smv name="scalar" type="blade">
+  scalar<comment>Use this type to store scalars</comment>
+</smv>
+
+
+<function name="_vectorE3GA" arg1="normalizedPoint" argName1="P" comment="I use this as a hack"/>
+<function name="_normalizedPoint" arg1="vectorE3GA" argName1="V"/>
+<function name="_rotor" arg1="pointPair" floatType="double"/>
+<function name="_dualSphere" outputName="pointToSphere" arg1="normalizedPoint" argName1="P" floatType="float"/>
+
+<function name="exp" arg1="bivectorE3GA" floatType="double"/>
+<function name="exp" arg1="freeVector" floatType="double"/>
+<function name="cos" arg1="bivectorE3GA" floatType="double"/>
+<function name="cos" arg1="freeVector" floatType="double"/>
+<function name="sin" arg1="bivectorE3GA" floatType="double"/>
+<function name="sin" arg1="freeVector" floatType="double"/>
+
+
+<function name="add" arg1="mv" arg2="mv" />
+<function name="subtract" arg1="mv" arg2="mv"/>
+<function name="add" arg1="pointPair" arg2="pointPair" floatType="float"/>
+<function name="subtract" arg1="pointPair" arg2="pointPair" floatType="float"/>
+
+<function name="applyVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
+<function name="applyUnitVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
+<function name="applyUnitVersor" arg1="normalizedTranslator" arg2="normalizedPoint" metric="default" />
+<function name="applyVersorWI" arg1="rotorE3GA" arg2="normalizedPoint" arg3="rotorE3GA" metric="default" />
+
+<function name="applyVersor" arg1="mv" arg2="mv" metric="default"  floatType="double"/>
+<function name="applyUnitVersor" arg1="mv" arg2="mv" metric="default"  floatType="double"/>
+<function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  floatType="double"/>
+
+<function name="cgaPoint" arg1="vectorE3GA" floatType="double"/>
+<function name="cgaPoint" arg1="vectorE3GA" floatType="float"/>
+<function name="cgaPoint" arg1="double" arg2="double" arg3="double" floatType="double"/>
+<function name="cgaPoint" arg1="float" arg2="float" arg3="float" optionOrigin="no" optionInfinity="ni" floatType="float"/>
+
+<function name="cgaPointDistance" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
+<function name="cgaPointDistance" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
+<function name="cgaPointDistance2" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
+<function name="cgaPointDistance2" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
+
+<function name="dual" arg1="mv" floatType="float"/>
+<function name="undual" arg1="mv" floatType="float"/>
+<function name="dual" arg1="mv" metric="euclidean" floatType="double"/>
+
+<function name="dual" arg1="double" outputName="dualE" metric="euclidean" floatType="double"/>
+<function name="dual" arg1="normalizedPoint" outputName="dualE" metric="euclidean" floatType="double"/>
+<function name="dual" arg1="pointPair" outputName="dualE" metric="euclidean" floatType="double"/>
+
+<function name="dual" arg1="double" floatType="double"/>
+<function name="dual" arg1="normalizedPoint" floatType="double"/>
+<function name="dual" arg1="pointPair" floatType="double"/>
+
+<function name="undual" arg1="double" floatType="double"/>
+<function name="undual" arg1="normalizedPoint" floatType="double"/>
+<function name="undual" arg1="pointPair" floatType="double"/>
+
+<function name="gp" arg1="float" arg2="mv" floatType="float"/>
+<function name="gp" arg1="mv" arg2="double" floatType="double"/>
+<function name="gp" arg1="mv" arg2="mv" floatType="double"/>
+<function name="gp" arg1="mv" arg2="mv" floatType="float"/>
+
+<function name="gp" arg1="vectorE3GA" arg2="vectorE3GA" floatType="float"/>
+<function name="gp" arg1="double" arg2="double" returnType="float"  floatType="double"/>
+
+<function name="grade" arg1="mv"/>
+<function name="grade2" arg1="mv" floatType="float"/>
+<function name="grade0" arg1="rotorE3GA" floatType="double"/>
+<function name="grade2" arg1="rotorE3GA" floatType="double"/>
+
+
+<function name="norm" outputName="normE" arg1="mv" metric="euclidean" floatType="double"/>
+<function name="norm" arg1="mv" metric="default" floatType="float"/>
+
+<function name="norm2" outputName="normE2" arg1="mv" metric="euclidean" floatType="double"/>
+<function name="norm2" outputName="normE2" arg1="mv" metric="euclidean" floatType="float"/>
+<function name="norm2" arg1="mv" metric="default" floatType="double"/>
+<function name="norm2" arg1="mv" metric="default" floatType="float"/>
+<function name="norm" arg1="dualSphere" floatType="double"/>
+<function name="norm2" arg1="dualSphere" floatType="double"/>
+<function name="norm" outputName="normE" arg1="dualSphere" metric="euclidean" floatType="double"/>
+<function name="norm2" outputName="normE2" arg1="dualSphere" metric="euclidean" floatType="double"/>
+
+<function name="op" arg1="mv" arg2="mv" floatType="double"/>
+<function name="op" arg1="normalizedPoint" arg2="normalizedPoint" />
+<function name="op" arg1="circle" arg2="normalizedPoint" />
+
+<function name="sas" arg1="mv" arg2="double" arg3="double" floatType="double"/>
+<function name="sas" arg1="bivectorE3GA" arg2="double" arg3="double" floatType="double"/>
+
+<function name="negate" arg1="mv" floatType="double"/>
+<function name="reverse" arg1="mv" floatType="double"/>
+<function name="cliffordConjugate" arg1="mv" floatType="double"/>
+<function name="gradeInvolution" arg1="mv" floatType="double"/>
+
+<function name="reverse" arg1="double" floatType="double"/>
+<function name="reverse" arg1="normalizedPoint" floatType="double"/>
+<function name="reverse" arg1="pointPair" floatType="double"/>
+<function name="reverse" arg1="rotorE3GA" floatType="double"/>
+<function name="reverse" arg1="mv" floatType="float"/>
+
+<function name="negate" arg1="double" floatType="double"/>
+<function name="negate" arg1="normalizedPoint" floatType="double"/>
+<function name="negate" arg1="pointPair" floatType="double"/>
+<function name="negate" arg1="rotorE3GA" floatType="double"/>
+
+<function name="cliffordConjugate" arg1="double" floatType="double"/>
+<function name="cliffordConjugate" arg1="normalizedPoint" floatType="double"/>
+<function name="cliffordConjugate" arg1="pointPair" floatType="double"/>
+<function name="cliffordConjugate" arg1="rotorE3GA" floatType="double"/>
+
+<function name="gradeInvolution" arg1="double" floatType="double"/>
+<function name="gradeInvolution" arg1="normalizedPoint" floatType="double"/>
+<function name="gradeInvolution" arg1="pointPair" floatType="double"/>
+<function name="gradeInvolution" arg1="rotorE3GA" floatType="double"/>
+
+<function name="unit" arg1="dualSphere" floatType="double"/>
+<function name="unit" outputName="unitE" arg1="dualSphere" metric="euclidean" floatType="double"/>
+
+<function name="unit" arg1="mv" floatType="double"/>
+<function name="unit" outputName="unitE" arg1="mv" metric="euclidean" floatType="double"/>
+
+<function name="versorInverse" arg1="rotorE3GA" metric="default" floatType="double"/>
+<function name="versorInverse" arg1="mv" metric="default" />
+
+<function name="random" returnType="vectorE3GA"/>
+<function name="random" returnType="mv"/>

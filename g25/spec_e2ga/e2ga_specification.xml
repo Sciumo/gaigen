@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<g25spec 
+	license="gpl" 
+	language="c"
+	namespace="e2ga"
+	coordStorage="variables"
+	defaultOperatorBindings="true"
+	dimension="2"
+  	reportUsage="true"
+  	gmvCode="expand"
+  	parser="antlr"
+  	testSuite="true"
+	copyright="Copyright (C) 2010 Daniel Fontijne"
+>
+
+<inline 
+	constructors="false" 
+	set="false" 
+	assign="false" 
+	operators="false" 
+	functions="false"
+	/>
+
+
+<floatType type="double" suffix=""/>
+<floatType type="float" suffix="_f"/>
+
+
+<basisVectorNames 
+	name1="e1"
+	name2="e2"
+	/>
+	
+<metric name="default">e1.e1=e2.e2=1</metric>
+
+<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="parityPure"/>
+
+<smv name="e1" const="true" type="blade">e1=1<comment>e1 basis vector</comment></smv>
+<smv name="e2" const="true" type="blade">e2=1<comment>e2 basis vector</comment></smv>
+<smv name="I" const="true" type="blade">e1^e2=1<comment>unit pseudoscalar</comment></smv>
+
+<smv name="scalar" type="blade">scalar</smv>
+<smv name="vector" type="blade">e1 e2</smv>
+<smv name="bivector" type="blade">e1^e2</smv>  
+<smv name="rotor" type="versor">scalar e1^e2</smv>
+
+<om name="om" coordinateOrder="default" />
+
+<som name="Grade1OM">
+  <domain>e1 e2</domain>
+</som>
+  
+<som name="Grade2OM">
+  <domain>e1^e2</domain>
+</som>
+
+<function name="norm" arg1="mv"/>
+<function name="norm" arg1="vector"/>
+<function name="norm" arg1="bivector"/>
+  
+<function name="norm2" arg1="mv"/>
+<function name="norm2" arg1="vector"/>
+<function name="norm2" arg1="bivector"/>
+
+<function name="equals" arg1="mv" arg2="mv" arg3="double" floatType="double"/>
+<function name="equals" arg1="vector" arg2="vector" arg3="double" floatType="double"/>
+  
+<function name="zero" arg1="mv" arg2="double" floatType="double"/>
+<function name="zero" arg1="vector" arg2="double" floatType="double"/>
+  
+<function name="exp" arg1="bivector" floatType="double"/>
+<function name="cos" arg1="bivector" floatType="double"/>
+<function name="sin" arg1="bivector" floatType="double"/>
+<function name="cosh" arg1="bivector" floatType="double"/>
+<function name="sinh" arg1="bivector" floatType="double"/>
+
+<function name="exp" arg1="mv" floatType="double"/>
+<function name="sin" arg1="mv" floatType="double"/>
+<function name="cos" arg1="mv" floatType="double"/>
+<function name="sinh" arg1="mv" floatType="double"/>
+<function name="cosh" arg1="mv" floatType="double"/>
+
+
+<function name="add" arg1="mv" arg2="mv"/>
+<function name="add" arg1="vector" arg2="vector" floatType="float"/>
+<function name="subtract" arg1="mv" arg2="mv"/>
+<function name="subtract" arg1="vector" arg2="vector"/>
+
+<function name="applyVersor" arg1="rotor" arg2="vector" metric="default" />
+<function name="applyUnitVersor" arg1="rotor" arg2="vector" metric="default" />
+
+
+<function name="dual" arg1="mv" floatType="float"/>
+<function name="undual" arg1="mv" floatType="float"/>
+
+<function name="dual" arg1="vector" floatType="double"/>
+<function name="undual" arg1="vector" floatType="double"/>
+
+
+<function name="gp" arg1="mv" arg2="mv"/>
+<function name="gp" arg1="vector" arg2="vector" floatType="float"/>
+
+<function name="div" arg1="mv" arg2="double" floatType="double"/>
+<function name="div" arg1="vector" arg2="double" floatType="double"/>
+
+<function name="extractGrade" arg1="mv"/>
+
+<function name="sp" arg1="mv" arg2="mv"/>
+
+<function name="op" arg1="mv" arg2="mv"/>
+<function name="op" arg1="vector" arg2="vector" />
+
+<function name="sas" arg1="mv" arg2="double" arg3="double" floatType="double"/>
+<function name="sas" arg1="bivector" arg2="double" arg3="double" floatType="double"/>
+
+<function name="negate" arg1="mv" floatType="double"/>
+<function name="reverse" arg1="mv" floatType="double"/>
+<function name="gradeInvolution" arg1="mv" floatType="double"/>
+<function name="cliffordConjugate" arg1="mv" floatType="double"/>
+
+<function name="reverse" arg1="rotor"/>
+
+<function name="unit" arg1="mv"/>
+<function name="unit" arg1="vector"/>
+<function name="unit" arg1="rotor"/>
+
+<function name="versorInverse" arg1="rotor"/>
+
+<function name="random_double" outputName="genrand" optionGen="mt"/>
+<function name="random_float" optionGen="libc"/>
+
+<function name="random_blade"/>
+<function name="random_versor"/>
+
+<function name="random_vector"/>
+<function name="random_bivector"/>
+<function name="random_rotor"/>
+  
+<function name="hp" arg1="mv" arg2="mv" floatType="double"/>
+<function name="hp" arg1="vector" arg2="vector" floatType="double"/>
+
+<function name="applyOM" arg1="om" arg2="vector" floatType="double"/>
+<function name="applyOM" arg1="om" arg2="bivector" floatType="double"/>
+<function name="applyOM" arg1="om" arg2="mv" floatType="double"/>
+
+<function name="gp" outputName="gp_dont_mangle_1" arg1="mv" arg2="double" floatType="double"/>
+<function name="gp" outputName="gp_dont_mangle_15" arg1="mv" arg2="float" floatType="float"/>
+<function name="norm" outputName="norm_dont_mangle_18" arg1="rotor" floatType="double"/>
+<function name="norm" outputName="norm_dont_mangle_19" arg1="rotor" floatType="float"/>
+<function name="reverse" outputName="reverse_dont_mangle_13" arg1="mv" floatType="float"/>
+<function name="versorInverse" outputName="versorInverse_dont_mangle_11" arg1="mv" floatType="double"/>
+<function name="versorInverse" outputName="versorInverse_dont_mangle_12" arg1="mv" floatType="float"/>
+
+</g25spec>

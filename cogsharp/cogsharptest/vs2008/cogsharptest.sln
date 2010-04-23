@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cogsharptest", "cogsharptest.csproj", "{638057E8-928A-490D-9A07-54B3B2B6488C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cogsharp", "..\..\cogsharp\vs2008\cogsharp.csproj", "{AB55FF76-52B1-4D50-9514-42B75548DAA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{638057E8-928A-490D-9A07-54B3B2B6488C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638057E8-928A-490D-9A07-54B3B2B6488C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638057E8-928A-490D-9A07-54B3B2B6488C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638057E8-928A-490D-9A07-54B3B2B6488C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB55FF76-52B1-4D50-9514-42B75548DAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB55FF76-52B1-4D50-9514-42B75548DAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB55FF76-52B1-4D50-9514-42B75548DAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB55FF76-52B1-4D50-9514-42B75548DAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

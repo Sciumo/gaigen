@@ -1,0 +1,2 @@
+g25 sample_spec.xml
+gcc -lm c3ga.c c3ga_test_main.c c3ga_mt.c c3ga_parse_mv.c 

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_t10ga_runtime", "test_t10ga_runtime.vcproj", "{912949D5-7DF4-401A-A1CF-C3DC878E6A39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{912949D5-7DF4-401A-A1CF-C3DC878E6A39}.Debug|Win32.ActiveCfg = Debug|Win32
+		{912949D5-7DF4-401A-A1CF-C3DC878E6A39}.Debug|Win32.Build.0 = Debug|Win32
+		{912949D5-7DF4-401A-A1CF-C3DC878E6A39}.Release|Win32.ActiveCfg = Release|Win32
+		{912949D5-7DF4-401A-A1CF-C3DC878E6A39}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,178 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{74975241-0E2A-492F-9796-1E2EEE970145}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>g25_cg_c</RootNamespace>
+    <AssemblyName>g25_cg_c</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\src\main.cs" />
+    <Compile Include="..\src\header.cs" />
+    <Compile Include="..\src\randommt.cs" />
+    <Compile Include="..\src\parser.cs" />
+    <Compile Include="..\src\converters.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\src\source.cs" />
+    <Compile Include="..\src\tostring.cs" />
+    <Compile Include="..\src\testsuite.cs" />
+    <Compile Include="..\src\smv.cs" />
+    <Compile Include="..\src\gmv.cs" />
+    <Compile Include="..\src\som.cs" />
+    <Compile Include="..\src\gom.cs" />
+    <Compile Include="..\src\constants.cs" />
+    <Compile Include="..\src\functions.cs" />
+    <Compile Include="..\src\util.cs" />
+    <Compile Include="..\src\functions\addsubtract.cs">
+      <Link>functions\addsubtract.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\applyversor.cs">
+      <Link>functions\applyversor.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\cgapoint.cs">
+      <Link>functions\cgapoint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\cgapointdistance.cs">
+      <Link>functions\cgapointdistance.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\gp.cs">
+      <Link>functions\gp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\igp.cs">
+      <Link>functions\igp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\hp.cs">
+      <Link>functions\hp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\op.cs">
+      <Link>functions\op.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\ip.cs">
+      <Link>functions\ip.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\extractgrade.cs">
+      <Link>functions\extractgrade.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\togglesign.cs">
+      <Link>functions\togglesign.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\norm.cs">
+      <Link>functions\norm.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\unit.cs">
+      <Link>functions\unit.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\versorinverse.cs">
+      <Link>functions\versorinverse.cs</Link>
+    </Compile>    
+    <Compile Include="..\src\functions\gradebitmap.cs">
+      <Link>functions\gradebitmap.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\zero.cs">
+      <Link>functions\zero.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\equals.cs">
+      <Link>functions\equals.cs</Link>
+    </Compile>    
+    <Compile Include="..\src\functions\dual.cs">
+      <Link>functions\dual.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\div.cs">
+      <Link>functions\div.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\sas.cs">
+      <Link>functions\sas.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\increment.cs">
+      <Link>functions\increment.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\sincosexp.cs">
+      <Link>functions\sincosexp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_scalar.cs">
+      <Link>functions\random_scalar.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_gmv.cs">
+      <Link>functions\random_gmv.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_smv.cs">
+      <Link>functions\random_smv.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\applyom.cs">
+      <Link>functions\applyom.cs</Link>
+    </Compile>
+    
+    
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cogsharp\cogsharp\vs2005\cogsharp.csproj">
+      <Project>{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}</Project>
+      <Name>cogsharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\refga\vs2005\refga.csproj">
+      <Project>{EE20FDD1-73CB-45AD-99ED-7C966CA55008}</Project>
+      <Name>refga</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_shared\vs2005\g25_cg_shared.csproj">
+      <Project>{3201341A-C332-493F-9B02-029D0C1229A8}</Project>
+      <Name>g25_cg_shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libg25\vs2005\libg25.csproj">
+      <Project>{7F4AC507-9298-483A-8AC4-7713479DEECA}</Project>
+      <Name>libg25</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cg_c_templates.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)..\src
+doxygen Doxyfile</PostBuildEvent>
+  </PropertyGroup>
+</Project>

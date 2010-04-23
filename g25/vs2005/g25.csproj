@@ -1,0 +1,90 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1534D236-6DEB-4AC6-877C-3B39F2F7322D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>g25</RootNamespace>
+    <AssemblyName>g25</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\src\Program.cs" />
+    <Compile Include="..\src\ndesk_options.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cogsharp\cogsharp\vs2005\cogsharp.csproj">
+      <Project>{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}</Project>
+      <Name>cogsharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\refga\vs2005\refga.csproj">
+      <Project>{EE20FDD1-73CB-45AD-99ED-7C966CA55008}</Project>
+      <Name>refga</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_cpp\vs2005\g25_cg_cpp.csproj">
+      <Project>{BFA9283B-4049-4990-AFA9-E4E8E7219F91}</Project>
+      <Name>g25_cg_cpp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_csharp\vs2005\g25_cg_csharp.csproj">
+      <Project>{8D84CBB4-3DF8-44D5-8C3A-BD6459F5299F}</Project>
+      <Name>g25_cg_csharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_c\vs2005\g25_cg_c.csproj">
+      <Project>{74975241-0E2A-492F-9796-1E2EEE970145}</Project>
+      <Name>g25_cg_c</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_java\vs2005\g25_cg_java.csproj">
+      <Project>{63A8F50E-67AD-4744-BB72-F3957C8043D5}</Project>
+      <Name>g25_cg_java</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_matlab\vs2005\g25_cg_matlab.csproj">
+      <Project>{745E9E14-D789-40F6-AF85-99681F379D0B}</Project>
+      <Name>g25_cg_matlab</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_python\vs2005\g25_cg_python.csproj">
+      <Project>{713615F2-9203-4909-90F3-3796AEC9F96F}</Project>
+      <Name>g25_cg_python</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25_cg_shared\vs2005\g25_cg_shared.csproj">
+      <Project>{3201341A-C332-493F-9B02-029D0C1229A8}</Project>
+      <Name>g25_cg_shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libg25\vs2005\libg25.csproj">
+      <Project>{7F4AC507-9298-483A-8AC4-7713479DEECA}</Project>
+      <Name>libg25</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "refgatest", "refgatest.csproj", "{D84FB334-E039-450F-8658-674A0CE0A708}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "refga", "..\..\vs2008\refga.csproj", "{5E5D126A-1095-42DC-9D25-CA0D7960CE01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D84FB334-E039-450F-8658-674A0CE0A708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D84FB334-E039-450F-8658-674A0CE0A708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D84FB334-E039-450F-8658-674A0CE0A708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D84FB334-E039-450F-8658-674A0CE0A708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E5D126A-1095-42DC-9D25-CA0D7960CE01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E5D126A-1095-42DC-9D25-CA0D7960CE01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E5D126A-1095-42DC-9D25-CA0D7960CE01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E5D126A-1095-42DC-9D25-CA0D7960CE01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

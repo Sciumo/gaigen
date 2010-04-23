@@ -1,0 +1,80 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7F4AC507-9298-483A-8AC4-7713479DEECA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>libg25</RootNamespace>
+    <AssemblyName>libg25</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GeneralMatrix, Version=1.0.3056.21444, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\refga\GeneralMatrix.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\src\constant.cs" />
+    <Compile Include="..\src\floattype.cs" />
+    <Compile Include="..\src\variabletype.cs" />
+    <Compile Include="..\src\metric.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\src\spec.cs" />
+    <Compile Include="..\src\rsel.cs" />
+    <Compile Include="..\src\rsep.cs" />
+    <Compile Include="..\src\rsbbp.cs" />
+    <Compile Include="..\src\mv.cs" />
+    <Compile Include="..\src\om.cs" />
+    <Compile Include="..\src\fgs.cs" />
+    <Compile Include="..\src\verbatim.cs" />
+    <Compile Include="..\src\cg.cs" />
+    <Compile Include="..\src\tuples.cs" />
+    <Compile Include="..\src\exception.cs" />
+    <Compile Include="..\src\operator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cogsharp\cogsharp\vs2005\cogsharp.csproj">
+      <Project>{CA3BA84A-64BB-4798-B7A8-E5EB86DA2939}</Project>
+      <Name>cogsharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\refga\vs2005\refga.csproj">
+      <Project>{EE20FDD1-73CB-45AD-99ED-7C966CA55008}</Project>
+      <Name>refga</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)..\src
+doxygen Doxyfile</PostBuildEvent>
+  </PropertyGroup>
+</Project>

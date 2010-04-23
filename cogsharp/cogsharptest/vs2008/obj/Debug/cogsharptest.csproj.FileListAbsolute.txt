@@ -1,0 +1,14 @@
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\obj\Debug\ResolveAssemblyReference.cache
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\bin\Debug\cogsharptest.exe
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\bin\Debug\cogsharptest.pdb
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\bin\Debug\cogsharp.dll
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\bin\Debug\cogsharp.pdb
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\obj\Debug\cogsharptest.exe
+C:\ga\cogsharp.vs2008\cogsharptest\vs2008\obj\Debug\cogsharptest.pdb
+C:\ga\cogsharp\cogsharptest\vs2008\obj\Debug\cogsharptest.exe
+C:\ga\cogsharp\cogsharptest\vs2008\obj\Debug\cogsharptest.pdb
+C:\ga\cogsharp\cogsharptest\vs2008\bin\Debug\cogsharptest.exe
+C:\ga\cogsharp\cogsharptest\vs2008\bin\Debug\cogsharptest.pdb
+C:\ga\cogsharp\cogsharptest\vs2008\bin\Debug\cogsharp.dll
+C:\ga\cogsharp\cogsharptest\vs2008\bin\Debug\cogsharp.pdb
+C:\ga\cogsharp\cogsharptest\vs2008\obj\Debug\ResolveAssemblyReference.cache

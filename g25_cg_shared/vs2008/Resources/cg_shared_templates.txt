@@ -1,0 +1,893 @@
+// argument: Namespace = name of algebra (used as PROJECT_NAME)
+${CODEBLOCK doxyfile}
+# Doxyfile 1.5.6
+
+#---------------------------------------------------------------------------
+# Project related configuration options
+#---------------------------------------------------------------------------
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = <%Namespace%>
+
+PROJECT_NUMBER         = 
+OUTPUT_DIRECTORY       = .\docs
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ABBREVIATE_BRIEF       = "The $name class" \
+                         "The $name widget" \
+                         "The $name file" \
+                         is \
+                         provides \
+                         specifies \
+                         contains \
+                         represents \
+                         a \
+                         an \
+                         the
+ALWAYS_DETAILED_SEC    = NO
+INLINE_INHERITED_MEMB  = NO
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = 
+STRIP_FROM_INC_PATH    = 
+SHORT_NAMES            = NO
+JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+#DETAILS_AT_TOP         = NO
+INHERIT_DOCS           = YES
+SEPARATE_MEMBER_PAGES  = NO
+TAB_SIZE               = 8
+ALIASES                = 
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = YES
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+BUILTIN_STL_SUPPORT    = NO
+CPP_CLI_SUPPORT        = NO
+SIP_SUPPORT            = NO
+IDL_PROPERTY_SUPPORT   = YES
+DISTRIBUTE_GROUP_DOC   = NO
+SUBGROUPING            = YES
+TYPEDEF_HIDES_STRUCT   = NO
+#---------------------------------------------------------------------------
+# Build related configuration options
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+HIDE_FRIEND_COMPOUNDS  = NO
+HIDE_IN_BODY_DOCS      = NO
+INTERNAL_DOCS          = NO
+CASE_SENSE_NAMES       = NO
+HIDE_SCOPE_NAMES       = NO
+SHOW_INCLUDE_FILES     = YES
+INLINE_INFO            = YES
+SORT_MEMBER_DOCS       = YES
+SORT_BRIEF_DOCS        = NO
+SORT_GROUP_NAMES       = NO
+SORT_BY_SCOPE_NAME     = NO
+GENERATE_TODOLIST      = YES
+GENERATE_TESTLIST      = YES
+GENERATE_BUGLIST       = YES
+GENERATE_DEPRECATEDLIST= YES
+ENABLED_SECTIONS       = 
+MAX_INITIALIZER_LINES  = 30
+SHOW_USED_FILES        = YES
+SHOW_DIRECTORIES       = NO
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+FILE_VERSION_FILTER    = 
+#---------------------------------------------------------------------------
+# configuration options related to warning and progress messages
+#---------------------------------------------------------------------------
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_FORMAT            = "$file:$line: $text"
+WARN_LOGFILE           = 
+#---------------------------------------------------------------------------
+# configuration options related to the input files
+#---------------------------------------------------------------------------
+INPUT                  = .\
+INPUT_ENCODING         = UTF-8
+FILE_PATTERNS          = *.c \
+                         *.cc \
+                         *.cxx \
+                         *.cpp \
+                         *.c++ \
+                         *.d \
+                         *.java \
+                         *.ii \
+                         *.ixx \
+                         *.ipp \
+                         *.i++ \
+                         *.inl \
+                         *.h \
+                         *.hh \
+                         *.hxx \
+                         *.hpp \
+                         *.h++ \
+                         *.idl \
+                         *.odl \
+                         *.cs \
+                         *.php \
+                         *.php3 \
+                         *.inc \
+                         *.m \
+                         *.mm \
+                         *.dox \
+                         *.py \
+                         *.f90 \
+                         *.f \
+                         *.vhd \
+                         *.vhdl
+RECURSIVE              = NO
+EXCLUDE                = 
+EXCLUDE_SYMLINKS       = NO
+EXCLUDE_PATTERNS       = 
+EXCLUDE_SYMBOLS        = 
+EXAMPLE_PATH           = 
+EXAMPLE_PATTERNS       = *
+EXAMPLE_RECURSIVE      = NO
+IMAGE_PATH             = 
+INPUT_FILTER           = 
+FILTER_PATTERNS        = 
+FILTER_SOURCE_FILES    = NO
+#---------------------------------------------------------------------------
+# configuration options related to source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = NO
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = YES
+REFERENCED_BY_RELATION = NO
+REFERENCES_RELATION    = NO
+REFERENCES_LINK_SOURCE = YES
+USE_HTAGS              = NO
+VERBATIM_HEADERS       = NO
+#---------------------------------------------------------------------------
+# configuration options related to the alphabetical class index
+#---------------------------------------------------------------------------
+ALPHABETICAL_INDEX     = NO
+COLS_IN_ALPHA_INDEX    = 5
+IGNORE_PREFIX          = 
+#---------------------------------------------------------------------------
+# configuration options related to the HTML output
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_HEADER            = 
+HTML_FOOTER            = 
+HTML_STYLESHEET        = 
+HTML_ALIGN_MEMBERS     = YES
+GENERATE_HTMLHELP      = NO
+GENERATE_DOCSET        = NO
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_BUNDLE_ID       = org.doxygen.Project
+HTML_DYNAMIC_SECTIONS  = NO
+CHM_FILE               = 
+HHC_LOCATION           = 
+GENERATE_CHI           = NO
+CHM_INDEX_ENCODING     = 
+BINARY_TOC             = NO
+TOC_EXPAND             = NO
+DISABLE_INDEX          = NO
+ENUM_VALUES_PER_LINE   = 4
+GENERATE_TREEVIEW      = NONE
+TREEVIEW_WIDTH         = 250
+FORMULA_FONTSIZE       = 10
+#---------------------------------------------------------------------------
+# configuration options related to the LaTeX output
+#---------------------------------------------------------------------------
+GENERATE_LATEX         = NO
+LATEX_OUTPUT           = latex
+LATEX_CMD_NAME         = latex
+MAKEINDEX_CMD_NAME     = makeindex
+COMPACT_LATEX          = NO
+PAPER_TYPE             = a4wide
+EXTRA_PACKAGES         = 
+LATEX_HEADER           = 
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+LATEX_BATCHMODE        = NO
+LATEX_HIDE_INDICES     = NO
+#---------------------------------------------------------------------------
+# configuration options related to the RTF output
+#---------------------------------------------------------------------------
+GENERATE_RTF           = NO
+RTF_OUTPUT             = rtf
+COMPACT_RTF            = NO
+RTF_HYPERLINKS         = NO
+RTF_STYLESHEET_FILE    = 
+RTF_EXTENSIONS_FILE    = 
+#---------------------------------------------------------------------------
+# configuration options related to the man page output
+#---------------------------------------------------------------------------
+GENERATE_MAN           = NO
+MAN_OUTPUT             = man
+MAN_EXTENSION          = .3
+MAN_LINKS              = NO
+#---------------------------------------------------------------------------
+# configuration options related to the XML output
+#---------------------------------------------------------------------------
+GENERATE_XML           = NO
+XML_OUTPUT             = xml
+XML_SCHEMA             = 
+XML_DTD                = 
+XML_PROGRAMLISTING     = YES
+#---------------------------------------------------------------------------
+# configuration options for the AutoGen Definitions output
+#---------------------------------------------------------------------------
+GENERATE_AUTOGEN_DEF   = NO
+#---------------------------------------------------------------------------
+# configuration options related to the Perl module output
+#---------------------------------------------------------------------------
+GENERATE_PERLMOD       = NO
+PERLMOD_LATEX          = NO
+PERLMOD_PRETTY         = YES
+PERLMOD_MAKEVAR_PREFIX = 
+#---------------------------------------------------------------------------
+# Configuration options related to the preprocessor   
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+EXPAND_ONLY_PREDEF     = NO
+SEARCH_INCLUDES        = YES
+INCLUDE_PATH           = 
+INCLUDE_FILE_PATTERNS  = 
+PREDEFINED             = 
+EXPAND_AS_DEFINED      = 
+SKIP_FUNCTION_MACROS   = YES
+#---------------------------------------------------------------------------
+# Configuration::additions related to external references   
+#---------------------------------------------------------------------------
+TAGFILES               = 
+GENERATE_TAGFILE       = 
+ALLEXTERNALS           = NO
+EXTERNAL_GROUPS        = YES
+PERL_PATH              = /usr/bin/perl
+#---------------------------------------------------------------------------
+# Configuration options related to the dot tool   
+#---------------------------------------------------------------------------
+CLASS_DIAGRAMS         = YES
+MSCGEN_PATH            = 
+HIDE_UNDOC_RELATIONS   = YES
+HAVE_DOT               = NO
+DOT_FONTNAME           = FreeSans
+DOT_FONTPATH           = 
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+GROUP_GRAPHS           = YES
+UML_LOOK               = NO
+TEMPLATE_RELATIONS     = NO
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DOT_IMAGE_FORMAT       = png
+DOT_PATH               = 
+DOTFILE_DIRS           = 
+DOT_GRAPH_MAX_NODES    = 50
+MAX_DOT_GRAPH_DEPTH    = 1000
+DOT_TRANSPARENT        = YES
+DOT_MULTI_TARGETS      = NO
+GENERATE_LEGEND        = YES
+DOT_CLEANUP            = YES
+#---------------------------------------------------------------------------
+# Configuration::additions related to the search engine   
+#---------------------------------------------------------------------------
+SEARCHENGINE           = NO
+${ENDCODEBLOCK}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// S = Specification of algebra.
+// FT = floatType
+// headerFilename = name of algebra header file
+${CODEBLOCK BuiltinParserSource_C_CPP}
+<%{
+string TRUE = (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) ? "1" : "true";
+string FALSE = (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) ? "0" : "false";%>
+#include <stdio.h>
+#include <ctype.h>
+#include "<%headerFilename%>"
+
+#ifdef WIN32
+#define snprintf _snprintf
+#pragma warning(disable:4996) /* quit your whining already */
+#endif /* WIN32 */
+
+<%if ((S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) && (S.m_namespace.Length > 0)) {%>
+namespace <%S.m_namespace%> {
+<%}%>
+
+static void <%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>(unsigned int bvIdx, <%FT.type%> *scale, unsigned int *bitmap) {
+	unsigned b;
+	
+	b = 1 << bvIdx;
+	if ((*bitmap) & b) { // bv ^ bv = 0
+		*scale = <%FT.DoubleToString(S, 0.0)%>;
+		return;
+	}
+
+	// add basis vector to bitmap	
+	(*bitmap) |= b;
+
+	bvIdx++;
+	for (; bvIdx < <%S.m_dimension%>; bvIdx++) // compute sign flips due to anti commuting basis vectors
+		if ((*bitmap) & (1 << bvIdx)) (*scale) = -(*scale);
+}
+
+static void <%S.m_namespace%><%FT.GetMangledName(S, "ParseSum")%>(<%FT.type%> coord[<%1<<S.m_dimension%>], <%FT.type%> scale, unsigned int bitmap) {
+	int idx = <%S.m_namespace%>_basisElementIndexByBitmap[bitmap];
+	coord[idx] += scale / (<%FT.type%>)<%S.m_namespace%>_basisElementSignByIndex[idx];
+}
+
+static void <%S.m_namespace%><%FT.GetMangledName(S, "ParseDataInit")%>(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD) {
+	PD->message[0] = 0;
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+	<%FT.GetMangledName(S, S.m_GMV.Name)%>_setZero(PD->value);
+<%} else {%>
+	PD->value.set();
+<%}%>
+}
+
+/// return true when 'buf' starts with 'pattern
+static int <%S.m_namespace%><%FT.GetMangledName(S, "CompareId")%>(const char *pattern, const char *buf, int len) {
+	int i = 0;
+	while (pattern[i] != 0) {
+		if (buf[i] != pattern[i]) return 0;
+		else i++;
+	}
+	if (i != len) return 0; // must match full pattern
+	else return 1;
+}
+
+
+/// TOKEN IDs: (for internal use only)
+#define T_BAD_IDENTIFIER -100
+#define T_BAD_NUMBER -10
+#define T_BAD_CHARACTER -1
+#define T_END_OF_STRING 0
+#define T_WEDGE 1
+#define T_MUL 2
+#define T_PLUS 3
+#define T_MINUS 4
+#define T_NUMBER 10
+#define T_FIRST_BASIS_VECTOR 100
+#define T_LAST_BASIS_VECTOR <%100+S.m_dimension-1%>
+
+<%for (int i = 0; i < S.m_dimension; i++) {%>
+#define T_<%S.m_basisVectorNames[i].ToUpper()%> <%100+i%>
+
+<%}%>
+
+/**
+Returns the next token for the multivector parser.
+Skips whitespace.
+
+Sets startIdx and endIdx to start and end (inclusive) of token, except when end of string.
+
+If the next token is a number, anything that atof() can accept should be accepted.
+
+Increments lineIdx when new line char (0x0A) is found, and sets currentLineStart to
+the index of that char.
+*/
+int <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(const char *buf, int *startIdx, int *endIdx, int *lineIdx, int *currentLineStart) {
+	int i, pointFound = 0;
+
+	// skip all whitespace and other empty stuff, keep track of line index
+	while ((buf[(*startIdx)] > 0) && (buf[(*startIdx)] <= ' ')) {
+		if (buf[(*startIdx)] == 0x0A) { // start of new line
+			(*lineIdx)++;
+			*currentLineStart = (*startIdx)+1;
+		}
+		(*startIdx)++;
+	}
+
+	// detect end of string
+	if (buf[(*startIdx)] == 0) {
+		*startIdx = *endIdx;
+		return T_END_OF_STRING; // EOS
+	}
+
+	// operators
+	if (buf[(*startIdx)] == '^') {*endIdx = *startIdx; return T_WEDGE;} // ^
+	else if (buf[(*startIdx)] == '*') {*endIdx = *startIdx; return T_MUL;} // *
+	else if (buf[(*startIdx)] == '+') {*endIdx = *startIdx; return T_PLUS;} // +
+	else if (buf[(*startIdx)] == '-') {*endIdx = *startIdx; return T_MINUS;} // -
+
+	else if (isdigit((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '.')) { // parse number?
+		*endIdx = (*startIdx);
+
+		// eat up all digits and at most one point
+		while (isdigit((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '.')) {
+			(*endIdx)++;
+			if (buf[(*endIdx)] == '.') {
+				(*endIdx)++;
+				pointFound = 1;
+				break;
+			}
+		}
+		
+		if (pointFound) { // if point found, eat up all digits
+			while (isdigit((unsigned char)buf[(*endIdx)])) {
+				(*endIdx)++;
+			}
+		}
+
+		// see if there is a 'e' or 'E'
+		if  ((buf[(*endIdx)] == 'e') || (buf[(*endIdx)] == 'E')) {
+			(*endIdx)++;
+			// accept at most one +-
+			if  ((buf[(*endIdx)] == '-') || (buf[(*endIdx)] == '+')) {
+				(*endIdx)++;
+			}
+
+			// if there is an 'e', there must be some digit
+			if (!isdigit((unsigned char)buf[(*endIdx)])) return -10; // bad number
+
+			// eat up all digits
+			while (isdigit((unsigned char)buf[(*endIdx)])) {
+				(*endIdx)++;
+			}
+		}
+		(*endIdx)--; // end index is inclusive
+		return T_NUMBER;
+	}
+
+	else if (isalpha((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '_')) { // parse identifier?
+		// find end of chain of numbers, letters and '_'
+		*endIdx = (*startIdx) + 1;
+
+//		if ((*startIdx) == 396) {
+//			printf("AT!\n");
+//		}
+
+		while (isalnum((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '_')) (*endIdx)++;
+		(*endIdx)--;  // end index is inclusive
+
+		// see which basis vector it is
+		for (i = 0; i < <%S.m_dimension%>; i++)
+			if (<%S.m_namespace%><%FT.GetMangledName(S, "CompareId")%>(<%S.m_namespace%>_basisVectorNames[i], buf + (*startIdx), (*endIdx) - (*startIdx) + 1)) return T_FIRST_BASIS_VECTOR + i; // basis vector
+		return T_BAD_IDENTIFIER; // bad identifier
+	}
+
+	else return T_BAD_CHARACTER;
+} // end of <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+extern void compress(const <%FT.type%> *c, <%FT.type%> *cc, int *cgu, <%FT.type%> epsilon, int gu);
+int parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>Ex(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD, const char *str, const char *strSourceName)
+<%} else {%>
+bool parseEx(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD, const std::string &_str, const std::string &_strSourceName)
+<%}%>
+{
+	<%FT.type%> coord[<%1<<S.m_dimension%>];
+	char buf[256]; // use to copy number tokens
+	<%FT.type%> scale;
+	unsigned int bitmap;
+	int startIdx = 0, endIdx;
+	int lineIdx = 0, currentLineStart = 0;
+	int token, i, beDone, cnt, firstLoop = 1;
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+	const char *str = _str.c_str();
+	const char *strSourceName = _strSourceName.c_str();
+<%}%>
+
+	<%S.m_namespace%><%FT.GetMangledName(S, "ParseDataInit")%>(PD); // should reset all
+	<%G25.CG.Shared.Util.GetSetToZeroCode(S, FT, "coord", 1<<S.m_dimension)%>
+
+	// get the first token
+	token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+
+	while (1) {
+		// reset for next basis blade
+		bitmap = 0;
+		scale = <%FT.DoubleToString(S, 1.0)%>;
+		beDone = 0;
+
+		if (token == T_END_OF_STRING) break;
+
+
+		cnt = 0;
+		while ((token == T_PLUS) || (token == T_MINUS)) { // accept all +- 
+			cnt++;
+			startIdx = endIdx+1;
+			if (token == T_MINUS) scale *= -1.0; // -
+			token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+		}
+		
+		// require at least one +- if this is not the first term:
+		if ((!firstLoop) && (cnt == 0)) {
+			snprintf(PD->message, 256, "Expected '+' or '-' at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+			return <%FALSE%>;
+		}
+
+		if ((token == T_NUMBER) || ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR))) { // must be number or basis vector
+			if (token == T_NUMBER) {
+				{ // copy token to buf, multiply scale with value of number
+					for (i = 0; i <= (endIdx-startIdx); i++)
+						buf[i] = str[startIdx+i];
+					buf[(endIdx-startIdx)+1] = 0;
+					scale *= (<%FT.type%>)atof((const char*)buf);
+				}
+				startIdx = endIdx+1;
+
+				// * or ^ ?
+				token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+				if ((token == T_WEDGE) || (token == T_MUL)) {
+					startIdx = endIdx+1;
+
+					// must find basis vector
+					token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+				}
+				else { // just a single scalar is OK
+					startIdx = endIdx+1;
+					beDone = 1;
+				}
+
+			}
+
+			if (!beDone) {
+				if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
+					<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((unsigned int)token - T_FIRST_BASIS_VECTOR, &scale, &bitmap);
+					startIdx = endIdx+1;
+				}
+				else {
+					snprintf(PD->message, 256, "Expected basis vector at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+					return <%FALSE%>;
+				}
+			}
+
+			if (!beDone) {
+				// accept ^ basis vector as many times as it takes
+				while (1) {
+					// ^
+					token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+					if (token != T_WEDGE) break;
+					startIdx = endIdx+1;
+
+					// basis vector
+					token = <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
+					if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
+						<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((unsigned int)token - T_FIRST_BASIS_VECTOR, &scale, &bitmap);
+						startIdx = endIdx+1;
+					}
+					else {
+						snprintf(PD->message, 256, "Expected basis vector at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+						return <%FALSE%>;
+					}
+
+
+				}
+
+			}
+		} // end of 'if number or bv'
+		else if (token == T_BAD_CHARACTER) {
+			snprintf(PD->message, 256, "Bad character at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+			return <%FALSE%>;
+		}
+		else if (token == T_BAD_NUMBER) {
+			snprintf(PD->message, 256, "Bad number at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+			return <%FALSE%>;
+		}
+		else if (token == T_BAD_IDENTIFIER) {
+			snprintf(PD->message, 256, "Bad identifier at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+			return <%FALSE%>;
+		}
+		else {
+			snprintf(PD->message, 256, "Unexpected token at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
+			return <%FALSE%>;
+		}
+
+		// add
+		<%S.m_namespace%><%FT.GetMangledName(S, "ParseSum")%>(coord, scale, bitmap);
+		
+		// remeber that the first loop is done
+		firstLoop = 0;
+	}
+
+	// compress
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+	<%FT.GetMangledName(S, "compress")%>(coord, PD->value->c, &(PD->value->gu), <%FT.DoubleToString(S, 0.0)%>, <%(1 << S.m_GMV.NbGroups)-1%>);
+<%} else {%>
+	PD->value = <%FT.GetMangledName(S, S.m_GMV.Name)%>_compress(coord, <%FT.DoubleToString(S, 0.0)%>, <%(1 << S.m_GMV.NbGroups)-1%>);
+<%}%>
+
+	return <%TRUE%>; // success
+} // end of parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>Ex
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+int parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>(<%FT.GetMangledName(S, S.m_GMV.Name)%> *val, const char *str)
+{
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> PD;
+	PD.value = val;
+	return parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>Ex(&PD, str, "");
+}
+<%} else {%>
+<%FT.GetMangledName(S, S.m_GMV.Name)%> parse(const std::string &str)
+{
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> PD;
+	bool result = parseEx(&PD, str, std::string(""));
+	if (result) return PD.value;
+	throw std::string(PD.message);
+}
+<%}%>
+
+<%if ((S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) && (S.m_namespace.Length > 0)) {%>
+} // end of namespace <%S.m_namespace%>
+<%}%>
+
+<%}%>
+${ENDCODEBLOCK}
+
+
+// S = Specification of algebra.
+// FT = floatType
+// grammarFilename = name of algebra grammar file
+${CODEBLOCK ANTLRparserSource_C_CPP}
+#include <stdio.h>
+
+/// if these next two files are missing, run 'java org.antlr.Tool <%grammarFilename%>' 
+#include "<%S.m_namespace%>Lexer.h"
+#include "<%S.m_namespace%>Parser.h"
+
+#include "<%headerFilename%>"
+
+#ifdef WIN32
+#define snprintf _snprintf
+#pragma warning(disable:4996) /* quit your whining already */
+#endif /* WIN32 */
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+using namespace <%S.m_namespace%>;
+<%}%>
+
+void <%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>(const char *bv, struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseBasisBladeData")%> *BB) {
+	unsigned int i, b;
+	
+	for (i = 0; i < <%S.m_dimension%>; i++) {
+		if (!strcmp(<%S.m_namespace%>_basisVectorNames[i], bv)) {
+			b = 1 << i;
+			if (BB->bitmap & b) { // bv ^ bv = 0
+				BB->scale = <%FT.DoubleToString(S, 0.0)%>;
+				return;
+			}
+
+			// add basis vector to bitmap	
+			BB->bitmap |= b;
+
+			i++;
+			for (; i < <%S.m_dimension%>; i++) // compute sign flips due to anti commuting basis vectors
+				if (BB->bitmap & (1 << i)) BB->scale = -BB->scale;
+			return;
+		}
+	}
+}
+
+void <%S.m_namespace%><%FT.GetMangledName(S, "ParseSum")%>(<%FT.type%> coord[<%1<<S.m_dimension%>], <%FT.type%> scale, const struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseBasisBladeData")%> *BB) {
+	int idx = <%S.m_namespace%>_basisElementIndexByBitmap[BB->bitmap];
+	coord[idx] += BB->scale * scale / (<%FT.type%>)<%S.m_namespace%>_basisElementSignByIndex[idx];
+}
+
+void <%S.m_namespace%><%FT.GetMangledName(S, "ParseDataInit")%>(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD) {
+	PD->message[0] = 0;
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+	<%FT.GetMangledName(S, S.m_GMV.Name)%>_setZero(PD->value);
+<%} else {%>
+	PD->value.set();
+<%}%>
+}
+
+
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+int parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>(<%FT.GetMangledName(S, S.m_GMV.Name)%> *val, const char *str)
+{
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> PD;
+	PD.value = val;
+	return parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>Ex(&PD, str, "");
+}
+<%} else {%>
+namespace <%S.m_namespace%> {
+
+<%FT.GetMangledName(S, S.m_GMV.Name)%> parse(const std::string &str)
+{
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> PD;
+	bool result = parseEx(<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>&<%}%>PD, str, "");
+	if (result) return PD.value;
+	throw std::string(PD.message);
+}
+<%}%>
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+int parse_<%FT.GetMangledName(S, S.m_GMV.Name)%>Ex(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD, const char *str, const char *strSourceName)
+<%} else {%>
+bool parseEx(struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> &_PD, const std::string &_str, const std::string &_strSourceName)
+<%}%>
+{
+	int success = 1; // set to false on error, returned at the end of the function
+    pANTLR3_INPUT_STREAM           input;
+    p<%S.m_namespace%>Lexer               lex;
+    pANTLR3_COMMON_TOKEN_STREAM    tokens;
+    p<%S.m_namespace%>Parser              parser;
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD = &_PD;
+	const char *str = _str.c_str();
+	const char *strSourceName = _strSourceName.c_str();
+<%}%>
+
+	if (strSourceName == NULL) strSourceName = "";
+
+	input = antlr3NewAsciiStringInPlaceStream((pANTLR3_UINT8)str, (ANTLR3_UINT32)strlen(str), (pANTLR3_UINT8)strSourceName);
+    lex = <%S.m_namespace%>LexerNew(input);
+    tokens = antlr3CommonTokenStreamSourceNew(ANTLR3_SIZE_HINT, TOKENSOURCE(lex));
+    parser = <%S.m_namespace%>ParserNew(tokens);
+	
+	parser->antlr_multivector(parser, PD);
+
+	// How to check for error in ANTLR C target? 
+	// Not like this, but what else?
+	if ((lex->pLexer->rec->state->exception != NULL) ||
+		(parser->pParser->rec->state->exception != NULL))
+	{
+		// The ANTLR V3 C target makes it pretty much impossible to do decent error reporting.
+		// The default functon (displayRecognitionError) just prints to stderr with no way to redirect?
+		// Also, I didn't find a way to add any sort of 'buffer' to the lexer/parser so you can accumulate
+		// your errors over there. So for now, just a generic error message here.
+		success = 0;
+		snprintf(PD->message, 256, "Error parsing multivector value from '%s'", strSourceName);
+	}
+
+    // clean up
+    parser->free(parser);
+    tokens->free(tokens);
+    lex->free(lex);
+    input->close(input);
+
+
+	return success <%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%> != 0 <%}%>;
+}
+
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+} // end of namespace <%S.m_namespace%>
+<%}%>
+
+${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// FT = floatType
+// realFT = float type actual used by the rest of the algebra
+// headerFilename = name of algebra header file
+${CODEBLOCK ANTLRgrammar_C_CPP}
+grammar <%S.m_namespace%>;
+
+options
+{
+    language=C;
+}
+
+tokens
+{
+	PLUS 	= '+' ;
+	MINUS	= '-' ;
+	GP	= '*' ;
+	OP	= '^' ;
+}
+
+
+@header
+{
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+// This avoids the header file being included as 'extern C'.
+#ifndef	_<%S.m_namespace%>Parser_H
+<%}%>
+#include "<%headerFilename%>"
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CPP) {%>
+#endif
+<%}%>
+}
+
+@members
+{
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+extern void <%FT.GetMangledName(S, "compress")%>(const <%FT.type%> *c, <%FT.type%> *cc, int *cgu, <%FT.type%> epsilon, int gu);
+<%} else {%>
+namespace <%S.m_namespace%> {
+<%if (realFT.type == FT.type) {%>
+<%FT.GetMangledName(S, S.m_GMV.Name)%> <%FT.GetMangledName(S, S.m_GMV.Name)%>_compress(const <%FT.type%> *c, <%FT.type%> epsilon, int gu);
+<%} else {%>
+<%realFT.GetMangledName(S, S.m_GMV.Name)%> <%realFT.GetMangledName(S, S.m_GMV.Name)%>_compress(const <%FT.type%> *c, <%FT.type%> epsilon, int gu) {
+	<%realFT.type%> d[<%1<<S.m_dimension%>];
+	for (int i = 0; i < <%1<<S.m_dimension%>; i++) {
+		d[i] = c[i];
+	}
+	return <%realFT.GetMangledName(S, S.m_GMV.Name)%>_compress(d, epsilon, gu);
+}
+<%}%>
+  
+} // end of namespace <%S.m_namespace%>
+<%}%> 
+}
+
+/*------------------------------------------------------------------
+ * PARSER RULES
+ *------------------------------------------------------------------*/
+
+antlr_multivector[struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseMultivectorData")%> *PD]
+@init{
+	struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseBasisBladeData")%> BB;
+	<%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
+	<%FT.type%> coord[<%1<<S.m_dimension%>];
+	<%G25.CG.Shared.Util.GetSetToZeroCode(S, FT, "coord", 1<<S.m_dimension)%>
+	<%S.m_namespace%><%FT.GetMangledName(S, "ParseDataInit")%>(PD);
+}
+@after{
+	// compress result into multivector
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.C) {%>
+	<%FT.GetMangledName(S, "compress")%>(coord, PD->value->c, &(PD->value->gu), <%FT.DoubleToString(S, 0.0)%>, <%(1 << S.m_GMV.NbGroups)-1%>);
+<%} else {%>
+	PD->value = <%S.m_namespace%>::<%FT.GetMangledName(S, S.m_GMV.Name)%>_compress(coord, <%FT.DoubleToString(S, 0.0)%>, <%(1 << S.m_GMV.NbGroups)-1%>);
+<%}%>
+}
+:
+(sg=antlr_sign {scale = sg;})* antlr_basis_element[&BB] {<%S.m_namespace%><%FT.GetMangledName(S, "ParseSum")%>(coord, scale, &BB);}
+(sg=antlr_sign {scale = sg;} (sg=antlr_sign {scale *= sg;})* antlr_basis_element[&BB] {<%S.m_namespace%><%FT.GetMangledName(S, "ParseSum")%>(coord, scale, &BB);})*
+;
+
+
+antlr_basis_element[struct <%S.m_namespace%><%FT.GetMangledName(S, "ParseBasisBladeData")%> *BB]
+@init{
+	BB->scale = <%FT.DoubleToString(S, 1.0)%>;
+	BB->bitmap = 0;
+}
+:
+	t1=NUMBER {BB->scale*=(<%FT.type%>)atof((const char*)t1->getText(t1)->chars);}  
+((GP | OP)?
+	(t2=BASIS_VECTOR {<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((const char*)t2->getText(t2)->chars, BB);} ) 
+(OP t3=BASIS_VECTOR {<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((const char*)t3->getText(t3)->chars, BB);})*)? |
+((t5=BASIS_VECTOR {<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((const char*)t5->getText(t5)->chars, BB);}) 
+(OP t6=BASIS_VECTOR {<%S.m_namespace%><%FT.GetMangledName(S, "ParseWedgeBasisVector")%>((const char*)t6->getText(t6)->chars, BB);})*)
+;
+
+antlr_sign returns [<%FT.type%> sg]
+@init{sg = <%FT.DoubleToString(S, 1.0)%>;}
+:
+	(PLUS | MINUS {sg = -sg;})
+;
+
+/*------------------------------------------------------------------
+ * LEXER RULES
+ *------------------------------------------------------------------*/
+
+WHITESPACE  	: ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ {$channel = HIDDEN;};
+
+BASIS_VECTOR	: ('<%S.m_basisVectorNames[0]%>'<%for (int i = 1; i < S.m_dimension; i++) {%> | '<%S.m_basisVectorNames[i]%>'<%}%>);
+
+NUMBER		: (INT ('.' INT)? | '.' INT) (('e' | 'E') ('+' | '-')? INT)?;
+
+
+fragment
+INT : ('0'..'9')+ ;
+${ENDCODEBLOCK}

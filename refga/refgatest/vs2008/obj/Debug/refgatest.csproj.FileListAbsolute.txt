@@ -1,0 +1,16 @@
+C:\ga\refga.vs2008\refgatest\vs2008\obj\Debug\ResolveAssemblyReference.cache
+C:\ga\refga.vs2008\refgatest\vs2008\bin\Debug\refgatest.exe
+C:\ga\refga.vs2008\refgatest\vs2008\bin\Debug\refgatest.pdb
+C:\ga\refga.vs2008\refgatest\vs2008\bin\Debug\GeneralMatrix.dll
+C:\ga\refga.vs2008\refgatest\vs2008\bin\Debug\refga.dll
+C:\ga\refga.vs2008\refgatest\vs2008\bin\Debug\refga.pdb
+C:\ga\refga.vs2008\refgatest\vs2008\obj\Debug\refgatest.exe
+C:\ga\refga.vs2008\refgatest\vs2008\obj\Debug\refgatest.pdb
+C:\ga\refga\refgatest\vs2008\obj\Debug\refgatest.exe
+C:\ga\refga\refgatest\vs2008\obj\Debug\refgatest.pdb
+C:\ga\refga\refgatest\vs2008\bin\Debug\refgatest.exe
+C:\ga\refga\refgatest\vs2008\bin\Debug\refgatest.pdb
+C:\ga\refga\refgatest\vs2008\bin\Debug\GeneralMatrix.dll
+C:\ga\refga\refgatest\vs2008\bin\Debug\refga.dll
+C:\ga\refga\refgatest\vs2008\bin\Debug\refga.pdb
+C:\ga\refga\refgatest\vs2008\obj\Debug\ResolveAssemblyReference.cache

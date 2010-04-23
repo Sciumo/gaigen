@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ $# -eq 1 ];
+then
+
+#create RPM built tree in root of user dir
+rpmdev-setuptree
+
+# clean up any junk from previous run
+rm -rf /tmp/g25*
+
+# go to root of Gaigen 2.5 Source
+cd ../..
+
+# export all sources to /tmp, targz them
+svn export . /tmp/g25-$1
+cd /tmp
+tar cf - g25-$1 | gzip > g25-$1.tar.gz
+
+# remove temp export dir
+rm -rf /tmp/g25-$1
+
+# copy tar.gz to rpm build directory
+rm -rf ~/rpmbuild/SOURCES/g25-$1.tar.gz
+mv g25-$1.tar.gz ~/rpmbuild/SOURCES
+
+# go back to original directory
+cd -
+cd g25/setup_linux
+
+# copy RPM spec file to RPM specs directory, insert version
+#cp g25.spec ~/rpmbuild/SPECS/
+cat g25.spec | sed -e "s/FILLINVERSION/$1/" > ~/rpmbuild/SPECS/g25.spec
+
+
+# build the RPMs
+cd ~/rpmbuild
+rpmbuild -ba --target noarch SPECS/g25.spec
+
+# go back to the original directory
+cd -
+
+# copy the generated RPMs to current dir
+cp ~/rpmbuild/RPMS/noarch/g25-$1-1.noarch.rpm .
+cp ~/rpmbuild/SRPMS/g25-$1-1.src.rpm .
+
+else
+echo Usage: $0 version_number
+echo For example, $0 2.5.1
+fi

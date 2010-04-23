@@ -1,0 +1,67 @@
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Copyright 2008, Daniel Fontijne, University of Amsterdam -- fontijne@science.uva.nl
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+using System.Reflection;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+
+using CoGsharp;
+
+namespace TEST
+{
+
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            try
+            {
+                System.Collections.Hashtable HT = new System.Collections.Hashtable();
+                HT["Canon Eos 5D Mark II body"] = 2176;
+                HT["Nikon D700 body"] = 1997;
+                HT["Sony DSLR-A900 body"] = 2345;
+
+
+                System.Console.WriteLine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+
+
+                CoG C = new CoG();
+
+                C.LoadTemplates(
+                    System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + 
+                    "\\..\\..\\..\\src\\sample_template.txt");
+
+                C.EmitTemplate("sample_template", "HT=", HT);
+                C.EmitTemplate("sample_template", "HT=", HT);
+
+                System.Console.Write(C.GetOutputAndClear());
+            }
+            catch (Exception E)
+            {
+                System.Console.WriteLine("Exception: " + E.ToString());
+            }
+
+            return;
+        }
+    }
+}

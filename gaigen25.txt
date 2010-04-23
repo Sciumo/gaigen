@@ -1,0 +1,591 @@
+todo next:
+
+V -all types IDs (SMV) + strings, so we can report about them, and GMV can have type field.
+V -mv struct 
+V -set/release functions
+V-#define GRADE values
+V-make array of grade values, nb grades
+V-make array of grade size, nb grades
+V-make array of group sizes, nb groups
+V-compress
+V-expand
+V -extract coordinates
+	V double mv_e1(mv val) (either 0 or the coord)
+V -make some kind of map of the geometric product (group X group -> group)
+V -all parts of the geometric product (group X group X group)
+V -sas_mv
+V -largest coordinate function for GMVs or for all types?	
+V -point-point distance
+V -point-point distance squared
+V write to multiple StringBuilders at the same time (decl here, def there).
+V write code for each function in parallel (yeaaahaaaa)
+V FindFunction() should have simpler access, in the form of GetFunctionName(...) which auto mangles everything . . .  
+V dependency stuff (just complain that user should add
+	V the dependency stuff also fills in the blank in FGS? That would make stuff a lot easier . . .
+V cog should emit straight to stringbuilder!
+
+V gmv base code (struct, other requirements)
+V gmv versions of all functions so far
+	V gp & friends: with scalar
+	
+	V AddSubtract: hard coded OR
+	V ToggleSign: use the same stuff as for gp (toggle sign of one grade part)
+	V Dual: also generate dual code from ToggleSign. It can reuse the existing stuff most of the time.
+	V Grade: allow for bitmap and grade0(...) functions? Use ToggleSign stuff
+	V Norm: use geometric product parts 
+	V versor inverse, unit : use norm, and scaling copy
+	V ApplyVersor: simply use gp? two gps (V X V), and then scale and copy like unit, apply inverse through scaling?
+	V SinCosExp: custom algos from templates
+V set scalar for SMV (if it has a scalar part)
+V -allow for comments on fgs functions
+V if it causes trouble often, generate a float-returning version of norm() and such when a scalar SMV is defined
+V -handle missing types properly
+V have proper error handling and reporting.
+V 1. Insert verbatim code (for includes, etc) at the right places.
+V 2  V Have choice of random generator: rand of mt
+   V Have random blade and versor generators, optionally with type:
+   V Have randomPoint for conformal model (get a random vectorE3GA(
+V 3. divide by scalar function
+V gmv code which does not use full expanded code 
+V 'Hadamard product' for multivectors
+V 'inverse Hadamard product' for multivectors
+V outermorphism stuff
+V add pointer type to VariableType, and fix the gom/som init from matrix function hack.
+V tostring
+V parser/lexer ANTLR 3?
+V something is wrong with runtime GP code (norm)
+V something is wrong with both parsers
+V equals function
+V zero function
+V random SMV for all types, even if may fail
+V warn about none-parity pure mixup of types and gmv mem alloc
+V add hyperbolic sinh, cosh
+V -implement constants		
+V testing code
+V avoid clashes of cogsharp names while compiling (or at least detect them, and make up another name)
+
+check quality of documentation?
+
+--
+Maybe fix the float type stuff
+	-each type/float combination is a type on its own
+	-this simplifies the code and allows for mixing of types.
+	-do not care about recycling computation results, or if
+	you do, put them in a cache (signal cache when results are being computed
+	to avoid double work)
+	-have an option to have a XML function work for multiple float types
+	-problem: there will still be only one GMV type, or maybe remove m_GMV and have a function
+	to ask for GMV of a certain float type?
+	
+--
+
+-> C++ version 
+	V GVM and SMV set functions
+	V SMV set functions
+	V do we need _double _float? Guess so, if only for backward compat.
+	V compress
+	V expand
+	V toString
+	V start testing with custom float type
+	V implement add/subtract as first try for functions
+	V GOM and SOM class
+	V functions
+	V why all the {0.0, 0.0} in the GMV functions?
+	V debug GMV not grouped by grade 
+	V parser
+	V fix all the unused variables in C testing code
+	V operators
+	V set coordinate functions for GMV?
+	V generate test functions in parallel
+	V increment/decrement functions	
+	V igp functions:
+	V remove C++ code dependency on memmove, memcpy, memset
+	V fix operator problems (bind only to first unique combination of arguments?)
+	V run-time tables implemented for C++
+	V converters (SMV<->SMV)
+	V report usage
+	V Command line argument(s)
+	V Compile examples using command line tool
+	V release Gaigen 1.0 on sourceforge.
+	V Try out monodevelop on Windows, then Linux, OS X
+	V RE-Install fedora 12
+	V have a bare testing framework for C++	
+	V fix cpp problems (rename parser to cpp, adjust filenames in Makefile)
+	V make randomized selection 
+	V vary number of float types, what float types
+	V include / generate myDouble for test
+	V Fix the float problems
+	V add an option to save spec back to XML, then regenerate the code from that (except for the test code?), then compare result?
+	V Fix XML problems
+	V Check requested return type of all testing dependencies for SMVs (should be null, not GMV)
+	V Add some constants types to e2ga, e3ga, p3ga template specs.
+	V Add some constant values e2ga, e3ga, p3ga template specs.
+	V then c3ga
+	V -then synthetic Euclidean
+	V Setup testing enviroment which runs tests for many configurations
+	V C++ testing code
+	
+	
+	-use the test generator on OSX, package
+	-then do test on linux (use xbuild to build, manual install, test all)
+	
+	
+	-get it all to work on OSX, linux
+		
+		V First generate the code & compile, then run all tests
+		Run / compile environment for 
+			V Windows
+			V OSX
+			-> Linux (try xbuild for mono / VC project files)
+	
+	v Compile generated code on linux, osx, fix warnings, problems, etc.
+	-> package first distribution files. Which packaging system for source? Just an SVN export?
+		
+
+	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
+
+	V Get SourceForge project, 
+
+
+	Have a generic 'float type' that can be used in function requests in specs. Maybe call it sfloat?
+
+
+
+	-have a signed norm function (e.g., norm(2 no^ni) = -2)
+	-in apply versor, have I used the sign correction stuff??? (page 192/193 in GA4CS book)
+		very simple: if odd versor, apply grade involution to subject
+			-GMV: use gradebitmap and gradeinvolution functions (remember to check dependencies)
+			-SMV: ask refga for grade of versor, then use refga grade involution
+
+--
+
+Todo: find common (numerical or also symbolic) factors in code. Such as the 0.5 in cgaPointC and the 2.0 in applyUnitVersor_normalizedTranslator_f_normalizedPoint_f.
+
+
+---------------------------------------------------
+Correcting design mistakes:
+->get rid of type = type + floattype
+	Each type has its own float type, mangled name, etc
+	Each coordinate can (in theory) have its own float type
+	
+-> one FGS for each function (not shared between float types)
+-> FGS final output name goes into separate field, not into m_outputName
+	
+-be able to get dependency right for the template code (to simplify the test stuff)
+
+---------------------------------------------------
+ 
+
+C# version & Java version
+
+Matlab version or matlab binding
+
+factorization, meet, join like in the factor - join paper . . .
+
+Python version
+CUDA version? What support for classes does CUDA have?
+
+Zie ook mail Robert Valkenburg onderaan.
+ 
+meet, join
+delta product function
+	(lazy) delta product grade function
+		
+Publish in ACM TOMS
+
+For Gaigen 2.5, what code is required:
+V -read/write specification XML. specification contains:
+V	basis, 
+V	metric, 
+V	output language, 
+V	license,
+V	GMV type
+V	SMV types
+V	GOM type
+V	SOM types
+V	function instantiations
+V	operator bindings
+	
+V -be able to generate code like CoG except explicitly instantiate?
+ 	
+-how is GMV handled?	
+	compression is per-group
+		groups (and coord order) can be explicitly specified, or by high-level spec (e.g. 'per grade', or split-off basis vector no, ni)
+	the products are handled in two modes:
+		code generation:
+			but we generate code for each group-combo, writes out full geometric product and contains conditionals such that it computes only for the grade which the caller requires
+		compute products of basis blade on-location:
+			if basis is non-orthogonal, there is a table which can translate from user basis to orthogonal basis (back and forth)
+				maybe per group ad well?
+			compute products of all basis blades, per group
+	In any case, there should be a re-compression function (for per group compression)
+	
+
+----------------------------------------
+
+
+        // timing code
+//                    System.Diagnostics.Stopwatch SW = new System.Diagnostics.Stopwatch();
+  //                  SW.Start();
+    //                Console.WriteLine("Elapsed (parts code): " + SW.ElapsedMilliseconds.ToString() + " ms");
+
+----------------------------------------
+
+Basis code
+Interface library for using basis code
+	Interfaces:
+		XML
+		interactive
+		API (API is already done?)
+	Should this be able to format code? --> see later on
+		Maybe something to pick out re-usable code?
+	
+Code generator
+	Boiler plate
+	Specific functions
+	
+		
+	
+
+
+get rid of large GMV code
+get rid of underscore casting
+get rid of profiling
+get rid of slow code generation
+get rid of rewriting mix up
+get rid of functions
+
++simpler implementation of alternative languages
++modular
++explicit instantiation (either print once (with line to insert into profile), or compile error)
++hand-written functions, e.g., applyVersor(X, Xi, blade)
++really put effort into float and double alongside!
+
+
+GA on symbolic multivector -> code
+gp(a1 e1+a2 e2+a3 e3, e2+e4)
+CoG
+GMV alternative impl
+
+--------------------------------------------------------
+
+Maybe have a little tool which does output to XML
+space.spc contains both basis and metric
+
+genCode -s space.spc gp(c[0] * e1 + c[1] * e2, d[2] * e3 + c[0] * e2^e3)
+
+parser parses:
+WORD (anything except ()^*."/)
+FUNCTIONS WORD(WORD|FUNCTIONS|OPS)
+OPERATORS
+
+Output:
+<op type=add>
+	<arg1 = ....>
+	<arg2 = ....>
+</op type=add>
+
+
+--------------------------------------------------------
+
+profile example:
+bivectorE3GA gp(vectorE3GA, vectorE3GA);
+RBM exp(dualLine);
+
+--------------------------------------------------------
+
+void generateProduct(Output, String fundName, mvType returnType, mvType arg1, mvType arg2, String arg1Name, String arg2Name, MV result) {
+	printf(Output, "%s %s(%s %s, %s %s) {\n", returnType, funcName, arg1.getTypeName(), arg1Name, arg2.getTypeName(), arg2Name);
+	
+	for (all coords of return type) {
+		rt[0] = ... 
+	
+	}
+	
+	
+	
+}
+
+
+Hi Daniel,
+
+Sorry about the delay, I was hoping to get back to you sooner. Here are some initial thoughts on a C++ GA library.  They are based on my experiences using Gaigen 1 quite heavily, writing a mex wrapper around Gaigen 1 to provide a Matlab toolbox, writing a GA library using lots of template meta-programming (working but not finished), and finally a peak at Gaigen 2.
+
+Naturally most of my comments are about the users view of a library, how easy is it to extend and interact with the rest of the C++ language.  Please don't take anything as critisism, its more just a  list of things i might consider if i was writing a library.  I would be happy to trial anything you produce as i am very likely to use it when finished.
+WARNING: My code examples were written in the email so they have not been compiled and will be full of bugs.
+
+I wont list every thing i liked about Gaigen 1 because i liked most of it, some highights were:
+
+Gaigen 1:
+
+* It was documented  (Gaigen user manual)
+* It was focused (not trying to be all things to all people)
+* Nice natural syntax with operator overloading
+* etc
+
+Some specific things i might have done differently:
+
+* not made e1, e2 etc as members of the ga class
+    i.e.   ga41::e1   but rather instantiations of the ga class.     const ga41 e1 = ga41(GRADE1,1); 
+     (cf: std::ostream  and  std::cout)
+
+* made some methods free functions (using friends functions if required) to keep the class interface small
+   e.g.     x.norm_b()    -> norm_2(x)
+
+ This is so the class interface is kept as small as possible and any user additions (which can only be free functions) fit in seemlessly with the  library writers algorithms.   * provide dynamic and static interfaces to key variables so users can easily add to the library
+ 
+  I find myself setting up variables like   int grades[] = {GRADE0, GRADE1, GRADE2, GRADE2, GRADE4, GRADE5}
+  quite often so i  can loop over grades (dynamic interface)
+ 
+  Similarly a metaprogramming interface, say something like
+
+// declaration
+template <int N> struct grade {};
+
+// specialisations
+template struct grade<0> { static const size_t value = GRADE0; };
+template struct grade<1> { static const size_t value = GRADE1; };
+template struct grade<2> { static const size_t value = GRADE2; };
+template struct grade<3> { static const size_t value = GRADE3; };
+template struct grade<4> { static const size_t value = GRADE4; };
+template struct grade<5> { static const size_t value = GRADE5; };
+
+// better to implement using boost mpl lib e.g.
+template <size_t N> struct grade;  // declaration
+template struct grade<0> : mpl::size_t<GRADE0> {};
+...
+template struct grade<5> : mpl::size_t<GRADE5> {};
+
+// and then multiple grades
+// primary
+template <size_t A0=0, size_t A1=0, size_t A2=0,
+     size_t A3=0, size_t A4=0, size_t A5=0 >
+struct grades {
+   static const size_t value = (grade<A0>::value |  grade<A1>::value |  grade<A2>::value  |
+      grade<A3>::value |  grade<A4>::value |  grade<A5>::value);
+};
+
+// specialisations
+template <>
+struct grades<> {
+   static const size_t value =  grade<0>::value;
+};
+template <size_t A0>
+struct grades<A0> {
+   static const size_t value = grade<A0>::value;
+};
+template <size_t A0, size_t A1>
+struct grades<A0, A1> {
+   static const size_t value = grade<A0>::value |  grade<A1>::value;
+   static const size_t num_args = 2;
+};
+template <size_t A0, size_t A1, size_t A2>
+struct grades<A0, A1, A2> {
+   static const size_t value = grade<A0>::value |  grade<A1>::value |  grade<A2>::value;
+   static const size_t num_args = 3;
+};
+template <size_t A0, size_t A1, size_t A2, size_t A3>
+struct grades<A0, A1, A2, A3> {
+   static const size_t value = grade<A0>::value |  grade<A1>::value |  grade<A2>::value |  grade<A3>::value;
+   static const size_t num_args = 4;
+};
+template <size_t A0, size_t A1, size_t A2, size_t A3, size_t A4>
+struct grades<A0, A1, A2, A3, A4> {
+   static const size_t value = grade<A0>::value |  grade<A1>::value |  grade<A2>::value |
+                            grade<A3>::value |  grade<A4>::value;
+   static const size_t num_args = 5;
+};
+
+
+
+ so the user can write grade<0>::value |  grade<2>::value |  grade<4>::value
+  or  grades<0,2,4>::value
+  This is all done at compile time so
+
+  inline  template <grades g>
+   mv project(const ga& x)   {
+      return x(g::value);
+   }
+
+    ga x;
+    y = project<grades<0,2,4> >(x);  // get motor grades
+
+
+* use std::string (in addition char*) for printing etc
+* Avoid return value cache array optimisation . I ran into a problem with this a couple of times.  Compilers might use RVO anyway (or the upcoming move sematics).  You offered the option of turning this off anyway but i didn't tick the box first time round .
+
+Gaigen 2
+-------------
+
+I had a quick look at Gaigen 2, with emphasis on "quick" so ignore any comments that seem silly.
+
+Again, i wont comment on all the things i like except I think having separate types for different elements like you done has many benefits (in addition to speed).  Essentially it provides a mechanism to dispatch code at compile time.
+  e.g. serialialing ga elements to a file
+
+* General comments: -  The class interface to say mv is quite big with many similar functions taking different numbers of args, or different multivector types.
+- You could consider generating some of the code as templates reducing duplication and more importantly so the compiler only generates exactly the instantiations that are required.  Some examples are given below. -  The could consider using a range type object to replace all those  'coordinates specified' constructors and set functions .  See below.
+- You could move some of the functions out of the class as free functions.
+
+* Making types as templates instantiations has some advantages to the library user.  This does not change the class internals at all, its just the interface, in fact really only the class name.
+If you define a new GA type
+
+namespace gaigen {
+
+ template <typename EType>
+ class element
+ {
+    // some code etc ...
+ };
+}
+
+Where EType is some class that disinguishes one type from another e.g.
+class Rotator;  class Vector;
+class Scalar; // etc
+
+// then make a type say
+typedef   element<Rotator>  rotator;
+
+EType  might be a simple tag type or contain most of the  code and be inherited from or anything in between.
+[It may make sense to have more that one EType for independent concepts or policies (e.g. in the stuff i was doing one was a typelist defining the basis vectors and one was a small  class defining the algebra, ga3, ga4, ga41 etc ) ]
+
+e.g. simple tag
+class Rotator {};
+
+or with some data
+
+class Rotator {
+public:
+m_c[4];
+};
+
+
+This allows a user to write a new function which considers all GA types, and only GA types in a simple way.
+
+template <typename EType>
+my_ga_function(const gaigen::element<EType>& val)  // only dispatched for a GA type
+
+Without this the user has to write very general functions
+template <typename AnyType>
+my_ga_function(const AnyType& val)   // match for any type
+which is more error prone.
+
+SFINAE techniques like boost::enable_if<> can be used to remove candidates off the template instantiation list.
+
+You can also generate all those "pass through" functions with one template function.  This has the advantage of only generating the ones you use.
+
+// generalised copy constructor
+   template <typename T>
+   inline mv(const element<T>& arg1) {
+           set(arg1);
+       }
+will generate all  "init from xxx_t" constructors
+
+Likewise
+// generalised assignment operator
+template <typename T>
+mv& mv::operator=(const element<T>& arg1) {
+       set(arg1);
+       return *this;
+}
+
+
+* Initialising multivectors
+ 
+   You could consider adding a "set" function that requires something like a general range (http://www.boost.org/doc/libs/1_38_0/libs/range/index.html)
+
+   template <typename Range>
+   void mv::set_range(unsigned int gradeUsage, const Range&  range)
+
+   then you can initialise with anything that statisfies the minimal range requirements.
+    You could also add a constructor that takes a range
+    mv(unsigned int gradeUsage,  const Range&  range) {
+             set_range(gradeUsage, range)
+     }
+
+  
+   For example i often initialise lists using the boost assign library
+(http://www.boost.org/doc/libs/1_38_0/libs/assign/doc/index.html)
+
+So you could write something like
+using boost::assign::cref_list_of;
+
+gaigen::mv(gradeUsage, cref_list_of<7>(1)(2)(3)(4)(5)(6)(7) );
+
+mv.set_range(gradeUsage,   cref_list_of<7>(1)(2)(3)(4)(5)(6)(7) );
+
+and you could remove the entire  all "'coordinates specified'" and "set to N coordinates" families.   cref_list_of<> is quite light weight.
+
+If you dont want to depend on the boost library  then  you could add  a  little range generator.  This would have nothing to do with ga but would be an general purpose class useful for initialising across all the algebras thus reducing code duplication.
+I wrote something like this once for exactly this kind of application (I'll see if i can find it).  You could have a syntax like
+
+gaigen::mv(gradeUsage, gaigen::range<7>(1, 2, 3, 4, 5, 6, 7) );
+
+
+
+Misc minor comments:
+* explicit contructors?
+e.g.
+inline no_t(Float s,  int filler)
+
+Is there any reason not to simply use an explicit constructor ?
+explicit no_t(Float s);  // never automatically dispatched for conversion
+
+* inline in class definitions
+all methods in the class definition are regarded as inline anyway
+
+
+> Specifically, I wanted to ask you about the test suite which I believe
+> you wrote for Gaigen 1. I remember you found quite some errors in
+> Gaigen 1 that way. For Gaigen 2.5, I want to automatically generate
+> the test suite along with the rest of the code. Any advice on that?
+> Maybe I can have a copy of your test suite for Gaigen 1?
+>
+>   
+This was actually Matlab code and was really only to test our Matlab wrapper around Gaigen 1.  I'm not sure how useful it will be, i'll take another look and send anything that seems relevant.
+
+I use the boost test library
+http://www.boost.org/doc/libs/1_38_0/libs/test/doc/html/index.html
+
+Its got some quite nice features for testing numerical type code (but i dont really have mush of a basis for comparison).
+
+I have a function norm_c which returns the norm of coordinates (e.g. so norm_c(cga::eo) == sqrt(2) )
+
+  double norm_c(const Ga_type& x);
+
+and most testing looks something like
+
+#define BOOST_TEST_MODULE example
+#include <boost/test/included/unit_test.hpp>
+
+const double tol = 0.0001;  // tolerance
+
+BOOST_AUTO_TEST_CASE( test_meet )
+{
+  Ga_type x;   //   // some code in setting x as meet of some multivectors
+
+  Ga_type x_expected = ... ;  // set to expected answer   BOOST_CHECK_SMALL( norm_c( x - x_expected ), tol);
+}
+
+I could look at recasting the old matlab tests using the boost test framework.
+
+It prints out nice reports etc.
+
+> The following describes Gaigen 2.5 in a nutshell:
+> -rewrite of Gaigen 2.
+> -implementation language C#.
+> -(currently planned) output languages: C, C++, C#, Java, Matlab, Python.
+>   
+Very interested in C++ and Matlab
+> -specification: XML.  -user interface for editing specification.
+> -no profiling. You have to list each optimization yourself.
+> -documentation and unit tests generated along with actual implementation.
+> -output nearly compatible with Gaigen 2.
+> -works up to 10-D.
+>
+>   
+All sound good.
+
+If i think of other things i'll forward them on.
+
+kind regards
+ Robert

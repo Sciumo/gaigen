@@ -1,0 +1,36 @@
+/*
+Arguments:
+SPEC = subspace.g2.Specification
+*/
+${CODEBLOCK header_includes_blah}
+
+<%using System.Collections.Generic%>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <string>
+
+#include "mvtypebase.h"
+
+// pre_h_include
+<%for (Iterator I = SPEC.getIncludes(CPP_PRE_HEADER); I.hasNext(); ) {%>
+#include <%I.next()%>
+<%}%>
+${ENDCODEBLOCK}
+
+
+// This sample template prints out the 
+// Arguments:
+// HT =  System.Collections.Hashtable
+${CODEBLOCK sample_template}
+<%using System.Collections%>
+The Hashtable contains <%HT.Count%> entries.
+The key->value of the entries is:
+
+<%foreach (DictionaryEntry DE in HT) {%>
+<%DE.Key%> -> <%DE.Value%>.
+<%}%>
+
+That's all
+${ENDCODEBLOCK}
