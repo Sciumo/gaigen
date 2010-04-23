@@ -28,6 +28,9 @@ mv g25-$1.tar.gz ~/rpmbuild/SOURCES
 cd -
 cd g25/setup_linux
 
+# copy .tar.gz sources to setup_linux dir
+cp ~/rpmbuild/SOURCES/g25-$1.tar.gz .
+
 # copy RPM spec file to RPM specs directory, insert version
 #cp g25.spec ~/rpmbuild/SPECS/
 cat g25.spec | sed -e "s/FILLINVERSION/$1/" > ~/rpmbuild/SPECS/g25.spec
