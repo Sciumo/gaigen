@@ -29,6 +29,10 @@ namespace G25
         /// </summary>
         public static bool OptionDisplayHelp = false;
         /// <summary>
+        ///  Command line argument: display version.
+        /// </summary>
+        public static bool OptionDisplayVersion = false;
+        /// <summary>
         /// When this string is non-null, the loaded spec is save to that file.
         /// </summary>
         public static string OptionSaveSpecXmlFile = null;
@@ -37,11 +41,16 @@ namespace G25
         /// </summary>
         public static string OptionSaveFileListFile = null;
 
+        public static const string Version = "2.5.1";
 
         static void Main(string[] args)
         {
             // parse command line
             List<string> extraArgs = ParseCommandLineOptions(args);
+
+            // display version if required
+            if (OptionDisplayVersion)
+                Console.WriteLine("Gaigen " + Version);
 
             // display help if required
             if (OptionDisplayHelp)
@@ -72,6 +81,7 @@ namespace G25
         {
             NDesk.Options.OptionSet p = new NDesk.Options.OptionSet() {
                 { "h|?|help", (string str) => {OptionDisplayHelp = true;} },
+                { "v|version", (string str) => {OptionDisplayVersion = true;} },
                 { "s|save=", (string str) => {OptionSaveSpecXmlFile = str;} },
                 { "f|filelist=", (string str) => {OptionSaveFileListFile = str;} },
             };
@@ -186,6 +196,7 @@ namespace G25
                 "\n" +
                 "Options:\n" +
                 "-h -? -help: display help.\n" +
+                "-v -version: display version.\n" +
                 "-s file.xml -save file.xml: saves loaded specification back to XML (for testing).\n" +
                 "-f list.txt -filelist list.txt: writes names of generated files to text file.\n" +
                 "\n");
