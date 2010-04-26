@@ -409,44 +409,55 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
        \end{itemize}
        
 \item {\bf constant} This element is used to generate a constant value in the output. This is useful is you
- *     want a constant value of an existing type. The constant has a name, 
- *     a type, and a value. Some examples of a constant are:
- *     <code>
- *     <constant name="vectorE1" type="vectorE3GA">e1=1 <comment>e1, as a vectorE3GA</comment></constant>
- *     <constant name="pointAtOrigin" type="normalizedPoint">e1=0 e2=0 e3=0 ni=0</constant>
- *     </code>
- *     Note that coordinates which are zero do not need to be specified. The attributes of a {\tt smv} element are:
- *        - {\tt name}. The name of the constant.
- *        - {\tt type}. The type of the constant. Currently only specialized multivector constants are supported ({\tt smv}).
- *     The {\tt constant} contains the value of the coordinates of the constant, and optionally a {\tt comment} element.
+      want a constant value of non-constant type. The constant has a name, 
+      a type, and a value. Some examples of a constant are:
+      \begin{verbatim}
+      <constant name="vectorE1" type="vectorE3GA">e1=1</constant>
+      <constant name="pointAtOrigin" type="normalizedPoint">e1=0 e2=0 e3=0 ni=0</constant>
+      \end{verbatim}
+      Note that coordinates which are zero do not need to be specified. The attributes of a {\tt constant} element are:
+      
+       \begin{itemize}
+       \item {\tt name}. The name of the constant.
+       \item {\tt type}. The type of the constant. Currently only specialized multivector constants are supported ({\tt smv}).
+       \end{itemize}
+      The {\tt constant} contains the value of the coordinates of the constant, and optionally a {\tt comment} element.
+      
 \item {\bf om} Specifies the general outermorphism matrix representation type. The outermorphism has a domain and
- *     a range, both of which may be specified, but they can also be set to the defaults. An example of an outermorphism with default
- *     coordinate order is:
- *     <code>
- *     <om name="om" coordinateOrder="default" />
- *     </code>
- *     A 3-D example of an outermorphism with a custom domain and range is:
- *     <code>
- *     <om name="om" coordinateOrder="custom">
- *     <domain>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</domain>
- *     <range>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</range>
- *     </code>
- *     In this last example, it was redundant to specify the range since it is identical to the domain. Leaving the {\tt range} element
- *     out would have the same effect. Note that all basis blades must be present in an general outermorphism's range and domain.
- *     The attributess of a {\tt om} element are:
- *        - {\tt name}. The name of the outermorphism type, for example {\tt om}.
- *        - {\tt coordinateOrder}. This can be {\tt default} or {\tt custom}. If {\tt custom} is used, the {\tt domain}
- *           and possibly the {\tt range} should be specified. If the {\tt range} is left out, it is assumed to be identical to the {\tt domain}.
+      a range, both of which may be specified, but they can also be left to the defaults. An example of an outermorphism with default
+      coordinate order is:
+      \begin{verbatim}
+      <om name="om" coordinateOrder="default" />
+      \end{verbatim}
+      A 3-D example of an outermorphism with a custom domain and range is:
+      \begin{verbatim}
+      <code>
+      <om name="om" coordinateOrder="custom">
+      <domain>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</domain>
+      <range>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</range>
+      </code>
+      \end{verbatim}
+      In this last example, it was redundant to specify the range since it is identical to the domain. Leaving the {\tt range} element
+      out would have the same effect. Note that all basis blades must be present in an general outermorphism's range and domain.
+      The attributes of a {\tt om} element are:
+       \begin{itemize}
+       \item {\tt name}. The name of the outermorphism type, for example {\tt om}.
+       \item {\tt coordinateOrder}. This can be {\tt default} or {\tt custom}. If {\tt custom} is used, the {\tt domain}
+            and possibly the {\tt range} should be specified. If the {\tt range} is left out, it is assumed to be identical to the {\tt domain}.
+       \end{itemize}
+       
 \item {\bf som} A {\tt som} element specifies a specialized outermorphism. It is pretty much that same as a general outermorphism
- *     except it does not need to have all basis blades in its domain and range. An example of a {\tt som} element is:
- *     <code>
- *     <som name="flatPointOM">
- *     <domain>e1^ni e2^ni e3^ni no^ni</domain>
- *     <range>e1^ni e2^ni e3^ni no^ni</range> 
- *     </som>
- *     </code>
- *     The {\tt som} element has only one attribute, since the {\tt coordinateOrder} is always custom:
- *        - {\tt name}. The name of the outermorphism type, for example {\tt om}.
+      except it does not need to have all basis blades in its domain and range. An example of a {\tt som} element is:
+      <code>
+      <som name="flatPointOM">
+      <domain>e1^ni e2^ni e3^ni no^ni</domain>
+      <range>e1^ni e2^ni e3^ni no^ni</range> 
+      </som>
+      </code>
+      The {\tt som} element has only one attribute, since the {\tt coordinateOrder} is always custom:
+       \begin{itemize}
+       \item {\tt name}. The name of the outermorphism type, for example {\tt om}.
+       \end{itemize}
 \item {\bf function} This element specifies a request to the code generator back-end to implement a specific function
  *     for specific arguments.
  *     The attributes are:
