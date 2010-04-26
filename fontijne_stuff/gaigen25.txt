@@ -67,7 +67,7 @@ V -implement constants
 V testing code
 V avoid clashes of cogsharp names while compiling (or at least detect them, and make up another name)
 
-check quality of documentation?
+check quality of documentation
 
 --
 Maybe fix the float type stuff
@@ -131,15 +131,16 @@ Maybe fix the float type stuff
 	V Get SourceForge project, 
 	V Compile generated code on linux, osx, fix warnings, problems, etc.
 	V package first distribution files. Which packaging system for source? Just an SVN export?
+	V sample algebras for user manual
 
-	write use manual
+	v write use manual
+		-> XML format
 	
-	sample algebras for user manual
+	Tell Robert to try it out
 	
-		
 
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
-
+	Removes XML stuff from G25.Specification and put into its own class
 
 
 	Have a generic 'float type' that can be used in function requests in specs. Maybe call it sfloat?
