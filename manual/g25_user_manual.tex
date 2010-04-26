@@ -332,7 +332,7 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
             
        \end{itemize}
        
-\item {\bf unaryOperator} This element allows you to tie an unary operator symbol to a one-argument function (in
+\item {\bf unaryOperator} This element allows you to bind a unary operator symbol to a one-argument function (in
       languages which support this feature). The attributes of this element are:
        \begin{itemize}
        \item {\tt symbol}. The operator symbol, for example {\tt ++}.
@@ -342,63 +342,72 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
        \item {\tt function}. The name of the function to bind to, for example {\tt increment}.
        \end{itemize}
          
-\item {\bf binaryOperator} This element allows you to tie an binary operator symbol to a two-argument function (in
- *     languages which support this). The attributes of this element are:
- *        - {\tt symbol}. The operator symbol, for example {\tt ^}.
- *        - {\tt function}. The name of the function to bind to, for example {\tt op}.
+\item {\bf binaryOperator} This element allows you to bind an binary operator symbol to a two-argument function (in
+      languages which support this feature). The attributes of this element are:
+       \begin{itemize}
+         \item {\tt symbol} The operator symbol, for example {\tt ^}.
+         \item  {\tt function} The name of the function to bind to, for example {\tt op}.
+       \end{itemize}
+       
 \item {\bf basisVectorNames}. This element lists the names of basis vectors of the algebra. The number of basis vectors
- *     must match the dimension {\tt N} of the space. The attributes of the element are {\tt name1}, {\tt name2}, 
- *     ..., {\tt nameN}. Each attribute is assigned the name of its respective basis vector, for example {\tt name1="e1"}.
+      must match the dimension {\tt N} of the space. The attributes of the element are {\tt name1}, {\tt name2}, 
+      ..., {\tt nameN}. Each attribute is assigned the name of its respective basis vector, for example {\tt name1="e1" name2="e2"}.
+      
 \item {\bf metric} A {\tt metric} element specifies the inner product between one or more pairs of basis vectors.
- *     By default, all inner product between basis vectors are assumed to be 0. By using {\tt metric} elements, one can
- *     set the inner product to different values. Inside one algebra, different metrics can be used, e.g. a conformal one and
- *     a Euclidean one. This is used internally by Gaigen for generating the code for e.g. factorization, but may also be
- *     useful for end-users.
- *     An example of a metric element is 
- *     <code>
- *     <metric name="default">no.ni=-1</metric>
- *     </code>
- *     This line says that the inner product between basis vectors {\tt no} and {\tt ni} is {\tt -1}.
- *     The attribute {\tt name="default"} says that this line belongs to the "default" metric and may be
- *     left out (because the default value for this attribute is {\tt "default"}.
- *     One may also specify multiple metrics at once, as in
- *     <code>
- *     <metric>e1.e1=e2.e2=e3.e3=1</metric>
- *     </code>
- *     Inside {\tt function} elements, a non-default metric may be specified by using the 
- *     {\tt metric="name"} attribute.
- *     Due to floating point roundoff errors in eigenvalue computation, a value or
- *     coordinates that should be (e.g.)1.0 may become (e.g.)(1.0+-1e-16).
- *     This makes the generated code less efficient, is annoiying to read and propagates
- *     the roundoff errors.
- *     For that reason, there is the option to round coordinates after metric product.
- *     The default is to round, but when the final metric is diagonal, it is forced
- *     to no rounding because there is not need to use it in that case. 
- *     The user can explicitly specify the rounding using the {\tt round="false"} or {\tt round="true"} attribute,
- *     but when the metric is diagonal, it will still be forced to no rounding.
- *     When rounding is enabled, coordinates which are very close to an integer
- *     value are 'rounded' to that value. The threshold for being 'very close' is 1e-14.
+      By default, all inner product between basis vectors are assumed to be 0. By using {\tt metric} elements, one can
+      set the inner product to different values. Inside one algebra, different metrics can be used, e.g. a conformal one and
+      a Euclidean one. This is used internally by Gaigen for generating the code for e.g. factorization, but may also be
+      useful for end-users.
+      
+      An example of a metric element is {\tt <metric name="default">no.ni=-1</metric>}.
+      This line says that the inner product between basis vectors {\tt no} and {\tt ni} is {\tt -1}.
+      The attribute {\tt name="default"} says that this line belongs to the "default" metric and may be
+      left out (because the default value for this attribute is {\tt "default"}.
+      
+      One may also specify multiple metrics at once, as in
+      {\tt <metric>e1.e1=e2.e2=e3.e3=1</metric>}.
+      
+      Inside {\tt function} elements, a non-default metric may be specified by using the 
+      {\tt metric="name"} attribute.
+      
+      Due to floating point roundoff errors in eigenvalue computation, a value or
+      coordinates that should be (e.g.)1.0 may become (e.g., $1 + 1e^{-16}$).
+      This makes the generated code less efficient, is annoying to read and propagates
+      the roundoff errors.
+      For that reason, there is the option to round coordinates after a metric product.
+      The default is to round, but when the final metric is diagonal, it is forced
+      to no rounding because there is not need to use it in that case. 
+      The user can explicitly force the rounding using the {\tt round="false"} or {\tt round="true"} attribute,
+      but when the metric is diagonal, it will still be forced to no rounding.
+      When rounding is enabled, coordinates which are very close to an integer
+      value are 'rounded' to that value. The threshold for being 'very close' is $1e^{-14}$.
+      
 \item {\bf mv} This element specifies the properties of the general multivector. It is one of the most involved elements.
- *     Its attributes are:
- *        - {\tt name}. The name of the general multivector type, for example {\tt mv}.
- *        - {\tt compress}. How to compress the multivector coordinates: {\tt byGrade} or {\tt byGroup} (explained in detail \ref mv_coord_sec "below").
- *        - {\tt coordinateOrder}. The order of coordinates: {\tt default} or {\tt custom} (explained in detail \ref mv_coord_sec "below").
- *        - {\tt memAlloc}. How to allocate memory for coordinates: {\tt full}, {\tt parityPure} or {\tt dynamic} (explained in detail \ref mv_coord_sec "below").
+      Its attributes are:
+       \begin{itemize}
+         \item {\tt name}. The name of the general multivector type, for example {\tt mv}.
+         \item {\tt compress}. How to compress the multivector coordinates: {\tt byGrade} or {\tt byGroup} (explained in detail Section~\ref{sec:mv_coord_sec} below).
+         \item {\tt coordinateOrder}. The order of coordinates: {\tt default} or {\tt custom} (explained in detail \ref mv_coord_sec "below").
+         \item {\tt memAlloc}. How to allocate memory for coordinates: {\tt full}, {\tt parityPure} or {\tt dynamic} (explained in detail Section~\ref{sec:mv_coord_sec} below).
+       \end{itemize}
+         
+         
 \item {\bf smv} An {\tt smv} specifies a specialized multivector type. 
- *     The {\tt smv} element should contain the basis blades of the type. These may have constant assignments, and if the
- *     type is constant {\tt const="true"}, then all basis blades must have a constant assignment. An example of a specialized
- *     multivector definition is:
- *     <code>
- *     <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3</smv>
- *     </code>
- *     The attributes of a {\tt smv} element are:
- *        - {\tt name}. The name of the specialized multivector type, for example {\tt vector}.
- *        - {\tt const} (optional). Can either be {\tt true} or {\tt false}. When true, the type is to be a constant type with no
- *          variable coordinates. In that case, all basis blades must have a constant value assigned to it. If the {\tt const}
- *          attribute is not specified it is assumed to be {\tt false}.
- *        - {\tt type}. The {\tt type} attribute specified whether instances of the specifialized multivector class will carry
- *          blade ({\tt type="blade"}), rotor ({\tt type="rotor"}), versor ({\tt type="versor"}) or any multivector 
- *          ({\tt type="multivector"}) values. This may be used for optimizations and sanity checks by code generator back-ends.
+      The {\tt smv} element should contain the basis blades of the type. These may have constant assignments, and if the
+      type is constant {\tt const="true"}, then all basis blades must have a constant assignment. An example of a specialized
+      multivector definition is {\tt <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3</smv>}.
+      
+      The attributes of a {\tt smv} element are:
+       \begin{itemize}
+       \item {\tt name}. The name of the specialized multivector type, for example {\tt vector}.
+       \item {\tt const} (optional). Can either be {\tt true} or {\tt false}. When true, the type is to be a constant type with no
+           variable coordinates. In that case, all basis blades must have a constant value assigned to it. If the {\tt const}
+           attribute is not specified it is assumed to be {\tt false}.
+       \item {\tt type}. The {\tt type} attribute specified whether instances of the specifialized multivector class will carry
+           blade ({\tt type="blade"}), rotor ({\tt type="rotor"}), versor ({\tt type="versor"}) or any multivector 
+           ({\tt type="multivector"}) values. This may be used for optimizations and sanity checks by code generator back-ends.
+       \end{itemize}
+       
 \item {\bf constant} This element is used to generate a constant value in the output. This is useful is you
  *     want a constant value of an existing type. The constant has a name, 
  *     a type, and a value. Some examples of a constant are:

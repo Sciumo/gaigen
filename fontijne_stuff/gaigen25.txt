@@ -138,6 +138,10 @@ Maybe fix the float type stuff
 	
 	Tell Robert to try it out
 	
+	Announce on GA net
+	
+	Put message on geometricalgebra.org
+	
 
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
 	Removes XML stuff from G25.Specification and put into its own class
