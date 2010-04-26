@@ -27,9 +27,16 @@ namespace g25_test_generator
         public static bool Shuffle = false;
 
         /// <summary>
+        /// When true, four sample algebras are generated with fixed settings.
+        /// These sample algebras are included with the G25 user manual.
+        /// </summary>
+        public static bool SampleAlgebras = false;
+
+        /// <summary>
         /// What algebras to generate for (command-line option, otherwise the default is used.
         /// </summary>
         public static List<string> Algebras = new List<string>();
+
 
         public static int GeneratorCount = 0;
 
@@ -37,6 +44,8 @@ namespace g25_test_generator
         public const string CLEAN_CMD = "clean";
         public const string TEST_CMD = "test";
         public const string XML_TEST_CMD = "xml_test";
+
+        public static List<string> Languages = new List<string> { "c", "cpp" };
 
         static void Main(string[] args)
         {
@@ -62,21 +71,18 @@ namespace g25_test_generator
                 Environment.Exit(-1);
             }
 
-
+            // init command list
             Dictionary<string, List<string>> commands = new Dictionary<string, List<string>>();
             commands[BUILD_CMD] = new List<string>();
             commands[CLEAN_CMD] = new List<string>();
             commands[TEST_CMD] = new List<string>();
             commands[XML_TEST_CMD] = new List<string>();
+
+            // generate the specifications, collect commands
             try
             {
-                if (Algebras.Contains("e2ga")) GenerateE2gaVariations(cog, commands);
-                if (Algebras.Contains("e3ga")) GenerateE3gaVariations(cog, commands);
-                if (Algebras.Contains("p3ga")) GenerateP3gaVariations(cog, commands);
-                if (Algebras.Contains("c3ga")) GenerateC3gaVariations(cog, commands);
-                if (Algebras.Contains("enga")) GenerateENgaVariations(cog, commands);
-                // todo? if (Algebras.Contains("cnga")) GenerateNdConformalVariations(cog, commands);
-                 
+                if (SampleAlgebras) GenerateSampleAlgebras(cog, commands);
+                else GenerateVariations(cog, commands);
             }
             catch (Exception ex)
             {
@@ -86,6 +92,7 @@ namespace g25_test_generator
                 Environment.Exit(-1);
             }
 
+            // write scripts from commands
             WriteTopLevelScripts(cog, commands);
 
             Console.WriteLine("");
@@ -103,6 +110,7 @@ namespace g25_test_generator
             NDesk.Options.OptionSet p = new NDesk.Options.OptionSet() {
                 { "a|algebra=", (string s) => { Algebras.Add(s.ToLower()); } },
                 { "s|shuffle", (string s) => {Shuffle = true;} },
+                { "sa|sample_algebras", (string s) => {SampleAlgebras = true;} },
                 { "r|reduce=", (int r) => {ReduceNbTestsBy = r;} },
             };
 
@@ -266,6 +274,36 @@ namespace g25_test_generator
             System.IO.Directory.CreateDirectory(OutputDirectory);
         }
 
+
+        public static void GenerateSampleAlgebras(CoG cog, Dictionary<string, List<string>> commands)
+        {
+            Console.WriteLine("Generating the sample algebras");
+
+            SpecVars SV = new SpecVars();
+            SV.HaveGom = true;
+            SV.Inline = true;
+            SV.ShortNameLangOnly = true;
+            List<SpecVars> vars = SV.VaryOutputLanguage(Languages);
+
+            GenerateE2gaVariations(cog, commands, vars);
+
+            GenerateE3gaVariations(cog, commands, vars);
+
+            GenerateP3gaVariations(cog, commands, vars);
+
+            GenerateP3gaVariations(cog, commands, vars);
+        }
+
+        public static void GenerateVariations(CoG cog, Dictionary<string, List<string>> commands)
+        {
+            if (Algebras.Contains("e2ga")) GenerateE2gaVariations(cog, commands);
+            if (Algebras.Contains("e3ga")) GenerateE3gaVariations(cog, commands);
+            if (Algebras.Contains("p3ga")) GenerateP3gaVariations(cog, commands);
+            if (Algebras.Contains("c3ga")) GenerateC3gaVariations(cog, commands);
+            if (Algebras.Contains("enga")) GenerateENgaVariations(cog, commands);
+            // todo? if (Algebras.Contains("cnga")) GenerateNdConformalVariations(cog, commands);
+        }
+                 
         /// <summary>
         /// Generates variations of Gaigen 2.5 specifications and Makefiles for the E2GA template.
         /// <param name="cog">Used for code generation.</param>
@@ -284,12 +322,15 @@ namespace g25_test_generator
 
             vars = Reduce(vars);
 
-            List<string> names = new List<string>();
+            GenerateE2gaVariations(cog, commands, vars);
+        }
 
+        public static void GenerateE2gaVariations(CoG cog, Dictionary<string, List<string>> commands, List<SpecVars> vars)
+        {
             foreach (SpecVars V in vars)
             {
-                string name = GenerateFromVar(cog, commands, "e2ga_spec", GetMakefileTemplateName(), "e2ga", V);
-                names.Add(name);
+                V.Dimension = 2;
+                GenerateFromVar(cog, commands, "e2ga_spec", GetMakefileTemplateName(), "e2ga", V);
             }
         }
 
@@ -311,12 +352,15 @@ namespace g25_test_generator
 
             vars = Reduce(vars);
 
-            List<string> names = new List<string>();
+            GenerateE3gaVariations(cog, commands, vars);
+        }
 
+        public static void GenerateE3gaVariations(CoG cog, Dictionary<string, List<string>> commands, List<SpecVars> vars)
+        {
             foreach (SpecVars V in vars)
             {
-                string name = GenerateFromVar(cog, commands, "e3ga_spec", GetMakefileTemplateName(), "e3ga", V);
-                names.Add(name);
+                V.Dimension = 3;
+                GenerateFromVar(cog, commands, "e3ga_spec", GetMakefileTemplateName(), "e3ga", V);
             }
         }
 
@@ -340,10 +384,15 @@ namespace g25_test_generator
 
             List<string> names = new List<string>();
 
+            GenerateP3gaVariations(cog, commands, vars);
+        }
+
+        public static void GenerateP3gaVariations(CoG cog, Dictionary<string, List<string>> commands, List<SpecVars> vars)
+        {
             foreach (SpecVars V in vars)
             {
-                string name = GenerateFromVar(cog, commands, "p3ga_spec", GetMakefileTemplateName(), "p3ga", V);
-                names.Add(name);
+                V.Dimension = 4;
+                GenerateFromVar(cog, commands, "p3ga_spec", GetMakefileTemplateName(), "p3ga", V);
             }
         }
 
@@ -365,12 +414,19 @@ namespace g25_test_generator
 
             vars = Reduce(vars);
 
-            List<string> names = new List<string>();
-
             foreach (SpecVars V in vars)
             {
-                string name = GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(), "c3ga", V);
-                names.Add(name);
+                V.Dimension = 5;
+                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(), "c3ga", V);
+            }
+        }
+
+        public static void GenerateC3gaVariations(CoG cog, Dictionary<string, List<string>> commands, List<SpecVars> vars)
+        {
+            foreach (SpecVars V in vars)
+            {
+                V.Dimension = 5;
+                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(), "c3ga", V);
             }
         }
 
@@ -408,12 +464,9 @@ namespace g25_test_generator
             vars = Reduce(vars);
 
 
-            List<string> names = new List<string>();
-
             foreach (SpecVars V in vars)
             {
-                string name = GenerateFromVar(cog, commands, "eNga_spec", GetMakefileTemplateName(), "e" + V.Dimension + "ga", V);
-                names.Add(name);
+                GenerateFromVar(cog, commands, "eNga_spec", GetMakefileTemplateName(), "e" + V.Dimension + "ga", V);
             }
         }
 
@@ -598,10 +651,9 @@ namespace g25_test_generator
 
         public static List<SpecVars> GetVariations(int minDim, int maxDim, bool groupAlternative, string alternativeGmvName, string alternativeScalarName, bool varyGmvCode, bool varyInline, bool varyCoordStorage)
         {
-            List<string> languages = new List<string> { "c", "cpp" };
             List<SpecVars> returnList = new List<SpecVars>();
 
-            foreach (string lang in languages)
+            foreach (string lang in Languages)
             {
                 List<SpecVars> list = new List<SpecVars>();
                 list.Add(new SpecVars());

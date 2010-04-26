@@ -43,6 +43,7 @@ namespace g25_test_generator
             ReportUsage = false;
             FloatTypes = new List<string>{"double"};
             RandomGenerator = "libc";
+            ShortNameLangOnly = false;
         }
 
         object ICloneable.Clone()
@@ -58,29 +59,36 @@ namespace g25_test_generator
 
         public string GetShortName()
         {
-            string gmvMemAllocStr = "x";
-            if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) gmvMemAllocStr = "D";
-            else if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) gmvMemAllocStr = "Y";
-            else if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.FULL) gmvMemAllocStr = "P";
+            if (ShortNameLangOnly)
+            {
+                return OutputLanguage;
+            }
+            else
+            {
+                string gmvMemAllocStr = "x";
+                if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) gmvMemAllocStr = "D";
+                else if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) gmvMemAllocStr = "Y";
+                else if (GmvMemAlloc == G25.GMV.MEM_ALLOC_METHOD.FULL) gmvMemAllocStr = "P";
 
-            string floatTypesStr = "" + FloatTypes.Count;
-            foreach (string str in FloatTypes)
-                floatTypesStr = floatTypesStr + str[0];
+                string floatTypesStr = "" + FloatTypes.Count;
+                foreach (string str in FloatTypes)
+                    floatTypesStr = floatTypesStr + str[0];
 
-            return OutputLanguage + "_" +
-                Dimension +
-                ((HaveScalarType) ? "S" : "x") +
-                ((CoordStorage == G25.COORD_STORAGE.ARRAY) ? "A" : "V") +
-                ((GroupAlternative) ? "A" : "x") +
-                ((HaveGom) ? "G" : "x") +
-                ((BuiltInParser) ? "B" : "A") + "_" +
-                ((Inline) ? "I" : "x") + "_" +
-                ((ReportUsage) ? "R" : "x") + "_" +
-                gmvMemAllocStr +
-                GmvName + "_" +
-                floatTypesStr + "_" +
-                RandomGenerator + "_" +
-                ScalarName;
+                return OutputLanguage + "_" +
+                    Dimension +
+                    ((HaveScalarType) ? "S" : "x") +
+                    ((CoordStorage == G25.COORD_STORAGE.ARRAY) ? "A" : "V") +
+                    ((GroupAlternative) ? "A" : "x") +
+                    ((HaveGom) ? "G" : "x") +
+                    ((BuiltInParser) ? "B" : "A") + "_" +
+                    ((Inline) ? "I" : "x") + "_" +
+                    ((ReportUsage) ? "R" : "x") + "_" +
+                    gmvMemAllocStr +
+                    GmvName + "_" +
+                    floatTypesStr + "_" +
+                    RandomGenerator + "_" +
+                    ScalarName;
+            }
         }
 
         /// <summary>
@@ -509,8 +517,7 @@ namespace g25_test_generator
         public bool ReportUsage { get; set; }
         public List<string> FloatTypes { get; set; }
         public string RandomGenerator { get; set; }
-
-
+        public bool ShortNameLangOnly { get; set; }
 
     }
 }

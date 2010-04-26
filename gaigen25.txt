@@ -1,3 +1,6 @@
+This is my personal to-do list
+
+
 todo next:
 
 V -all types IDs (SMV) + strings, so we can report about them, and GMV can have type field.
@@ -124,27 +127,19 @@ Maybe fix the float type stuff
 	V -then synthetic Euclidean
 	V Setup testing enviroment which runs tests for many configurations
 	V C++ testing code
+	V get it all to work on OSX, linux
+	V Get SourceForge project, 
+	V Compile generated code on linux, osx, fix warnings, problems, etc.
+	V package first distribution files. Which packaging system for source? Just an SVN export?
+
+	write use manual
 	
+	sample algebras for user manual
 	
-	-use the test generator on OSX, package
-	-then do test on linux (use xbuild to build, manual install, test all)
-	
-	
-	-get it all to work on OSX, linux
-		
-		V First generate the code & compile, then run all tests
-		Run / compile environment for 
-			V Windows
-			V OSX
-			-> Linux (try xbuild for mono / VC project files)
-	
-	v Compile generated code on linux, osx, fix warnings, problems, etc.
-	-> package first distribution files. Which packaging system for source? Just an SVN export?
 		
 
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
 
-	V Get SourceForge project, 
 
 
 	Have a generic 'float type' that can be used in function requests in specs. Maybe call it sfloat?
