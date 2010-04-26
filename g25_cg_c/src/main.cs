@@ -112,6 +112,8 @@ namespace G25
                 /// for post processing.</returns>
                 public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
                 {
+                    S.SetInlineNone();
+
                     CoGsharp.CoG cog = InitCog(S);
 
                     CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);

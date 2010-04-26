@@ -60,7 +60,7 @@ namespace G25
                 {
                     StringBuilder SB = new StringBuilder();
 
-                    string inlineStr = S.GetInlineString((!declOnly) && S.m_inlineOperators, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, (!declOnly) && S.m_inlineOperators, " ");
                     string returnTypeName = (FGS.m_returnTypeName.Length > 0) ? FGS.m_returnTypeName : FT.type;
                     if (!S.IsFloatType(returnTypeName)) returnTypeName = FT.GetMangledName(S, returnTypeName);
                     string arg1typeName = FT.GetMangledName(S, FGS.ArgumentTypeNames[0]);

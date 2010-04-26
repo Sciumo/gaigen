@@ -3078,27 +3078,6 @@ namespace G25
             return "invalid";
         }
 
-        /// <summary>
-        /// Returns the appropriate inline string for the output language.
-        /// 
-        /// Returns "" when inline is false, and the inline string + postFixStr otherwise.
-        /// </summary>
-        /// <param name="inline"></param>
-        /// <param name="postFixStr">Concatenated to inline string. May be null.</param>
-        /// <returns>Inline string, or ""</returns>
-        public string GetInlineString(bool inline, String postFixStr)
-        {
-            if (inline)
-            {
-                if (this.m_outputLanguage == OUTPUT_LANGUAGE.C)
-                    return "";
-                else if (this.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
-                    return "inline" + postFixStr;
-                else return "inline_str_to_do" + postFixStr;
-            }
-            else return "";
-        }
-
         /**
          * Inserts the verbatim code (in m_verbatimCode</c>) into the generated files.
          * The list <c>generatedFiles</c> is used to find the names of the files.
@@ -3110,6 +3089,19 @@ namespace G25
             foreach (VerbatimCode VC in m_verbatimCode) {
                 VC.InsertCode(m_inputDirectory, generatedFiles);
             }
+        }
+
+
+        /// <summary>
+        /// Sets all m_inlineX to false. Used by the 'C' language.
+        /// </summary>
+        public void SetInlineNone()
+        {
+            m_inlineConstructors = 
+                m_inlineSet =
+                m_inlineAssign = 
+                m_inlineOperators =
+                m_inlineFunctions = false;
         }
 
 

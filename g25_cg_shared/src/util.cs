@@ -485,6 +485,29 @@ namespace G25
                     else return "test_" + funcName + cgd.GetDontMangleUniqueId();
                 }
 
+                /// <summary>
+                /// Returns the appropriate inline string for the output language.
+                /// 
+                /// Returns "" when inline is false, and the inline string + postFixStr otherwise.
+                /// </summary>
+                /// <param name="inline"></param>
+                /// <param name="postFixStr">Concatenated to inline string. May be null.</param>
+                /// <returns>Inline string, or ""</returns>
+                public static string GetInlineString(Specification S, bool inline, String postFixStr)
+                {
+                    if (inline)
+                    {
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                            return "";
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+                            return "inline" + postFixStr;
+                        else return "inline_str_to_do" + postFixStr;
+                    }
+                    else return "";
+                }
+
+
+
             } // end of class Util
         } // end of namepace Shared
     } // end of namespace CG

@@ -277,7 +277,7 @@ namespace G25
                     bool inline, string returnType, string functionName,
                     FuncArgInfo returnArgument, FuncArgInfo[] arguments)
                 {
-                    SB.Append(S.GetInlineString(inline, " "));
+                    SB.Append(G25.CG.Shared.Util.GetInlineString(S, inline, " "));
                     if (returnArgument != null) returnType = "void";
                     SB.Append(returnType);
                     SB.Append(" ");

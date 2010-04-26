@@ -361,7 +361,7 @@ namespace G25
                     }
 
                     // do we inline this func?
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
                     string dstArgStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? (dstTypeName + " *dst, ") : "";
                     string refStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "*" : "&"; ;
 

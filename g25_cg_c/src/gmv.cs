@@ -153,7 +153,7 @@ namespace G25
                         declSB.AppendLine("/** Sets a " + typeName + " to zero */");
 
                         // do we inline this func?
-                        string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                         string funcDecl = inlineStr + "void " + funcName + "(" + typeName + " *M)";
 
@@ -187,7 +187,7 @@ namespace G25
                         declSB.AppendLine("/** Sets a " + typeName + " to a scalar value */");
 
                         // do we inline this func?
-                        String inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        String inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                         String funcDecl = inlineStr + "void " + funcName + "(" + typeName + " *M, " + FT.type +" val)";
 
@@ -215,16 +215,16 @@ namespace G25
                     G25.GMV gmv = S.m_GMV;
                     foreach (G25.FloatType FT in S.m_floatTypes)
                     {
-                        String typeName = FT.GetMangledName(S, gmv.Name);
-                        String funcName = typeName + "_setArray";
+                        string typeName = FT.GetMangledName(S, gmv.Name);
+                        string funcName = typeName + "_setArray";
 
                         // write comment
                         declSB.AppendLine("/** Sets a " + typeName + " to the value in the array. 'gu' is a group usage bitmap. */");
 
                         // do we inline this func?
-                        String inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                        String funcDecl = inlineStr + "void " + funcName + "(" + typeName + " *M, int gu, const " + FT.type + " *arr)";
+                        string funcDecl = inlineStr + "void " + funcName + "(" + typeName + " *M, int gu, const " + FT.type + " *arr)";
 
                         declSB.Append(funcDecl);
                         declSB.AppendLine(";");
@@ -255,20 +255,20 @@ namespace G25
                         {
                             //if (dstFT == srcFT) continue;
 
-                            String dstTypeName = dstFT.GetMangledName(S, gmv.Name);
+                            string dstTypeName = dstFT.GetMangledName(S, gmv.Name);
 
                             // write comment
                             if (dstFT == srcFT) declSB.AppendLine("/** Copies a " + srcTypeName + " */");
                             else declSB.AppendLine("/** Copies a " + srcTypeName + " (floating point type " + srcFT.type + ") to a " + dstTypeName + " (floating point type " + dstFT.type + ") */");
 
-                            String funcName;
+                            string funcName;
                             if (dstFT == srcFT) funcName = srcTypeName + "_copy";
                             else funcName = srcTypeName + "_to_" + dstTypeName;
 
                             // do we inline this func?
-                            String inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                            String funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
+                            string funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
                             declSB.Append(funcDecl);
                             declSB.AppendLine(";");
@@ -313,7 +313,7 @@ namespace G25
                             String funcName = srcTypeName + "_to_" + dstTypeName;
 
                             // do we inline this func?
-                            String inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            String inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                             String funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
@@ -415,7 +415,7 @@ namespace G25
                             string funcName = srcTypeName + "_to_" + dstTypeName;
 
                             // do we inline this func?
-                            String inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            String inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                             string funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
@@ -485,7 +485,7 @@ namespace G25
                     string varName = "A";
 
                     // do we inline this func?
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     string funcName = gmvTypeName + "_" + bladeName;
 
@@ -533,7 +533,7 @@ namespace G25
                     string coordName = bladeName + "_coord";
 
                     // do we inline this func?
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     string funcName = gmvTypeName + "_set_" + bladeName;
 
@@ -561,7 +561,7 @@ namespace G25
                     string varName = "A";
 
                     // do we inline this func?
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     string funcName = gmvTypeName + "_reserveGroup_" + groupIdx;
 

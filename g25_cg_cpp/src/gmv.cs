@@ -314,7 +314,7 @@ namespace G25
                         string funcName = "set";
 
                         // do we inline this func?
-                        string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                         string funcDecl = inlineStr + "void " + className + "::" + funcName + "()";
 
@@ -351,7 +351,7 @@ namespace G25
                         string funcName = "set";
 
                         // do we inline this func?
-                        string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                         string funcDecl = inlineStr + "void " + className + "::" + funcName + "(" + FT.type + " val)";
 
@@ -386,7 +386,7 @@ namespace G25
                         string funcName = "set";
 
                         // do we inline this func?
-                        string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                         string funcDecl = inlineStr + "void " + className + "::" + funcName + "(int gu, const " + FT.type + " *arr)";
 
@@ -424,7 +424,7 @@ namespace G25
                             string funcName = "set";
 
                             // do we inline this func?
-                            string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                             string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
 
@@ -476,7 +476,7 @@ namespace G25
                             string funcName = "set";
 
                             // do we inline this func?
-                            string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                             string funcDecl = inlineStr + "void " +dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
 
@@ -570,7 +570,7 @@ namespace G25
                             string funcName = "set";
 
                             // do we inline this func?
-                            string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                            string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                             string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
 
@@ -765,7 +765,7 @@ namespace G25
 
                     const string gmvName = "x";
                     RefGA.BasisBlade scalarBlade = RefGA.BasisBlade.ONE;
-                    string inlineStr = S.GetInlineString(S.m_inlineFunctions, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineFunctions, " ");
 
                     foreach (G25.FloatType FT in S.m_floatTypes)
                     {
@@ -781,7 +781,7 @@ namespace G25
 
                         declSB.AppendLine(comment);
                         string altFuncDecl = FT.type + " " + altFuncName + "(const " + className + " &" + gmvName + ")";
-                        declSB.Append(S.GetInlineString(true, " ") + altFuncDecl + " {return " + funcName + "(" + gmvName + "); }");
+                        declSB.Append(G25.CG.Shared.Util.GetInlineString(S, true, " ") + altFuncDecl + " {return " + funcName + "(" + gmvName + "); }");
                         declSB.AppendLine(";");
 
                         defSB.Append(inlineStr + funcDecl);

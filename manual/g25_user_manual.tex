@@ -1,0 +1,169 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage{palatino}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{longtable}
+\usepackage{color}
+  
+\newtheorem{theorem}{Theorem}
+\newtheorem{law}{Law}
+\newtheorem{assumption}{Assumption}
+
+\raggedbottom
+
+\newcommand{\dist}{\mbox{distance}}
+\newcommand{\gav}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\bev}[1]{\ensuremath{\mathbf{e}_{#1}}}
+\newcommand{\op}{\wedge}
+\newcommand{\ip}{\cdot}
+\newcommand{\dual}[1]{{#1}^*}
+\newcommand{\gp}{\,}
+\newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\rev}[1]{\widetilde{#1}}
+\newcommand{\no}{\ensuremath{{\bf o}}}
+\renewcommand{\ni}{\ensuremath{{\bf  \infty}}}
+\renewcommand{\no}{\ensuremath{e_{\bf  o}}}
+\renewcommand{\ni}{\ensuremath{e_{\bf  \infty}}}
+\newcommand{\grade}[1]{\mbox{\rm grade}}
+\newcommand{\gradeop}[2]{{\langle {#1}\rangle_{#2}}}
+\newcommand{\NOTE}[1]{\mbox{\bf [[~{#1}~]]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\half}{{\mbox{$\frac{1}{2}$}}}
+
+\definecolor{black}{gray}{0}
+\definecolor{dark}{gray}{0.5}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{darkred}{rgb}{0.65,0,0}
+\definecolor{blue}{rgb}{0,0,1}
+\definecolor{darkgreen}{rgb}{0,0.65,0}
+\newcommand{\tcb}[1]{\textcolor{blue}{#1}}
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+\newcommand{\tcdr}[1]{\textcolor{darkred}{#1}}
+\newcommand{\tcd}[1]{\textcolor{dark}{#1}}
+\newcommand{\tcdg}[1]{\textcolor{darkgreen}{#1}}
+
+\begin{document}
+
+\title{Gaigen 2.5 User Manual}
+\author{
+Daniel Fontijne\\University of Amsterdam 
+}
+\date{\today}
+\maketitle
+
+\section{Introduction}
+
+Gaigen 2.5 is a code generator for geometric algebra. It compiles an XML specification
+of an algebra into an implementation. Supported output languages are C and C++.
+Support for C\# and Java will be finished in May 2010. The tool itself is written in C\#.
+
+\section{Some History}
+
+Gaigen stands for \emph{Geometric Algebra Implementetion GENerator}.
+
+The first version of Gaigen was written in 2001. It supported only C++ as output language
+and the performance of the generated code was two to five times slower than the equivalent
+use of linear algebra. At that time it was the fastest general purpose GA implemention available. 
+Gaigen 1 supported only one multivector type and used coordinate  compression and profiling to increase performance.
+
+The second version of Gaigen was written in 2006. It added support for specialized multivector
+types and the Java. The generated code was competative with linear algebra (faster for some problems,
+slower for others).
+
+This version (2.5) is a re-implementation of Gaigen 2. It removes a lot of 'dead weight' and
+primarily aims at making Gaigen suitable for a production environment, with an emphasis on
+testing, programming language support, scalability and extendability.
+
+See \cite{GA4CS} and \cite{fontijnePhD} for background information on (implementation of) geometric algebra.
+
+
+\section{Installing}
+
+An installer is provided for each platform.
+One Linux and OSX, Mono is required because Gaigen 2.5 is written in C\#.
+Mono is a free, open source implementation of Microsofts .Net platform.
+
+\begin{itemize}
+\item[Windows] Run {\tt InstallG25.msi}.
+\item[Linux] Make sure Mono and ANTLR are installed, then install the RPM using 
+{\tt rpm -i g25-2.5.X.rpm}. Use {\tt rpm -U g25-2.5.X.rpm} to update.
+By default three small scripts are installed in {\tt /usr/bin}, the actual program is installed in {\tt /usr/share/g25}.
+\item[Mac OS X] Install Mono, then run {\tt g25.pkg}. Three small scripts are installed in {\tt /usr/bin}, the actual 
+program is installed in {\tt /usr/share/g25}.
+\end{itemize}
+
+ANTLR is required to compile grammar for parsing multivector strings.
+This is optional, as a built-in parser is also included.
+
+\section{Running}
+
+To compile an algebra specification, run {\tt g25 specfile.xml} from the command line.
+	
+The first time you run {\tt g25} it may be a bit slow because it is compiling
+a lot of code templates on the fly. Compiled templates are stored in a temporary 
+directory and recycled in future runs.
+On Linux and OSX, can take a quite some time due to Mono.
+
+	
+The following command line options are available:
+
+{\tt -h -help -?}: display help.
+Example: {\tt g25 -h}
+
+{\tt -v, -version}: display version information.
+Example: {\tt g25 -v}
+
+{\tt -s, -save}: read specification file, then save it.
+Example: {\tt g25 -s spec_out.xml spec_in.xml}
+
+{\tt -f, -filelist}: save a list of generated files to a file.
+Example: {\tt g25 -f filelist.txt spec.xml}
+
+\section{Sample Algebras}
+
+Use the following command to generate a few specification of algebras that may be used
+as a starting for your own specs: {\tt g25_test_generator -sa }.
+This creates a directory {\tt TestG25}. In that directory will be four specifications for
+algebras, for each supported language. Scripts to build and test the algebras are also
+included.
+
+The sample algebras are:
+\begin{itemize}
+\item[e2ga] 2-D Euclidean geometric algebra.
+\item[e3ga] 3-D Euclidean geometric algebra.
+\item[p3ga] Geometric algebra for the homogeneous model of 3-D space (so it is a 4-D algebra).
+Multivector types for points, planes, lines and so on are defined.
+\item[c3ga] Geometric algebra for the conformal model of 3-D space (so it is a 4-D algebra).
+Multivector types for points, spheres, circles, lines and so on are defined.
+\end{itemize}
+
+
+
+\section{Why did you write Gaigen 2.5 C\#?}
+
+I wrote Gaigen 2.5 in C\# because I wanted to try out the platform.
+I assumed that Mono would be good enough to run Gaigen 2.5 on OS X and
+Linux, but it is slightly disappointing in speed. Hopefully this will
+situation will improve in the future.
+
+
+\begin{thebibliography}{}
+
+
+	
+\bibitem{GA4CS} L.~Dorst and D.~Fontijne and S.~Mann.
+	\emph{Geometric Algebra for Computer Science: An Object Oriented Approach to Geometry.}
+	Morgan Kaufmann, revised edition 2009.
+
+\bibitem{fontijnePhD} D.~Fontijne.
+	\emph{Efficient Implementation of Geometric Algebra.}
+	PhD. Thesis, University of Amsterdam, 2007.
+
+
+\end{thebibliography}
+
+
+\end{document}

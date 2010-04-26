@@ -1,0 +1,78 @@
+
+What is G25
+
+	GA generator for languages x, y, z, predict when finished, some history
+
+History
+
+Installing
+	Package for each platform
+	Manual and sample algebras (should be included)	
+	
+Running
+
+	g25 specfile.xml
+	
+	Command line Options:
+		-s 		read XML, save it
+		-save
+			example: g25 -s spec_out.xml spec_in.xml
+	
+		-f 		save list of generated files to file
+		-filelist
+			example: g25 -f filelist.txt spec.xml
+			
+		-h		writes help message
+		-help
+		-?
+			example: g25 -h
+			
+			
+	Mono warning.
+	
+Sample algebras
+	do g25_test_generator -sa
+
+
+Documentation
+	Running Doxygen to extract algebra documentation
+	Say in-code docs not fully finished yet
+	
+	See also test code for examples of how to use each function
+
+
+XML file format
+	Take from g25 docs
+
+
+Building from source
+	Download source tar.gz or SVN from sourceforge
+	export MONO_IOMAP=all    # makes mono tools case and slash insensitive
+	cd g25/vs2008
+	xbuild g25.sln /p:Configuration=Release
+	cd ../../g25_diff/vs2008
+	xbuild g25_diff.csproj /p:Configuration=Release
+	cd ../../g25_test_generator/vs2008
+	xbuild g25_test_generator.csproj /p:Configuration=Release
+
+	Installers / packagers are in g25/setup_win, g25/setup_osx, g25/setup_linux
+
+
+
+Testing
+
+	Generating a Test with the algebra
+
+	Test Suite Generator (g25_test_generator)
+		Options:
+		-r reduce
+		-s shuffle
+		-sa generate sample algebras included with the manual
+	
+		Test the can be run:
+		build
+		test
+		build and test
+		xml_test (generate, save, regenerate)
+Why C#?
+	Just checking it out

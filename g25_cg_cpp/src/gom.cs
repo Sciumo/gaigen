@@ -256,7 +256,7 @@ namespace G25
                 public static void WriteSetIdentity(Specification S, G25.CG.Shared.CGdata cgd)
                 {
                     StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     defSB.AppendLine("");
 
@@ -302,7 +302,7 @@ namespace G25
                 public static void WriteCopy(Specification S, G25.CG.Shared.CGdata cgd)
                 {
                     StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     defSB.AppendLine("");
 
@@ -352,7 +352,7 @@ namespace G25
                     string funcName = srcTypeName + "_to_" + dstTypeName;
 
                     // do we inline this func?
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     string funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 

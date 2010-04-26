@@ -801,7 +801,7 @@ namespace G25
                 /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
                 public static void WriteLargestCoordinateFunctions(Specification S, G25.CG.Shared.CGdata cgd)
                 {
-                    string inlineStr = S.GetInlineString(S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
                     StringBuilder defSB = (S.m_inlineFunctions) ? cgd.m_inlineDefSB : cgd.m_defSB;
                     defSB.AppendLine("");
@@ -885,7 +885,7 @@ namespace G25
                     const string smvName = "x";
                     const bool ptr = false;
                     RefGA.BasisBlade scalarBlade = RefGA.BasisBlade.ONE;
-                    string inlineStr = S.GetInlineString(S.m_inlineFunctions, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineFunctions, " ");
                     
 
                     foreach (G25.FloatType FT in S.m_floatTypes)
@@ -906,7 +906,7 @@ namespace G25
 
                             declSB.AppendLine(comment);
                             string altFuncDecl = FT.type + " " + altFuncName + "(const " + className + " &" + smvName + ")";
-                            declSB.Append(S.GetInlineString(true, " ") + altFuncDecl + " {return " + funcName + "(" + smvName + "); }");
+                            declSB.Append(G25.CG.Shared.Util.GetInlineString(S, true, " ") + altFuncDecl + " {return " + funcName + "(" + smvName + "); }");
                             declSB.AppendLine(";");
 
                             defSB.Append(inlineStr + funcDecl);

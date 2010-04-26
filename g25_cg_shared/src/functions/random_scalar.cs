@@ -103,7 +103,7 @@ namespace G25
                     {
                         StringBuilder declSB = m_cgd.m_declSB;
                         StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
-                        string inlineStr = m_specification.GetInlineString(m_specification.m_inlineFunctions, " ");
+                        string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
 
                         declSB.AppendLine("/** Generates a random " + m_functionNameFloatType +
                             " in [0.0 1.0) interval using the " + ((m_generatorType == PRGtype.LIBC) ? "c library rand() function" : "mersenne twister method") + " */");
@@ -114,7 +114,7 @@ namespace G25
                         declSB.Append(m_functionNameFloatType + " " + funcName + "();\n");
 
                         defSB.Append(
-                            m_specification.GetInlineString(m_specification.m_inlineFunctions, " ") +
+                            G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ") +
                             m_functionNameFloatType + " " + funcName + "() {\n");
 
                         if (m_generatorType == PRGtype.LIBC)

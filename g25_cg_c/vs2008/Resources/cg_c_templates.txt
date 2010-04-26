@@ -852,13 +852,13 @@ ${ENDCODEBLOCK}
 // gpScalarFuncName = geometric product of multivector and scalar
 // generatorVersor = bool (use geometric product or outer product)
 ${CODEBLOCK randomBladeVersor}
-<%if (S.m_inlineFunctions) {%>inline <%}%>void <%functionName%>(<%mvType%> *arg1, <%FT.type%> scale, int grade, int basisVectorBitmap) {
+<%G25.CG.Shared.Util.GetInlineString(S, S.m_inlineFunctions, " ")%>void <%functionName%>(<%mvType%> *arg1, <%FT.type%> scale, int grade, int basisVectorBitmap) {
 	<%FT.type%> minimumNorm = <%FT.DoubleToString(S, 0.01)%>;
 	<%FT.type%> largestCoordinate = <%FT.DoubleToString(S, 4.0)%>;
 	<%functionName%>_ex(arg1, scale, grade, basisVectorBitmap, minimumNorm, scale * largestCoordinate);
 }
 
-<%if (S.m_inlineFunctions) {%>inline <%}%>void <%functionName%>_ex(<%mvType%> *arg1, <%FT.type%> scale, int _grade, int basisVectorBitmap, 
+<%G25.CG.Shared.Util.GetInlineString(S, S.m_inlineFunctions, " ")%>void <%functionName%>_ex(<%mvType%> *arg1, <%FT.type%> scale, int _grade, int basisVectorBitmap, 
 		<%FT.type%> minimumNorm, <%FT.type%> largestCoordinate) 
 {
 	<%mvType%> randomVector, tmp1, tmp2;
