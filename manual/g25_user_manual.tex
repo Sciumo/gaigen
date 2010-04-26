@@ -60,10 +60,9 @@ Gaigen 2.5 is a code generator for geometric algebra. It compiles an XML specifi
 of an algebra into an implementation. Supported output languages are C and C++.
 Support for C\# and Java will be finished in May 2010. The tool itself is written in C\#.
 
-\section{History and Background}
+\section{History, Background, Licensing}
 
 Gaigen stands for \emph{Geometric Algebra Implementation GENerator}.
-
 The first version of Gaigen was written in 2001. It supported only C++ as output language
 and the performance of the generated code was two to five times slower than the equivalent
 use of linear algebra. At that time it was the fastest general purpose GA implementation available. 
@@ -72,23 +71,30 @@ The tool itself was written in C++.
 
 The second version of Gaigen was written in 2006. It added support for specialized multivector
 types and supported C++ and Java. The tool itself was written in Java.
-The generated code was competative with linear algebra (faster for some problems, slower for others).
+The generated code was competitive with linear algebra (faster for some problems, slower for others).
+Again Gaigen~2 was the fastest general purpose GA implementation available, although a 
+C++ template library named Clifford was equally fast (this library is no longer available,
+it seems).
 
 This version (2.5) is a re-implementation of Gaigen 2. It removes a lot of 'dead weight' and
 primarily aims at making Gaigen suitable for a production environment, with an emphasis on
-testing, programming language support, scalability and extendability.
+testing, programming language support, scalability and extendibility. Some functions may be
+slightly faster in Gaigen~2.5 than Gaigen~2 due to minor optimizations.
+
+The Gaigen~2.5 tool ({\tt g25}) is covered by a GPL license. 
+The generated (compiled) code is your own and can be covered by any license.
 
 See \cite{GA4CS} and \cite{fontijnePhD} for background information on (implementation of) geometric algebra.
 
 
 \section{Installing}
 
-An installer is provided for each platform.
-One Linux and OSX, Mono is required because Gaigen 2.5 is written in C\#.
+An installer is provided on SourceForge for each platform.
+On Linux and OSX, Mono is required because Gaigen 2.5 is written in C\#.
 Mono is a free, open source implementation of Microsofts .Net platform.
 
 \begin{itemize}
-\item {\bf Windows: } Run {\tt InstallG25.msi}. By default, the files are installed in {\tt c:\\program files\\g25}.
+\item {\bf Windows: } Run {\tt InstallG25.msi}. By default, the files are installed in {\tt c:/program files/g25}.
 The system path is updated to include this directory.
 \item {\bf Linux: } Make sure Mono and ANTLR are installed, then install the RPM using 
 {\tt rpm -i g25-2.5.X.rpm}. Use {\tt rpm -U g25-2.5.X.rpm} to update.
@@ -139,7 +145,7 @@ Example: {\tt g25 -f filelist.txt spec.xml}
 Use the following command to generate a few algebra specifications that may be used
 as a starting for your own specs: {\tt g25\_test\_generator -sa }.
 This creates a directory {\tt TestG25}. In that directory will be four algebra specifications.
-Make files, and cripts to build and test the algebras are also included, for each supported
+Make files, and scripts to build and test the algebras are also included, for each supported
 language.
 
 The sample algebras are:
@@ -233,7 +239,7 @@ cd ../../g25_test_generator/vs2008
 xbuild g25_test_generator.csproj /p:Configuration=Release
 \end{verbatim}
 
-Installers / packagers for each platform are in {\tt g25\\setup\_win}, 
+Installers / packagers for each platform are in {\tt g25/setup\_win}, 
 {\tt g25/setup\_osx} and {\tt g25/setup\_linux}.
 
 
@@ -243,11 +249,269 @@ A good starting point for writing you own specifications are the sample algebras
 (Section~\ref{s:sample_algebras}). The format of the specification file is described
 here.
 
+The XML specification starts with the opening element {\tt g25spec}.
 
+This element can have the following attributes, most of which are required:
+\begin{itemize}
+\item {\bf license} The license of the generated code. The value can be {\tt custom}, {\tt gpl} or {\tt bsd}. The license is case insensitive.
+If the license is custom, a {\tt customLicense} element is expected later on in the specification.
 
+\item {\bf language}. The value can be {\tt c}, {\tt cpp}, {\tt java}, {\tt csharp}, {\tt python}, {\tt matlab} currently. 
+(the fact that a value is valid does not means that it is actually implemented . . .). The language names are case insensitive.
 
-TODO
-Take (remove) from code.
+\item {\bf namespace}. The name and the namespace/package of the generated code (always required, because it is also used as a prefix/part of generated filenames).
+
+\item {\bf coordStorage}. The value can be {\tt array} (coordinates are stored in arrays) or {\tt variables} (one variable for each coordinate). 
+Determines whether coordinates are stored in arrays or in single variables. This only applies to specialized multivectors. 
+
+\item {\bf defaultOperatorBindings}. The value can be {\tt true} or {\tt false}. If {\tt true}, the default operator bindings for the output language are used 
+(for example, the {\tt +} symbol is bound to the {\tt add} function).
+
+\item {\bf dimension}. The dimension of the space of the algebra. Must be $>= 1$. 
+For values above 7, consider using {\tt gmvCode="runtime"}.
+Values above 12 probably lead to code that cannot be compiled because it is too large.
+
+\item {\bf reportUsage}. The value can be {\tt true} or {\tt false}. If {\tt true}, print statements are added to the code to report usage of non-optimized functions
+       (i.e., functions involving specialized multivectors which were implicitly converted to general multivectors). 
+       When {\tt true}, a field is added to the general multivector type which keeps track of the original specialized 
+       type of the multivector. This option has no effect in the {\tt C} language because it does not support implicit conversion.
+ 
+\item {\bf gmvCode}. Possible values are {\tt expand} and {\tt runtime}. The code for general multivectors can be very large. For example a geometric product of two GMVs in 10-D 
+      takes in the order of 1024*1024 multiplication and additions. If the code for this product is written explicitly into the code (the default option),
+      the code size would also be in the order of megabytes. Because of this, Gaigen 1 and Gaigen 2 could only generate algebras up to about 7-D.
+      To overcome this limitation, Gaigen 2.5 supports 'run-time' computation of geometric products and all other functions without explicitly generating
+      code for every single multiply/add. The default option {\tt expand} writes out all code, is fast, but cannot realistically be used above 7-D. 
+      The option {\tt runtime} performs the computations at run-time, using (among others) tables which must be initialized at startup. 
+      If the option {\tt runtime} is used, the metric must be diagonal. Otherwise Gaigen 2.5 cannot compute these tables at runtime
+      This is because non-diagonal metrics requires symmetric eigenvalue computations, and 
+      it would be a burden to require eigenvalue code for every output language. Note that the run-time code is slower than the expanded code.
+      
+\item {\bf parser}. What type of multivector string parser to generate. The default is {\tt none}. Other options are
+       {\tt builtin} (for a parser hand-written for Gaigen 2.5) and {\tt antlr} for an ANTLR based parser. Both these parsers have the
+       same functionality and interface, but their internal implementation is different. For the ANTLR parser, you need to
+       invoke {\tt java org.antlr.Tool} on the generated {\tt .g} grammar and link with the ANTLR run-time.
+       
+\item {\bf copyright} The copyright statement of the generated code.
+\end{itemize}
+ 
+  
+Inside the main <c>g25spec</c> element, the following elements can be present:
+\begin{itemize}
+    - <c>customLicense</c>. The custom license text. Must be present when <c>license="custom"</c>. Copied verbatim to the top of each the generated file.
+ *   - <c>outputDirectory</c>. Where the generated files should go. The value <c>path</c> attribute is the name of the path.
+ *      By default, output is to the current working directory.
+ *   - <c>outputFilename</c>. Allows the name of individual generated files to be modified. For example, if the code generator 
+ *      would generate a file named 'foo.cpp', but the user wants this file to be named 'bar.cpp', then setting 
+ *      attributes <c>defaultName="foo.cpp"</c> and <c>customName="bar.cpp"</c>
+ *      allows the filename to be overridden. Attributes:
+ *        - <c>defaultName</c> (required). Name that the file would otherwise have (do not include path).
+ *        - <c>customName</c> (required). Custom name for file (do not include path).
+ *   - <c>inline</c>. What type of functions to inline. Possible attributes are <c>constructors</c>, 
+ *     <c>set</c>, <c>assign</c>, <c>operators</c> and <c>functions</c>.
+ *     The value of the attributes can be <c>true</c> or <c>false</c>.
+ *   - <c>floatType</c>. This element can have the following attributes:
+ *        - <c>type</c> (required). The value should be a floating point type (e.g. <c>float</c> or <c>double</c>).
+ *        - <c>suffix</c> (optional). The suffix applied to multivector/outermorphism classes when instantiated with this
+ *           floating point type. For example if there is a specialized multivector called <c>vectorE3GA</c> and the suffix
+ *           for the float type <c>double</c> is <c>_f</c> then <c>vectorE3GA</c> instantiated with <c>double</c>
+ *           will be called <c>vectorE3GA_t</c>.
+ *        - <c>prefix</c> (optional). The prefix applied to multivector/outermorphism classes when instantiated with this
+ *           floating point type.
+ *   - <c>unaryOperator</c>. This element allows you to tie an unary operator symbol to a one-argument function (in
+ *     languages which support this). The attributes of this element are:
+ *        - <c>symbol</c>. The operator symbol, for example <c>++</c>.
+ *        - <c>prefix</c>. Only for <c>++</c> and <c>--</c>:
+ *           Whether this operator is prefix (e.g. <c>++a</c>) or postifx (<c>a++</c>). Use <c>true</c>
+ *           for prefix, and <c>false</c> for postfix. 
+ *        - <c>function</c>. The name of the function to bind to, for example <c>preIncrement</c>.
+ *   - <c>binaryOperator</c>. This element allows you to tie an binary operator symbol to a two-argument function (in
+ *     languages which support this). The attributes of this element are:
+ *        - <c>symbol</c>. The operator symbol, for example <c>^</c>.
+ *        - <c>function</c>. The name of the function to bind to, for example <c>op</c>.
+ *   - <c>basisVectorNames</c>. This element lists the names of basis vectors of the algebra. The number of basis vectors
+ *     must match the dimension <c>N</c> of the space. The attributes of the element are <c>name1</c>, <c>name2</c>, 
+ *     ..., <c>nameN</c>. Each attribute is assigned the name of its respective basis vector, for example <c>name1="e1"</c>.
+ *   - <c>metric</c>. A <c>metric</c> element specifies the inner product between one or more pairs of basis vectors.
+ *     By default, all inner product between basis vectors are assumed to be 0. By using <c>metric</c> elements, one can
+ *     set the inner product to different values. Inside one algebra, different metrics can be used, e.g. a conformal one and
+ *     a Euclidean one. This is used internally by Gaigen for generating the code for e.g. factorization, but may also be
+ *     useful for end-users.
+ *     An example of a metric element is 
+ *     <code>
+ *     <metric name="default">no.ni=-1</metric>
+ *     </code>
+ *     This line says that the inner product between basis vectors <c>no</c> and <c>ni</c> is <c>-1</c>.
+ *     The attribute <c>name="default"</c> says that this line belongs to the "default" metric and may be
+ *     left out (because the default value for this attribute is <c>"default"</c>.
+ *     One may also specify multiple metrics at once, as in
+ *     <code>
+ *     <metric>e1.e1=e2.e2=e3.e3=1</metric>
+ *     </code>
+ *     Inside <c>function</c> elements, a non-default metric may be specified by using the 
+ *     <c>metric="name"</c> attribute.
+ *     Due to floating point roundoff errors in eigenvalue computation, a value or
+ *     coordinates that should be (e.g.)1.0 may become (e.g.)(1.0+-1e-16).
+ *     This makes the generated code less efficient, is annoiying to read and propagates
+ *     the roundoff errors.
+ *     For that reason, there is the option to round coordinates after metric product.
+ *     The default is to round, but when the final metric is diagonal, it is forced
+ *     to no rounding because there is not need to use it in that case. 
+ *     The user can explicitly specify the rounding using the <c>round="false"</c> or <c>round="true"</c> attribute,
+ *     but when the metric is diagonal, it will still be forced to no rounding.
+ *     When rounding is enabled, coordinates which are very close to an integer
+ *     value are 'rounded' to that value. The threshold for being 'very close' is 1e-14.
+ *   - <c>mv</c>. This element specifies the properties of the general multivector. It is one of the most involved elements.
+ *     Its attributes are:
+ *        - <c>name</c>. The name of the general multivector type, for example <c>mv</c>.
+ *        - <c>compress</c>. How to compress the multivector coordinates: <c>byGrade</c> or <c>byGroup</c> (explained in detail \ref mv_coord_sec "below").
+ *        - <c>coordinateOrder</c>. The order of coordinates: <c>default</c> or <c>custom</c> (explained in detail \ref mv_coord_sec "below").
+ *        - <c>memAlloc</c>. How to allocate memory for coordinates: <c>full</c>, <c>parityPure</c> or <c>dynamic</c> (explained in detail \ref mv_coord_sec "below").
+ *   - <c>smv</c>. An <c>smv</c> specifies a specialized multivector type. 
+ *     The <c>smv</c> element should contain the basis blades of the type. These may have constant assignments, and if the
+ *     type is constant <c>const="true"</c>, then all basis blades must have a constant assignment. An example of a specialized
+ *     multivector definition is:
+ *     <code>
+ *     <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3</smv>
+ *     </code>
+ *     The attributes of a <c>smv</c> element are:
+ *        - <c>name</c>. The name of the specialized multivector type, for example <c>vector</c>.
+ *        - <c>const</c> (optional). Can either be <c>true</c> or <c>false</c>. When true, the type is to be a constant type with no
+ *          variable coordinates. In that case, all basis blades must have a constant value assigned to it. If the <c>const</c>
+ *          attribute is not specified it is assumed to be <c>false</c>.
+ *        - <c>type</c>. The <c>type</c> attribute specified whether instances of the specifialized multivector class will carry
+ *          blade (<c>type="blade"</c>), rotor (<c>type="rotor"</c>), versor (<c>type="versor"</c>) or any multivector 
+ *          (<c>type="multivector"</c>) values. This may be used for optimizations and sanity checks by code generator back-ends.
+ *   - <c>constant</c>. This element is used to generate a constant value in the output. This is useful is you
+ *     want a constant value of an existing type. The constant has a name, 
+ *     a type, and a value. Some examples of a constant are:
+ *     <code>
+ *     <constant name="vectorE1" type="vectorE3GA">e1=1 <comment>e1, as a vectorE3GA</comment></constant>
+ *     <constant name="pointAtOrigin" type="normalizedPoint">e1=0 e2=0 e3=0 ni=0</constant>
+ *     </code>
+ *     Note that coordinates which are zero do not need to be specified. The attributes of a <c>smv</c> element are:
+ *        - <c>name</c>. The name of the constant.
+ *        - <c>type</c>. The type of the constant. Currently only specialized multivector constants are supported (<c>smv</c>).
+ *     The <c>constant</c> contains the value of the coordinates of the constant, and optionally a <c>comment</c> element.
+ *   - <c>om</c>. Specifies the general outermorphism matrix representation type. The outermorphism has a domain and
+ *     a range, both of which may be specified, but they can also be set to the defaults. An example of an outermorphism with default
+ *     coordinate order is:
+ *     <code>
+ *     <om name="om" coordinateOrder="default" />
+ *     </code>
+ *     A 3-D example of an outermorphism with a custom domain and range is:
+ *     <code>
+ *     <om name="om" coordinateOrder="custom">
+ *     <domain>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</domain>
+ *     <range>scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</range>
+ *     </code>
+ *     In this last example, it was redundant to specify the range since it is identical to the domain. Leaving the <c>range</c> element
+ *     out would have the same effect. Note that all basis blades must be present in an general outermorphism's range and domain.
+ *     The attributess of a <c>om</c> element are:
+ *        - <c>name</c>. The name of the outermorphism type, for example <c>om</c>.
+ *        - <c>coordinateOrder</c>. This can be <c>default</c> or <c>custom</c>. If <c>custom</c> is used, the <c>domain</c>
+ *           and possibly the <c>range</c> should be specified. If the <c>range</c> is left out, it is assumed to be identical to the <c>domain</c>.
+ *   - <c>som</c>. A <c>som</c> element specifies a specialized outermorphism. It is pretty much that same as a general outermorphism
+ *     except it does not need to have all basis blades in its domain and range. An example of a <c>som</c> element is:
+ *     <code>
+ *     <som name="flatPointOM">
+ *     <domain>e1^ni e2^ni e3^ni no^ni</domain>
+ *     <range>e1^ni e2^ni e3^ni no^ni</range> 
+ *     </som>
+ *     </code>
+ *     The <c>som</c> element has only one attribute, since the <c>coordinateOrder</c> is always custom:
+ *        - <c>name</c>. The name of the outermorphism type, for example <c>om</c>.
+ *   - <c>function</c>. This element specifies a request to the code generator back-end to implement a specific function
+ *     for specific arguments.
+ *     The attributes are:
+ *        - <c>name</c>. The name of the function, as it is known to the code generator. This name is also the name of the
+ *           generated function unless an <c>outputName</c> attribute is specified. To generate a converter (underscore constructor),
+ *           the name of the function should be the destination type plus an underscore, e.g., <c>_vectorE3GA</c>. This first (and only)
+ *           argument should be the source type.
+ *        - <c>outputName</c>. Optional. Changes the name of the generated function to the value of the attribute. For example, allows you
+ *          to rename a function <c>gp</c> to <c>geometricProduct</c>
+ *        - <c>returnType</c>. Optional. By default, the code generator will determine the return type of the functions it generates, but it is possible to override this default by setting it explicitly. 
+ *          The return type should be the name of a specialized mutlvector. However, the return type may also be 'scalar' or any of the floating point typenames used in the algebra.
+ *          If the return type is 'scalar', then a float will be returned, automatically adapted to the floating point type of the function.
+ *        - <c>argN</c>. Specifies the type of argument <c>N</c>. If no <c>argN</c> attribute is given, the code generator should fill in the right number of general multivector or general 
+ *           outermorphism types automatically. Otherwise, the correct number of <c>argN</c> attributes should be specified for the function (running from 1 up
+ *           to the number of arguments of the function). Not all combinations of argument types are possible. For example, currently it is not possible
+ *           to mix general and specialized multivectors. It is possible to mix floating point types and general multivectors though.
+ *        - <c>argNameN</c>. Specifies the name of argument <c>N</c>. This only affects the name of the argument inside
+ *           the generated function. Specifying this name may be superfluous, but may improve readability, especially for code-completion
+ *           wizards. 
+ *        - <c>optionX</c>. Specifies a optional option 'X'. For example, the <c>exp</c> functions can generate more efficient code
+ *           when it knows what the sign of the square of the argument is. In that case, one may use for example <c>optionSquare="1.0"</c>.
+ *        - <c>floatType</c>. Multiple <c>floatType</c> attributes may be present in a single <c>function</c> element. 
+ *          By default, the code generator will generate code for all floating point types of the specification, but using the 
+ *          <c>floatType</c> attribute(s) this may be limited to only the set of listed floating point types.
+ *        - <c>metric</c>. The optional <c>metric</c> attribute specifies the usage of a non-default metric (case insensitive). By default,
+ *          the metric <c>"default"</c> is used. By using this attribute a different metric may be used for
+ *          the function, e.g., <c>metric="euclidean"</c>.
+ *        - <c>comment</c>. Use the this optional attribute to add any extra comment to the function documentation. For example, one could
+ *          use the comment to explain what a certain function is used for.
+ *   - <c>verbatim</c>. This element is used to add verbatim code to the output files. This may be useful to
+ *     include some headers, to add some custom functions or documentation. The <c>verbatim</c> element can contain
+ *     the code as text, or can point to a file using the <c>codeFilename</c> attribute. The attributes are:
+ *        - <c>filenameX</c>. The filename(s) of the files to modify. Multiple files can be modifed with one <c>verbatim</c> element.
+ *        The <c>X</c> in the attribute can be any string (including empty). If multiple <c>filenameX</c> attributes are specified, multiple
+ *        files are modified.
+ *        - <c>position</c>. Where to place the verbatim code. The values can be <c>top</c> (at the top of the file), 
+ *           <c>bottom</c> (at the bottom of the file), <c>before</c> (before some marker string) or
+ *           <c>after</c> (before some marker string).
+ *        - <c>marker</c>. If <c>position</c> is <c>before</c> or <c>after</c>, then this attribute specifies the string
+ *           before or after which the verbatim code should be inserted.
+ *        - <c>codeFilename</c>. The verbatim code can be directly inside the <c>verbatim</c> element but for long code
+ *           it may be easier to put the code in a separate file. The name of this file is specified using this attribute.
+ \end{itemize}
+ 
+ * \subsection mv_coord_sec Multivector compression, coordinate order and memory allocation
+ * 
+ * Memory of general multivector variables can be allocated in different ways whose effictiveness will vary per code generator/language.
+ * You can allocate memory for all possible coordinates (<c>memAlloc="full"</c>). This would for example allocate 32 coordinates for a 5-D algebra.
+ * You can also allocate half of that if you know that you will always use parity-pure (only even-grade, or only odd-grade) multivectors
+ * (<c>memAlloc="parityPure"</c>). Another option is dynamically allocate just the memory that is required (<c>memAlloc="dynamic"</c>).
+ * 
+ * Compression of multivector coordinates can be done per grade part (<c>compress="byGrade"</c>) or per user-defined group (<c>compress="byGroup"</c>).
+ * 
+ * If compression is done by grade, then the attribute value <c>coordinateOrder="default"</c> can be used. But it is also allowed to
+ * have a custom coordinate order. In that case the <c>mv</c> element must contain a list of basis blades all, i.e., the order of coordinates.
+ * The basis blades should not be in <c>group</c> elements, just listed in the order you want them to be. The basis blades
+ * should be listed in ascending grade order. For example:
+ * <code>
+ <mv compress="byGrade" coordinateOrder="custom" memAlloc="parityPure">
+    scalar
+    no e1 e2 e3 ni
+    no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+    e2^e3^ni e3^e1^ni e1^e2^ni no^e3^ni no^e1^ni no^e2^ni no^e2^e3 no^e1^e3 no^e1^e2 e1^e2^e3
+    e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+    no^e1^e2^e3^ni
+</mv>
+ *  </code>
+ * If compression is done by group, each group of basis blades must be specified inside the <c>mv</c> element inside a <c>group</c> element. 
+ * A group cannot contain basis blades of different grades. This example splits the coordinates of the 5-D conformal algebra into
+ * three basic groups (<c>no</c>, <c>ni</c>, and <c>e1, e2, e3</c>) for all grades. For example:
+ *  <code>
+<mv compress="byGroup" coordinateOrder="custom" memAlloc="parityPure">
+    <group>scalar</group>
+    <group>no</group>
+    <group>e1 e2 e3</group>
+    <group>ni</group>
+    <group>no^e1 no^e2 no^e3</group>
+    <group>e1^e2 e2^e3 e3^e1</group> 
+    <group>e1^ni e2^ni e3^ni</group>
+    <group>no^ni</group>
+    <group>e2^e3^ni e3^e1^ni e1^e2^ni</group>
+    <group>no^e3^ni no^e1^ni no^e2^ni</group>
+    <group>no^e2^e3 no^e1^e3 no^e1^e2</group>
+    <group>e1^e2^e3</group>
+    <group>e1^e2^e3^ni</group>
+    <group>no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni</group>
+    <group>no^e1^e2^e3</group>
+    <group>no^e1^e2^e3^ni</group>
+</mv>
+ *  </code>
+ * 
+ * 
 
 \section{Why did you write Gaigen 2.5 C\#?}
 
