@@ -41,7 +41,10 @@ namespace G25
         /// </summary>
         public static string OptionSaveFileListFile = null;
 
-        public static const string Version = "2.5.1";
+        /// <summary>
+        /// Gaigen Version.
+        /// </summary>
+        public const string Version = "2.5.1";
 
         static void Main(string[] args)
         {

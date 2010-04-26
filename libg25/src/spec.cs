@@ -3068,7 +3068,7 @@ namespace G25
         }
 
         /// <returns>string representation of m_outputLanguage.</returns>
-        public String GetOutputLanguageString() {
+        public string GetOutputLanguageString() {
             if (m_outputLanguage == OUTPUT_LANGUAGE.C) return XML_C;
             else if (m_outputLanguage == OUTPUT_LANGUAGE.CPP) return XML_CPP;
             else if (m_outputLanguage == OUTPUT_LANGUAGE.JAVA) return XML_JAVA;
@@ -3086,7 +3086,7 @@ namespace G25
         /// <param name="inline"></param>
         /// <param name="postFixStr">Concatenated to inline string. May be null.</param>
         /// <returns>Inline string, or ""</returns>
-        public String GetInlineString(bool inline, String postFixStr)
+        public string GetInlineString(bool inline, String postFixStr)
         {
             if (inline)
             {
