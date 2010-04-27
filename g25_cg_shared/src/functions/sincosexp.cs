@@ -30,9 +30,11 @@ namespace G25
                 /// Generates code for sin, cos and exp.
                 /// 
                 /// The following function names are possible:
-                ///   - <c>"sin"</c>: Sine of bivector.
-                ///   - <c>"cos"</c>: Cosine of bivector.
-                ///   - <c>"exp"</c>: Exponential of bivector.
+                ///   - <c>"sin"</c>: Sine of multivector.
+                ///   - <c>"cos"</c>: Cosine of multivector.
+                ///   - <c>"exp"</c>: Exponential of multivector.
+                ///   - <c>"sinh"</c>: Hyperbolic sine of multivector.
+                ///   - <c>"cosh"</c>: Hyperbolic cosine of multivector.
                 /// 
                 /// For specialized multivector types, the generator tries to figure out the sign of the square
                 /// itself. If this fails, the user can specify a value using the <c>optionSquare="value"</c>

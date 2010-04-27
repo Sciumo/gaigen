@@ -921,7 +921,7 @@ Not implemented yet.
 
 \subsubsection*{norm2}
 
-Computes the sqaured norm of a multivector.
+Computes the squared norm of a multivector.
 The value returned is $< \gav{X} \gp \rev{\gav{X}} >_{0}$.
 A custom metric can be specified.
 \begin{verbatim}
@@ -930,13 +930,185 @@ A custom metric can be specified.
           arg1="evenVersor" metric="euclidean"/>
 \end{verbatim}
 
+\subsubsection*{op}
+
+Computes the outer product of two multivectors.
+\begin{verbatim}
+<function name="op" arg1="mv" arg2="mv"/>
+<function name="op" arg1="vector" arg2="vector" />
+\end{verbatim}
+
+\subsubsection*{random\_blade}
+
+Generates a random blade (stored in the general multivector type).
+\begin{verbatim}
+<function name="random_blade"/>
+<function name="random_blade" floatType="float"/>
+\end{verbatim}
 
 
+\subsubsection*{random\_versor}
+
+Generates a random versor (stored in the general multivector type).
+A custom metric can be specified.
+\begin{verbatim}
+<function name="random_versor"/>
+<function name="random_versor" outputName="random_versor_eucl" metric="euclidean"/>
+\end{verbatim}
 
 
+\subsubsection*{random\_scalar}
+
+Generates a random floating point value. The {\tt scalar} part of the function
+name should be replaced with a floating point type, as in the examples below.
+Use the option {\tt optionGen } to specify the random generator. Currently
+supported are Mersenne Twister {\tt mt} and the C standard library random
+generator {\tt libc}.
+\begin{verbatim}
+<function name="random_double" outputName="genrand" optionGen="libc"/>
+<function name="random_float" optionGen="mt"/>
+\end{verbatim}
+
+\subsubsection*{random\_smv}
+
+Generates a random specialized multivector. The {\tt smv} part of the function
+name should be replaced with the name of the specialized multivector type.
+
+For scalar, pseudoscalar, vector, dual vector and types defined with
+{\tt type="multivector"}, random coordinates are generated.
+
+For all other types, random vectors are generated and multiplied using the 
+geometric product. A custom metric can be specified.
+\begin{verbatim}
+<function name="random_dualSphere" floatType="double"/>
+<function name="random_normalizedPoint" floatType="float"/>
+<function name="random_sphere"/>
+\end{verbatim}
+
+\subsubsection*{sas}
+
+{\tt sas} stands for \emph{scale, add scalar}. 
+It is a function that is used internally
+by the {\tt exp}, {\tt cos} and {\tt sin} functions.
+It scales a multivector by a certain factor, then adds a scalar.
+\begin{verbatim}
+<function name="sas" arg1="mv" arg2="double" arg3="double" floatType="double"/>
+<function name="sas" arg1="bivectorE3GA" arg2="double" arg3="double" floatType="double"/>
+\end{verbatim}
+
+\subsubsection*{exp}
+
+Computes the exponential of a multivector.
+A custom metric can be specified.
+
+An option {\tt optionSquare="value"} can be used to specify the 
+sign of the square. {\tt value} can be {\tt -1}, {\tt 0}, {\tt 1}.
+If the sign of the square is known, much more effective code can be genererated, avoiding 
+a (slow and inprecise) series evaluation. Most of the time though the option is
+not needed since Gaigen can figure out the sign of the square on its own using symbolic GA. 
+\begin{verbatim}
+<function name="exp" arg1="mv" />
+<function name="exp" outputName="exp_em" arg1="mv" metric="euclidean" />
+<function name="exp" arg1="pointPair" />
+<function name="exp" arg1="bivectorE3GA" optionSquare="1"/>
+\end{verbatim}
+
+\subsubsection*{sin}
+
+Computes the sine of a multivector.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="sin" arg1="mv" />
+<function name="sin" arg1="flatPoint" />
+<function name="sin" arg1="bivectorE3GA" optionSquare="1"/>
+\end{verbatim}
+
+\subsubsection*{cos}
+
+Computes the cosine of a multivector.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="cos" arg1="mv" />
+<function name="cos" outputName="cos_em" arg1="bivector" metric="euclidean"/>
+\end{verbatim}
+
+\subsubsection*{sinh}
+
+Computes the hyperbolic sine of a multivector.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="sinh" arg1="mv" />
+<function name="sinh"arg1="bivector"/>
+\end{verbatim}
+
+\subsubsection*{cosh}
+
+Computes the hyperbolic cosine of a multivector.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="cosh" arg1="mv" />
+\end{verbatim}
+
+\subsubsection*{negate}
+
+Negate a multivector.
+\begin{verbatim}
+<function name="negate" arg1="mv"/>
+<function name="negate" arg1="vector"/>
+\end{verbatim}
+
+\subsubsection*{reverse}
+
+Reverses a multivector.
+\begin{verbatim}
+<function name="reverse" arg1="mv"/>
+<function name="reverse" arg1="rotor"/>
+\end{verbatim}
+
+\subsubsection*{cliffordConjugate}
+
+Computes the Clifford conjugate of a multivector.
+\begin{verbatim}
+<function name="cliffordConjugate" arg1="mv"/>
+<function name="cliffordConjugate" arg1="evenVersor"/>
+\end{verbatim}
+
+\subsubsection*{gradeInvolution}
+
+Computes the grade involution of a multivector.
+\begin{verbatim}
+<function name="gradeInvolution" arg1="mv"/>
+<function name="gradeInvolution" arg1="vector"/>
+\end{verbatim}
+
+\subsubsection*{unit}
+
+Computes the unit of a multivector. The norm is evaluated using
+the {\tt norm} function. A custom metric can be specified.
+\begin{verbatim}
+<function name="unit" arg1="mv"/>
+<function name="unit" outputName="unit_em" arg1="rotor" metric="euclidean"/>
+\end{verbatim}
+
+\subsubsection*{versorInverse}
+
+Computes the versor inverse of a multivector ($\frac{\gav{X}}{\gav{X}\rev{\gav{X}}}$). 
+The norm is evaluated using the {\tt norm} function. A custom metric can be specified.
+\begin{verbatim}
+<function name="versorInverse" arg1="mv"/>
+<function name="versorInverse" arg1="rotor"/>
+\end{verbatim}
 
 
+\subsubsection*{zero}
 
+Check whether a multivector is zero, up to a scalar epsilon (difference threshold) value.
+\begin{verbatim}
+<function name="zero" arg1="mv" arg2="double" 
+          floatType="double"/>
+<function name="zero" arg1="rotor" arg2="float" 
+          floatType="float"/>
+\end{verbatim}
 
 
 \section{Converters}

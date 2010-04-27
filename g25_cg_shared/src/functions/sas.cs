@@ -38,7 +38,7 @@ namespace G25
                 /// it also has uses for the end user.
                 /// 
                 /// The function name should be <c>"sas"</c>.
-                /// The first argument should be a GMV, the other two arguments scalars.
+                /// The first argument should be a MV, the other two arguments scalars.
                 /// </summary>
                 public class SAS : G25.CG.Shared.BaseFunctionGenerator
                 {

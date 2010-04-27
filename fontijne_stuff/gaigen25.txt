@@ -134,7 +134,10 @@ Maybe fix the float type stuff
 	V sample algebras for user manual
 
 	v write use manual
-		-> XML format
+		-> functions
+	
+	Put user manual inside distributions
+		win, osx, linux
 	
 	Tell Robert to try it out
 	

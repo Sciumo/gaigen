@@ -32,7 +32,7 @@ namespace G25
                 /// For scalar, pseudoscalar, vector, dual vector and <c>G25.SMV.MULTIVECTOR_TYPE.MULTIVECTOR</c> types, 
                 /// random coordinates are generated and the result is rescaled to a random scalar.
                 /// 
-                /// For <c>G25.SMV.MULTIVECTOR_TYPE.BLADE</c>, <c>ROTOR</c> and <c>MULTIVECTOR</c> multivector types, 
+                /// For <c>G25.SMV.MULTIVECTOR_TYPE.BLADE</c>, <c>ROTOR</c> and <c>VERSOR</c> multivector types, 
                 /// random vectors are generated and multiplied using the geometric product of
                 /// specified metric. NOTE THAT THE RESULT OF THIS PROCEDURE IS NOT NECESSARILY 
                 /// A ROTOR, VERSOR OR BLADE DEPENDING ON THE DEFINITION OF THE SMV!
