@@ -124,6 +124,23 @@ namespace G25
                     WriteCloseMultilineComment(SB, S);
                 }
 
+                /// <summary>
+                /// Writes the copyright notice (as specified in 'S') to 'SB'. 
+                /// Uses opening and closing comments.
+                /// </summary>
+                /// <param name="S">Specification (used for license).</param>
+                /// <param name="SB">Where the code goes.</param>
+                public static void WriteCopyright(StringBuilder SB, G25.Specification S)
+                {
+                    if (S.m_copyright.Length > 0)
+                    {
+                        WriteOpenMultilineComment(SB, S);
+                        SB.Append(S.m_copyright);
+                        WriteCloseMultilineComment(SB, S);
+                    }
+                }
+                
+
                 public static void WriteOpenNamespace(StringBuilder SB, G25.Specification S, string namespaceName)
                 {
                     switch (S.m_outputLanguage)

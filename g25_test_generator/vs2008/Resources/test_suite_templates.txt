@@ -2034,7 +2034,6 @@ memAlloc="<%if (SV.GmvMemAlloc ==  G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>dynamic<
   <function name="unit" outputName="unit_null" arg1="rotor" metric="null"/>
   <function name="unit" outputName="unit_null" arg1="oddVersor" metric="null"/>
   <function name="unit" outputName="unit_null" arg1="evenVersor" metric="null"/>
-  <function name="unit" outputName="unit_null" arg1="pseudoscalar" metric="null"/>
 <%if (SV.HaveScalarType) {%>
   <function name="unit" outputName="unit_null" arg1="<%SV.ScalarName%>" metric="null"/>
 <%}%>

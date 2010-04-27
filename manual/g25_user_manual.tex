@@ -170,11 +170,11 @@ of use of each function.
 \section{Testing the Generated Code}
 
 Gaigen 2.5 can generate a test suite with each algebra.
-This is controlled via an option in the specification file.
+This is controlled via option {\tt testSuite} in the specification file.
 
 The sample algebras (Section~\ref{s:sample_algebras}) generate the test 
-code by default. Building them will result in an executables named 
-{\tt test } which try to test whether the code is working correctly. 
+code by default. Building them will result in executables named 
+{\tt test } which test whether the generated code is working correctly. 
 
 
 \subsection{Testing of Gaigen 2.5}
@@ -230,7 +230,7 @@ go to the directory {\tt g25/vs2008}. Do {\tt msbuild g25.sln /p:Configuration=R
 If you want to build from the command line on Linux or OSX, go to the directory {\tt g25/vs2008}
 and do 
 \begin{verbatim}
-export MONO_IOMAP=all  # makes mono tools case and slash insensitive
+export MONO_IOMAP=all  # makes mono tools case/slash insensitive
 cd g25/vs2008
 xbuild g25.sln /p:Configuration=Release
 cd ../../g25_diff/vs2008
@@ -243,15 +243,34 @@ Installers / packagers for each platform are in {\tt g25/setup\_win},
 {\tt g25/setup\_osx} and {\tt g25/setup\_linux}.
 
 
-\section{XML file format}
+\section{Writing Algebra Specifications}
 
-A good starting point for writing you own specifications are the sample algebras
-(Section~\ref{s:sample_algebras}). The format of the specification file is described
-here.
+The format of the specification file is described in the next section.
+A good starting point for writing you own specifications are the sample algebras,
+see Section~\ref{s:sample_algebras} for how to obtain them.
 
-The XML specification starts with the opening element {\tt g25spec}.
+If you'd like to write a totally new specification, typically you'd take the top part
+of one of the sample algebras (up to where the specialized multivectors ({\tt smv}) are defined).
+Then you'd change the dimension of the space to what you need, edit the names of the basis
+vectors, and set the metric. Then adjust all the other settings to your needs.
 
-This element can have the following attributes, most of which are required:
+If you need them, add your own specialized multivectors (defining types like points,
+vectors, bivectors). 
+
+Finally you need to ask for the functions you want to have implemented using {\tt function} entries.
+The easiest way is to ask for these functions to be implemented for general multivectors.
+Specialized multivectors automatically convert to general multivectors when passed
+as arguments to such functions, so if you do not care about speed they are all you need.
+
+If you want to optimize your code, add specialized functions as needed. You can
+also use the {\tt reportUsage} feature to get a report on what functions could be
+optimized.
+
+\section{Algebra Specification File XML Format}
+
+An XML specification file starts with the opening element {\tt g25spec}.
+
+This element can have the following attributes:
 \begin{itemize}
 \item {\bf license} The license of the generated code. The value can be {\tt custom}, {\tt gpl} or {\tt bsd}. The license is case insensitive.
 If the license is custom, a {\tt customLicense} element is expected later on in the specification.
@@ -268,23 +287,34 @@ Determines whether coordinates are stored in arrays or in single variables. This
 (for example, the {\tt +} symbol is bound to the {\tt add} function).
 
 \item {\bf dimension} The dimension of the space of the algebra. Must be $>= 1$. 
-For values above 7, consider using {\tt gmvCode="runtime"}.
+For values above 7, consider using {\tt gmvCode="runtime"}, see below.
 Values above 12 probably lead to code that cannot be compiled because it is too large.
 
-\item {\bf reportUsage} The value can be {\tt true} or {\tt false}. If {\tt true}, print statements are added to the code to report usage of non-optimized functions
+\item {\bf testSuite} Whether to generate extra code to test the generated code. 
+	Can be {\tt true} or {\tt false}.
+
+
+\item {\bf reportUsage} The value can be {\tt true} or {\tt false}. 
+       When {\tt true}, print statements are added to the code to report usage of non-optimized functions
        (i.e., functions involving specialized multivectors which were implicitly converted to general multivectors). 
-       When {\tt true}, a field is added to the general multivector type which keeps track of the original specialized 
+       Also, a member variable is added to the general multivector type which keeps track of the original specialized 
        type of the multivector. This option has no effect in the {\tt C} language because it does not support implicit conversion.
  
-\item {\bf gmvCode} Possible values are {\tt expand} and {\tt runtime}. The code for general multivectors can be very large. For example a geometric product of two GMVs in 10-D 
-      takes in the order of 1024*1024 multiplication and additions. If the code for this product is written explicitly into the code (the default option),
-      the code size would also be in the order of megabytes. Because of this, Gaigen 1 and Gaigen 2 could only generate algebras up to about 7-D.
-      To overcome this limitation, Gaigen 2.5 supports 'run-time' computation of geometric products and all other functions without explicitly generating
+\item {\bf gmvCode} Possible values are {\tt expand} and {\tt runtime}. 
+      The code for general multivectors can be very large. 
+      For example a geometric product of two GMVs in 10-D 
+      takes in the order of 1024*1024 multiplications and additions.
+      If the code for this product is written explicitly into the code (the default option),
+      the code size would also be in the order of megabytes. 
+      
+      Because of this, Gaigen 1 and Gaigen 2 could only generate algebras up to about 7-D.
+      To overcome this limitation, Gaigen 2.5 supports `run-time' computation of geometric products and all other functions without explicitly generating
       code for every single multiply/add. The default option {\tt expand} writes out all code, is fast, but cannot realistically be used above 7-D. 
+      
       The option {\tt runtime} performs the computations at run-time, using (among others) tables which must be initialized at startup. 
-      If the option {\tt runtime} is used, the metric must be diagonal. Otherwise Gaigen 2.5 cannot compute these tables at runtime
-      This is because non-diagonal metrics requires symmetric eigenvalue computations, and 
-      it would be a burden to require eigenvalue code for every output language. Note that the run-time code is slower than the expanded code.
+      If the option {\tt runtime} is used, the metric must be diagonal. To compute the tables of a non-diagonal metric,
+      symmetric eigenvalue computation is required, and it would be a burden to require eigenvalue code for every output language. 
+      Note that the run-time code is approximately two times slower than the expanded code.
       
 \item {\bf parser} What type of multivector string parser to generate. The default is {\tt none}. Other options are
        {\tt builtin} (for a parser hand-written for Gaigen 2.5) and {\tt antlr} for an ANTLR based parser. Both these parsers have the
@@ -295,7 +325,7 @@ Values above 12 probably lead to code that cannot be compiled because it is too 
 \end{itemize}
  
   
-Inside the main <c>g25spec</c> element, the following elements can be present:
+Inside the main {\tt g25spec} element, the following elements can be present:
 \begin{itemize}
 \item {\bf customLicense} The custom license text. This element must be present when {\tt license="custom"}. 
          The text is copied verbatim to the top of each the generated file.
@@ -345,7 +375,7 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
 \item {\bf binaryOperator} This element allows you to bind an binary operator symbol to a two-argument function (in
       languages which support this feature). The attributes of this element are:
        \begin{itemize}
-         \item {\tt symbol} The operator symbol, for example {\tt ^}.
+         \item {\tt symbol} The operator symbol, for example {\tt $\wedge$}.
          \item  {\tt function} The name of the function to bind to, for example {\tt op}.
        \end{itemize}
        
@@ -386,9 +416,9 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
       Its attributes are:
        \begin{itemize}
          \item {\tt name}. The name of the general multivector type, for example {\tt mv}.
-         \item {\tt compress}. How to compress the multivector coordinates: {\tt byGrade} or {\tt byGroup} (explained in detail Section~\ref{sec:mv_coord_sec} below).
-         \item {\tt coordinateOrder}. The order of coordinates: {\tt default} or {\tt custom} (explained in detail \ref mv_coord_sec "below").
-         \item {\tt memAlloc}. How to allocate memory for coordinates: {\tt full}, {\tt parityPure} or {\tt dynamic} (explained in detail Section~\ref{sec:mv_coord_sec} below).
+         \item {\tt compress}. How to compress the multivector coordinates: {\tt byGrade} or {\tt byGroup} (explained in detail Section~\ref{s:mv_coord} below).
+         \item {\tt coordinateOrder}. The order of coordinates: {\tt default} or {\tt custom} (explained in detail Section~\ref{s:mv_coord} below).
+         \item {\tt memAlloc}. How to allocate memory for coordinates: {\tt full}, {\tt parityPure} or {\tt dynamic} (explained in detail Section~\ref{s:mv_coord} below).
        \end{itemize}
          
          
@@ -448,87 +478,117 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
        
 \item {\bf som} A {\tt som} element specifies a specialized outermorphism. It is pretty much that same as a general outermorphism
       except it does not need to have all basis blades in its domain and range. An example of a {\tt som} element is:
-      <code>
+      \begin{verbatim}
       <som name="flatPointOM">
       <domain>e1^ni e2^ni e3^ni no^ni</domain>
       <range>e1^ni e2^ni e3^ni no^ni</range> 
       </som>
-      </code>
+      \end{verbatim}
       The {\tt som} element has only one attribute, since the {\tt coordinateOrder} is always custom:
        \begin{itemize}
        \item {\tt name}. The name of the outermorphism type, for example {\tt om}.
        \end{itemize}
+       
 \item {\bf function} This element specifies a request to the code generator back-end to implement a specific function
- *     for specific arguments.
- *     The attributes are:
- *        - {\tt name}. The name of the function, as it is known to the code generator. This name is also the name of the
- *           generated function unless an {\tt outputName} attribute is specified. To generate a converter (underscore constructor),
- *           the name of the function should be the destination type plus an underscore, e.g., {\tt _vectorE3GA}. This first (and only)
- *           argument should be the source type.
- *        - {\tt outputName}. Optional. Changes the name of the generated function to the value of the attribute. For example, allows you
- *          to rename a function {\tt gp} to {\tt geometricProduct}
- *        - {\tt returnType}. Optional. By default, the code generator will determine the return type of the functions it generates, but it is possible to override this default by setting it explicitly. 
- *          The return type should be the name of a specialized mutlvector. However, the return type may also be 'scalar' or any of the floating point typenames used in the algebra.
- *          If the return type is 'scalar', then a float will be returned, automatically adapted to the floating point type of the function.
- *        - {\tt argN}. Specifies the type of argument {\tt N}. If no {\tt argN} attribute is given, the code generator should fill in the right number of general multivector or general 
- *           outermorphism types automatically. Otherwise, the correct number of {\tt argN} attributes should be specified for the function (running from 1 up
- *           to the number of arguments of the function). Not all combinations of argument types are possible. For example, currently it is not possible
- *           to mix general and specialized multivectors. It is possible to mix floating point types and general multivectors though.
- *        - {\tt argNameN}. Specifies the name of argument {\tt N}. This only affects the name of the argument inside
- *           the generated function. Specifying this name may be superfluous, but may improve readability, especially for code-completion
- *           wizards. 
- *        - {\tt optionX}. Specifies a optional option 'X'. For example, the {\tt exp} functions can generate more efficient code
- *           when it knows what the sign of the square of the argument is. In that case, one may use for example {\tt optionSquare="1.0"}.
- *        - {\tt floatType}. Multiple {\tt floatType} attributes may be present in a single {\tt function} element. 
- *          By default, the code generator will generate code for all floating point types of the specification, but using the 
- *          {\tt floatType} attribute(s) this may be limited to only the set of listed floating point types.
- *        - {\tt metric}. The optional {\tt metric} attribute specifies the usage of a non-default metric (case insensitive). By default,
- *          the metric {\tt "default"} is used. By using this attribute a different metric may be used for
- *          the function, e.g., {\tt metric="euclidean"}.
- *        - {\tt comment}. Use the this optional attribute to add any extra comment to the function documentation. For example, one could
- *          use the comment to explain what a certain function is used for.
-\item {\bf verbatim} This element is used to add verbatim code to the output files. This may be useful to
- *     include some headers, to add some custom functions or documentation. The {\tt verbatim} element can contain
- *     the code as text, or can point to a file using the {\tt codeFilename} attribute. The attributes are:
- *        - {\tt filenameX}. The filename(s) of the files to modify. Multiple files can be modifed with one {\tt verbatim} element.
- *        The {\tt X} in the attribute can be any string (including empty). If multiple {\tt filenameX} attributes are specified, multiple
- *        files are modified.
- *        - {\tt position}. Where to place the verbatim code. The values can be {\tt top} (at the top of the file), 
- *           {\tt bottom} (at the bottom of the file), {\tt before} (before some marker string) or
- *           {\tt after} (before some marker string).
- *        - {\tt marker}. If {\tt position} is {\tt before} or {\tt after}, then this attribute specifies the string
- *           before or after which the verbatim code should be inserted.
- *        - {\tt codeFilename}. The verbatim code can be directly inside the {\tt verbatim} element but for long code
- *           it may be easier to put the code in a separate file. The name of this file is specified using this attribute.
+       for specific arguments. See Section~\ref{s:functions} for the supported GA functions and Section~\ref{s:converters} for
+       information on converters.
+       
+       The attributes are:
+       \begin{itemize}
+       \item {\tt name}. The name of the function, as it is known to the code generator. This name is also the name of the
+             generated function unless an {\tt outputName} attribute is specified. To generate a converter (`underscore constructor'),
+             the name of the function should be the destination type plus an underscore, e.g., {\tt \_vectorE3GA}. This first (and only)
+             argument should be the source type.
+             
+       \item {\tt outputName}. Optional. Changes the name of the generated function to the value of the attribute. For example, allows you
+            to rename a function {\tt gp} to {\tt geometricProduct}. Sometimes this attribute is required to avoid nameclashes, for example
+            if you want the define the same function for two different metrics.
+            
+       \item {\tt returnType}. Optional. By default, the code generator will determine the return type of the functions it generates, 
+       		but it is possible to override this default by setting it explicitly. 
+            The return type should be the name of a specialized mutlvector. However, the return type may also be `scalar' or any of the 
+            floating point typenames used in the algebra.
+            If the return type is `scalar', then a float will be returned, automatically adapted to the floating point type of the function.
+            
+       \item {\tt argN}. Specifies the type of argument {\tt N}. If no {\tt argN} attribute is given, the code generator will fill in the 
+       	     default (general) types automatically. Otherwise, the correct number of {\tt argN} attributes should be specified for the function 
+       	     (running from 1 up to the number of arguments of the function). 
+       	     
+       	     Not all combinations of argument types are possible. For example, currently it is not possible
+             to mix general and specialized multivectors. It is possible to mix floats and general multivectors though.
+             
+       \item {\tt argNameN}. Specifies the name of argument {\tt N}. This only affects the name of the argument inside
+             the generated function. Specifying this name may be superfluous, but may improve readability, especially for code-completion
+             wizards. 
+             
+       \item {\tt optionX}. Specifies a optional option {\tt X}. For example, the {\tt exp} functions can generate more efficient code
+             when it knows what the sign of the square of the argument is. In that case, one may use for example {\tt optionSquare="1.0"}.
+             
+       \item {\tt floatType}. Multiple {\tt floatType} attributes may be present in a single {\tt function} element. 
+            By default, the code generator will generate code for all floating point types of the specification, but using the 
+            {\tt floatType} attribute(s) this may be limited to only the set of listed floating point types.
+            
+       \item {\tt metric}. The optional {\tt metric} attribute specifies the usage of a non-default metric (case insensitive). By default,
+            the metric {\tt "default"} is used. By using this attribute a different metric may be used for
+            the function, e.g., {\tt metric="euclidean"}.
+            
+       \item {\tt comment}. Use the this optional attribute to add any extra user comments to the function documentation. For example, one could
+            use the comment to explain what a certain function is used for. These comments will appear in the documentation generated by Doxygen.
+            
+       \end{itemize}
+       
+\item {\bf verbatim} This element is used to add verbatim code to the output files. 
+	It can be useful, ie.e., to include some headers or packages, or to add some custom functions or documentation. 
+	The {\tt verbatim} element can contain the code as text, or can point to a file using the {\tt codeFilename} attribute. 
+	The attributes are:
+	\begin{itemize}
+	
+        \item {\tt filenameX}. The filename(s) of the files to modify. Multiple files can be modifed with one {\tt verbatim} element.
+         The {\tt X} in the attribute can be any string (including empty). If multiple {\tt filenameX} attributes are specified, multiple
+         files are modified.
+         
+        \item {\tt position}. Where to place the verbatim code. The values can be {\tt top} (at the top of the file), 
+            {\tt bottom} (at the bottom of the file), {\tt before} (before some marker string) or
+            {\tt after} (before some marker string).
+            
+        \item {\tt marker}. If {\tt position} is {\tt before} or {\tt after}, then this attribute specifies the string
+            before or after which the verbatim code should be inserted.
+            
+        \item {\tt codeFilename}. The verbatim code can be directly inside the {\tt verbatim} element but for long code
+            it may be easier to put the code in a separate file. The name of this file is specified using this attribute.
+            
+	\end{itemize}
  \end{itemize}
  
- * \subsection mv_coord_sec Multivector compression, coordinate order and memory allocation
- * 
- * Memory of general multivector variables can be allocated in different ways whose effictiveness will vary per code generator/language.
- * You can allocate memory for all possible coordinates (<c>memAlloc="full"</c>). This would for example allocate 32 coordinates for a 5-D algebra.
- * You can also allocate half of that if you know that you will always use parity-pure (only even-grade, or only odd-grade) multivectors
- * (<c>memAlloc="parityPure"</c>). Another option is dynamically allocate just the memory that is required (<c>memAlloc="dynamic"</c>).
- * 
- * Compression of multivector coordinates can be done per grade part (<c>compress="byGrade"</c>) or per user-defined group (<c>compress="byGroup"</c>).
- * 
- * If compression is done by grade, then the attribute value <c>coordinateOrder="default"</c> can be used. But it is also allowed to
- * have a custom coordinate order. In that case the <c>mv</c> element must contain a list of basis blades all, i.e., the order of coordinates.
- * The basis blades should not be in <c>group</c> elements, just listed in the order you want them to be. The basis blades
- * should be listed in ascending grade order. For example:
- * <code>
- <mv compress="byGrade" coordinateOrder="custom" memAlloc="parityPure">
-    scalar
-    no e1 e2 e3 ni
-    no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
-    e2^e3^ni e3^e1^ni e1^e2^ni no^e3^ni no^e1^ni no^e2^ni no^e2^e3 no^e1^e3 no^e1^e2 e1^e2^e3
-    e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
-    no^e1^e2^e3^ni
+ \subsection{Multivector Compression, Coordinate Order and Memory Allocation}
+ \label{s:mv_coord}
+  
+Memory of general multivector variables can be allocated in different ways whose effictiveness will vary per code generator/language.
+You can allocate memory for all possible coordinates (<c>memAlloc="full"</c>). This would for example allocate 32 coordinates for a 5-D algebra.
+You can also allocate half of that if you know that you will always use parity-pure (only even-grade, or only odd-grade) multivectors
+(<c>memAlloc="parityPure"</c>). Another option is dynamically allocate just the memory that is required (<c>memAlloc="dynamic"</c>).
+
+Compression of multivector coordinates can be done per grade part (<c>compress="byGrade"</c>) or per user-defined group (<c>compress="byGroup"</c>).
+
+If compression is done by grade, then the attribute value <c>coordinateOrder="default"</c> can be used. But it is also allowed to
+have a custom coordinate order. In that case the <c>mv</c> element must contain a list of basis blades all, i.e., the order of coordinates.
+The basis blades should not be in <c>group</c> elements, just listed in the order you want them to be. The basis blades
+should be listed in ascending grade order. For example:
+\begin{verbatim}
+<mv compress="byGrade" coordinateOrder="custom" memAlloc="parityPure">
+   scalar
+   no e1 e2 e3 ni
+   no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+   e2^e3^ni e3^e1^ni e1^e2^ni no^e3^ni no^e1^ni no^e2^ni no^e2^e3 no^e1^e3 no^e1^e2 e1^e2^e3
+   e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+   no^e1^e2^e3^ni
 </mv>
- *  </code>
- * If compression is done by group, each group of basis blades must be specified inside the <c>mv</c> element inside a <c>group</c> element. 
- * A group cannot contain basis blades of different grades. This example splits the coordinates of the 5-D conformal algebra into
- * three basic groups (<c>no</c>, <c>ni</c>, and <c>e1, e2, e3</c>) for all grades. For example:
- *  <code>
+\end{verbatim}
+  
+If compression is done by group, each group of basis blades must be specified inside the <c>mv</c> element inside a <c>group</c> element. 
+A group cannot contain basis blades of different grades. This example splits the coordinates of the 5-D conformal algebra into
+three basic groups (<c>no</c>, <c>ni</c>, and <c>e1, e2, e3</c>) for all grades. For example:
+\begin{verbatim}
 <mv compress="byGroup" coordinateOrder="custom" memAlloc="parityPure">
     <group>scalar</group>
     <group>no</group>
@@ -547,9 +607,19 @@ Inside the main <c>g25spec</c> element, the following elements can be present:
     <group>no^e1^e2^e3</group>
     <group>no^e1^e2^e3^ni</group>
 </mv>
- *  </code>
- * 
- * 
+\end{verbatim}
+ 
+ 
+\section{Supported Functions}
+\label{s:functions}
+
+
+\section{Converters}
+\label{s:converters}
+
+Underscore constructors
+
+
 
 \section{Why did you write Gaigen 2.5 C\#?}
 

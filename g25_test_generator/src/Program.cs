@@ -291,7 +291,7 @@ namespace g25_test_generator
 
             GenerateP3gaVariations(cog, commands, vars);
 
-            GenerateP3gaVariations(cog, commands, vars);
+            GenerateC3gaVariations(cog, commands, vars);
         }
 
         public static void GenerateVariations(CoG cog, Dictionary<string, List<string>> commands)

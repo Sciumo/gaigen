@@ -103,7 +103,8 @@ namespace G25
                     StringBuilder sourceSB = new StringBuilder(); // parser source (if any) goes here
                     StringBuilder grammarSB = new StringBuilder(); // grammar (if any) goes here
 
-                    // output license
+                    // output license, copyright
+                    G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
                     G25.CG.Shared.Util.WriteLicense(sourceSB, S);
 
                     // parser declarations:

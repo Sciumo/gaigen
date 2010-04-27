@@ -2777,17 +2777,17 @@ namespace G25
         /// <summary>
         ///  The copyright of the generated code.
         /// </summary>
-        public String m_copyright;
+        public string m_copyright;
 
         /// <summary>
         ///  The license of the generated code.
         /// </summary>
-        public String m_license;
+        public string m_license;
 
         /// <summary>
         /// The namespace for the generated code (can be empty string for no namespace).
         /// </summary>
-        public String m_namespace;
+        public string m_namespace;
 
         /// <summary>
         /// The language if the generated implementation?
@@ -2853,7 +2853,7 @@ namespace G25
         private List<Operator> m_defaultOperators = new List<Operator>();
 
         /// <summary>Names of basis vectors (e.g., "e1", "e2", ...)</summary>
-        public List<String> m_basisVectorNames;
+        public List<string> m_basisVectorNames;
 
         /// <summary>
         /// List of Metric objects. The first entry is always the default algebra metric.
@@ -2888,10 +2888,10 @@ namespace G25
         /// <summary>Where the specification came from, or when this is unknown, the current working directory.
         /// This directory is used to resolve relative paths (e.g., for verbatim code to be read from user-specified files).
         /// </summary>
-        public String m_inputDirectory;
+        public string m_inputDirectory;
 
         /// <summary>Where the generated files go by default.</summary>
-        public String m_outputDirectory;
+        public string m_outputDirectory;
 
         /// <summary>Is used to determine whether the output directory should be written to XML</summary>
         public bool m_outputDirectoryExplicitlySet;
