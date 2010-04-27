@@ -29,7 +29,7 @@ namespace G25
                 /// <summary>
                 /// Generates code for extractGrade0() ... extractGradeN() functions.
                 /// 
-                /// The function name should be <c>"extractGrade"</c>.
+                /// The function name start with <c>"extractGrade"</c>.
                 /// </summary>
                 public class Grade : G25.CG.Shared.BaseFunctionGenerator
                 {

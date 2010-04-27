@@ -970,8 +970,8 @@ namespace RefGA
         /// <returns>dual of <param name="A"/></returns>
         public static Multivector Undual(Multivector A, int dim)
         {
-            Multivector Ii = Multivector.GetPseudoscalar(dim);
-            return ip(A, Ii, BasisBlade.InnerProductType.LEFT_CONTRACTION);
+            Multivector I = Multivector.GetPseudoscalar(dim);
+            return ip(A, I, BasisBlade.InnerProductType.LEFT_CONTRACTION);
         }
 
         /// <summary>Computes the undual of <paramref name="A"/> with respect to the whole space. The
@@ -980,8 +980,8 @@ namespace RefGA
         /// <returns>dual of <param name="A"/></returns>
         public static Multivector Undual(Multivector A, double[] m)
         {
-            Multivector Ii = Multivector.GetPseudoscalar(m.Length);
-            return ip(A, Ii, m, BasisBlade.InnerProductType.LEFT_CONTRACTION);
+            Multivector I = Multivector.GetPseudoscalar(m.Length);
+            return ip(A, I, m, BasisBlade.InnerProductType.LEFT_CONTRACTION);
         }
 
         /// <summary>Computes the undual of <paramref name="A"/> with respect to the whole space. The
@@ -990,8 +990,8 @@ namespace RefGA
         /// <returns>dual of <param name="A"/></returns>
         public static Multivector Undual(Multivector A, Metric M)
         {
-            Multivector Ii = Multivector.GetPseudoscalar(M.EigenMetric.Length);
-            return ip(A, Ii, M, BasisBlade.InnerProductType.LEFT_CONTRACTION);
+            Multivector I = Multivector.GetPseudoscalar(M.EigenMetric.Length);
+            return ip(A, I, M, BasisBlade.InnerProductType.LEFT_CONTRACTION);
         }
 
         /// <summary>Computes the undual of this with respect to the whole space. The
