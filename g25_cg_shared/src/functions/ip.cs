@@ -36,7 +36,7 @@ namespace G25
                 ///   - <c>"rc"</c>: right contraction.
                 ///   - <c>"sp"</c>: scalar product.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class IP : G25.CG.Shared.BaseFunctionGenerator
                 {

@@ -41,7 +41,7 @@ namespace G25
                 /// If the sign of the square is known, much more effective code can be genererated, avoiding 
                 /// a (slow and inprecise) series evaluation.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class SinCosExp : G25.CG.Shared.BaseFunctionGenerator
                 {

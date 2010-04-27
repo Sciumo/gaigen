@@ -31,7 +31,7 @@ namespace G25
                 /// 
                 /// The function name should be <c>"unit"</c>.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class Unit : G25.CG.Shared.BaseFunctionGenerator
                 {

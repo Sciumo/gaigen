@@ -31,7 +31,7 @@ namespace G25
                 /// 
                 /// The dual function should be called <c>"dual"</c> and undual function should be called <c>"undual"</c>.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class Dual : G25.CG.Shared.BaseFunctionGenerator
                 {

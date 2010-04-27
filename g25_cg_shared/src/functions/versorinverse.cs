@@ -35,7 +35,7 @@ namespace G25
                 /// For other types of multivectors it is not valid in general. What it does is
                 /// compute <c>inverse(V) = reverse(V) / (reverse(V).V)</c>.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class VersorInverse : G25.CG.Shared.BaseFunctionGenerator
                 {

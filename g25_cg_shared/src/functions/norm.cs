@@ -31,7 +31,7 @@ namespace G25
                 /// 
                 /// Norm function should be called <c>"norm"</c> and norm squared should be called <c>"norm2"</c>.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class Norm : G25.CG.Shared.BaseFunctionGenerator
                 {

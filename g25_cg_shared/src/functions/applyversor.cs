@@ -37,7 +37,7 @@ namespace G25
                 /// The first argument of the generated function is the versor, the second is the blade or versor
                 /// to be transformed. The third argument (<c>WI</c> only) is the inverse of the versor.
                 /// 
-                /// The metric can be specified using the <c>optionMetric="metricName"</c> attribute.
+                /// The metric can be specified using the <c>metric="metricName"</c> attribute.
                 /// </summary>
                 public class ApplyVersor : G25.CG.Shared.BaseFunctionGenerator
                 {
