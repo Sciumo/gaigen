@@ -29,7 +29,7 @@ namespace G25
                 /// <summary>
                 /// Generates code applying an outermorphism to a multivector.
                 /// 
-                /// Addition function should be called <c>"add"</c> and subtraction should be called <c>"subtract"</c>.
+                /// The function should be called <c>"applyOM"</c>.
                 /// </summary>
                 public class ApplyOM : G25.CG.Shared.BaseFunctionGenerator
                 {

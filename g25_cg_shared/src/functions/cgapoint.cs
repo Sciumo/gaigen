@@ -149,7 +149,7 @@ namespace G25
                                 m_returnValue = no;
                                 for (int i = 0; i < m_specification.m_dimension - 2; i++)
                                 {
-                                    String bvName = "e" + (i + 1).ToString(); // todo: this assumes a fixed name for the basis vectors. Make these names options?
+                                    string bvName = "e" + (i + 1).ToString(); // todo: this assumes a fixed name for the basis vectors. Make these names options?
                                     int bvIdx = m_specification.GetBasisVectorIndex(bvName);
                                     if (bvIdx < 0)
                                         throw new G25.UserException("Cannot find basis vector " + bvName, m_specification.FunctionToXmlString(m_fgs));

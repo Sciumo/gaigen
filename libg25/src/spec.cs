@@ -142,107 +142,107 @@ namespace G25
         public const string DONT_MANGLE = "_dont_mangle_";
         public const string CONSTANT_TYPE_SUFFIX = "_t";
 
-        public const String XML_G25_SPEC = "g25spec";
-        public const String XML_LICENSE = "license";
-        public const String XML_GPL = "gpl";
-        public const String XML_BSD = "bsd";
-        public const String XML_CUSTOM = "custom";
-        public const String XML_LANGUAGE = "language";
-        public const String XML_C = "c";
-        public const String XML_CPP = "cpp";
-        public const String XML_JAVA = "java";
-        public const String XML_CSHARP = "csharp";
-        public const String XML_PYTHON = "python";
-        public const String XML_MATLAB = "matlab";
-        public const String XML_NAMESPACE = "namespace";
-        public const String XML_COORD_STORAGE = "coordStorage";
-        public const String XML_ARRAY = "array";
-        public const String XML_VARIABLES = "variables";
-        public const String XML_DEFAULT_OPERATOR_BINDINGS = "defaultOperatorBindings";
-        public const String XML_TRUE = "true";
-        public const String XML_FALSE = "false";
-        public const String XML_DIMENSION = "dimension";
-        public const String XML_REPORT_USAGE = "reportUsage";
-        public const String XML_GMV_CODE = "gmvCode";
-        public const String XML_EXPAND = "expand";
-        public const String XML_RUNTIME = "runtime";
-        public const String XML_PARSER = "parser";
-        public const String XML_TEST_SUITE = "testSuite";
-        public const String XML_NONE = "none";
-        public const String XML_ANTLR = "antlr";
-        public const String XML_BUILTIN = "builtin";
-        public const String XML_CUSTOM_LICENSE = "customLicense";
-        public const String XML_INLINE = "inline";
-        public const String XML_CONSTRUCTORS = "constructors";
-        public const String XML_SET = "set";
-        public const String XML_ASSIGN = "assign";
-        public const String XML_OPERATORS = "operators";
-        public const String XML_FUNCTIONS = "functions";
-        public const String XML_FLOAT_TYPE = "floatType";
-        public const String XML_TYPE = "type";
-        public const String XML_PREFIX = "prefix";
-        public const String XML_SUFFIX = "suffix";
-        public const String XML_UNARY_OPERATOR = "unaryOperator";
-        public const String XML_BINARY_OPERATOR = "binaryOperator";
-        public const String XML_FUNCTION = "function";
-        public const String XML_SYMBOL = "symbol";
-        public const String XML_BASIS_VECTOR_NAMES = "basisVectorNames";
-        public const String XML_NAME = "name";
-        public const String XML_METRIC = "metric";
-        public const String XML_ROUND = "round";
-        public const String XML_MV = "mv";
-        public const String XML_COMPRESS = "compress";
-        public const String XML_BY_GRADE = "byGrade";
-        public const String XML_BY_GROUP = "byGroup";
-        public const String XML_COORDINATE_ORDER = "coordinateOrder";
-        public const String XML_DEFAULT = "default";
-        public const String XML_MEM_ALLOC = "memAlloc";
-        public const String XML_PARITY_PURE = "parityPure";
-        public const String XML_DYNAMIC = "dynamic";
-        public const String XML_FULL = "full";
-        public const String XML_GROUP = "group";
-        public const String XML_SMV = "smv";
-        public const String XML_CONST = "const";
-        public const String XML_CONSTANT = "constant";
-        public const String XML_MULTIVECTOR = "multivector";
-        public const String XML_BLADE = "blade";
-        public const String XML_ROTOR = "rotor";
-        public const String XML_VERSOR = "versor";
-        public const String XML_COPYRIGHT = "copyright";
-        public const String XML_OUTPUT_NAME = "outputName";
-        public const String XML_ARG = "arg";
-        public const String XML_OPTION = "option";
-        public const String XML_ARGNAME = "argName";
-        public const String XML_COMMENT = "comment";
-        public const String XML_OM = "om";
-        public const String XML_SOM = "som";
-        public const String XML_DOMAIN = "domain";
-        public const String XML_RANGE = "range";
-        public const String XML_RETURN_TYPE = "returnType";
-        public const String XML_SCALAR = "scalar";
-        public const String XML_OUTPUT_DIRECTORY = "outputDirectory";
-        public const String XML_PATH = "path";
-        public const String XML_OUTPUT_FILENAME = "outputFilename";
-        public const String XML_DEFAULT_NAME = "defaultName";
-        public const String XML_CUSTOM_NAME = "customName";
-        public const String XML_VERBATIM = "verbatim";
-        public const String XML_FILENAME = "filename";
-        public const String XML_POSITION = "position";
-        public const String XML_MARKER = "marker";
-        public const String XML_CODE_FILENAME = "codeFilename";
-        public const String XML_TOP = "top";
-        public const String XML_BOTTOM = "bottom";
-        public const String XML_BEFORE_MARKER = "before";
-        public const String XML_AFTER_MARKER = "after";
+        public const string XML_G25_SPEC = "g25spec";
+        public const string XML_LICENSE = "license";
+        public const string XML_GPL = "gpl";
+        public const string XML_BSD = "bsd";
+        public const string XML_CUSTOM = "custom";
+        public const string XML_LANGUAGE = "language";
+        public const string XML_C = "c";
+        public const string XML_CPP = "cpp";
+        public const string XML_JAVA = "java";
+        public const string XML_CSHARP = "csharp";
+        public const string XML_PYTHON = "python";
+        public const string XML_MATLAB = "matlab";
+        public const string XML_NAMESPACE = "namespace";
+        public const string XML_COORD_STORAGE = "coordStorage";
+        public const string XML_ARRAY = "array";
+        public const string XML_VARIABLES = "variables";
+        public const string XML_DEFAULT_OPERATOR_BINDINGS = "defaultOperatorBindings";
+        public const string XML_TRUE = "true";
+        public const string XML_FALSE = "false";
+        public const string XML_DIMENSION = "dimension";
+        public const string XML_REPORT_USAGE = "reportUsage";
+        public const string XML_GMV_CODE = "gmvCode";
+        public const string XML_EXPAND = "expand";
+        public const string XML_RUNTIME = "runtime";
+        public const string XML_PARSER = "parser";
+        public const string XML_TEST_SUITE = "testSuite";
+        public const string XML_NONE = "none";
+        public const string XML_ANTLR = "antlr";
+        public const string XML_BUILTIN = "builtin";
+        public const string XML_CUSTOM_LICENSE = "customLicense";
+        public const string XML_INLINE = "inline";
+        public const string XML_CONSTRUCTORS = "constructors";
+        public const string XML_SET = "set";
+        public const string XML_ASSIGN = "assign";
+        public const string XML_OPERATORS = "operators";
+        public const string XML_FUNCTIONS = "functions";
+        public const string XML_FLOAT_TYPE = "floatType";
+        public const string XML_TYPE = "type";
+        public const string XML_PREFIX = "prefix";
+        public const string XML_SUFFIX = "suffix";
+        public const string XML_UNARY_OPERATOR = "unaryOperator";
+        public const string XML_BINARY_OPERATOR = "binaryOperator";
+        public const string XML_FUNCTION = "function";
+        public const string XML_SYMBOL = "symbol";
+        public const string XML_BASIS_VECTOR_NAMES = "basisVectorNames";
+        public const string XML_NAME = "name";
+        public const string XML_METRIC = "metric";
+        public const string XML_ROUND = "round";
+        public const string XML_MV = "mv";
+        public const string XML_COMPRESS = "compress";
+        public const string XML_BY_GRADE = "byGrade";
+        public const string XML_BY_GROUP = "byGroup";
+        public const string XML_COORDINATE_ORDER = "coordinateOrder";
+        public const string XML_DEFAULT = "default";
+        public const string XML_MEM_ALLOC = "memAlloc";
+        public const string XML_PARITY_PURE = "parityPure";
+        public const string XML_DYNAMIC = "dynamic";
+        public const string XML_FULL = "full";
+        public const string XML_GROUP = "group";
+        public const string XML_SMV = "smv";
+        public const string XML_CONST = "const";
+        public const string XML_CONSTANT = "constant";
+        public const string XML_MULTIVECTOR = "multivector";
+        public const string XML_BLADE = "blade";
+        public const string XML_ROTOR = "rotor";
+        public const string XML_VERSOR = "versor";
+        public const string XML_COPYRIGHT = "copyright";
+        public const string XML_OUTPUT_NAME = "outputName";
+        public const string XML_ARG = "arg";
+        public const string XML_OPTION = "option";
+        public const string XML_ARGNAME = "argName";
+        public const string XML_COMMENT = "comment";
+        public const string XML_OM = "om";
+        public const string XML_SOM = "som";
+        public const string XML_DOMAIN = "domain";
+        public const string XML_RANGE = "range";
+        public const string XML_RETURN_TYPE = "returnType";
+        public const string XML_SCALAR = "scalar";
+        public const string XML_OUTPUT_DIRECTORY = "outputDirectory";
+        public const string XML_PATH = "path";
+        public const string XML_OUTPUT_FILENAME = "outputFilename";
+        public const string XML_DEFAULT_NAME = "defaultName";
+        public const string XML_CUSTOM_NAME = "customName";
+        public const string XML_VERBATIM = "verbatim";
+        public const string XML_FILENAME = "filename";
+        public const string XML_POSITION = "position";
+        public const string XML_MARKER = "marker";
+        public const string XML_CODE_FILENAME = "codeFilename";
+        public const string XML_TOP = "top";
+        public const string XML_BOTTOM = "bottom";
+        public const string XML_BEFORE_MARKER = "before";
+        public const string XML_AFTER_MARKER = "after";
 
 
         /// <summary>
         /// Used as the name of the auto-generated euclidean metric.
         /// </summary>
-        public const String INTERNAL_EUCLIDEAN_METRIC = "_internal_euclidean_metric_";
+        public const string INTERNAL_EUCLIDEAN_METRIC = "_internal_euclidean_metric_";
 
 
-        const String GPL_LICENSE = 
+        const string GPL_LICENSE = 
                     "This program is free software; you can redistribute it and/or\n" + 
                     "modify it under the terms of the GNU General Public License\n" + 
                     "as published by the Free Software Foundation; either version 2\n" + 
@@ -257,7 +257,7 @@ namespace G25
                     "along with this program; if not, write to the Free Software\n" + 
                     "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n";
 
-        const String BSD_LICENSE = 
+        const string BSD_LICENSE = 
                     "* Redistribution and use in source and binary forms, with or without\n" +
                     "* modification, are permitted provided that the following conditions are met:\n" +
                     "*     * Redistributions of source code must retain the above copyright\n" +
@@ -2434,7 +2434,7 @@ namespace G25
         }
 
         /// <returns>license text (may be multiple lines).</returns>
-        public String GetLicense() {
+        public string GetLicense() {
             return m_license;
         }
 

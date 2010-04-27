@@ -142,6 +142,8 @@ Maybe fix the float type stuff
 	
 	Put message on geometricalgebra.org
 	
+	Put link on uva website homepage
+	
 
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
 	Removes XML stuff from G25.Specification and put into its own class

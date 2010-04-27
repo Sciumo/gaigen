@@ -66,17 +66,17 @@ Gaigen stands for \emph{Geometric Algebra Implementation GENerator}.
 The first version of Gaigen was written in 2001. It supported only C++ as output language
 and the performance of the generated code was two to five times slower than the equivalent
 use of linear algebra. At that time it was the fastest general purpose GA implementation available. 
-Gaigen 1 supported only one multivector type and used coordinate  compression and profiling to increase performance.
-The tool itself was written in C++.
+Gaigen 1 supported only the general multivector type and used coordinate  compression and profiling 
+to increase performance. The tool itself was written in C++.
 
-The second version of Gaigen was written in 2006. It added support for specialized multivector
+The second version of Gaigen was released in 2006. It added support for specialized multivector
 types and supported C++ and Java. The tool itself was written in Java.
 The generated code was competitive with linear algebra (faster for some problems, slower for others).
 Again Gaigen~2 was the fastest general purpose GA implementation available, although a 
 C++ template library named Clifford was equally fast (this library is no longer available,
 it seems).
 
-This version (2.5) is a re-implementation of Gaigen 2. It removes a lot of 'dead weight' and
+This version (2.5) is a re-implementation of Gaigen 2. It removes a lot of `dead weight' and
 primarily aims at making Gaigen suitable for a production environment, with an emphasis on
 testing, programming language support, scalability and extendibility. Some functions may be
 slightly faster in Gaigen~2.5 than Gaigen~2 due to minor optimizations.
@@ -632,7 +632,105 @@ three basic groups ({\tt no}, {\tt ni}, and {\tt e1, e2, e3}) for all grades. Fo
 \section{Supported Functions}
 \label{s:functions}
 
-Todo
+The section lists the functions that Gaigen 2.5 can generate out of the box
+(plugins may add more functions). Each entry lists the name of the function,
+gives a short description and some examples.
+
+
+\subsubsection*{add}
+
+Adds two multivectors.
+\begin{verbatim}
+<function name="add" arg1="mv" arg2="mv" />
+<function name="add" arg1="vectorE3GA" arg2="vectorE3GA" />
+<function name="add" arg1="scalar" arg2="bivector" returnType="rotor" />
+\end{verbatim}
+
+\subsubsection*{subtract}
+
+Subtracts two multivectors.
+\begin{verbatim}
+<function name="subtract" arg1="mv" arg2="mv" />
+<function name="subtract" arg1="vectorE3GA" arg2="vectorE3GA" />
+\end{verbatim}
+
+\subsubsection*{applyOM}
+
+Applies an outermorphism to a multivector.
+\begin{verbatim}
+<function name="applyOM" arg1="om" arg2="mv"/>
+<function name="applyOM" arg1="om" arg2="normalizedPoint"/>
+<function name="applyOM" arg1="grade1OM" arg2="vectorE3GA"/>
+\end{verbatim}
+
+
+\subsubsection*{applyVersor}
+
+Applies a versor \gav{V} to a multivector \gav{X}.
+
+\noindent For even versors, returns $\gav{V} \gp \gav{X} \gp \rev{\gav{V}} / (\gav{V} \gp \rev{\gav{V}})$.\\
+For odd versors, returns $\gav{V} \gp \hat{\gav{X}} \gp \rev{\gav{V}} / (\gav{V} \gp \rev{\gav{V}})$.\\
+
+\noindent A custom metric can be used via the {\tt metric="name"} attribute.
+\begin{verbatim}
+<function name="applyVersor" arg1="mv" arg2="mv"/>
+<function name="applyUnitVersor" arg1="rotorE3GA" arg2="vectorE3GA"/>
+<function name="applyVersor" arg1="rotorE3GA" arg2="normalizedPoint"  
+          metric="euclidean"/>
+\end{verbatim}
+
+\subsubsection*{applyUnitVersor}
+
+Applies a unit versor \gav{V} to a multivector \gav{X} under the assumption
+that $\rev{\gav{V}} = \inv{\gav{V}}$. This identity does not hold generally 
+in non-Euclidean metrics, so be careful.
+
+\noindent For even versors, returns $\gav{V} \gp \gav{X} \gp \rev{\gav{V}}$.\\
+For odd versors, returns $\gav{V} \gp \hat{\gav{X}} \gp \rev{\gav{V}}$.\\
+
+\noindent A custom metric can be used via the {\tt metric="name"} attribute.
+\begin{verbatim}
+<function name="applyUnitVersor" arg1="mv" arg2="mv"/>
+<function name="applyUnitVersor" arg1="evenVersor" arg2="line"/>
+\end{verbatim}
+
+\subsubsection*{applyVersorWI}
+
+Applies a versor \gav{V} to a multivector \gav{X} given the explicit $\gav{VI} = \inv{\gav{V}}$.\\
+Note that the function have three arguments (\gav{V}, \gav{X} and \gav{VI}).
+
+\noindent For even versors, returns $\gav{V} \gp \gav{X} \gp \gav{VI}$.\\
+For odd versors, returns $\gav{V} \gp \hat{\gav{X}} \gp \gav{VI}$.\\
+
+\noindent A custom metric can be used via the {\tt metric="name"} attribute.
+\begin{verbatim}
+<function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv"/>
+<function name="applyVersorWI" arg1="rotorE3GA" arg2="bivectorE3GA" 
+          arg3="rotorE3GA"/>
+\end{verbatim}
+
+\subsubsection*{cgaPoint}
+
+Returns a conformal point. The position of the point can be specified
+using coordinates or as a vector.
+\begin{verbatim}
+<function name="cgaPoint" arg1="vectorE3GA"/>
+<function name="cgaPoint" arg1="double" arg2="double" arg3="double" 
+          floatType="double"/>
+<function name="cgaPoint" arg1="float" arg2="float" arg3="float" 
+          optionOrigin="no"  optionInfinity="ni" floatType="float"/>
+\end{verbatim}
+
+\subsubsection*{randomCgaPoint}
+
+Returns a conformal point at a random position.
+\begin{verbatim}
+<function name="randomCgaPoint"/>
+\end{verbatim}
+
+
+
+
 
 \section{Converters}
 \label{s:converters}

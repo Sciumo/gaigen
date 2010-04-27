@@ -53,7 +53,8 @@ namespace G25
                     // get StringBuilder where all generated code goes
                     StringBuilder SB = new StringBuilder();
 
-                    // output license
+                    // output license, copyright
+                    G25.CG.Shared.Util.WriteCopyright(SB, S);
                     G25.CG.Shared.Util.WriteLicense(SB, S);
 
                     // write main documentation
