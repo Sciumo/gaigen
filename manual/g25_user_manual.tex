@@ -760,8 +760,10 @@ Computes the undual ($\gav{U} = \gav{X} \gp \gav{I}$) of a multivector. A custom
 
 Check for equality of two multivectors, up to a scalar epsilon (difference threshold) value.
 \begin{verbatim}
-<function name="equals" arg1="mv" arg2="mv" arg3="double" floatType="double"/>
-<function name="equals" arg1="rotor" arg2="bivector" arg3="double" floatType="double"/>
+<function name="equals" arg1="mv" arg2="mv" arg3="double" 
+          floatType="double"/>
+<function name="equals" arg1="rotor" arg2="bivector" arg3="double" 
+          floatType="double"/>
 \end{verbatim}
 
 \subsubsection*{extractGrade}
@@ -780,11 +782,169 @@ Extracts grade X from a multivector.
 <function name="extractGrade4" arg1="evenVersor"/>
 \end{verbatim}
 
+\subsubsection*{gp}
+
+Computes the geometric product of two multivectors. A custom metric can be specified.
+\begin{verbatim}
+<function name="gp" arg1="mv" arg2="mv"/>
+<function name="gp" arg1="vectorE3GA" arg2="vectorE3GA" 
+          returnType="evenVersor"/>
+<function name="gp" outputName="gp_em" arg1="mv" arg2="mv" 
+          metric="euclidean"/>
+\end{verbatim}
+
+\subsubsection*{gradeBitmap}
+
+Computes a bitmap which specifies which grade parts of a multivector are non-zero, up to a scalar epsilon (difference threshold) value.
+\begin{verbatim}
+<function name="gradeBitmap" arg1="mv" arg2="double" 
+          floatType="double"/>
+<function name="gradeBitmap" arg1="rotor" arg2="double"
+          floatType="double"/>
+\end{verbatim}
+
+\subsubsection*{hp}
+
+Computes the hadamard product (coordinate-wise multiplication) of two multivectors. This
+is not a true geometric algebra operations, and the hadamard product is not well-defined
+when the orientation of basis-blades does not match between the two multivectors. It is useful
+nonetheless, for example when modulating color vectors in computer graphics.
+\begin{verbatim}
+<function name="hp" arg1="mv" arg2="mv"/>
+<function name="hp" arg1="vector" arg2="vector"/>
+\end{verbatim}
+
+\subsubsection*{ihp}
+
+Computes the inverse hadamard product (coordinate-wise division) of two multivectors. 
+See the limitations for {\tt hp} above.
+\begin{verbatim}
+<function name="ihp" arg1="mv" arg2="mv"/>
+<function name="ihp" arg1="plane" arg2="sphere"/>
+\end{verbatim}
+
+
+\subsubsection*{igp}
+
+Computes the inverse geometric product of two multivectors ($\gav{A} \gp \rev{\gav{B}} / (\gav{B} \gp \rev{\gav{B}})$).
+A custom metric can be specified.
+\begin{verbatim}
+<function name="igp" arg1="mv" arg2="mv"/>
+<function name="igp" arg1="line" arg2="circle" 
+          metric="euclidean">
+\end{verbatim}
+
+\subsubsection*{increment}
+
+Increments a multivector value by one.
+\begin{verbatim}
+<function name="increment" arg1="mv"/>
+<function name="increment" arg1="bivector" returnType="rotor"/>
+<function name="increment" arg1="rotor"/>
+\end{verbatim}
+
+\subsubsection*{decrement}
+
+Decrements a multivector value by one.
+\begin{verbatim}
+<function name="increment" arg1="mv"/>
+<function name="increment" arg1="bivector" returnType="rotor"/>
+<function name="increment" arg1="rotor"/>
+\end{verbatim}
+
+\subsubsection*{hip}
+
+Computes the Hestenes inner product of two multivectors (which is zero for scalars).
+A custom metric can be specified.
+\begin{verbatim}
+<function name="hip" outputName="ip" arg1="mv" arg2="mv"/>
+<function name="hip" outputName="ip" arg1="oddVersor"
+          arg2="rotorE3GA"/>
+\end{verbatim}
+
+\subsubsection*{mhip}
+
+Computes the modified Hestenes inner product of two multivectors.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="mhip" arg1="mv" arg2="mv"/>
+<function name="mhip" arg1="bivector" arg2="scalar"/>
+\end{verbatim}
+
+\subsubsection*{lc}
+
+Computes the left contraction inner product of two multivectors.
+The left contraction is zero when the grade of the left argument
+is higher than the grade of the right argument.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="lc" arg1="mv" arg2="mv"/>
+<function name="lc" arg1="vector" arg2="bivector"/>
+\end{verbatim}
+
+\subsubsection*{rc}
+
+Computes the right contraction inner product of two multivectors.
+The right contraction is zero when the grade of the right argument
+is higher than the grade of the left argument.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="rc" arg1="mv" arg2="mv"/>
+<function name="rc" arg1="bivector" arg2="vector"/>
+\end{verbatim}
+
+\subsubsection*{sp}
+
+Computes the scalar product (scalar part of the geometric product) of two multivectors.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="sp" arg1="mv" arg2="mv"/>
+<function name="sp" outputName="dotProduct" 
+          arg1="vector" arg2="vector"
+          metric="euclidean"/>
+\end{verbatim}
+
+
+\subsubsection*{norm}
+
+Computes the norm of a multivector.
+The absolute norm squared is used, i.e., the value returned is $\sqrt{ \mid < \gav{X} \gp \rev{\gav{X}} >_{0} \mid}$.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="norm" arg1="mv"/>
+<function name="norm" arg1="rotor"/>
+\end{verbatim}
+
+\subsubsection*{signedNorm}
+
+Not implemented yet.
+
+\subsubsection*{norm2}
+
+Computes the sqaured norm of a multivector.
+The value returned is $< \gav{X} \gp \rev{\gav{X}} >_{0}$.
+A custom metric can be specified.
+\begin{verbatim}
+<function name="norm2" arg1="mv"/>
+<function name="norm2" outputname="norm2_em"
+          arg1="evenVersor" metric="euclidean"/>
+\end{verbatim}
+
+
+
+
+
+
+
+
+
 
 \section{Converters}
 \label{s:converters}
 
 Todo
+Example: convert from normalizedPoint -> vector
+convert from bivector -> rotor
 
 Underscore constructors
 
@@ -792,7 +952,8 @@ Underscore constructors
 
 \section{Why did you write Gaigen 2.5 C\#?}
 
-I wrote Gaigen 2.5 in C\# because I wanted to try out the platform.
+I wrote Gaigen 2.5 in C\# because I wanted to try out the .Net platform
+(it's pretty nice).
 I assumed that Mono would be good enough to run Gaigen 2.5 on OS X and
 Linux, but it is slightly disappointing in speed. Hopefully the Mono
 team will improve Mono's performance in the future.
