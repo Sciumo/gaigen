@@ -25,7 +25,7 @@ namespace G25.CG.Java
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
         {
-            return G25.Specification.XML_JAVA;
+            return G25.XML.XML_JAVA;
         }
 
         /// <summary>

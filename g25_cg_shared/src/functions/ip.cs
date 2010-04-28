@@ -74,7 +74,7 @@ namespace G25.CG.Shared.Func
             else if (IsLc(F)) return RefGA.BasisBlade.InnerProductType.LEFT_CONTRACTION;
             else if (IsRc(F)) return RefGA.BasisBlade.InnerProductType.RIGHT_CONTRACTION;
             else if (IsSp(F)) return RefGA.BasisBlade.InnerProductType.SCALAR_PRODUCT;
-            else throw new G25.UserException("Unknown inner product type: " + F.Name, S.FunctionToXmlString(F));
+            else throw new G25.UserException("Unknown inner product type: " + F.Name, XML.FunctionToXmlString(S, F));
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace G25.CG.Shared.Func
             else if (IsLc(F)) return "left contraction";
             else if (IsRc(F)) return "right contraction";
             else if (IsSp(F)) return "scalar product";
-            else throw new G25.UserException("G25.CG.C.IP.GetIpName(): unknown inner product type: " + F.Name, S.FunctionToXmlString(F));
+            else throw new G25.UserException("G25.CG.C.IP.GetIpName(): unknown inner product type: " + F.Name, XML.FunctionToXmlString(S, F));
         }
 
         // constants, intermediate results

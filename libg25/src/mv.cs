@@ -800,15 +800,15 @@ namespace G25
         public string MvTypeString { get {
             switch (m_mvType) {
                 case MULTIVECTOR_TYPE.MULTIVECTOR:
-                    return Specification.XML_MULTIVECTOR;
+                    return XML.XML_MULTIVECTOR;
                 case MULTIVECTOR_TYPE.BLADE:
-                    return Specification.XML_BLADE;
+                    return XML.XML_BLADE;
 
                 case MULTIVECTOR_TYPE.ROTOR:
-                    return Specification.XML_ROTOR;
+                    return XML.XML_ROTOR;
 
                 case MULTIVECTOR_TYPE.VERSOR:
-                    return Specification.XML_VERSOR;
+                    return XML.XML_VERSOR;
                 default:
                     throw new Exception("G25.SMV.MvTypeString(): invalid multivector type: " + m_mvType);
             }

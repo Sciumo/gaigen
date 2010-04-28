@@ -29,7 +29,7 @@ namespace G25.CG.CPP
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
         {
-            return G25.Specification.XML_CPP;
+            return G25.XML.XML_CPP;
         }
 
         /// <summary>

@@ -126,7 +126,7 @@ namespace G25.CG.Shared
                 if (!foundSuitablePlugin)
                 {// no plugin could do 'F': complain about it
                     System.Console.WriteLine("Warning no suitable plugin for function " + F.Name + "; XML specification: ");
-                    System.Console.WriteLine("    " + S.FunctionToXmlString(F));
+                    System.Console.WriteLine("    " + XML.FunctionToXmlString(S, F));
                 }
             }
 
@@ -217,7 +217,7 @@ namespace G25.CG.Shared
 
             if (returnType == null)
                 throw new G25.UserException("Missing return type: " + G25.CG.Shared.BasisBlade.MultivectorToTypeDescription(S, value),
-                    S.FunctionToXmlString(F));
+                    XML.FunctionToXmlString(S, F));
 
             bool ptr = true;
 

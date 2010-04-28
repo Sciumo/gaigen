@@ -219,7 +219,7 @@ namespace G25.CG.Shared
             m_sane = false; // do not continue code generation for this type
             if (E.m_XMLerrorSource.Length == 0)
             {
-                String XMLstring = m_specification.FunctionToXmlString(m_fgs);
+                string XMLstring = XML.FunctionToXmlString(m_specification, m_fgs);
                 m_cgd.AddError(new G25.UserException(E.m_message, XMLstring, E.m_filename, E.m_line, E.m_column));
             }
             else m_cgd.AddError(E);

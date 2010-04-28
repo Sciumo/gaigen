@@ -204,7 +204,7 @@ namespace G25.CG.Shared
                     // print deps to console:
                     for (int i = 0; i < D.Length; i++)
                     {
-                        System.Console.WriteLine(S.FunctionToXmlString(D[i]));
+                        System.Console.WriteLine(XML.FunctionToXmlString(S, D[i]));
                     }
                 }
             }

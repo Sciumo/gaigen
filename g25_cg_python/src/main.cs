@@ -25,7 +25,7 @@ namespace G25.CG.Python
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
         {
-            return G25.Specification.XML_PYTHON;
+            return G25.XML.XML_PYTHON;
         }
 
         /// <summary>

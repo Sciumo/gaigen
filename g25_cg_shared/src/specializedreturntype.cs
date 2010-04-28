@@ -165,12 +165,12 @@ namespace G25.CG.Shared
                 if (returnSmv != null) return returnSmv;
                 G25.FloatType returnFT = S.GetFloatType(F.ReturnTypeName); // is it a specific float?
                 if (returnFT != null) return FT; //returnFT;
-                else if (F.ReturnTypeName == G25.Specification.XML_SCALAR) // is it a unspecified float?
+                else if (F.ReturnTypeName == G25.XML.XML_SCALAR) // is it a unspecified float?
                     return FT;
 
                 // type does not exist: abort (TODO: error message)
                 else throw new G25.UserException("Non-existant user-specified return type: " + F.ReturnTypeName,
-                    S.FunctionToXmlString(F)); // non-existant return type
+                    XML.FunctionToXmlString(S, F)); // non-existant return type
             }
             else
             {
@@ -204,7 +204,7 @@ namespace G25.CG.Shared
             // throw exception
             throw new G25.UserException("Missing specialized multivector type.\n" + 
                 "Please add the following XML to the specification to fix the dependency:\n" + 
-                S.SMVtoXmlString(synSMV));
+                XML.SMVtoXmlString(S, synSMV));
 
         }
 

@@ -126,7 +126,7 @@ namespace G25.CG.Shared
             G25.fgs tmpF = new G25.fgs(F.Name, F.OutputName, returnTypeName, argumentTypeNames,
                 F.ArgumentVariableNames, floatNames, F.MetricName, F.Comment, F.Options);
 
-            string XMLstr = S.FunctionToXmlString(tmpF);
+            string XMLstr = XML.FunctionToXmlString(S, tmpF);
 
             return XMLstr;
         }

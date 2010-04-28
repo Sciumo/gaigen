@@ -110,7 +110,7 @@ namespace G25
                 G25.Specification S = new G25.Specification(srcFilename);
 
                 Console.WriteLine("Saving algebra specification: " + dstFilename);
-                string str = S.ToXmlString();
+                string str = XML.ToXmlString(S);
                 G25.CG.Shared.Util.WriteFile(dstFilename, str);
 
                 // write list of generated files
@@ -212,22 +212,22 @@ namespace G25
         {
             switch (L.Language)
             {
-                case Specification.XML_C:
+                case XML.XML_C:
                     L.AddAssembly(typeof(G25.CG.C.MainGenerator).Assembly);
                     break;
-                case Specification.XML_CPP:
+                case XML.XML_CPP:
                     L.AddAssembly(typeof(G25.CG.CPP.MainGenerator).Assembly);
                     break;
-                case Specification.XML_JAVA:
+                case XML.XML_JAVA:
                     L.AddAssembly(typeof(G25.CG.Java.MainGenerator).Assembly);
                     break;
-                case Specification.XML_CSHARP:
+                case XML.XML_CSHARP:
                     L.AddAssembly(typeof(G25.CG.CSharp.MainGenerator).Assembly);
                     break;
-                case Specification.XML_PYTHON:
+                case XML.XML_PYTHON:
                     L.AddAssembly(typeof(G25.CG.Python.MainGenerator).Assembly);
                     break;
-                case Specification.XML_MATLAB:
+                case XML.XML_MATLAB:
                     L.AddAssembly(typeof(G25.CG.Matlab.MainGenerator).Assembly);
                     break;
             }

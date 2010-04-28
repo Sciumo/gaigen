@@ -31,7 +31,7 @@
  * \section classes_sec The classes
  * 
  * The G25.Specification class carries all information on the specification of an algebra. It can
- * read and write XML files containing the specification (see \ref specification_sec for a description).
+ * read and write XML files containing the specification (see the g25_user_manual for a description).
  * 
  * The G25.rsep class is a simple expression parser that Gaigen uses to parse parts of the XML
  * specification, such as the metric specification (<c>"e1.e1=1"</c>)and the definition of basis vectors (<c>"e1^e2^e3"</c>).
@@ -964,7 +964,7 @@ namespace G25
         /// Checks if all basis vector names are unique and valid. Throws Exception when this is
         /// not that case.
         /// </summary>
-        private void CheckBasisVectorNames()
+        protected internal void CheckBasisVectorNames()
         {
             if (m_basisVectorNames.Count != m_dimension)
                 throw new G25.UserException("The number of basis vector names does not match dimension of space (see XML element '" + XML.XML_BASIS_VECTOR_NAMES + "').");
@@ -1029,13 +1029,13 @@ namespace G25
         /// </summary>
         /// <param name="defaultName">Default </param>
         /// <param name="customName"></param>
-        public void SetOutputFilename(String defaultName, String customName)
+        public void SetOutputFilename(string defaultName, string customName)
         {
             m_outputFilenameOverrides[defaultName] = customName;
         }
 
         /// <returns>output filename of file 'defaultName', with possible override.</returns>
-        public String GetOutputFilename(String defaultName)
+        public string GetOutputFilename(string defaultName)
         {
             if (m_outputFilenameOverrides.ContainsKey(defaultName))
                 return m_outputFilenameOverrides[defaultName];
@@ -1046,9 +1046,9 @@ namespace G25
         /// Then if the filename is rooted (absolute) it is returned as is. Otherwise 
         /// GetOutputDir() is appended in front of it.</remarks>
         /// <returns>Full path of output filename 'defaultName'.</returns>
-        public String GetOutputPath(String defaultName)
+        public string GetOutputPath(string defaultName)
         {
-            String outputFilename = GetOutputFilename(defaultName);
+            string outputFilename = GetOutputFilename(defaultName);
             if (System.IO.Path.IsPathRooted(outputFilename)) return outputFilename;
             else return System.IO.Path.Combine(GetOutputDir(), outputFilename);
         }
@@ -1065,7 +1065,7 @@ namespace G25
         }
 
         /**
-         * Inserts the verbatim code (in m_verbatimCode</c>) into the generated files.
+         * Inserts the verbatim code (in <c>m_verbatimCode</c>) into the generated files.
          * The list <c>generatedFiles</c> is used to find the names of the files.
          * 
          * Warnings are issued when code could not be inserted.

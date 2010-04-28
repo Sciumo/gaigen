@@ -104,7 +104,7 @@ namespace G25.CG.Shared.Func
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
                 {
-                    m_funcName[FT.type] = G25.CG.Shared.GmvGpParts.WriteGMVgpFunction(m_specification, m_cgd, FT, m_specification.GetMetric(Specification.XML_DEFAULT), FAI, m_fgs, comment, G25.CG.Shared.GPparts.ProductTypes.OUTER_PRODUCT);
+                    m_funcName[FT.type] = G25.CG.Shared.GmvGpParts.WriteGMVgpFunction(m_specification, m_cgd, FT, m_specification.GetMetric(XML.XML_DEFAULT), FAI, m_fgs, comment, G25.CG.Shared.GPparts.ProductTypes.OUTER_PRODUCT);
                 }
                 else
                 {// write simple specialized function:

@@ -532,6 +532,7 @@ namespace G25
         /// <summary>
         /// Converts a G25.fgs to an XML string representation.
         /// </summary>
+        /// <param name="S"></param>
         /// <param name="F"></param>
         /// <returns>XML string representation of 'F'.</returns>
         public static string FunctionToXmlString(Specification S, G25.fgs F)
@@ -602,6 +603,7 @@ namespace G25
         /// <summary>
         /// Converts a G25.SMV to an XML string representation.
         /// </summary>
+        /// <param name="S"></param>
         /// <param name="smv"></param>
         /// <returns>XML string representation of 'smv'.</returns>
         public static string SMVtoXmlString(Specification S, G25.SMV smv)
@@ -657,6 +659,7 @@ namespace G25
         /// Converts a G25.Constant to an XML string representation.
         /// </summary>
         /// <param name="C"></param>
+        /// <param name="S"></param>
         /// <returns>XML string representation of 'smv'.</returns>
         public static string ConstantToXmlString(Specification S, G25.Constant C)
         {
@@ -819,27 +822,27 @@ namespace G25
                 switch (A[i].Name)
                 {
                     case XML_LICENSE:
-                        SetLicense(A[i].Value);
+                        S.SetLicense(A[i].Value);
                         break;
                     case XML_COPYRIGHT:
-                        m_copyright = A[i].Value;
+                        S.m_copyright = A[i].Value;
                         break;
                     case XML_LANGUAGE:
-                        SetLanguage(A[i].Value);
+                        S.SetLanguage(A[i].Value);
                         break;
                     case XML_NAMESPACE:
-                        m_namespace = A[i].Value;
+                        S.m_namespace = A[i].Value;
                         break;
                     case XML_COORD_STORAGE:
                         if (A[i].Value == XML_ARRAY)
-                            m_coordStorage = COORD_STORAGE.ARRAY;
+                            S.m_coordStorage = COORD_STORAGE.ARRAY;
                         else if (A[i].Value == XML_VARIABLES)
-                            m_coordStorage = COORD_STORAGE.VARIABLES;
+                            S.m_coordStorage = COORD_STORAGE.VARIABLES;
                         else throw new G25.UserException("XML parsing error: Unknown attribute value '" + A[i].Value + "' for attribute '" + XML_COORD_STORAGE + "'.");
                         break;
                     case XML_DEFAULT_OPERATOR_BINDINGS:
                         if (A[i].Value.ToLower() == XML_TRUE)
-                            SetDefaultOperatorBindings();
+                            S.SetDefaultOperatorBindings();
                         break;
                     case XML_DIMENSION:
                         int dim;
@@ -848,29 +851,29 @@ namespace G25
                             dim = System.Int32.Parse(A[i].Value);
                         }
                         catch (System.Exception) { throw new G25.UserException("Invalid dimension for space of algebra: '" + A[i].Value + "'."); }
-                        SetDimension(dim);
+                        S.SetDimension(dim);
                         break;
                     case XML_REPORT_USAGE:
-                        m_reportUsage = (A[i].Value.ToLower() == XML_TRUE);
+                        S.m_reportUsage = (A[i].Value.ToLower() == XML_TRUE);
                         break;
                     case XML_GMV_CODE:
                         if (A[i].Value.ToLower() == XML_RUNTIME)
-                            m_gmvCodeGeneration = GMV_CODE.RUNTIME;
+                            S.m_gmvCodeGeneration = GMV_CODE.RUNTIME;
                         else if (A[i].Value.ToLower() == XML_EXPAND)
-                            m_gmvCodeGeneration = GMV_CODE.EXPAND;
+                            S.m_gmvCodeGeneration = GMV_CODE.EXPAND;
                         else throw new G25.UserException("Invalid value '" + A[i].Value + "' for attribute '" + XML_GMV_CODE + "'.");
                         break;
                     case XML_PARSER:
                         if (A[i].Value.ToLower() == XML_NONE)
-                            m_parserType = PARSER.NONE;
+                            S.m_parserType = PARSER.NONE;
                         else if (A[i].Value.ToLower() == XML_ANTLR)
-                            m_parserType = PARSER.ANTLR;
+                            S.m_parserType = PARSER.ANTLR;
                         else if (A[i].Value.ToLower() == XML_BUILTIN)
-                            m_parserType = PARSER.BUILTIN;
+                            S.m_parserType = PARSER.BUILTIN;
                         else throw new G25.UserException("Invalid value '" + A[i].Value + "' for attribute '" + XML_PARSER + "'.");
                         break;
                     case XML_TEST_SUITE:
-                        m_generateTestSuite = (A[i].Value.ToLower() == XML_TRUE);
+                        S.m_generateTestSuite = (A[i].Value.ToLower() == XML_TRUE);
                         break;
                     default:
                         throw new G25.UserException("XML parsing error: Unknown XML attribute '" + A[i].Name + "' in root element '" + XML_G25_SPEC + "'.");
@@ -891,19 +894,19 @@ namespace G25
                 switch (A[i].Name)
                 {
                     case XML_CONSTRUCTORS:
-                        m_inlineConstructors = val;
+                        S.m_inlineConstructors = val;
                         break;
                     case XML_SET:
-                        m_inlineSet = val;
+                        S.m_inlineSet = val;
                         break;
                     case XML_ASSIGN:
-                        m_inlineAssign = val;
+                        S.m_inlineAssign = val;
                         break;
                     case XML_OPERATORS:
-                        m_inlineOperators = val;
+                        S.m_inlineOperators = val;
                         break;
                     case XML_FUNCTIONS:
-                        m_inlineFunctions = val;
+                        S.m_inlineFunctions = val;
                         break;
                     default:
                         throw new G25.UserException("XML parsing error: Unknown attribute '" + A[i].Name + "' in element '" + XML_INLINE + "'.");
@@ -935,7 +938,7 @@ namespace G25
                 }
             }
 
-            AddFloatType(floatType, floatPrefix, floatSuffix);
+            S.AddFloatType(floatType, floatPrefix, floatSuffix);
         }
 
         private static void ParseOperatorAttributes(Specification S, string elementName, XmlAttributeCollection A)
@@ -968,7 +971,7 @@ namespace G25
             if ((nbArgs != 1) && prefixAttributeSpecified)
                 throw new G25.UserException("Prefix specified for operator '" + symbol + "' bound to '" + function + "' (todo: improve this error message).");
 
-            AddOperator(new Operator(nbArgs, prefix, symbol, function));
+            S.AddOperator(new Operator(nbArgs, prefix, symbol, function));
         }
 
         /// <summary>
@@ -977,8 +980,8 @@ namespace G25
         private static void ParseBasisVectorNamesAttributes(Specification S, XmlAttributeCollection A)
         {
             // reset all names to ""
-            for (int i = 0; i < m_basisVectorNames.Count; i++)
-                m_basisVectorNames[i] = "";
+            for (int i = 0; i < S.m_basisVectorNames.Count; i++)
+                S.m_basisVectorNames[i] = "";
 
             // handle all attributes
             for (int i = 0; i < A.Count; i++)
@@ -995,11 +998,11 @@ namespace G25
                 {
                     throw new G25.UserException("XML parsing error: Invalid attribute '" + A[i].Name + "' in element '" + XML_BASIS_VECTOR_NAMES + "'.");
                 }
-                SetBasisVectorName(idx, A[i].Value);
+                S.SetBasisVectorName(idx, A[i].Value);
             }
 
             // check if all have been set 
-            CheckBasisVectorNames();
+            S.CheckBasisVectorNames();
         }
 
         /// <summary>
@@ -1011,7 +1014,7 @@ namespace G25
         /// </param>
         private static void ParseMetric(Specification S, string name, string str)
         {
-            Object O = m_metricParser.Parse(str);
+            Object O = S.m_metricParser.Parse(str);
             if (O == null) throw new G25.UserException("Error parsing metric specification '" + str + "'.");
 
             // System.Console.WriteLine("str -> " + O.ToString());
@@ -1020,7 +1023,7 @@ namespace G25
             G25.rsep.FunctionApplication FA = O as G25.rsep.FunctionApplication;
             if (FA == null) throw new G25.UserException("Invalid metric specification '" + str + "'.");
 
-            ParseMetric(name, FA, str);
+            ParseMetric(S, name, FA, str);
         }
 
         /// <summary>
@@ -1034,7 +1037,7 @@ namespace G25
             G25.rsep.FunctionApplication FA = O as G25.rsep.FunctionApplication;
             if ((FA == null) || (FA.FunctionName == "negate") || (FA.FunctionName == "nop"))
             {
-                return ParseMetricValue(O, str);
+                return ParseMetricValue(S, O, str);
             }
 
             // This FA should be of the form X.Y=value
@@ -1045,7 +1048,7 @@ namespace G25
                 (XdotY.FunctionName != "ip")) throw new G25.UserException("Invalid metric specification '" + str + "'");
 
             // get value by recursing
-            double value = ParseMetric(name, FA.Arguments[1], str);
+            double value = ParseMetric(S, name, FA.Arguments[1], str);
 
             // get, check names of basis vectors
             String basisVectorName1 = XdotY.Arguments[0] as String;
@@ -1053,10 +1056,10 @@ namespace G25
             if ((basisVectorName1 == null) || (basisVectorName2 == null))
                 throw new G25.UserException("Invalid basis vector names in metric specification '" + str + "'");
 
-            int basisVectorIdx1 = BasisVectorNameToIndex(basisVectorName1);
-            int basisVectorIdx2 = BasisVectorNameToIndex(basisVectorName2);
+            int basisVectorIdx1 = S.BasisVectorNameToIndex(basisVectorName1);
+            int basisVectorIdx2 = S.BasisVectorNameToIndex(basisVectorName2);
 
-            SetMetric(name, basisVectorIdx1, basisVectorIdx2, value);
+            S.SetMetric(name, basisVectorIdx1, basisVectorIdx2, value);
 
             return value;
         }
@@ -1067,7 +1070,7 @@ namespace G25
         /// <param name="O">Either a string or an Object.</param>
         /// <param name="str">The full metric specification (used only for descriptions in Exceptions).</param>
         /// <returns>The value of the metric specification or throws an Exception.</returns>
-        private double ParseMetricValue(Object O, String str)
+        private static double ParseMetricValue(Specification S, Object O, String str)
         {
             // is it a string? If so, parse it
             String Ostr = O as String;
@@ -1089,8 +1092,8 @@ namespace G25
                 throw new G25.UserException("Invalid value in metric specification '" + str + "'");
 
             if (FA.FunctionName == "negate")
-                return -ParseMetricValue(FA.Arguments[0], str);
-            else return ParseMetricValue(FA.Arguments[0], str);
+                return ParseMetricValue(S, FA.Arguments[0], str);
+            else return ParseMetricValue(S, FA.Arguments[0], str);
         }
 
         /// <summary>
@@ -1168,19 +1171,19 @@ namespace G25
                 if (E.FirstChild != null)
                     throw new G25.UserException("The coordinate order is set to default, but the multivector definition element '" + XML_MV + "' contains a custom coordinate order.");
 
-                basisBlades = m_basisBladeParser.GetDefaultBasisBlades();
+                basisBlades = S.m_basisBladeParser.GetDefaultBasisBlades();
             }
             else
             {
-                basisBlades = m_basisBladeParser.ParseMVbasisBlades(E);
+                basisBlades = S.m_basisBladeParser.ParseMVbasisBlades(E);
                 if (compressByGrade)
-                    basisBlades = m_basisBladeParser.SortBasisBladeListByGrade(basisBlades);
+                    basisBlades = S.m_basisBladeParser.SortBasisBladeListByGrade(basisBlades);
             }
 
             if (rsbbp.ConstantsInList(basisBlades))
                 throw new G25.UserException("Constant coordinate(s) were specified in the general multivector type (XML element '" + XML_MV + "')");
 
-            SetGeneralMV(new GMV(name, rsbbp.ListToDoubleArray(basisBlades), memAllocMethod));
+            S.SetGeneralMV(new GMV(name, rsbbp.ListToDoubleArray(basisBlades), memAllocMethod));
         }
 
         /// <summary>
@@ -1198,7 +1201,7 @@ namespace G25
                 {
                     try
                     {
-                        return m_basisBladeParser.ParseBasisBlades(FT);
+                        return S.m_basisBladeParser.ParseBasisBlades(FT);
                     }
                     catch (Exception Ex)
                     {
@@ -1289,18 +1292,18 @@ namespace G25
                 {
                     // if a constant should be generated and no constant name is specified
                     constantName = typeName;
-                    typeName = constantName + CONSTANT_TYPE_SUFFIX;
+                    typeName = constantName + Specification.CONSTANT_TYPE_SUFFIX;
                 }
 
                 // check if name is already present
-                if (IsTypeName(typeName))
+                if (S.IsTypeName(typeName))
                     throw new G25.UserException("In specialized multivector definition: type '" + typeName + "' already exists.");
 
             } // end of 'handle attributes'
 
             // parse list of basis blades and optional comment
-            List<G25.rsbbp.BasisBlade> L = ParseBasisBladeList(E.FirstChild, typeName);
-            string comment = ParseComment(E.FirstChild);
+            List<G25.rsbbp.BasisBlade> L = ParseBasisBladeList(S, E.FirstChild, typeName);
+            string comment = ParseComment(S, E.FirstChild);
 
             if (L == null)
                 throw new G25.UserException("XML parsing error in element '" + XML_SMV + "': Missing basis blade list for specialized multivector '" + typeName + "'");
@@ -1308,11 +1311,11 @@ namespace G25
             SMV smv = new SMV(typeName, L.ToArray(), mvType, comment);
 
             // add new type to list of specialized multivectors
-            AddSpecializedMV(smv);
+            S.AddSpecializedMV(smv);
 
             // todo: add code for adding constant here
             if (constantName != null)
-                AddConstant(new ConstantSMV(constantName, smv, null, comment));
+                S.AddConstant(new ConstantSMV(constantName, smv, null, comment));
         } // end of ParseSMVelementAndAttributes()
 
         /// <summary>
@@ -1348,38 +1351,38 @@ namespace G25
                     throw new G25.UserException("XML parsing error: Missing '" + XML_TYPE + "' attribute in element '" + XML_CONSTANT + "'.");
 
                 // check if name is already present
-                if (!IsSpecializedMultivectorName(typeName))
+                if (!S.IsSpecializedMultivectorName(typeName))
                     throw new G25.UserException("In constant definition: type '" + typeName + "' is not a specialized multivector.");
 
             } // end of 'handle attributes'
 
             // parse list of basis blades and optional comment
-            List<G25.rsbbp.BasisBlade> L = ParseBasisBladeList(E.FirstChild, constantName);
-            string comment = ParseComment(E.FirstChild);
+            List<G25.rsbbp.BasisBlade> L = ParseBasisBladeList(S, E.FirstChild, constantName);
+            string comment = ParseComment(S, E.FirstChild);
 
-            SMV type = GetType(typeName) as SMV;
+            SMV type = S.GetType(typeName) as SMV;
 
             // add new type to list of specialized multivectors (constuctor should check if all are constant
-            AddConstant(new ConstantSMV(constantName, type, L, comment));
+            S.AddConstant(new ConstantSMV(constantName, type, L, comment));
         } // end of ParseConstantElementAndAttributes()
 
         private static void ParseGOMelementAndAttributes(Specification S, XmlElement E)
         {
             bool specialized = false;
-            GOM gom = ParseOMelementAndAttributes(E, specialized) as GOM;
-            if (IsTypeName(gom.Name))
+            GOM gom = ParseOMelementAndAttributes(S, E, specialized) as GOM;
+            if (S.IsTypeName(gom.Name))
                 throw new G25.UserException("In general outermorphism definition: a type '" + gom.Name + "' already exists.");
-            SetGeneralOM(gom);
+            S.SetGeneralOM(gom);
         }
 
 
         private static void ParseSOMelementAndAttributes(Specification S, XmlElement E)
         {
             bool specialized = true;
-            SOM som = ParseOMelementAndAttributes(E, specialized) as SOM;
-            if (IsTypeName(som.Name))
+            SOM som = ParseOMelementAndAttributes(S, E, specialized) as SOM;
+            if (S.IsTypeName(som.Name))
                 throw new G25.UserException("In specialized outermorphism definition: a type '" + som.Name + "' already exists.");
-            AddSpecializedOM(som);
+            S.AddSpecializedOM(som);
         }
 
 
@@ -1428,7 +1431,7 @@ namespace G25
 
             if (defaultCoordinateOrder)
             {
-                domain = range = m_basisBladeParser.GetDefaultBasisBlades();
+                domain = range = S.m_basisBladeParser.GetDefaultBasisBlades();
             }
             else
             {
@@ -1440,10 +1443,10 @@ namespace G25
                     switch (DR.Name)
                     {
                         case XML_DOMAIN:
-                            domain = m_basisBladeParser.ParseMVbasisBlades(DR);
+                            domain = S.m_basisBladeParser.ParseMVbasisBlades(DR);
                             break;
                         case XML_RANGE:
-                            range = m_basisBladeParser.ParseMVbasisBlades(DR);
+                            range = S.m_basisBladeParser.ParseMVbasisBlades(DR);
                             break;
                         default:
                             System.Console.WriteLine("XML parsing warning: unknown element '" + E.Name + "' in element '" + E.Name + "'.");
@@ -1463,8 +1466,8 @@ namespace G25
             if (range == null) range = domain;
 
             if (specialized)
-                return new SOM(name, rsbbp.ListToSingleArray(domain), rsbbp.ListToSingleArray(range), m_dimension);
-            else return new GOM(name, rsbbp.ListToSingleArray(domain), rsbbp.ListToSingleArray(range), m_dimension);
+                return new SOM(name, rsbbp.ListToSingleArray(domain), rsbbp.ListToSingleArray(range), S.m_dimension);
+            else return new GOM(name, rsbbp.ListToSingleArray(domain), rsbbp.ListToSingleArray(range), S.m_dimension);
         } // end of ParseOMelementAndAttributes()
 
 
@@ -1513,7 +1516,7 @@ namespace G25
                     else if (A[i].Name == XML_RETURN_TYPE)
                     {
                         returnTypeName = A[i].Value;
-                        if (!IsTypeName(returnTypeName))
+                        if (!S.IsTypeName(returnTypeName))
                         {
                             if (returnTypeName.ToLower() == XML_SCALAR) // "scalar" is also allowed as returntype
                             {
@@ -1557,12 +1560,12 @@ namespace G25
                             throw new G25.UserException("Error parsing function '" + functionName + "': invalid attribute index '" + A[i].Name + "' in element '" + XML_FUNCTION + "'.");
 
                         string typeName = A[i].Value;
-                        if (!IsTypeName(typeName))
+                        if (!S.IsTypeName(typeName))
                         {
                             // it may be a constant, like 'e1', try adding a "_t"
-                            if (IsTypeName(typeName + CONSTANT_TYPE_SUFFIX))
+                            if (S.IsTypeName(typeName + Specification.CONSTANT_TYPE_SUFFIX))
                             {
-                                typeName = typeName + CONSTANT_TYPE_SUFFIX;
+                                typeName = typeName + Specification.CONSTANT_TYPE_SUFFIX;
                             }
                             else throw new G25.UserException("Error parsing function '" + functionName + "': '" + typeName + "' is not a type (inside element '" + XML_FUNCTION + "')");
                         }
@@ -1593,7 +1596,7 @@ namespace G25
                 // if no float type are specified, copy all from specification
                 if (floatNames.Count == 0)
                 {
-                    foreach (FloatType FT in m_floatTypes)
+                    foreach (FloatType FT in S.m_floatTypes)
                         floatNames.Add(FT.type);
                 }
 
@@ -1613,7 +1616,7 @@ namespace G25
 
             fgs F = new fgs(functionName, outputFunctionName, returnTypeName, argumentTypeNames, argumentVariableName, floatNames.ToArray(), metricName, comment, options);
 
-            m_functions.Add(F);
+            S.m_functions.Add(F);
         } // ParseFunction()
 
         public static void ParseVerbatim(Specification S, XmlElement E)
@@ -1685,7 +1688,7 @@ namespace G25
                     throw new G25.UserException("Missing/empty verbatim code or verbatim code filename in element '" + XML.XML_VERBATIM + "'");
             } // end of 'handle attributes'
 
-            m_verbatimCode.Add(new VerbatimCode(filenames, where, customMarker, verbatimCode, verbatimCodeFile));
+            S.m_verbatimCode.Add(new VerbatimCode(filenames, where, customMarker, verbatimCode, verbatimCodeFile));
         } // end of ParseVerbatim()
 
 

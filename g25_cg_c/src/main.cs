@@ -95,7 +95,7 @@ namespace G25.CG.C
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
         {
-            return G25.Specification.XML_C;
+            return G25.XML.XML_C;
         }
 
         /// <summary>

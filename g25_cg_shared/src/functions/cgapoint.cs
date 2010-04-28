@@ -72,7 +72,7 @@ namespace G25.CG.Shared.Func
             int bvIdx = S.GetBasisVectorIndex(originName);
             if (bvIdx < 0)
                 throw new G25.UserException("Unknown basis vector specified for origin: " + originName,
-                    S.FunctionToXmlString(F));
+                    XML.FunctionToXmlString(S, F));
             else return new RefGA.Multivector(new RefGA.BasisBlade((uint)(1 << bvIdx)));
         }
 
@@ -85,7 +85,7 @@ namespace G25.CG.Shared.Func
             int bvIdx = S.GetBasisVectorIndex(originName);
             if (bvIdx < 0)
                 throw new G25.UserException("Unknown basis vector specified for infinity: " + originName,
-                    S.FunctionToXmlString(F));
+                    XML.FunctionToXmlString(S, F));
             else return new RefGA.Multivector(new RefGA.BasisBlade((uint)(1 << bvIdx)));
         }
 
@@ -146,7 +146,7 @@ namespace G25.CG.Shared.Func
                         string bvName = "e" + (i + 1).ToString(); // todo: this assumes a fixed name for the basis vectors. Make these names options?
                         int bvIdx = m_specification.GetBasisVectorIndex(bvName);
                         if (bvIdx < 0)
-                            throw new G25.UserException("Cannot find basis vector " + bvName, m_specification.FunctionToXmlString(m_fgs));
+                            throw new G25.UserException("Cannot find basis vector " + bvName, XML.FunctionToXmlString(m_specification, m_fgs));
 
                         RefGA.Multivector basisVector = RefGA.Multivector.GetBasisVector(bvIdx);
 
@@ -162,7 +162,7 @@ namespace G25.CG.Shared.Func
                 }
                 else
                 {
-                    throw new G25.UserException("Invalid arguments specified.", m_specification.FunctionToXmlString(m_fgs));
+                    throw new G25.UserException("Invalid arguments specified.", XML.FunctionToXmlString(m_specification, m_fgs));
                 }
 
                 { // add no and 0.5 vectorValue^2 ni

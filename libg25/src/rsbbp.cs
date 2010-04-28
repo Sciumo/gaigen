@@ -169,12 +169,12 @@ namespace G25
                 while (G != null)
                 {
                     // check if name of element is 'group'
-                    if (G.Name != Specification.XML_GROUP)
-                        throw new Exception("Invalid element '" + G.Name + "' in element '" + Specification.XML_MV + "'");
+                    if (G.Name != XML.XML_GROUP)
+                        throw new Exception("Invalid element '" + G.Name + "' in element '" + XML.XML_MV + "'");
 
                     // check content is text
                     T = G.FirstChild as XmlText;
-                    if (T == null) throw new Exception("Invalid contents of element '" + G.Name + "' in element '" + Specification.XML_MV + "'");
+                    if (T == null) throw new Exception("Invalid contents of element '" + G.Name + "' in element '" + XML.XML_MV + "'");
 
                     // parse text, add to list of basis blades
                     L.Add(ParseBasisBlades(T));
@@ -225,7 +225,7 @@ namespace G25
             // not a string: O must be a function application (concat(...), assign(...) op(...), negate(...) or nop(...) )
             G25.rsep.FunctionApplication FA = O as G25.rsep.FunctionApplication;
             if (FA == null)
-                throw new Exception("Invalid contents of element '" + Specification.XML_MV + "': " + originalStr);
+                throw new Exception("Invalid contents of element '" + XML.XML_MV + "': " + originalStr);
 
             if ((FA.FunctionName == "op") || (FA.FunctionName == "negate") || (FA.FunctionName == "nop") || (FA.FunctionName == "assign"))
             { // this is the last entry in the concat(...) list

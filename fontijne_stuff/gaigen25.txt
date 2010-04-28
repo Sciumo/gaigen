@@ -139,10 +139,10 @@ Maybe fix the float type stuff
 	V Enable feedback / mailinglist on sourceforge
 	V Put message on geometricalgebra.org
 	V Put link on uva website homepage
+	V remove XML stuff from G25.Specification and put into its own class
 	
 	Announce on GA net
 	
-	->remove XML stuff from G25.Specification and put into its own class
 	
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
 
