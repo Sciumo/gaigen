@@ -197,13 +197,13 @@ If the ANTLR parser is enabled:
 {\tt A\_parser.c} to {\tt A\_parser.cpp}, and {\tt A\_lexer.c} to {\tt A\_lexer.cpp}.
 \end{itemize}
 
-# \subsection{Generated Files for the C\# Programming Language}
+% \subsection{Generated Files for the C\# Programming Language}
 
-# To do.
+% To do.
 
-# \subsection{Generated Files for the Java Programming Language}
+% \subsection{Generated Files for the Java Programming Language}
 
-# To do.
+% To do.
 
 \section{Sample Algebras}
 \label{s:sample_algebras}
@@ -1184,11 +1184,24 @@ Checks whether a multivector is zero, up to a scalar epsilon (difference thresho
 \section{Converters}
 \label{s:converters}
 
-Todo
-Example: convert from normalizedPoint -> vector
-convert from bivector -> rotor
+By default, converters are generated to convert specialized multivectors
+to general multivectors and vice versa.
 
-Underscore constructors
+To convert one type of specialized multivector into another, the user
+should explicitly ask for it to be generated. For example, to request
+a converter from the specialized multivector type {\tt normalizedPoint}
+to the specialized multivector type {\tt vectorE3GA}, use:
+\begin{verbatim}
+<function name="_vectorE3GA" arg1="normalizedPoint"/>
+\end{verbatim}
+The underscore prefix in the {\tt name} attribute indicates that the function 
+is a converter. This comes from Gaigen~2 where these functions were called
+\emph{underscore constructors}.
+
+Converters silently drop coordinates that cannot be represented by the
+destination type. In the above example, the conversion from point to
+3-D Euclidean vector loses the {\tt no} (origin) and {\tt ni} (infinity)
+coordinates.
 
 
 

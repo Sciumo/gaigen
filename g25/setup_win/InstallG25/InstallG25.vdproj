@@ -573,6 +573,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E518AB0D9E7E4A74B3D11CAAAAA703AA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EA88FAB37423D9AD98EB7EB42F638D6E"
         "OwnerKey" = "8:_462B9127336E4E30A649E1CA53D286E2"
         "MsmSig" = "8:_UNDEFINED"
@@ -1554,6 +1560,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E518AB0D9E7E4A74B3D11CAAAAA703AA"
+            {
+            "SourcePath" = "8:..\\..\\..\\manual\\g25_user_manual.pdf"
+            "TargetName" = "8:g25_user_manual.pdf"
+            "Tag" = "8:"
+            "Folder" = "8:_936C15859ADD44F591C67A42D5766F1E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EA88FAB37423D9AD98EB7EB42F638D6E"
             {
             "AssemblyRegister" = "3:1"
@@ -1828,7 +1854,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:G25"
         "ProductCode" = "8:{55BCE0DA-FE6F-4BB6-94DE-84CF252660E2}"
-        "PackageCode" = "8:{EF6FC7B2-4E19-4B17-8F6B-7337B0C999FE}"
+        "PackageCode" = "8:{DA5FA853-CA67-4E82-ADE2-380C00E62D98}"
         "UpgradeCode" = "8:{16F8A834-A225-4A7C-AC91-4B3DE6882F21}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
@@ -1947,6 +1973,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_2E291E981FF14A8F995D91FFC2078735"
+            {
+            "Name" = "8:Shortcut to g25_user_manual.pdf"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_E518AB0D9E7E4A74B3D11CAAAAA703AA"
+            "Folder" = "8:_E96D050234D64ECFA0E90F9508F3762B"
+            "WorkingFolder" = "8:_936C15859ADD44F591C67A42D5766F1E"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {

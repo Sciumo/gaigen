@@ -25,6 +25,11 @@ namespace G25
     class Program
     {
         /// <summary>
+        /// Gaigen Version.
+        /// </summary>
+        public const string Version = "2.5.1";
+
+        /// <summary>
         ///  Command line argument: display help.
         /// </summary>
         public static bool OptionDisplayHelp = false;
@@ -40,11 +45,6 @@ namespace G25
         /// When this string is non-null, a list of generated files is written to that file.
         /// </summary>
         public static string OptionSaveFileListFile = null;
-
-        /// <summary>
-        /// Gaigen Version.
-        /// </summary>
-        public const string Version = "2.5.1";
 
         static void Main(string[] args)
         {

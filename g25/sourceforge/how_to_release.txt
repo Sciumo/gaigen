@@ -1,0 +1,26 @@
+On Windows, do  
+ - svn update
+ - increment the version number 
+ 	- in g25/src/Program.cs
+ 	- in alt-enter -> InstallG25 project -> description (say NO to change product code or whatever)
+ - compile the user manual
+ - open g25/vs2008/g25.sln
+ - rebuild the InstalG25 project
+ - upload the user manual and InstallG25.msi
+ - svn commit
+ 
+On OSX:
+ - svn update
+ - open g25/vs2008/g25.sln using MonoDevelop
+ - rebuild all
+ - go to g25/setup_osx
+ - sudo ./package_script
+ - upload g25.pkg
+ - svn commit
+
+On Linux:
+ - svn update
+ - run g25/setup_linux/package_script VERSION_NUMBER
+ - upload src.tar.gz, and the binary and source RPMs
+ - svn commit
+ 
