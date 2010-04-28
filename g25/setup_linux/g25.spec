@@ -69,6 +69,9 @@ install -D -m644 g25/vs2008/bin/Release/g25.exe $RPM_BUILD_ROOT%{_datadir}/g25/b
 install -m644 g25/vs2008/bin/Release/*.dll $RPM_BUILD_ROOT%{_datadir}/g25/bin
 install -m644 g25_diff/vs2008/bin/Release/g25_diff.exe $RPM_BUILD_ROOT%{_datadir}/g25/bin/g25_diff.exe
 install -m644 g25_test_generator/vs2008/bin/Release/g25_test_generator.exe $RPM_BUILD_ROOT%{_datadir}/g25/bin/g25_test_generator.exe
+install -D -m644 manual/g25_user_manual.pdf $RPM_BUILD_ROOT%{_datadir}/g25/doc/g25_user_manual.pdf
+install -D -m644 g25/g25.1 $RPM_BUILD_ROOT%{_datadir}/man/man1/g25.1
+install -D -m644 g25/g25_test_generator.1 $RPM_BUILD_ROOT%{_datadir}/man/man1/g25_test_generator.1
 install -D -m755 g25.sh $RPM_BUILD_ROOT%{_bindir}/g25
 install -m755 g25_diff.sh $RPM_BUILD_ROOT%{_bindir}/g25_diff
 install -m755 g25_test_generator.sh $RPM_BUILD_ROOT%{_bindir}/g25_test_generator
@@ -80,6 +83,8 @@ install -m755 g25_test_generator.sh $RPM_BUILD_ROOT%{_bindir}/g25_test_generator
 %files
 %defattr(0644,root,root)  
 %{_datadir}/g25/bin/*
+%{_datadir}/g25/doc/g25_user_manual.pdf
+%{_datadir}/man/man1/*
 %attr(0755, root, root) %{_bindir}/g25
 %attr(0755, root, root) %{_bindir}/g25_diff
 %attr(0755, root, root) %{_bindir}/g25_test_generator
