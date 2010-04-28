@@ -22,6 +22,7 @@ cp ../../g25_test_generator/vs2008/bin/Release/g25_test_generator.exe /tmp/g25_p
 cp ../../g25_diff/vs2008/bin/Release/g25_diff.exe /tmp/g25_package_tmp/usr/share/g25/bin
 cp ../../manual/g25_user_manual.pdf /tmp/g25_package_tmp/usr/share/g25/doc
 cp ../g25.1 /tmp/g25_package_tmp/usr/share/man/man1
+cp ../g25_test_generator.1 /tmp/g25_package_tmp/usr/share/man/man1
 
 rm g25.pkg
 

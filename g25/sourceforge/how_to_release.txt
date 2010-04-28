@@ -7,7 +7,9 @@ On Windows, do
  - open g25/vs2008/g25.sln
  - make sure project is set to 'Release' configuration.
  - rebuild the InstalG25 project
+ - create a new release folder on SourceForge
  - upload the user manual and InstallG25.msi
+ - select the 'Windows' platform for the .msi 
  - svn commit
  
 On OSX:
@@ -18,11 +20,13 @@ On OSX:
  - go to g25/setup_osx
  - sudo ./package_script
  - upload g25.pkg
+ - select the 'OSX' platform for the .pkg 
  - svn commit
 
 On Linux:
  - svn update
  - run g25/setup_linux/package_script VERSION_NUMBER
  - upload src.tar.gz, and the binary and source RPMs
+ - select the 'Linux/BSD/Solaris' platform for the binary .rpm 
  - svn commit
  
