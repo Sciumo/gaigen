@@ -66,6 +66,8 @@
     <Compile Include="..\src\tuples.cs" />
     <Compile Include="..\src\exception.cs" />
     <Compile Include="..\src\operator.cs" />
+    <Compile Include="..\src\xml.cs" />
+    <Compile Include="..\src\licenses.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\refga\vs2008\refga.csproj">

@@ -54,6 +54,8 @@
     <Compile Include="..\src\tuples.cs" />
     <Compile Include="..\src\exception.cs" />
     <Compile Include="..\src\operator.cs" />
+    <Compile Include="..\src\xml.cs" />
+    <Compile Include="..\src\licenses.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cogsharp\cogsharp\vs2005\cogsharp.csproj">
