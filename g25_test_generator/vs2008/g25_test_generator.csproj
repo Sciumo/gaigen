@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -59,10 +59,6 @@
       <Project>{AB55FF76-52B1-4D50-9514-42B75548DAA3}</Project>
       <Name>cogsharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\g25\vs2008\G25.csproj">
-      <Project>{5C0BFA2B-01FB-4D28-8F87-FE128D3D54A0}</Project>
-      <Name>G25</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\g25_cg_shared\vs2008\g25_cg_shared.csproj">
       <Project>{3442FC1F-E44B-41ED-869B-E77B53EE1BC1}</Project>
       <Name>g25_cg_shared</Name>
@@ -70,6 +66,10 @@
     <ProjectReference Include="..\..\libg25\vs2008\libg25.csproj">
       <Project>{B3586D97-C4B7-4872-8CEB-AAD8651F41A2}</Project>
       <Name>libg25</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\g25\vs2008\g25.csproj">
+      <Project>{5C0BFA2B-01FB-4D28-8F87-FE128D3D54A0}</Project>
+      <Name>g25</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,7 @@ On Windows, do
 On OSX:
  - svn update
  - open g25/vs2008/g25.sln using MonoDevelop
+ - make sure the project is set to 'Release' configuration
  - rebuild all
  - go to g25/setup_osx
  - sudo ./package_script

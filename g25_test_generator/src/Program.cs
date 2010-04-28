@@ -19,7 +19,7 @@ namespace g25_test_generator
         /// <summary>
         /// The number of test algebras generated is reduced by a factor of (approximately) 'ReduceNbTestsBy'.
         /// </summary>
-        public static int ReduceNbTestsBy = 1;
+        public static int ReduceNbTestsBy = 1000;
 
         /// <summary>
         /// Whether to shuffle the order in which the algebras are compiled, tested, etc.
@@ -36,6 +36,11 @@ namespace g25_test_generator
         /// What algebras to generate for (command-line option, otherwise the default is used.
         /// </summary>
         public static List<string> Algebras = new List<string>();
+		
+		/// <summary>
+        ///  Command line argument: display version.
+        /// </summary>
+		public static bool OptionDisplayHelp = false;
 
 
         public static int GeneratorCount = 0;
@@ -56,6 +61,12 @@ namespace g25_test_generator
 				Console.WriteLine("Stray arguments detected: " + extraArgs);
 			}
 
+			// display help if required
+            if (OptionDisplayHelp)
+            {
+                DisplayHelp();
+            }
+			
             // set the defaults if the user did not ask for any algebra
             if (Algebras.Count == 0)
                     Algebras = new List<string>{ "e2ga", "e3ga", "p3ga", "c3ga", "enga"};
@@ -108,6 +119,7 @@ namespace g25_test_generator
         public static List<string> ParseCommandLineOptions(string[] args)
         {
             NDesk.Options.OptionSet p = new NDesk.Options.OptionSet() {
+				{ "h|?|help", (string str) => {OptionDisplayHelp = true;} },
                 { "a|algebra=", (string s) => { Algebras.Add(s.ToLower()); } },
                 { "s|shuffle", (string s) => {Shuffle = true;} },
                 { "sa|sample_algebras", (string s) => {SampleAlgebras = true;} },
@@ -119,6 +131,30 @@ namespace g25_test_generator
             return extra;
 
         }
+		
+		private static void DisplayHelp()
+        {
+            Console.Write(
+                "Gaigen 2.5 Test Generator\n" + 
+			    "Copyright 2010 Daniel Fontijne, University of Amsterdam.\n" +
+                "\n" +
+			    "Used to generate sample algebras specifications and for regression testing.\n" +
+                "\n" +
+                "A directory named TestG25 is created in the current directory, where a set of sample/test algebras written.\n" +
+                "Build scripts, test scripts and makefiles are also generated\n" + 
+                "\n" +
+                "Usage: g25_test_generator\n" +
+                "\n" +
+                "Options:\n" +
+                "-h -? -help: display help.\n" +
+			    "-sa -sample_algebras: generate the sample algebras instead of the test algebras.\n" +       
+                "-a -algebra: what algebras to generate (e2ga, e3ga, p3ga, c3ga, enga).\n" +
+                "-s -shuffle: shuffle the order of the algebras inside the scripts.\n" +
+                "-r -reduce: reduce the number of test algebras by a factor of N (default is 1000).\n" +
+                "\n");
+        }
+		
+		
 
         public static void ShuffleList<T>(IList<T> list)
         {
@@ -279,6 +315,9 @@ namespace g25_test_generator
         {
             Console.WriteLine("Generating the sample algebras");
 
+			ReduceNbTestsBy = 1;
+			Shuffle = false;
+			
             SpecVars SV = new SpecVars();
             SV.HaveGom = true;
             SV.Inline = true;
@@ -381,8 +420,6 @@ namespace g25_test_generator
             List<SpecVars> vars = GetVariations(minDim, maxDim, groupAlternative, altGmvName, altScalarName, varyGmvCode, varyInline, varyCoordStorage);
 
             vars = Reduce(vars);
-
-            List<string> names = new List<string>();
 
             GenerateP3gaVariations(cog, commands, vars);
         }

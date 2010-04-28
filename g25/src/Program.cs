@@ -190,7 +190,7 @@ namespace G25
         private static void DisplayHelp()
         {
             Console.Write(
-                "Gaigen 2.5. Copyright 2008-2010 Daniel Fontijne, University of Amsterdam.\n" +
+                "Gaigen " + Version + ". Copyright 2008-2010 Daniel Fontijne, University of Amsterdam.\n" +
                 "\n" +
                 "Compiles a geometric algebra specification into code.\n" +
                 "Output files go into the current directory unless the specification overrides.\n" +
