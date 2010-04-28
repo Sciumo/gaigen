@@ -141,19 +141,80 @@ Example: {\tt g25 -f filelist.txt spec.xml}
 
 \section{Generated Files}
 
-\subsubsection*{C}
-\subsubsection*{C++}
-\subsubsection*{C\#}
-\subsubsection*{Java}
+When Gaigen 2.5 compiles an algebra specification. a number of files
+are generated.
+In this paragraph, the {\tt namespace} of the algebra is {\tt A} and
+the name of the general multivector type is {\tt MV}.
+
+\subsection{Generated Files for the C Programming Language}
+
+By default, the following files and generated:
+\begin{itemize}
+\item {\tt A.h} : main header of algebra implementation.
+\item {\tt A.c} : main definitions of algebra functions.
+\end{itemize}
+If testing is enabled:
+\begin{itemize}
+\item {\tt A\_test\_main.c} : test suite ({\tt main()} function included).
+\end{itemize}
+If the Mersenne Twister random generator is enabled:
+\begin{itemize}
+\item {\tt A\_mt.c} : Mersenne Twister random generator source.
+\item {\tt A\_mt.h} : Mersenne Twister random generator header.
+\end{itemize}
+If a parser is enabled:
+\begin{itemize}
+\item {\tt A\_parse\_MV.c} : main header of algebra implementation.
+\end{itemize}
+If the ANTLR parser is enabled:
+\begin{itemize}
+\item {\tt A.g} : ANTLR grammar.
+\end{itemize}
+
+\subsection{Generated Files for the C++ Programming Language}
+
+By default, the following files and generated:
+\begin{itemize}
+\item {\tt A.h} : main header, inlined functions.
+\item {\tt A.cpp} : non-inlined definitions of algebra functions.
+\end{itemize}
+If testing is enabled:
+\begin{itemize}
+\item {\tt A\_test\_main.cpp} : test suite ({\tt main()} function included).
+\end{itemize}
+If the Mersenne Twister random generator is enabled:
+\begin{itemize}
+\item {\tt A\_mt.cpp} : Mersenne Twister random generator source.
+\item {\tt A\_mt.h} : Mersenne Twister random generator header.
+\end{itemize}
+If a parser is enabled:
+\begin{itemize}
+\item {\tt A\_parse\_MV.cpp} : main header of algebra implementation.
+\end{itemize}
+If the ANTLR parser is enabled:
+\begin{itemize}
+\item {\tt A.g} : ANTLR grammar. Note: after compilation using ANTLR, rename
+{\tt A\_parser.c} to {\tt A\_parser.cpp}, and {\tt A\_lexer.c} to {\tt A\_lexer.cpp}.
+\end{itemize}
+
+# \subsection{Generated Files for the C\# Programming Language}
+
+# To do.
+
+# \subsection{Generated Files for the Java Programming Language}
+
+# To do.
 
 \section{Sample Algebras}
 \label{s:sample_algebras}
 
-Use the following command to generate a few algebra specifications that may be used
-as a starting for your own specs: {\tt g25\_test\_generator -sa }.
-This creates a directory {\tt TestG25}. In that directory will be four algebra specifications.
-Make files, and scripts to build and test the algebras are also included, for each supported
-language.
+The {\tt g25\_test\_generator} can be used to generate a few algebra specifications.
+These may be used as a starting for your own specs. Use the following command
+to generate them: {\tt g25\_test\_generator -sa }.
+
+
+A directory {\tt TestG25} will be created. In that directory will be a number algebra specifications.
+Build-scripts, test-scripts and Makefiles are provided
 
 The sample algebras are:
 \begin{itemize}
@@ -168,7 +229,8 @@ Multivector types for points, spheres, circles, lines and so on are defined.
 \section{Documentation of Generated Code}
 
 The generated code is self-documenting, although this
-feature is not fully finished yet. Run {\tt doxygen } to extract
+feature is not fully finished yet (the overview page
+is not implemented yet). Run {\tt doxygen } to extract
 the documentation from the code.
 
 The generated test code is also a good way to get an example
@@ -1130,6 +1192,7 @@ Underscore constructors
 
 
 
+\iffalse
 \section{Why did you write Gaigen 2.5 in C\#?}
 
 I wrote Gaigen 2.5 in C\# because I wanted to try out the .Net platform
@@ -1137,7 +1200,7 @@ I wrote Gaigen 2.5 in C\# because I wanted to try out the .Net platform
 I assumed that Mono would be good enough to run Gaigen 2.5 on OS X and
 Linux, but it is slightly disappointing in speed. Hopefully the Mono
 team will improve Mono's performance in the future.
-
+\fi
 
 
 

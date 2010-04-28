@@ -132,9 +132,11 @@ Maybe fix the float type stuff
 	V Compile generated code on linux, osx, fix warnings, problems, etc.
 	V package first distribution files. Which packaging system for source? Just an SVN export?
 	V sample algebras for user manual
+	V Compact namespaces
 
 	v write user manual
 		-> converters
+		-> generated files
 	
 	Put user manual inside distributions
 		win, osx, linux
