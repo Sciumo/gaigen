@@ -206,23 +206,6 @@ namespace G25
         }
 
         /// <summary>
-        /// Converts a RefGA.BasisBlade to a string for printout in the specification.
-        /// The blade should have positive or negative 1 scale. A scalar basis blade
-        /// is transformed into "scalar" or "-scalar".
-        /// </summary>
-        protected string BasisBladeToString(RefGA.BasisBlade B, String[] bvNames)
-        {
-            String bbStr = B.ToString(bvNames);
-            // convert "-1*" to "-", otherwise the string cannot be parsed back in again
-            if (bbStr.StartsWith("-1*")) bbStr = "-" + bbStr.Substring(3);
-
-            if (bbStr == "1") bbStr = "scalar";
-            if (bbStr == "-1") bbStr = "-scalar";
-            return bbStr;
-        }
-
-
-        /// <summary>
         /// Throws exception when specification is not consistent, missing details, etc.
         /// For example, a floating point type must be set.
         /// 
@@ -399,77 +382,6 @@ namespace G25
         } // end of FindFunction()
 
 
-        public void ParseVerbatim(XmlElement E)
-        {
-            List<string> filenames = new List<string>();
-            VerbatimCode.POSITION where = VerbatimCode.POSITION.INVALID;
-            string customMarker = null;
-            string verbatimCode = null;
-            string verbatimCodeFile = null;
-
-            { // handle attributes
-                XmlAttributeCollection A = E.Attributes;
-
-                // handle all attributes
-                for (int i = 0; i < A.Count; i++)
-                {
-                    // filename
-                    if (A[i].Name.StartsWith(XML.XML_FILENAME)) {
-                       filenames.Add(A[i].Value);
-                    }
-
-                    // position
-                    else if (A[i].Name == XML.XML_POSITION)
-                    {
-                        if (A[i].Value == XML.XML_TOP) where = VerbatimCode.POSITION.TOP;
-                        else if (A[i].Value == XML.XML_BOTTOM) where = VerbatimCode.POSITION.BOTTOM;
-                        else if (A[i].Value == XML.XML_BEFORE_MARKER) where = VerbatimCode.POSITION.BEFORE_MARKER;
-                        else if (A[i].Value == XML.XML_AFTER_MARKER) where = VerbatimCode.POSITION.AFTER_MARKER;
-                        else throw new G25.UserException("Invalid " + XML.XML_POSITION + " '" + A[i].Value + "'  in element '" + XML.XML_VERBATIM + "'.");
-                    }
-
-                    // marker
-                    else if (A[i].Name == XML.XML_MARKER)
-                    {
-                        customMarker = A[i].Value;
-                    }
-
-                    // codeFilename
-                    else if (A[i].Name == XML.XML_CODE_FILENAME)
-                    {
-                        if (A[i].Value.Length > 0)
-                            verbatimCodeFile = A[i].Value;
-                    }
-
-                    else throw new G25.UserException("Invalid attribute '" + A[i].Name + "'  in element '" + XML.XML_VERBATIM + "'.");
-                }
-
-                { // get verbatim code from _inside_ the element:
-                    XmlText T = E.FirstChild as XmlText;
-                    if ((T != null) && (T.Length > 0)) verbatimCode = T.Value;
-                }
-
-                // check if function name was specified:
-                if (filenames.Count == 0)
-                    throw new G25.UserException("Missing attribute '" + XML.XML_FILENAME + "' in element '" + XML.XML_VERBATIM + "'");
-
-                if (where == VerbatimCode.POSITION.INVALID)
-                    throw new G25.UserException("Missing attribute '" + XML.XML_POSITION + "' in element '" + XML.XML_VERBATIM + "'");
-
-                if (((where == VerbatimCode.POSITION.BEFORE_MARKER) || 
-                    (where == VerbatimCode.POSITION.AFTER_MARKER)) && 
-                    (customMarker == null)) {
-                        throw new G25.UserException("Missing attribute '" + XML.XML_MARKER + "' in element '" + XML.XML_VERBATIM + "'");                    
-                }
-
-                if ((verbatimCode == null) && (verbatimCodeFile == null))
-                    throw new G25.UserException("Missing/empty verbatim code or verbatim code filename in element '" + XML.XML_VERBATIM + "'");                    
-            } // end of 'handle attributes'
-
-            m_verbatimCode.Add(new VerbatimCode(filenames, where, customMarker, verbatimCode, verbatimCodeFile));
-        } // end of ParseVerbatim()
-
-
 
         private void InitBasisBladeParser()
         {
@@ -515,7 +427,7 @@ namespace G25
         /// If there is not Euclidean metric, adds one, named "_internal_euclidean_". 
         /// This system generated metric will not be written back to XML.
         /// </summary>
-        private void FinishMetric()
+        protected internal void FinishMetric()
         {
             bool hasEucl = false;
             foreach (Metric M in m_metric)
@@ -1251,13 +1163,13 @@ namespace G25
         public List<FloatType> m_floatTypes;
 
         /// <summary>Whether to add the default operator bindings on init.</summary>
-        public bool m_defaultOperatorBindings = false;
+        protected internal bool m_defaultOperatorBindings = false;
 
         /// <summary>Operator bindings.</summary>
         public List<Operator> m_operators = new List<Operator>();
 
-        /// <summary>Default operator bindings (used to known which operators in <c>m_operators</c>are used-defined and which are default).</summary>
-        private List<Operator> m_defaultOperators = new List<Operator>();
+        /// <summary>Default operator bindings (used to know which operators in <c>m_operators</c>are used-defined and which are default).</summary>
+        public List<Operator> m_defaultOperators = new List<Operator>();
 
         /// <summary>Names of basis vectors (e.g., "e1", "e2", ...)</summary>
         public List<string> m_basisVectorNames;
@@ -1268,10 +1180,10 @@ namespace G25
         public List<Metric> m_metric;
 
         /// <summary>Used to parse metric specifications (like "no.ni=-1")</summary>
-        private G25.rsep m_metricParser;
+        protected internal G25.rsep m_metricParser;
 
         /// <summary>Used to parse list of basis blades</summary>
-        private G25.rsbbp m_basisBladeParser;
+        protected internal G25.rsbbp m_basisBladeParser;
 
         /// <summary>General multivector specification.</summary>
         public GMV m_GMV;

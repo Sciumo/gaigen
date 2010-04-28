@@ -425,7 +425,7 @@ namespace G25
         protected G25.rsep m_basisBladeParser;
 
         /// <summary>
-        /// The specification which uses this parser (used for coordinate names, dimension of space.
+        /// The specification which uses this parser (used for coordinate names, dimension of space).
         /// </summary>
         protected Specification m_spec;
 

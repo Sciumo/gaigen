@@ -27,7 +27,7 @@ namespace G25
         /// <summary>
         /// Gaigen Version.
         /// </summary>
-        public const string Version = "2.5.1";
+        public const string Version = "2.5.2";
 
         /// <summary>
         ///  Command line argument: display help.

@@ -158,7 +158,7 @@ namespace G25
 
                 // namespace
                 if ((S.m_namespace != null) && (S.m_namespace.Length > 0))
-                    SB.Append("\t" + XML_NAMESPACE + "=\"" + m_namespace + "\"\n");
+                    SB.Append("\t" + XML_NAMESPACE + "=\"" + S.m_namespace + "\"\n");
 
                 // coordinate storage
                 SB.Append("\t" + XML_COORD_STORAGE + "=\"" + ((S.m_coordStorage == COORD_STORAGE.ARRAY) ? XML_ARRAY : XML_VARIABLES) + "\"\n");
@@ -281,18 +281,18 @@ namespace G25
 
             { // inline
                 SB.Append("<" + XML_INLINE + "\n");
-                SB.Append("\t" + XML_CONSTRUCTORS + "=\"" + ((m_inlineConstructors) ? XML_TRUE : XML_FALSE) + "\"\n");
-                SB.Append("\t" + XML_SET + "=\"" + ((m_inlineSet) ? XML_TRUE : XML_FALSE) + "\"\n");
-                SB.Append("\t" + XML_ASSIGN + "=\"" + ((m_inlineAssign) ? XML_TRUE : XML_FALSE) + "\"\n");
-                SB.Append("\t" + XML_OPERATORS + "=\"" + ((m_inlineOperators) ? XML_TRUE : XML_FALSE) + "\"\n");
-                SB.Append("\t" + XML_FUNCTIONS + "=\"" + ((m_inlineFunctions) ? XML_TRUE : XML_FALSE) + "\"\n");
+                SB.Append("\t" + XML_CONSTRUCTORS + "=\"" + ((S.m_inlineConstructors) ? XML_TRUE : XML_FALSE) + "\"\n");
+                SB.Append("\t" + XML_SET + "=\"" + ((S.m_inlineSet) ? XML_TRUE : XML_FALSE) + "\"\n");
+                SB.Append("\t" + XML_ASSIGN + "=\"" + ((S.m_inlineAssign) ? XML_TRUE : XML_FALSE) + "\"\n");
+                SB.Append("\t" + XML_OPERATORS + "=\"" + ((S.m_inlineOperators) ? XML_TRUE : XML_FALSE) + "\"\n");
+                SB.Append("\t" + XML_FUNCTIONS + "=\"" + ((S.m_inlineFunctions) ? XML_TRUE : XML_FALSE) + "\"\n");
                 SB.Append("\t/>\n"); // end of <inline> entry
             }
 
             SB.AppendLine(""); // empty line
 
             { // float types
-                foreach (FloatType FT in m_floatTypes)
+                foreach (FloatType FT in S.m_floatTypes)
                 {
                     SB.Append("<" + XML_FLOAT_TYPE + " " + XML_TYPE + "=\"" + FT.type + "\"");
                     if (FT.prefix.Length > 0) SB.Append(" " + XML_PREFIX + "=\"" + FT.prefix + "\"");
@@ -305,8 +305,8 @@ namespace G25
 
             { // basis vector names
                 SB.Append("<" + XML_BASIS_VECTOR_NAMES);
-                for (int i = 0; i < m_basisVectorNames.Count; i++)
-                    SB.Append("\n\t" + XML_NAME + (i + 1).ToString() + "=\"" + m_basisVectorNames[i] + "\"");
+                for (int i = 0; i < S.m_basisVectorNames.Count; i++)
+                    SB.Append("\n\t" + XML_NAME + (i + 1).ToString() + "=\"" + S.m_basisVectorNames[i] + "\"");
                 SB.Append("\n\t/>\n"); // end of <basisVectorNames> entry
             }
 
@@ -314,11 +314,11 @@ namespace G25
 
             { // metric
                 // printed out in order of basisvectors
-                foreach (Metric M in m_metric)
+                foreach (Metric M in S.m_metric)
                 {
-                    if (M.m_name == INTERNAL_EUCLIDEAN_METRIC) continue; // do not emit auto-generated metric to XML
-                    for (int v1 = 0; v1 < m_dimension; v1++)
-                        for (int v2 = 0; v2 < m_dimension; v2++)
+                    if (M.m_name == Specification.INTERNAL_EUCLIDEAN_METRIC) continue; // do not emit auto-generated metric to XML
+                    for (int v1 = 0; v1 < S.m_dimension; v1++)
+                        for (int v2 = 0; v2 < S.m_dimension; v2++)
                             for (int i = 0; i < M.m_metricBasisVectorIdx1.Count; i++)
                                 if ((v1 == M.m_metricBasisVectorIdx1[i]) && (v2 == M.m_metricBasisVectorIdx2[i]))
                                 {
@@ -326,7 +326,7 @@ namespace G25
                                     if (!M.m_round) // default = true, so only print when false
                                         SB.Append(" " + XML_ROUND + "=\"" + XML_FALSE + "\"");
                                     SB.Append(">");
-                                    SB.Append(m_basisVectorNames[v1] + "." + m_basisVectorNames[v2] + "=" + M.m_metricValue[i]);
+                                    SB.Append(S.m_basisVectorNames[v1] + "." + S.m_basisVectorNames[v2] + "=" + M.m_metricValue[i]);
                                     SB.Append("</" + XML_METRIC + ">\n");
                                 }
                 }
@@ -335,10 +335,10 @@ namespace G25
             SB.AppendLine(""); // empty line
 
             // operators
-            foreach (Operator op in m_operators)
+            foreach (Operator op in S.m_operators)
             {
                 // first check if this isn't a 'default operator'
-                if (m_defaultOperators.Contains(op)) continue;
+                if (S.m_defaultOperators.Contains(op)) continue;
 
                 bool unary = (op.NbArguments == 1);
                 string opStr = (unary) ? XML_UNARY_OPERATOR : XML_BINARY_OPERATOR;
@@ -357,47 +357,47 @@ namespace G25
 
             SB.AppendLine(""); // empty line
 
-            if (m_GMV != null) // general multivector:
+            if (S.m_GMV != null) // general multivector:
             {
                 SB.Append("<" + XML_MV);
 
                 // name
-                SB.Append(" " + XML_NAME + "=\"" + m_GMV.Name + "\"");
+                SB.Append(" " + XML_NAME + "=\"" + S.m_GMV.Name + "\"");
 
                 // compression (by grade, group)
-                bool compressedByGrade = m_GMV.IsGroupedByGrade(m_dimension);
+                bool compressedByGrade = S.m_GMV.IsGroupedByGrade(S.m_dimension);
                 SB.Append(" " + XML_COMPRESS + "=\"");
                 if (compressedByGrade) SB.Append(XML_BY_GRADE + "\"");
                 else SB.Append(XML_BY_GROUP + "\"");
 
                 // coordinate order
-                bool defaultCoordinateOrder = (compressedByGrade && m_GMV.CompareBasisBladeOrder(rsbbp.ListToDoubleArray(m_basisBladeParser.GetDefaultBasisBlades())));
+                bool defaultCoordinateOrder = (compressedByGrade && S.m_GMV.CompareBasisBladeOrder(rsbbp.ListToDoubleArray(S.m_basisBladeParser.GetDefaultBasisBlades())));
                 SB.Append(" " + XML_COORDINATE_ORDER + "=\"");
                 if (defaultCoordinateOrder) SB.Append(XML_DEFAULT + "\"");
                 else SB.Append(XML_CUSTOM + "\"");
 
                 // memory allocation method
                 SB.Append(" " + XML_MEM_ALLOC + "=\"");
-                if (m_GMV.MemoryAllocationMethod == GMV.MEM_ALLOC_METHOD.PARITY_PURE)
+                if (S.m_GMV.MemoryAllocationMethod == GMV.MEM_ALLOC_METHOD.PARITY_PURE)
                     SB.Append(XML_PARITY_PURE + "\"");
-                else if (m_GMV.MemoryAllocationMethod == GMV.MEM_ALLOC_METHOD.FULL)
+                else if (S.m_GMV.MemoryAllocationMethod == GMV.MEM_ALLOC_METHOD.FULL)
                     SB.Append(XML_FULL + "\"");
                 else SB.Append(XML_DYNAMIC + "\"");
                 SB.Append(">\n");
 
                 if (!defaultCoordinateOrder)
                 { // emit coordinate order:
-                    String[] bvNames = (String[])m_basisVectorNames.ToArray();
+                    string[] bvNames = (string[])S.m_basisVectorNames.ToArray();
                     // loop over all groups:
-                    for (int g = 0; g < m_GMV.NbGroups; g++)
+                    for (int g = 0; g < S.m_GMV.NbGroups; g++)
                     {
                         SB.Append("<" + XML_GROUP + ">");
                         // loop over all basis blades of group
-                        for (int i = 0; i < m_GMV.Group(g).Length; i++)
+                        for (int i = 0; i < S.m_GMV.Group(g).Length; i++)
                         {
                             if (i > 0) SB.Append(" ");
 
-                            String bbStr = BasisBladeToString(m_GMV.BasisBlade(g, i), bvNames);
+                            string bbStr = BasisBladeToString(S.m_GMV.BasisBlade(g, i), bvNames);
                             SB.Append(bbStr);
                         }
                         SB.Append("</" + XML_GROUP + ">\n");
@@ -410,24 +410,24 @@ namespace G25
             SB.AppendLine(""); // empty line
 
             // specialized multivectors
-            for (int i = 0; i < m_SMV.Count; i++)
+            for (int i = 0; i < S.m_SMV.Count; i++)
             {
-                SB.Append(SMVtoXmlString(m_SMV[i]));
+                SB.Append(SMVtoXmlString(S, S.m_SMV[i]));
             }
 
             SB.AppendLine(""); // empty line
 
             // constants
-            for (int i = 0; i < m_constant.Count; i++)
+            for (int i = 0; i < S.m_constant.Count; i++)
             {
                 // assume only SMV constants for now
-                ConstantSMV C = m_constant[i] as ConstantSMV;
+                ConstantSMV C = S.m_constant[i] as ConstantSMV;
                 if (C == null) continue;
 
                 // check if type has name X+CONSTANT_TYPE_SUFFIX and is constant
-                if ((C.Type.GetName().Equals(C.Name + CONSTANT_TYPE_SUFFIX)) && (C.Type as SMV).IsConstant()) continue;
+                if ((C.Type.GetName().Equals(C.Name + Specification.CONSTANT_TYPE_SUFFIX)) && (C.Type as SMV).IsConstant()) continue;
 
-                SB.Append(ConstantToXmlString(C));
+                SB.Append(ConstantToXmlString(S, C));
             }
 
             SB.AppendLine(""); // empty line
@@ -435,11 +435,11 @@ namespace G25
             // outermorphisms
             {
                 // i = -1 = m_GOM, the rest is m_SOM
-                for (int i = -1; i < m_SOM.Count; i++)
+                for (int i = -1; i < S.m_SOM.Count; i++)
                 {
                     if (i == 0) SB.AppendLine(""); // empty line
 
-                    OM om = (i == -1) ? m_GOM as OM : m_SOM[i] as OM;
+                    OM om = (i == -1) ? S.m_GOM as OM : S.m_SOM[i] as OM;
                     if (om == null) continue;
                     string XMLtag = ((om is GOM) ? XML_OM : XML_SOM);
 
@@ -450,7 +450,7 @@ namespace G25
 
                     // coordinate order:
                     bool rangeEqualsDomain = om.DomainAndRangeAreEqual();
-                    bool defaultCoordOrder = rangeEqualsDomain && om.CompareDomainOrder(rsbbp.ListToDoubleArray(m_basisBladeParser.GetDefaultBasisBlades()));
+                    bool defaultCoordOrder = rangeEqualsDomain && om.CompareDomainOrder(rsbbp.ListToDoubleArray(S.m_basisBladeParser.GetDefaultBasisBlades()));
                     SB.Append(" " + XML_COORDINATE_ORDER + "=\"" + ((defaultCoordOrder) ? XML_DEFAULT : XML_CUSTOM) + "\"");
 
                     // end of XMLtag
@@ -458,10 +458,10 @@ namespace G25
 
                     if (!defaultCoordOrder)
                     {
-                        String[] bvNames = (String[])m_basisVectorNames.ToArray();
+                        string[] bvNames = (string[])S.m_basisVectorNames.ToArray();
                         for (int dr = 0; dr < 2; dr++)
                         {
-                            String XML_DOMAIN_OR_RANGE = (dr == 0) ? XML_DOMAIN : XML_RANGE;
+                            string XML_DOMAIN_OR_RANGE = (dr == 0) ? XML_DOMAIN : XML_RANGE;
                             RefGA.BasisBlade[][] B = (dr == 0) ? om.Domain : om.Range;
                             if ((dr == 1) && rangeEqualsDomain) continue;
 
@@ -500,8 +500,8 @@ namespace G25
             SB.AppendLine(""); // empty line
 
             // function generation specifications
-            for (int i = 0; i < m_functions.Count; i++)
-                SB.AppendLine(FunctionToXmlString(m_functions[i]));
+            for (int i = 0; i < S.m_functions.Count; i++)
+                SB.AppendLine(FunctionToXmlString(S, S.m_functions[i]));
 
             SB.AppendLine(""); // empty line
 
@@ -509,6 +509,25 @@ namespace G25
 
             return SB.ToString();
         } // end of function ToXmlString()
+
+
+        /// <summary>
+        /// Converts a RefGA.BasisBlade to a string for printout in the specification.
+        /// The blade should have positive or negative 1 scale. A scalar basis blade
+        /// is transformed into "scalar" or "-scalar".
+        /// </summary>
+        protected static string BasisBladeToString(RefGA.BasisBlade B, string[] bvNames)
+        {
+            String bbStr = B.ToString(bvNames);
+            // convert "-1*" to "-", otherwise the string cannot be parsed back in again
+            if (bbStr.StartsWith("-1*")) bbStr = "-" + bbStr.Substring(3);
+
+            if (bbStr == "1") bbStr = "scalar";
+            if (bbStr == "-1") bbStr = "-scalar";
+            return bbStr;
+        }
+
+
 
         /// <summary>
         /// Converts a G25.fgs to an XML string representation.
@@ -536,12 +555,12 @@ namespace G25
             {
                 string argTypeName = F.ArgumentTypeNames[a];
 
-                if (argTypeName.EndsWith(CONSTANT_TYPE_SUFFIX)) // check if it is a constant
+                if (argTypeName.EndsWith(Specification.CONSTANT_TYPE_SUFFIX)) // check if it is a constant
                 {
-                    G25.SMV smv = GetType(argTypeName) as G25.SMV;
+                    G25.SMV smv = S.GetType(argTypeName) as G25.SMV;
                     if ((smv != null) && smv.IsConstant())
                     { // if constant, remove the "_t" from the typename
-                        argTypeName = argTypeName.Substring(0, argTypeName.Length - CONSTANT_TYPE_SUFFIX.Length);
+                        argTypeName = argTypeName.Substring(0, argTypeName.Length - Specification.CONSTANT_TYPE_SUFFIX.Length);
                     }
                 }
 
@@ -559,7 +578,7 @@ namespace G25
             }
 
             // float names, if not all float names of algebra are used:
-            if (!F.UsesAllFloatTypes(m_floatTypes))
+            if (!F.UsesAllFloatTypes(S.m_floatTypes))
             {
                 for (int f = 0; f < F.NbFloatNames; f++)
                 {
@@ -585,15 +604,15 @@ namespace G25
         /// </summary>
         /// <param name="smv"></param>
         /// <returns>XML string representation of 'smv'.</returns>
-        public String SMVtoXmlString(G25.SMV smv)
+        public static string SMVtoXmlString(Specification S, G25.SMV smv)
         {
             StringBuilder SB = new StringBuilder();
-            bool constant = smv.IsConstant() && (GetMatchingConstant(smv) != null);
+            bool constant = smv.IsConstant() && (S.GetMatchingConstant(smv) != null);
             string name = smv.Name;
 
             // remove the extra constant suffix?
-            if (constant && name.EndsWith(CONSTANT_TYPE_SUFFIX))
-                name = name.Substring(0, name.Length - CONSTANT_TYPE_SUFFIX.Length);
+            if (constant && name.EndsWith(Specification.CONSTANT_TYPE_SUFFIX))
+                name = name.Substring(0, name.Length - Specification.CONSTANT_TYPE_SUFFIX.Length);
 
             SB.Append("<" + XML_SMV);
 
@@ -611,7 +630,7 @@ namespace G25
             SB.Append(">");
 
             { // emit coordinate order:
-                string[] bvNames = (string[])m_basisVectorNames.ToArray();
+                string[] bvNames = (string[])S.m_basisVectorNames.ToArray();
                 // loop over all basis blades
                 for (int b = 0; b < smv.Group(0).Length; b++)
                 {
@@ -639,7 +658,7 @@ namespace G25
         /// </summary>
         /// <param name="C"></param>
         /// <returns>XML string representation of 'smv'.</returns>
-        public String ConstantToXmlString(G25.Constant C)
+        public static string ConstantToXmlString(Specification S, G25.Constant C)
         {
             StringBuilder SB = new StringBuilder();
 
@@ -657,7 +676,7 @@ namespace G25
             { // emit value (assuming only SMV constants, for now)
                 SMV smv = C.Type as SMV;
                 ConstantSMV Csmv = C as ConstantSMV;
-                String[] bvNames = (String[])m_basisVectorNames.ToArray();
+                string[] bvNames = (string[])S.m_basisVectorNames.ToArray();
                 for (int b = 0; b < smv.NbNonConstBasisBlade; b++)
                 {
                     RefGA.BasisBlade B = smv.NonConstBasisBlade(b);
@@ -686,18 +705,18 @@ namespace G25
             if (rootElement.Name != XML_G25_SPEC)
                 throw new G25.UserException("Missing root element " + XML_G25_SPEC + " in XML file.");
 
-            ParseRootElement(rootElement);
+            ParseRootElement(S, rootElement);
 
             // initializes the RefGA.Metric variables of the m_metrics
-            FinishMetric();
+            S.FinishMetric();
 
             // check if specification is sane
-            CheckSpecificationSanity();
+            S.CheckSpecificationSanity();
         }
 
-        private void ParseRootElement(XmlElement rootElement)
+        private static void ParseRootElement(Specification S, XmlElement rootElement)
         {
-            ParseRootElementAttributes(rootElement.Attributes);
+            ParseRootElementAttributes(S, rootElement.Attributes);
 
             XmlNode _E = rootElement.FirstChild;
             while (_E != null)
@@ -709,32 +728,32 @@ namespace G25
                     {
                         case XML_CUSTOM_LICENSE:
                             {
-                                if (m_license != XML_CUSTOM)
+                                if (S.m_license != XML_CUSTOM)
                                     throw new G25.UserException("License was not set to '" + XML_CUSTOM + "' but there still is a '" + XML_CUSTOM_LICENSE + "' in the specification");
                                 XmlText T = E.FirstChild as XmlText;
                                 if (T != null)
-                                    m_license = T.Value;
+                                    S.m_license = T.Value;
                             }
                             break;
                         case XML_OUTPUT_DIRECTORY:
-                            SetOutputDir(E.GetAttribute(XML_PATH));
+                            S.SetOutputDir(E.GetAttribute(XML_PATH));
                             break;
                         case XML_OUTPUT_FILENAME:
-                            SetOutputFilename(E.GetAttribute(XML_DEFAULT_NAME), E.GetAttribute(XML_CUSTOM_NAME));
+                            S.SetOutputFilename(E.GetAttribute(XML_DEFAULT_NAME), E.GetAttribute(XML_CUSTOM_NAME));
                             break;
 
                         case XML_INLINE:
-                            ParseInlineAttributes(E.Attributes);
+                            ParseInlineAttributes(S, E.Attributes);
                             break;
                         case XML_FLOAT_TYPE:
-                            ParseFloatTypeAttributes(E.Attributes);
+                            ParseFloatTypeAttributes(S, E.Attributes);
                             break;
                         case XML_UNARY_OPERATOR:
                         case XML_BINARY_OPERATOR:
-                            ParseOperatorAttributes(E.Name, E.Attributes);
+                            ParseOperatorAttributes(S, E.Name, E.Attributes);
                             break;
                         case XML_BASIS_VECTOR_NAMES:
-                            ParseBasisVectorNamesAttributes(E.Attributes);
+                            ParseBasisVectorNamesAttributes(S, E.Attributes);
                             break;
                         case XML_METRIC:
                             {
@@ -745,36 +764,36 @@ namespace G25
                                 // parse actual metric:
                                 XmlText T = E.FirstChild as XmlText;
                                 if (T == null) throw new G25.UserException("Invalid  '" + XML_METRIC + "' element in specification.");
-                                ParseMetric(name, T.Value);
+                                ParseMetric(S, name, T.Value);
 
                                 // round?
                                 if (E.GetAttribute(XML_ROUND) != null)
                                 {
-                                    GetMetric(name).m_round = !(E.GetAttribute(XML_ROUND).ToLower() == XML_FALSE);
+                                    S.GetMetric(name).m_round = !(E.GetAttribute(XML_ROUND).ToLower() == XML_FALSE);
                                 }
 
                             }
                             break;
                         case XML_MV:
-                            ParseMVelementAndAttributes(E);
+                            ParseMVelementAndAttributes(S, E);
                             break;
                         case XML_SMV:
-                            ParseSMVelementAndAttributes(E);
+                            ParseSMVelementAndAttributes(S, E);
                             break;
                         case XML_OM:
-                            ParseGOMelementAndAttributes(E);
+                            ParseGOMelementAndAttributes(S, E);
                             break;
                         case XML_SOM:
-                            ParseSOMelementAndAttributes(E);
+                            ParseSOMelementAndAttributes(S, E);
                             break;
                         case XML_CONSTANT:
-                            ParseConstantElementAndAttributes(E);
+                            ParseConstantElementAndAttributes(S, E);
                             break;
                         case XML_FUNCTION:
-                            ParseFunction(E);
+                            ParseFunction(S, E);
                             break;
                         case XML_VERBATIM:
-                            ParseVerbatim(E);
+                            ParseVerbatim(S, E);
                             break;
                         default:
                             System.Console.WriteLine("Specification.ParseRootElement(): warning: unknown element '" + E.Name + "' in specification");
@@ -792,7 +811,7 @@ namespace G25
         /// <summary>
         /// Parses the attributes of the XML_G25_SPEC root element
         /// </summary>
-        private void ParseRootElementAttributes(XmlAttributeCollection A)
+        private static void ParseRootElementAttributes(Specification S, XmlAttributeCollection A)
         {
             // parse all attributes of the root element
             for (int i = 0; i < A.Count; i++)
@@ -863,7 +882,7 @@ namespace G25
         /// <summary>
         /// Parses the attributes of the XML_INLINE element
         /// </summary>
-        private void ParseInlineAttributes(XmlAttributeCollection A)
+        private static void ParseInlineAttributes(Specification S, XmlAttributeCollection A)
         {
             // parse all attributes of the root element
             for (int i = 0; i < A.Count; i++)
@@ -895,7 +914,7 @@ namespace G25
         /// <summary>
         /// Parses the attributes of the XML_FLOAT_TYPE element
         /// </summary>
-        private void ParseFloatTypeAttributes(XmlAttributeCollection A)
+        private static void ParseFloatTypeAttributes(Specification S, XmlAttributeCollection A)
         {
             String floatType = "", floatSuffix = "", floatPrefix = "";
             for (int i = 0; i < A.Count; i++)
@@ -919,7 +938,7 @@ namespace G25
             AddFloatType(floatType, floatPrefix, floatSuffix);
         }
 
-        private void ParseOperatorAttributes(String elementName, XmlAttributeCollection A)
+        private static void ParseOperatorAttributes(Specification S, string elementName, XmlAttributeCollection A)
         {
             int nbArgs = (elementName == XML_UNARY_OPERATOR) ? 1 : 2;
             String symbol = "";
@@ -955,7 +974,7 @@ namespace G25
         /// <summary>
         /// Sets all basis vector names to "", then handle XML attributes (nameX = "..") and then checks if all names have been set.
         /// </summary>
-        private void ParseBasisVectorNamesAttributes(XmlAttributeCollection A)
+        private static void ParseBasisVectorNamesAttributes(Specification S, XmlAttributeCollection A)
         {
             // reset all names to ""
             for (int i = 0; i < m_basisVectorNames.Count; i++)
@@ -990,7 +1009,7 @@ namespace G25
         /// <param name="str">A string "no.ni=-1". The string must be of the from id.id=(id.id=)*=(+-)?1. Valid examples are 
         /// "e1.e1=e2.e2=+1.2", "e3.e3=-1.2", 
         /// </param>
-        private void ParseMetric(String name, String str)
+        private static void ParseMetric(Specification S, string name, string str)
         {
             Object O = m_metricParser.Parse(str);
             if (O == null) throw new G25.UserException("Error parsing metric specification '" + str + "'.");
@@ -1009,7 +1028,7 @@ namespace G25
         /// </summary>
         /// <param name="name">name of the metric (e.g., "default" or "euclidean")</param>
         /// <returns>The value for X . Y metric</returns>
-        private double ParseMetric(String name, Object O, String str)
+        private static double ParseMetric(Specification S, string name, Object O, string str)
         {
             // first check if 'O' could be the final value of the metric specification
             G25.rsep.FunctionApplication FA = O as G25.rsep.FunctionApplication;
@@ -1082,7 +1101,7 @@ namespace G25
         /// and memory allocation method of the general multivector.
         /// </summary>
         /// <param name="E">XML_MV element</param>
-        private void ParseMVelementAndAttributes(XmlElement E)
+        private static void ParseMVelementAndAttributes(Specification S, XmlElement E)
         {
             String name = "mv";
             bool compressByGrade = true; // false means 'by group'
@@ -1168,7 +1187,7 @@ namespace G25
         /// Parses basis blade list of SMVs and constants.
         /// </summary>
         /// <returns>List of basis blades, or null if 'F' does not contain such a list.</returns>
-        private List<G25.rsbbp.BasisBlade> ParseBasisBladeList(XmlNode _F, string parentName)
+        private static List<G25.rsbbp.BasisBlade> ParseBasisBladeList(Specification S, XmlNode _F, string parentName)
         {
             while (_F != null)
             {
@@ -1196,7 +1215,7 @@ namespace G25
         /// Parses a comment for SMVs and constants.
         /// </summary>
         /// <returns>Comment string, or null if 'F' does not contain a comment.</returns>
-        private string ParseComment(XmlNode _F)
+        private static  string ParseComment(Specification S, XmlNode _F)
         {
             while (_F != null)
             {
@@ -1225,7 +1244,7 @@ namespace G25
         /// 
         /// </summary>
         /// <param name="E">XML_SMV element</param>
-        private void ParseSMVelementAndAttributes(XmlElement E)
+        private static void ParseSMVelementAndAttributes(Specification S, XmlElement E)
         {
             string typeName = null;
             bool isConstant = false;
@@ -1302,7 +1321,7 @@ namespace G25
         /// The XML_CONSTANT element should contain the name, type and basis blades values.
         /// </summary>
         /// <param name="E">XML_CONSTANT element</param>
-        private void ParseConstantElementAndAttributes(XmlElement E)
+        private static void ParseConstantElementAndAttributes(Specification S, XmlElement E)
         {
             string constantName = null;
             string typeName = null;
@@ -1344,7 +1363,7 @@ namespace G25
             AddConstant(new ConstantSMV(constantName, type, L, comment));
         } // end of ParseConstantElementAndAttributes()
 
-        private void ParseGOMelementAndAttributes(XmlElement E)
+        private static void ParseGOMelementAndAttributes(Specification S, XmlElement E)
         {
             bool specialized = false;
             GOM gom = ParseOMelementAndAttributes(E, specialized) as GOM;
@@ -1354,7 +1373,7 @@ namespace G25
         }
 
 
-        private void ParseSOMelementAndAttributes(XmlElement E)
+        private static void ParseSOMelementAndAttributes(Specification S, XmlElement E)
         {
             bool specialized = true;
             SOM som = ParseOMelementAndAttributes(E, specialized) as SOM;
@@ -1372,7 +1391,7 @@ namespace G25
         /// </summary>
         /// <param name="E">XML_OM or XML_SOM element.</param>
         /// <param name2="specialized">whether a general (false) or specialized (true) outermorphism is being parsed.</param>
-        private OM ParseOMelementAndAttributes(XmlElement E, bool specialized)
+        private static OM ParseOMelementAndAttributes(Specification S, XmlElement E, bool specialized)
         {
             String name = null;
             bool defaultCoordinateOrder = false; // false means 'custom'
@@ -1449,7 +1468,7 @@ namespace G25
         } // end of ParseOMelementAndAttributes()
 
 
-        public void ParseFunction(XmlElement E)
+        public static void ParseFunction(Specification S, XmlElement E)
         {
             // storage for all info:
             String functionName = null;
@@ -1596,6 +1615,80 @@ namespace G25
 
             m_functions.Add(F);
         } // ParseFunction()
+
+        public static void ParseVerbatim(Specification S, XmlElement E)
+        {
+            List<string> filenames = new List<string>();
+            VerbatimCode.POSITION where = VerbatimCode.POSITION.INVALID;
+            string customMarker = null;
+            string verbatimCode = null;
+            string verbatimCodeFile = null;
+
+            { // handle attributes
+                XmlAttributeCollection A = E.Attributes;
+
+                // handle all attributes
+                for (int i = 0; i < A.Count; i++)
+                {
+                    // filename
+                    if (A[i].Name.StartsWith(XML.XML_FILENAME))
+                    {
+                        filenames.Add(A[i].Value);
+                    }
+
+                    // position
+                    else if (A[i].Name == XML.XML_POSITION)
+                    {
+                        if (A[i].Value == XML.XML_TOP) where = VerbatimCode.POSITION.TOP;
+                        else if (A[i].Value == XML.XML_BOTTOM) where = VerbatimCode.POSITION.BOTTOM;
+                        else if (A[i].Value == XML.XML_BEFORE_MARKER) where = VerbatimCode.POSITION.BEFORE_MARKER;
+                        else if (A[i].Value == XML.XML_AFTER_MARKER) where = VerbatimCode.POSITION.AFTER_MARKER;
+                        else throw new G25.UserException("Invalid " + XML.XML_POSITION + " '" + A[i].Value + "'  in element '" + XML.XML_VERBATIM + "'.");
+                    }
+
+                    // marker
+                    else if (A[i].Name == XML.XML_MARKER)
+                    {
+                        customMarker = A[i].Value;
+                    }
+
+                    // codeFilename
+                    else if (A[i].Name == XML.XML_CODE_FILENAME)
+                    {
+                        if (A[i].Value.Length > 0)
+                            verbatimCodeFile = A[i].Value;
+                    }
+
+                    else throw new G25.UserException("Invalid attribute '" + A[i].Name + "'  in element '" + XML.XML_VERBATIM + "'.");
+                }
+
+                { // get verbatim code from _inside_ the element:
+                    XmlText T = E.FirstChild as XmlText;
+                    if ((T != null) && (T.Length > 0)) verbatimCode = T.Value;
+                }
+
+                // check if function name was specified:
+                if (filenames.Count == 0)
+                    throw new G25.UserException("Missing attribute '" + XML.XML_FILENAME + "' in element '" + XML.XML_VERBATIM + "'");
+
+                if (where == VerbatimCode.POSITION.INVALID)
+                    throw new G25.UserException("Missing attribute '" + XML.XML_POSITION + "' in element '" + XML.XML_VERBATIM + "'");
+
+                if (((where == VerbatimCode.POSITION.BEFORE_MARKER) ||
+                    (where == VerbatimCode.POSITION.AFTER_MARKER)) &&
+                    (customMarker == null))
+                {
+                    throw new G25.UserException("Missing attribute '" + XML.XML_MARKER + "' in element '" + XML.XML_VERBATIM + "'");
+                }
+
+                if ((verbatimCode == null) && (verbatimCodeFile == null))
+                    throw new G25.UserException("Missing/empty verbatim code or verbatim code filename in element '" + XML.XML_VERBATIM + "'");
+            } // end of 'handle attributes'
+
+            m_verbatimCode.Add(new VerbatimCode(filenames, where, customMarker, verbatimCode, verbatimCodeFile));
+        } // end of ParseVerbatim()
+
+
 
 
     } // end of class XML
