@@ -20,648 +20,642 @@ using System.Text;
 
 using RefGA.Symbolic;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+    
+    /// <summary>
+    /// Contains various utility functions for generating code.
+    /// </summary>
+    public class CodeUtil
     {
-        namespace Shared
+
+        static CodeUtil()
         {
-            
-            /// <summary>
-            /// Contains various utility functions for generating code.
-            /// </summary>
-            public class CodeUtil
+            InitOps();
+        }
+
+        /// <summary>
+        /// Returns an array of 'access strings' which are source code expressions that can be
+        /// used to access the coordinates of <c>smv</c>. The entries in the array correspond to
+        /// the non-const basis blades in <c>smv</c>. 
+        /// 
+        /// An example of access strings is <c>"A.e1"</c>, <c>"A.e2"</c>, <c>"A.e3"</c>, for a 3-D vector type.
+        /// This could also be <c>"A.c[0]"</c>, <c>"A.c[1]"</c>, <c>"A.c[2]"</c> if coordinates are stored in an array.
+        /// 
+        /// If 'ptr' is true, <c>"->"</c> will be used to access instance variables, otherwise <c>"."</c> is used.
+        /// (this may need to be tweaked as more languages are available for output).
+        /// </summary>
+        /// <param name="S">Used for basis blade names, language, COORD_STORAGE, etc.</param>
+        /// <param name="smv">The specialized multivector for which access strings are generated.</param>
+        /// <param name="smvName">The variable name to be used in the access strings. For example, specify <c>"A"</c> to get <c>"A.c[0]"</c> and so on.</param>
+        /// <param name="ptr">Is the variable a pointer or a reference/value?</param>
+        /// <returns>Array of strings that can be used to access the non-constant coordinates of the 'smv'.</returns>
+        public static string[] GetAccessStr(Specification S, G25.SMV smv, string smvName, bool ptr)
+        {
+            string[] AL = new string[smv.NbNonConstBasisBlade];
+            string accessStr = (ptr) ? "->" : ".";
+            string memberPrefix = "";
+
+
+            // override "this->" to ""
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+            {
+                memberPrefix = "m_";
+                if ((smvName == SmvUtil.THIS) && (ptr == true))
+                {
+                    smvName = "";
+                    accessStr = "";
+                }
+            }
+
+            string prefix = smvName + accessStr + memberPrefix;
+
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
+                AL[i] = prefix + smv.GetCoordLangID(i, S);
+
+            return AL;
+        } // end of GetAccessStr()
+
+        /// <summary>
+        /// Returns an array of 'access strings' for a specific group of the general multivector. 
+        /// Access strings are source code expressions that can be
+        /// used to access the coordinates of one specific group of coordinates of <c>gmv</c>.
+        /// </summary>
+        /// <param name="S">Used for basis blade names, language, COORD_STORAGE , etc.</param>
+        /// <param name="gmv">The specialized multivector for which access strings are generated.</param>
+        /// <param name="gmvName">The variable name of the _array_ of float to be used in the access strings. 
+        /// For example, specify <c>"A"</c> to get <c>"A[0]"</c> and so on.</param>
+        /// <param name="groupIdx">Specifies for that group index the access strings should be generated.</param>
+        /// <returns>Array of strings that can be used to access the coordinates of group <c>groupIdx</c> of the <c>gmv</c>.</returns>
+        public static String[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx)
+        {
+            String[] AL = new String[gmv.Group(groupIdx).Length];
+
+            for (int i = 0; i < gmv.Group(groupIdx).Length; i++)
+                AL[i] = gmvName + "[" + i + "]";
+
+            return AL;
+        } // end of GetAccessStr()
+
+
+        /// <summary>
+        /// Generates code for returning a scalar value. The input is a scalar-valued multivector.
+        /// </summary>
+        /// <param name="S">Specification (used for output language).</param>
+        /// <param name="FT">Floating point type which must be returned.</param>
+        /// <param name="mustCast">Set to true if the returned value must be cast to <c>FT</c>, that is
+        /// if you are not sure that the multivector has the same float type as the return type <c>FT</c>.</param>
+        /// <param name="value">The symbolic multivector value to be returned.</param>
+        /// <returns>Code for returning a scalar value.</returns>
+        public static String GenerateScalarReturnCode(Specification S, FloatType FT, bool mustCast, RefGA.Multivector value)
+        {
+            if (value.IsZero())
+            {
+                return "return " + FT.DoubleToString(S, 0.0) + ";";
+            }
+            else
             {
 
-                static CodeUtil()
+                return "return " +
+                    ((mustCast) ? (FT.castStr + "(") : "") +
+                    CodeUtil.ScalarToLangString(S, FT, value.BasisBlades[0]) +
+                    ((mustCast) ? ")" : "") +
+                    ";";
+            }
+        } // end of GenerateScalarReturnCode()
+
+        /// <summary>
+        /// Generates the code to assign a multivector value (which may have symbolic coordinates) to a specialized multivector.
+        /// </summary>
+        /// <param name="S">Specification of algebra. Used to known names of basis vector, output language, access strings, etc.</param>
+        /// <param name="FT">Floating point type of destination.</param>
+        /// <param name="mustCast">Set to true if a cast to 'FT' must be performed before assigned to 'dstName'.</param>
+        /// <param name="dstSmv">Type of specialized multivector assigned to.</param>
+        /// <param name="dstName">Name of specialized multivector assigned to.</param>
+        /// <param name="dstPtr">Is the destination of pointer?</param>
+        /// <param name="value">Multivector value to assign to the SMV. Must not contain basis blades inside the symbolic scalars.</param>
+        /// <param name="nbTabs">Number of tabs to put before the code.</param>
+        /// <param name="writeZeros">Some callers want to skip <c>"= 0.0"</c> assignments because they would be redundant. For
+        /// example the caller may know that the destination is already set to zero. If so, set this argument to false and
+        /// code for setting coordinates to 0 will not be generated.</param>
+        /// <returns>String of code for dstName = value;</returns>
+        public static String GenerateSMVassignmentCode(Specification S, FloatType FT, bool mustCast,
+            G25.SMV dstSmv, String dstName, bool dstPtr, RefGA.Multivector value, int nbTabs, bool writeZeros)
+        {
+            RefGA.BasisBlade[] BL = BasisBlade.GetNonConstBladeList(dstSmv);
+            String[] accessStr = GetAccessStr(S, dstSmv, dstName, dstPtr);
+            String[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
+
+            //int nbTabs = 1;
+            return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);
+        } // end of GenerateSMVassignmentCode
+
+        /// <summary>
+        /// Generates the code to assign a multivector value (which may have symbolic coordinates) to one specific coordinate group of a multivector.
+        /// </summary>
+        /// <param name="S">Specification of algebra. Used to known names of basis vector, output language, access strings, etc.</param>
+        /// <param name="FT">Floating point type of destination.</param>
+        /// <param name="mustCast">set to true if a cast to 'FT' must be performed before assigned to 'dstName'.</param>
+        /// <param name="dstGmv">Type of general multivector assigned to.</param>
+        /// <param name="dstName">Name of specialized multivector assigned to.</param>
+        /// <param name="groupIdx">Write to which group?</param>
+        /// <param name="value">Multivector value to assign to the GMV. Must not contain basis blades inside the symbolic scalars.</param>
+        /// <param name="nbTabs">Number of tabs to put before the code.</param>
+        /// <param name="writeZeros">Some callers want to skip "= 0.0" assignments because they would be redundant. So they set this argument to true.</param>
+        /// <returns>String of code for dstName = value;</returns>
+        public static string GenerateGMVassignmentCode(Specification S, FloatType FT, bool mustCast,
+            G25.GMV dstGmv, string dstName, int groupIdx, RefGA.Multivector value, int nbTabs, bool writeZeros)
+        {
+            RefGA.BasisBlade[] BL = dstGmv.Group(groupIdx);
+            string[] accessStr = GetAccessStr(S, dstGmv, dstName, groupIdx);
+            string[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
+
+            return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);
+        } // end of GenerateSMVassignmentCode
+
+
+        public static string GenerateReturnCode(Specification S, G25.SMV smv, G25.FloatType FT, String[] valueStr, int nbTabs, bool writeZeros)  {
+            StringBuilder SB = new StringBuilder();
+            string smvName = FT.GetMangledName(S, smv.Name);
+
+            SB.Append('\t', nbTabs);
+            SB.Append("return ");
+            SB.Append(smvName);
+            SB.Append("(");
+            if (valueStr.Length > 0)
+            {
+                SB.AppendLine(smvName + "::" + SmvUtil.GetCoordinateOrderConstant(S, smv) + ",");
+            }
+            for (int i = 0; i < valueStr.Length; i++) {
+                SB.Append('\t', nbTabs+2);
+                SB.Append(valueStr[i]);
+                if (i < (valueStr.Length - 1)) SB.Append(",");
+                SB.AppendLine(" // " + smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames) );
+            }
+            SB.Append('\t', nbTabs+1);
+            SB.Append(");");
+
+            return SB.ToString();
+        }
+
+        /// <summary>
+        /// Generates the code to assign each <c>valueStr</c> to its respective  <c>accessStr</c>.
+        /// (for example <c>A[0] = B[1]*B[2];</c>)
+        /// <c>valueStr</c> and <c>accessStr</c> must have the same length.
+        /// </summary>
+        /// <param name="S">Used for output language.</param>
+        /// <param name="accessStr">Array of strings that allows which can be used to write to specific coordinates
+        /// of multivectors. This array must have same length as 'valueStr'. Use GetAccessStr() to generate.</param>
+        /// <param name="valueStr">Array of value strings. Must have same length as <c>accessStr</c> Use <c>GetAssignmentStrings()</c> to compute this array.</param>
+        /// <param name="nbTabs">How many tabs to put in front of the generated code.</param>
+        /// <param name="writeZeros">Some callers want to skip <c>"= 0.0"</c> assignments because they would be redundant. So they set this argument to true.</param>
+        /// <returns>String of code for <c>dstName = value;</c></returns>
+        public static string GenerateAssignmentCode(Specification S, String[] accessStr, String[] valueStr, int nbTabs, bool writeZeros) 
+        {
+            StringBuilder SB = new StringBuilder();
+
+            // does the user want to assign zero (this is used by WriteGMVtoSMVcopy())
+            if (!writeZeros)
+            {
+                for (int i = 0; i < valueStr.Length; i++)
                 {
-                    InitOps();
+                    if ((valueStr[i] != null) && (ValueStringIsZero(S, valueStr[i])))
+                        valueStr[i] = null;
+                }
+            }
+
+            for (int i = 0; i < accessStr.Length; i++)
+            {
+                if (valueStr[i] == null) continue; // already assigned
+
+                // append tabs
+                SB.Append('\t', nbTabs);
+
+                // output dstName.c[0] = 
+                SB.Append(accessStr[i] + " = ");
+
+                // see if there any similar assignments
+                for (int j = i + 1; j < accessStr.Length; j++)
+                {
+                    if (valueStr[i] == valueStr[j])
+                    {
+                        valueStr[j] = null;
+                        SB.Append(accessStr[j] + " = ");
+                    }
+                }
+                SB.Append(valueStr[i]);
+                SB.AppendLine(";");
+            }
+
+            return SB.ToString();
+        } // GenerateAssignmentCode()
+
+        /// <summary>
+        /// Returns true when 'valueStr' represent a zero value in the target language.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="valueStr"></param>
+        /// <returns></returns>
+        public static bool ValueStringIsZero(Specification S, string valueStr)
+        {
+            if (!valueStr.StartsWith("0.0")) return false;
+            else if (valueStr.Length < 4) return true;
+            else return !Char.IsDigit(valueStr[3]);
+        }
+
+
+        /// <summary>
+        /// Generates code to assign <c>value</c> to a variable whose coordinate order is specified by <c>BL</c>.
+        /// 
+        /// For example, <c>BL</c> could be <c>[e1, e2, e3]</c> and the multivector value <c>[e1 - 2e3]</c>.
+        /// Then the returned array would be <c>["1", "0", "-2"]</c>.
+        /// 
+        /// Parts of <c>value</c> that cannot be assigned to <c>BL</c> are silently ignored. 
+        /// 
+        /// Possibly, at some point we would like to generate some kind of warning?
+        /// </summary>
+        /// <param name="S">Specification of algebra (not used yet).</param>
+        /// <param name="FT">Floating point type of assigned variable (used for casting strings).</param>
+        /// <param name="mustCast">Set to true if a cast to 'FT' must be performed.</param>
+        /// <param name="BL">Basis blades of assigned variable.</param>
+        /// <param name="value">Multivector value to assign to the list of basis blades. 
+        /// Must not contain basis blades inside the symbolic scalars of the RefGA.BasisBlades.</param>
+        /// <param name="writeZeros">When true, <c>"0"</c> will be returned when no value should be assigned
+        /// to some coordinate. <c>null</c> otherwise.</param>
+        /// <returns>An array of strings which tell you what to assign to each coordinate.</returns>
+        public static String[] GetAssignmentStrings(Specification S, FloatType FT, bool mustCast, RefGA.BasisBlade[] BL, 
+            RefGA.Multivector value, bool writeZeros)
+        {
+            String[] assignedStr = new String[BL.Length];
+            int idx = 0;
+
+            // for each non-const coord, find out what value is (loop through all entries in value)
+            foreach (RefGA.BasisBlade B in BL)
+            {
+                // find same basisblade in 'value'
+                foreach (RefGA.BasisBlade C in value.BasisBlades)
+                {
+                    if (C.bitmap == B.bitmap) // match found: get assignment string
+                    {
+                        // compute D = inverse(B) . C;
+                        RefGA.BasisBlade Bi = (new RefGA.BasisBlade(B.bitmap, 1.0 / B.scale)).Reverse();
+                        RefGA.BasisBlade D = RefGA.BasisBlade.scp(Bi, C);
+
+                        if (mustCast) assignedStr[idx] = FT.castStr + "(" + CodeUtil.ScalarToLangString(S, FT, D) + ")";
+                        else assignedStr[idx] = CodeUtil.ScalarToLangString(S, FT, D);
+                        break;
+                    }
                 }
 
-                /// <summary>
-                /// Returns an array of 'access strings' which are source code expressions that can be
-                /// used to access the coordinates of <c>smv</c>. The entries in the array correspond to
-                /// the non-const basis blades in <c>smv</c>. 
-                /// 
-                /// An example of access strings is <c>"A.e1"</c>, <c>"A.e2"</c>, <c>"A.e3"</c>, for a 3-D vector type.
-                /// This could also be <c>"A.c[0]"</c>, <c>"A.c[1]"</c>, <c>"A.c[2]"</c> if coordinates are stored in an array.
-                /// 
-                /// If 'ptr' is true, <c>"->"</c> will be used to access instance variables, otherwise <c>"."</c> is used.
-                /// (this may need to be tweaked as more languages are available for output).
-                /// </summary>
-                /// <param name="S">Used for basis blade names, language, COORD_STORAGE, etc.</param>
-                /// <param name="smv">The specialized multivector for which access strings are generated.</param>
-                /// <param name="smvName">The variable name to be used in the access strings. For example, specify <c>"A"</c> to get <c>"A.c[0]"</c> and so on.</param>
-                /// <param name="ptr">Is the variable a pointer or a reference/value?</param>
-                /// <returns>Array of strings that can be used to access the non-constant coordinates of the 'smv'.</returns>
-                public static String[] GetAccessStr(Specification S, G25.SMV smv, String smvName, bool ptr)
+                if (writeZeros && (assignedStr[idx] == null)) // has an assignment string been set?
                 {
-                    string[] AL = new string[smv.NbNonConstBasisBlade];
-                    string accessStr = (ptr) ? "->" : ".";
-                    string memberPrefix = "";
+                    // no assignment: simply assign "0"
+                    assignedStr[idx] = FT.DoubleToString(S, 0.0);
+                }
 
+                idx++;
+            }
+            return assignedStr;
+        } // end of GetAssignmentStrings()
 
-                    // override "this->" to ""
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+        /// <summary>
+        /// Used internally by ScalarToLangString().
+        /// 
+        /// Emits on term (+ ....) of a blade value. Contains some optimizations
+        /// to avoid stuff like <c>+-1.0</c>.
+        /// </summary>
+        protected static int EmitTerm(G25.Specification S, G25.FloatType FT, Object[] T, int tCnt, StringBuilder symResult)
+        {
+            // make stuff below a function
+            bool plusEmitted = false;
+            int pCnt = 0; // number of non-null terms in 'T'
+            for (int p = 0; p < T.Length; p++) // for each product ...*
+            {
+                if (T[p] != null)
+                {
+                    if ((!plusEmitted) && (tCnt > 0))
                     {
-                        memberPrefix = "m_";
-                        if ((smvName == SmvUtil.THIS) && (ptr == true))
-                        {
-                            smvName = "";
-                            accessStr = "";
-                        }
+                        symResult.Append("+");
+                        plusEmitted = true;
                     }
+                    if ((pCnt > 0) && (symResult.Length > 0) && (!((symResult[symResult.Length - 1] == '-') || (symResult[symResult.Length - 1] == '+'))))
+                        symResult.Append("*");
 
-                    string prefix = smvName + accessStr + memberPrefix;
-
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                        AL[i] = prefix + smv.GetCoordLangID(i, S);
-
-                    return AL;
-                } // end of GetAccessStr()
-
-                /// <summary>
-                /// Returns an array of 'access strings' for a specific group of the general multivector. 
-                /// Access strings are source code expressions that can be
-                /// used to access the coordinates of one specific group of coordinates of <c>gmv</c>.
-                /// </summary>
-                /// <param name="S">Used for basis blade names, language, COORD_STORAGE , etc.</param>
-                /// <param name="gmv">The specialized multivector for which access strings are generated.</param>
-                /// <param name="gmvName">The variable name of the _array_ of float to be used in the access strings. 
-                /// For example, specify <c>"A"</c> to get <c>"A[0]"</c> and so on.</param>
-                /// <param name="groupIdx">Specifies for that group index the access strings should be generated.</param>
-                /// <returns>Array of strings that can be used to access the coordinates of group <c>groupIdx</c> of the <c>gmv</c>.</returns>
-                public static String[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx)
-                {
-                    String[] AL = new String[gmv.Group(groupIdx).Length];
-
-                    for (int i = 0; i < gmv.Group(groupIdx).Length; i++)
-                        AL[i] = gmvName + "[" + i + "]";
-
-                    return AL;
-                } // end of GetAccessStr()
-
-
-                /// <summary>
-                /// Generates code for returning a scalar value. The input is a scalar-valued multivector.
-                /// </summary>
-                /// <param name="S">Specification (used for output language).</param>
-                /// <param name="FT">Floating point type which must be returned.</param>
-                /// <param name="mustCast">Set to true if the returned value must be cast to <c>FT</c>, that is
-                /// if you are not sure that the multivector has the same float type as the return type <c>FT</c>.</param>
-                /// <param name="value">The symbolic multivector value to be returned.</param>
-                /// <returns>Code for returning a scalar value.</returns>
-                public static String GenerateScalarReturnCode(Specification S, FloatType FT, bool mustCast, RefGA.Multivector value)
-                {
-                    if (value.IsZero())
+                    System.Object O = T[p];
+                    if ((O is System.Double) ||
+                        (O is System.Single) ||
+                        (O is System.Int16) ||
+                        (O is System.Int32) ||
+                        (O is System.Int64)) // etc . . . (all number types)
                     {
-                        return "return " + FT.DoubleToString(S, 0.0) + ";";
+                        double val = (double)O;
+                        if ((val == -1.0) && (p == 0) && (T.Length > 1))
+                        { // when multiplying with -1.0, output only a '-', IF the term is the first (p==0) and more terms follow (T.Length > 1)
+                            if (symResult.Length > 0)
+                            {// when val = -1, output code which is better for humans, instead of -1.0 * ... 
+                                if (symResult[symResult.Length - 1] == '+') // change '+' to '-'
+                                    symResult[symResult.Length - 1] = '-';
+                                else symResult.Append("-");
+                            }
+                            else symResult.Append("-");
+                        }
+                        else if ((val == 1.0) && (p == 0) && (T.Length > 1))
+                        { // when multiplying with 1.0, output nothing IF the term is the first (p==0) and more terms follow (T.Length > 1)
+                            // do nothing
+                        }
+                        else symResult.Append(FT.DoubleToString(S, (double)O));
+
+                    }
+                    else if (O is ScalarOp)
+                    {
+                        ScalarOp SO = (ScalarOp)O;
+                        symResult.Append(ScalarOpToLangString(S, FT, SO));
+                    }
+                    else if (O is RefGA.BasisBlade)
+                    {
+                        symResult.Append(ScalarToLangString(S, FT, (RefGA.BasisBlade)O));
+                    }
+                    else if (O is RefGA.Multivector)
+                    {
+                        RefGA.Multivector mv = (RefGA.Multivector)O;
+                        StringBuilder mvSB = new StringBuilder();
+                        mvSB.Append("(");
+                        bool first = true;
+                        foreach (RefGA.BasisBlade B in mv.BasisBlades)
+                        {
+                            if (!first) mvSB.Append(" + ");
+                            first = false;
+                            mvSB.Append(ScalarToLangString(S, FT, B));
+                        }
+
+                        mvSB.Append(")");
+
+                        symResult.Append(mvSB);
                     }
                     else
                     {
-
-                        return "return " +
-                            ((mustCast) ? (FT.castStr + "(") : "") +
-                            CodeUtil.ScalarToLangString(S, FT, value.BasisBlades[0]) +
-                            ((mustCast) ? ")" : "") +
-                            ";";
+                        symResult.Append(O.ToString());
                     }
-                } // end of GenerateScalarReturnCode()
 
-                /// <summary>
-                /// Generates the code to assign a multivector value (which may have symbolic coordinates) to a specialized multivector.
-                /// </summary>
-                /// <param name="S">Specification of algebra. Used to known names of basis vector, output language, access strings, etc.</param>
-                /// <param name="FT">Floating point type of destination.</param>
-                /// <param name="mustCast">Set to true if a cast to 'FT' must be performed before assigned to 'dstName'.</param>
-                /// <param name="dstSmv">Type of specialized multivector assigned to.</param>
-                /// <param name="dstName">Name of specialized multivector assigned to.</param>
-                /// <param name="dstPtr">Is the destination of pointer?</param>
-                /// <param name="value">Multivector value to assign to the SMV. Must not contain basis blades inside the symbolic scalars.</param>
-                /// <param name="nbTabs">Number of tabs to put before the code.</param>
-                /// <param name="writeZeros">Some callers want to skip <c>"= 0.0"</c> assignments because they would be redundant. For
-                /// example the caller may know that the destination is already set to zero. If so, set this argument to false and
-                /// code for setting coordinates to 0 will not be generated.</param>
-                /// <returns>String of code for dstName = value;</returns>
-                public static String GenerateSMVassignmentCode(Specification S, FloatType FT, bool mustCast,
-                    G25.SMV dstSmv, String dstName, bool dstPtr, RefGA.Multivector value, int nbTabs, bool writeZeros)
-                {
-                    RefGA.BasisBlade[] BL = BasisBlade.GetNonConstBladeList(dstSmv);
-                    String[] accessStr = GetAccessStr(S, dstSmv, dstName, dstPtr);
-                    String[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
-
-                    //int nbTabs = 1;
-                    return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);
-                } // end of GenerateSMVassignmentCode
-
-                /// <summary>
-                /// Generates the code to assign a multivector value (which may have symbolic coordinates) to one specific coordinate group of a multivector.
-                /// </summary>
-                /// <param name="S">Specification of algebra. Used to known names of basis vector, output language, access strings, etc.</param>
-                /// <param name="FT">Floating point type of destination.</param>
-                /// <param name="mustCast">set to true if a cast to 'FT' must be performed before assigned to 'dstName'.</param>
-                /// <param name="dstGmv">Type of general multivector assigned to.</param>
-                /// <param name="dstName">Name of specialized multivector assigned to.</param>
-                /// <param name="groupIdx">Write to which group?</param>
-                /// <param name="value">Multivector value to assign to the GMV. Must not contain basis blades inside the symbolic scalars.</param>
-                /// <param name="nbTabs">Number of tabs to put before the code.</param>
-                /// <param name="writeZeros">Some callers want to skip "= 0.0" assignments because they would be redundant. So they set this argument to true.</param>
-                /// <returns>String of code for dstName = value;</returns>
-                public static string GenerateGMVassignmentCode(Specification S, FloatType FT, bool mustCast,
-                    G25.GMV dstGmv, string dstName, int groupIdx, RefGA.Multivector value, int nbTabs, bool writeZeros)
-                {
-                    RefGA.BasisBlade[] BL = dstGmv.Group(groupIdx);
-                    string[] accessStr = GetAccessStr(S, dstGmv, dstName, groupIdx);
-                    string[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
-
-                    return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);
-                } // end of GenerateSMVassignmentCode
-
-
-                public static string GenerateReturnCode(Specification S, G25.SMV smv, G25.FloatType FT, String[] valueStr, int nbTabs, bool writeZeros)  {
-                    StringBuilder SB = new StringBuilder();
-                    string smvName = FT.GetMangledName(S, smv.Name);
-
-                    SB.Append('\t', nbTabs);
-                    SB.Append("return ");
-                    SB.Append(smvName);
-                    SB.Append("(");
-                    if (valueStr.Length > 0)
-                    {
-                        SB.AppendLine(smvName + "::" + SmvUtil.GetCoordinateOrderConstant(S, smv) + ",");
-                    }
-                    for (int i = 0; i < valueStr.Length; i++) {
-                        SB.Append('\t', nbTabs+2);
-                        SB.Append(valueStr[i]);
-                        if (i < (valueStr.Length - 1)) SB.Append(",");
-                        SB.AppendLine(" // " + smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames) );
-                    }
-                    SB.Append('\t', nbTabs+1);
-                    SB.Append(");");
-
-                    return SB.ToString();
+                    pCnt++;
                 }
+            }
+            return pCnt;
+        }
 
-                /// <summary>
-                /// Generates the code to assign each <c>valueStr</c> to its respective  <c>accessStr</c>.
-                /// (for example <c>A[0] = B[1]*B[2];</c>)
-                /// <c>valueStr</c> and <c>accessStr</c> must have the same length.
-                /// </summary>
-                /// <param name="S">Used for output language.</param>
-                /// <param name="accessStr">Array of strings that allows which can be used to write to specific coordinates
-                /// of multivectors. This array must have same length as 'valueStr'. Use GetAccessStr() to generate.</param>
-                /// <param name="valueStr">Array of value strings. Must have same length as <c>accessStr</c> Use <c>GetAssignmentStrings()</c> to compute this array.</param>
-                /// <param name="nbTabs">How many tabs to put in front of the generated code.</param>
-                /// <param name="writeZeros">Some callers want to skip <c>"= 0.0"</c> assignments because they would be redundant. So they set this argument to true.</param>
-                /// <returns>String of code for <c>dstName = value;</c></returns>
-                public static string GenerateAssignmentCode(Specification S, String[] accessStr, String[] valueStr, int nbTabs, bool writeZeros) 
+        /// <summary>
+        /// Used internally by ScalarToLangString().
+        /// </summary>
+        /// <returns>true when O is a RefGA.Symbolic.ScalarOp and the operations is RefGA.Symbolic.ScalarOp.INVERSE.</returns>
+        protected static bool IsScalarOpInverse(Object O)
+        {
+            return ((O is RefGA.Symbolic.ScalarOp) &&
+                    ((O as RefGA.Symbolic.ScalarOp).opName == RefGA.Symbolic.ScalarOp.INVERSE));
+        }
+
+        /// <summary>
+        /// Used internally.
+        /// 
+        /// Finds all RefGA.Symbolic.ScalarOp.Inverse and collects them into a new Object[] which is returned.
+        /// If there is only one inverse in 'T' and it is the only entry, then it is left as is.
+        /// </summary>
+        /// <param name="T"></param>
+        /// <returns></returns>
+        protected static Object[] IsolateInverses(Object[] T)
+        {
+            // count number of inverses, other terms
+            int nbInvTerms = 0;
+            int nbTerms = 0;
+            for (int i = 0; i < T.Length; i++)
+            {
+                if (T[i] == null) continue;
+                else if (IsScalarOpInverse(T[i])) nbInvTerms++;
+                else nbTerms++;
+            }
+            // if no inverses, or only one inverse and no other terms, return untouched:
+            if ((nbInvTerms == 0) || ((nbTerms == 0) && (nbInvTerms == 1)))
+                return null;
+            else
+            { // separate the inverses from the rest; return inverses in 'TI'
+                Object[] TI = new Object[nbInvTerms];
+                int tiIdx = 0;
+                for (int i = 0; i < T.Length; i++)
                 {
-                    StringBuilder SB = new StringBuilder();
-
-                    // does the user want to assign zero (this is used by WriteGMVtoSMVcopy())
-                    if (!writeZeros)
-                    {
-                        for (int i = 0; i < valueStr.Length; i++)
-                        {
-                            if ((valueStr[i] != null) && (ValueStringIsZero(S, valueStr[i])))
-                                valueStr[i] = null;
-                        }
-                    }
-
-                    for (int i = 0; i < accessStr.Length; i++)
-                    {
-                        if (valueStr[i] == null) continue; // already assigned
-
-                        // append tabs
-                        SB.Append('\t', nbTabs);
-
-                        // output dstName.c[0] = 
-                        SB.Append(accessStr[i] + " = ");
-
-                        // see if there any similar assignments
-                        for (int j = i + 1; j < accessStr.Length; j++)
-                        {
-                            if (valueStr[i] == valueStr[j])
-                            {
-                                valueStr[j] = null;
-                                SB.Append(accessStr[j] + " = ");
-                            }
-                        }
-                        SB.Append(valueStr[i]);
-                        SB.AppendLine(";");
-                    }
-
-                    return SB.ToString();
-                } // GenerateAssignmentCode()
-
-                /// <summary>
-                /// Returns true when 'valueStr' represent a zero value in the target language.
-                /// </summary>
-                /// <param name="S"></param>
-                /// <param name="valueStr"></param>
-                /// <returns></returns>
-                public static bool ValueStringIsZero(Specification S, string valueStr)
-                {
-                    if (!valueStr.StartsWith("0.0")) return false;
-                    else if (valueStr.Length < 4) return true;
-                    else return !Char.IsDigit(valueStr[3]);
-                }
-
-
-                /// <summary>
-                /// Generates code to assign <c>value</c> to a variable whose coordinate order is specified by <c>BL</c>.
-                /// 
-                /// For example, <c>BL</c> could be <c>[e1, e2, e3]</c> and the multivector value <c>[e1 - 2e3]</c>.
-                /// Then the returned array would be <c>["1", "0", "-2"]</c>.
-                /// 
-                /// Parts of <c>value</c> that cannot be assigned to <c>BL</c> are silently ignored. 
-                /// 
-                /// Possibly, at some point we would like to generate some kind of warning?
-                /// </summary>
-                /// <param name="S">Specification of algebra (not used yet).</param>
-                /// <param name="FT">Floating point type of assigned variable (used for casting strings).</param>
-                /// <param name="mustCast">Set to true if a cast to 'FT' must be performed.</param>
-                /// <param name="BL">Basis blades of assigned variable.</param>
-                /// <param name="value">Multivector value to assign to the list of basis blades. 
-                /// Must not contain basis blades inside the symbolic scalars of the RefGA.BasisBlades.</param>
-                /// <param name="writeZeros">When true, <c>"0"</c> will be returned when no value should be assigned
-                /// to some coordinate. <c>null</c> otherwise.</param>
-                /// <returns>An array of strings which tell you what to assign to each coordinate.</returns>
-                public static String[] GetAssignmentStrings(Specification S, FloatType FT, bool mustCast, RefGA.BasisBlade[] BL, 
-                    RefGA.Multivector value, bool writeZeros)
-                {
-                    String[] assignedStr = new String[BL.Length];
-                    int idx = 0;
-
-                    // for each non-const coord, find out what value is (loop through all entries in value)
-                    foreach (RefGA.BasisBlade B in BL)
-                    {
-                        // find same basisblade in 'value'
-                        foreach (RefGA.BasisBlade C in value.BasisBlades)
-                        {
-                            if (C.bitmap == B.bitmap) // match found: get assignment string
-                            {
-                                // compute D = inverse(B) . C;
-                                RefGA.BasisBlade Bi = (new RefGA.BasisBlade(B.bitmap, 1.0 / B.scale)).Reverse();
-                                RefGA.BasisBlade D = RefGA.BasisBlade.scp(Bi, C);
-
-                                if (mustCast) assignedStr[idx] = FT.castStr + "(" + CodeUtil.ScalarToLangString(S, FT, D) + ")";
-                                else assignedStr[idx] = CodeUtil.ScalarToLangString(S, FT, D);
-                                break;
-                            }
-                        }
-
-                        if (writeZeros && (assignedStr[idx] == null)) // has an assignment string been set?
-                        {
-                            // no assignment: simply assign "0"
-                            assignedStr[idx] = FT.DoubleToString(S, 0.0);
-                        }
-
-                        idx++;
-                    }
-                    return assignedStr;
-                } // end of GetAssignmentStrings()
-
-                /// <summary>
-                /// Used internally by ScalarToLangString().
-                /// 
-                /// Emits on term (+ ....) of a blade value. Contains some optimizations
-                /// to avoid stuff like <c>+-1.0</c>.
-                /// </summary>
-                protected static int EmitTerm(G25.Specification S, G25.FloatType FT, Object[] T, int tCnt, StringBuilder symResult)
-                {
-                    // make stuff below a function
-                    bool plusEmitted = false;
-                    int pCnt = 0; // number of non-null terms in 'T'
-                    for (int p = 0; p < T.Length; p++) // for each product ...*
-                    {
-                        if (T[p] != null)
-                        {
-                            if ((!plusEmitted) && (tCnt > 0))
-                            {
-                                symResult.Append("+");
-                                plusEmitted = true;
-                            }
-                            if ((pCnt > 0) && (symResult.Length > 0) && (!((symResult[symResult.Length - 1] == '-') || (symResult[symResult.Length - 1] == '+'))))
-                                symResult.Append("*");
-
-                            System.Object O = T[p];
-                            if ((O is System.Double) ||
-                                (O is System.Single) ||
-                                (O is System.Int16) ||
-                                (O is System.Int32) ||
-                                (O is System.Int64)) // etc . . . (all number types)
-                            {
-                                double val = (double)O;
-                                if ((val == -1.0) && (p == 0) && (T.Length > 1))
-                                { // when multiplying with -1.0, output only a '-', IF the term is the first (p==0) and more terms follow (T.Length > 1)
-                                    if (symResult.Length > 0)
-                                    {// when val = -1, output code which is better for humans, instead of -1.0 * ... 
-                                        if (symResult[symResult.Length - 1] == '+') // change '+' to '-'
-                                            symResult[symResult.Length - 1] = '-';
-                                        else symResult.Append("-");
-                                    }
-                                    else symResult.Append("-");
-                                }
-                                else if ((val == 1.0) && (p == 0) && (T.Length > 1))
-                                { // when multiplying with 1.0, output nothing IF the term is the first (p==0) and more terms follow (T.Length > 1)
-                                    // do nothing
-                                }
-                                else symResult.Append(FT.DoubleToString(S, (double)O));
-
-                            }
-                            else if (O is ScalarOp)
-                            {
-                                ScalarOp SO = (ScalarOp)O;
-                                symResult.Append(ScalarOpToLangString(S, FT, SO));
-                            }
-                            else if (O is RefGA.BasisBlade)
-                            {
-                                symResult.Append(ScalarToLangString(S, FT, (RefGA.BasisBlade)O));
-                            }
-                            else if (O is RefGA.Multivector)
-                            {
-                                RefGA.Multivector mv = (RefGA.Multivector)O;
-                                StringBuilder mvSB = new StringBuilder();
-                                mvSB.Append("(");
-                                bool first = true;
-                                foreach (RefGA.BasisBlade B in mv.BasisBlades)
-                                {
-                                    if (!first) mvSB.Append(" + ");
-                                    first = false;
-                                    mvSB.Append(ScalarToLangString(S, FT, B));
-                                }
-
-                                mvSB.Append(")");
-
-                                symResult.Append(mvSB);
-                            }
-                            else
-                            {
-                                symResult.Append(O.ToString());
-                            }
-
-                            pCnt++;
-                        }
-                    }
-                    return pCnt;
-                }
-
-                /// <summary>
-                /// Used internally by ScalarToLangString().
-                /// </summary>
-                /// <returns>true when O is a RefGA.Symbolic.ScalarOp and the operations is RefGA.Symbolic.ScalarOp.INVERSE.</returns>
-                protected static bool IsScalarOpInverse(Object O)
-                {
-                    return ((O is RefGA.Symbolic.ScalarOp) &&
-                            ((O as RefGA.Symbolic.ScalarOp).opName == RefGA.Symbolic.ScalarOp.INVERSE));
-                }
-
-                /// <summary>
-                /// Used internally.
-                /// 
-                /// Finds all RefGA.Symbolic.ScalarOp.Inverse and collects them into a new Object[] which is returned.
-                /// If there is only one inverse in 'T' and it is the only entry, then it is left as is.
-                /// </summary>
-                /// <param name="T"></param>
-                /// <returns></returns>
-                protected static Object[] IsolateInverses(Object[] T)
-                {
-                    // count number of inverses, other terms
-                    int nbInvTerms = 0;
-                    int nbTerms = 0;
-                    for (int i = 0; i < T.Length; i++)
-                    {
-                        if (T[i] == null) continue;
-                        else if (IsScalarOpInverse(T[i])) nbInvTerms++;
-                        else nbTerms++;
-                    }
-                    // if no inverses, or only one inverse and no other terms, return untouched:
-                    if ((nbInvTerms == 0) || ((nbTerms == 0) && (nbInvTerms == 1)))
-                        return null;
-                    else
-                    { // separate the inverses from the rest; return inverses in 'TI'
-                        Object[] TI = new Object[nbInvTerms];
-                        int tiIdx = 0;
-                        for (int i = 0; i < T.Length; i++)
-                        {
-                            if (IsScalarOpInverse(T[i]))
-                            { // strip the scalarop inverse part, and put T[i] in TI[i]
-                                TI[tiIdx++] = (T[i] as RefGA.Symbolic.ScalarOp).value;
-                                T[i] = null;
-                            }
-                        }
-                        return TI;
+                    if (IsScalarOpInverse(T[i]))
+                    { // strip the scalarop inverse part, and put T[i] in TI[i]
+                        TI[tiIdx++] = (T[i] as RefGA.Symbolic.ScalarOp).value;
+                        T[i] = null;
                     }
                 }
+                return TI;
+            }
+        }
 
 
-                /// <summary>
-                /// Converts a scalar basis blade (with optional symbolic part) to a string in the output language of <c>S</c>.
-                /// 
-                /// Some effort is made to output code which is close to that a human would write.
-                /// </summary>
-                /// <param name="S">Specification of algebra, used for output language, basis vector names, etc.</param>
-                /// <param name="FT">Floating point type of output.</param>
-                /// <param name="B">The basis blade.</param>
-                /// <returns>String code representation of 'B'.</returns>
-                public static string ScalarToLangString(G25.Specification S, G25.FloatType FT, RefGA.BasisBlade B)
+        /// <summary>
+        /// Converts a scalar basis blade (with optional symbolic part) to a string in the output language of <c>S</c>.
+        /// 
+        /// Some effort is made to output code which is close to that a human would write.
+        /// </summary>
+        /// <param name="S">Specification of algebra, used for output language, basis vector names, etc.</param>
+        /// <param name="FT">Floating point type of output.</param>
+        /// <param name="B">The basis blade.</param>
+        /// <returns>String code representation of 'B'.</returns>
+        public static string ScalarToLangString(G25.Specification S, G25.FloatType FT, RefGA.BasisBlade B)
+        {
+            string symScaleStr = "";
+            { // convert symbolic part
+                if (B.symScale != null)
                 {
-                    string symScaleStr = "";
-                    { // convert symbolic part
-                        if (B.symScale != null)
+                    // symbolic scalar string goes in  symResult
+                    System.Text.StringBuilder symResult = new System.Text.StringBuilder();
+                    int tCnt = 0;
+                    for (int t = 0; t < B.symScale.Length; t++) // for each term ...*...*...+
+                    {
+                        Object[] T = (Object[])B.symScale[t].Clone(); // clone 'T' because IsolateInverses() might alter it!
+                        if (T != null) // if term is not null
                         {
-                            // symbolic scalar string goes in  symResult
-                            System.Text.StringBuilder symResult = new System.Text.StringBuilder();
-                            int tCnt = 0;
-                            for (int t = 0; t < B.symScale.Length; t++) // for each term ...*...*...+
+                            // first find all scalarop inverses
+                            // turn those into a new term, but without inverses?
+                            Object[] TI = IsolateInverses(T);
+
+                            // emit 'T'
+                            int pCnt = EmitTerm(S, FT, T, tCnt, symResult);
+
+                            if (TI != null)  // do we have to divide by a number of terms?
                             {
-                                Object[] T = (Object[])B.symScale[t].Clone(); // clone 'T' because IsolateInverses() might alter it!
-                                if (T != null) // if term is not null
-                                {
-                                    // first find all scalarop inverses
-                                    // turn those into a new term, but without inverses?
-                                    Object[] TI = IsolateInverses(T);
-
-                                    // emit 'T'
-                                    int pCnt = EmitTerm(S, FT, T, tCnt, symResult);
-
-                                    if (TI != null)  // do we have to divide by a number of terms?
-                                    {
-                                        // emit '/(TI)'
-                                        symResult.Append("/(");
-                                        EmitTerm(S, FT, TI, 0, symResult);
-                                        symResult.Append(")");
-                                    }
-
-                                    if (pCnt > 0) tCnt++; // only increment number of terms when T was not empty
-                                }
+                                // emit '/(TI)'
+                                symResult.Append("/(");
+                                EmitTerm(S, FT, TI, 0, symResult);
+                                symResult.Append(")");
                             }
 
-                            if (tCnt > 0)
-                                symScaleStr = ((tCnt > 1) ? "(" : "") + symResult + ((tCnt > 1) ? ")" : "");
-                        }
-                    } // end of symbolic part
-
-                    // special cases when numerical scale is exactly +- 1
-                    if (B.scale == 1.0)
-                    {
-                        if (symScaleStr.Length > 0) return symScaleStr;
-                        else return FT.DoubleToString(S, 1.0);
-                    }
-                    else if (B.scale == -1.0)
-                    {
-                        if (symScaleStr.Length > 0) return "-" + symScaleStr;
-                        else return FT.DoubleToString(S, -1.0);
-                    }
-                    else
-                    {
-                        // get numerical part 
-                        String numScaleStr = FT.DoubleToString(S, B.scale);
-
-                        // merge symbolic and numerical
-                        if (symScaleStr.Length > 0)
-                            numScaleStr = numScaleStr + "*" + symScaleStr;
-
-                        // done
-                        return numScaleStr;
-                    }
-                } // end of function ScalarToLangString
-
-
-                /// <summary>
-                /// Converts a <c>RefGA.Symbolic.ScalarOp</c> to code.
-                /// 
-                /// Handles special cases (such as inversion) and understands floating point
-                /// types (e.g., <c>fabsf()</c> is used for floats and <c>fabs()</c> is used for doubles in C.
-                /// </summary>
-                /// <param name="S">Used for output language.</param>
-                /// <param name="FT">Floating point type used.</param>
-                /// <param name="Op">The operation to convert to code.</param>
-                /// <returns>Code for implementing <c>Op</c>c>.</returns>
-                public static string ScalarOpToLangString(G25.Specification S, G25.FloatType FT, RefGA.Symbolic.ScalarOp Op)
-                {
-                    string valueStr = null;
-                    {
-                        if (!Op.value.IsScalar()) throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): value should be scalar, found: " + Op.value.ToString(S.m_basisVectorNames));
-                        if (Op.value.IsZero()) valueStr = ScalarToLangString(S, FT, RefGA.BasisBlade.ZERO);
-                        else valueStr = ScalarToLangString(S, FT, Op.value.BasisBlades[0]);
-                    }
-
-                    if (Op.opName == ScalarOp.INVERSE)
-                    {
-                        if (FT.type == "float") return "1.0f / (" + valueStr + ")";
-                        else if (FT.type == "double") return "1.0 / (" + valueStr + ")";
-                        else return FT.castStr + "1.0 / (" + valueStr + ")";
-                    }
-                    else
-                    {
-                        switch (S.m_outputLanguage)
-                        {
-                            case OUTPUT_LANGUAGE.C:
-                                if (FT.type == "float") return m_floatOpsC[Op.opName] + "(" + valueStr + ")";
-                                else return m_doubleOpsC[Op.opName] + "(" + valueStr + ")";
-                            case OUTPUT_LANGUAGE.CPP:
-                                if (FT.type == "float") return m_floatOpsCpp[Op.opName] + "(" + valueStr + ")";
-                                else return m_doubleOpsCpp[Op.opName] + "(" + valueStr + ")";
-                            default:
-                                throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
+                            if (pCnt > 0) tCnt++; // only increment number of terms when T was not empty
                         }
                     }
 
-                } // end of function ScalarOpToLangString()
-
-                public static string OpNameToLangString(G25.Specification S, G25.FloatType FT, string opName) {
-                    switch (S.m_outputLanguage)
-                    {
-                        case OUTPUT_LANGUAGE.C:
-                            if (FT.type == "float") return m_floatOpsC[opName];
-                            else return m_doubleOpsC[opName];
-                        case OUTPUT_LANGUAGE.CPP:
-                            if (FT.type == "float") return m_floatOpsCpp[opName];
-                            else return m_doubleOpsCpp[opName];
-                        default:
-                            throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
-                    }
+                    if (tCnt > 0)
+                        symScaleStr = ((tCnt > 1) ? "(" : "") + symResult + ((tCnt > 1) ? ")" : "");
                 }
+            } // end of symbolic part
 
-                /// <summary>
-                /// Called by ScalarOpToLangString() to initialize some lookup tables.
-                /// </summary>
-                protected static void InitOps()
+            // special cases when numerical scale is exactly +- 1
+            if (B.scale == 1.0)
+            {
+                if (symScaleStr.Length > 0) return symScaleStr;
+                else return FT.DoubleToString(S, 1.0);
+            }
+            else if (B.scale == -1.0)
+            {
+                if (symScaleStr.Length > 0) return "-" + symScaleStr;
+                else return FT.DoubleToString(S, -1.0);
+            }
+            else
+            {
+                // get numerical part 
+                String numScaleStr = FT.DoubleToString(S, B.scale);
+
+                // merge symbolic and numerical
+                if (symScaleStr.Length > 0)
+                    numScaleStr = numScaleStr + "*" + symScaleStr;
+
+                // done
+                return numScaleStr;
+            }
+        } // end of function ScalarToLangString
+
+
+        /// <summary>
+        /// Converts a <c>RefGA.Symbolic.ScalarOp</c> to code.
+        /// 
+        /// Handles special cases (such as inversion) and understands floating point
+        /// types (e.g., <c>fabsf()</c> is used for floats and <c>fabs()</c> is used for doubles in C.
+        /// </summary>
+        /// <param name="S">Used for output language.</param>
+        /// <param name="FT">Floating point type used.</param>
+        /// <param name="Op">The operation to convert to code.</param>
+        /// <returns>Code for implementing <c>Op</c>c>.</returns>
+        public static string ScalarOpToLangString(G25.Specification S, G25.FloatType FT, RefGA.Symbolic.ScalarOp Op)
+        {
+            string valueStr = null;
+            {
+                if (!Op.value.IsScalar()) throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): value should be scalar, found: " + Op.value.ToString(S.m_basisVectorNames));
+                if (Op.value.IsZero()) valueStr = ScalarToLangString(S, FT, RefGA.BasisBlade.ZERO);
+                else valueStr = ScalarToLangString(S, FT, Op.value.BasisBlades[0]);
+            }
+
+            if (Op.opName == ScalarOp.INVERSE)
+            {
+                if (FT.type == "float") return "1.0f / (" + valueStr + ")";
+                else if (FT.type == "double") return "1.0 / (" + valueStr + ")";
+                else return FT.castStr + "1.0 / (" + valueStr + ")";
+            }
+            else
+            {
+                switch (S.m_outputLanguage)
                 {
-                    if (m_doubleOpsC != null) return; // check if init already done
-
-                    { // scalar math operations for C, double precision
-                        m_doubleOpsC = new System.Collections.Generic.Dictionary<String, String>();
-                        m_doubleOpsC[ScalarOp.SQRT] = "sqrt";
-                        m_doubleOpsC[ScalarOp.EXP] = "exp";
-                        m_doubleOpsC[ScalarOp.LOG] = "log";
-                        m_doubleOpsC[ScalarOp.SIN] = "sin";
-                        m_doubleOpsC[ScalarOp.COS] = "cos";
-                        m_doubleOpsC[ScalarOp.TAN] = "tan";
-                        m_doubleOpsC[ScalarOp.SINH] = "sinh";
-                        m_doubleOpsC[ScalarOp.COSH] = "cosh";
-                        m_doubleOpsC[ScalarOp.TANH] = "tanh";
-                        m_doubleOpsC[ScalarOp.ABS] = "fabs";
-                    }
-
-                    { // scalar math operations for C, single precision (C has not single precision math functions)
-                        m_floatOpsC = new System.Collections.Generic.Dictionary<String, String>();
-                        m_floatOpsC[ScalarOp.SQRT] = "(float)sqrt";
-                        m_floatOpsC[ScalarOp.EXP] = "(float)exp";
-                        m_floatOpsC[ScalarOp.LOG] = "(float)log";
-                        m_floatOpsC[ScalarOp.SIN] = "(float)sin";
-                        m_floatOpsC[ScalarOp.COS] = "(float)cos";
-                        m_floatOpsC[ScalarOp.TAN] = "(float)tan";
-                        m_floatOpsC[ScalarOp.SINH] = "(float)sinh";
-                        m_floatOpsC[ScalarOp.COSH] = "(float)cosh";
-                        m_floatOpsC[ScalarOp.TANH] = "(float)tanh";
-                        m_floatOpsC[ScalarOp.ABS] = "(float)fabs";
-                    }
-                    { // scalar math operations for C++, double precision
-                        m_doubleOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
-                        m_doubleOpsCpp[ScalarOp.SQRT] = "::sqrt";
-                        m_doubleOpsCpp[ScalarOp.EXP] = "::exp";
-                        m_doubleOpsCpp[ScalarOp.LOG] = "::log";
-                        m_doubleOpsCpp[ScalarOp.SIN] = "::sin";
-                        m_doubleOpsCpp[ScalarOp.COS] = "::cos";
-                        m_doubleOpsCpp[ScalarOp.TAN] = "::tan";
-                        m_doubleOpsCpp[ScalarOp.SINH] = "::sinh";
-                        m_doubleOpsCpp[ScalarOp.COSH] = "::cosh";
-                        m_doubleOpsCpp[ScalarOp.TANH] = "::tanh";
-                        m_doubleOpsCpp[ScalarOp.ABS] = "::fabs";
-                    }
-
-                    { // scalar math operations for C++, single precision
-                        m_floatOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
-                        m_floatOpsCpp[ScalarOp.SQRT] = "::sqrtf";
-                        m_floatOpsCpp[ScalarOp.EXP] = "::expf";
-                        m_floatOpsCpp[ScalarOp.LOG] = "::logf";
-                        m_floatOpsCpp[ScalarOp.SIN] = "::sinf";
-                        m_floatOpsCpp[ScalarOp.COS] = "::cosf";
-                        m_floatOpsCpp[ScalarOp.TAN] = "::tanf";
-                        m_floatOpsCpp[ScalarOp.SINH] = "::sinhf";
-                        m_floatOpsCpp[ScalarOp.COSH] = "::coshf";
-                        m_floatOpsCpp[ScalarOp.TANH] = "::tanhf";
-                        m_floatOpsCpp[ScalarOp.ABS] = "::fabsf";
-                    }
+                    case OUTPUT_LANGUAGE.C:
+                        if (FT.type == "float") return m_floatOpsC[Op.opName] + "(" + valueStr + ")";
+                        else return m_doubleOpsC[Op.opName] + "(" + valueStr + ")";
+                    case OUTPUT_LANGUAGE.CPP:
+                        if (FT.type == "float") return m_floatOpsCpp[Op.opName] + "(" + valueStr + ")";
+                        else return m_doubleOpsCpp[Op.opName] + "(" + valueStr + ")";
+                    default:
+                        throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
                 }
+            }
+
+        } // end of function ScalarOpToLangString()
+
+        public static string OpNameToLangString(G25.Specification S, G25.FloatType FT, string opName) {
+            switch (S.m_outputLanguage)
+            {
+                case OUTPUT_LANGUAGE.C:
+                    if (FT.type == "float") return m_floatOpsC[opName];
+                    else return m_doubleOpsC[opName];
+                case OUTPUT_LANGUAGE.CPP:
+                    if (FT.type == "float") return m_floatOpsCpp[opName];
+                    else return m_doubleOpsCpp[opName];
+                default:
+                    throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
+            }
+        }
+
+        /// <summary>
+        /// Called by ScalarOpToLangString() to initialize some lookup tables.
+        /// </summary>
+        protected static void InitOps()
+        {
+            if (m_doubleOpsC != null) return; // check if init already done
+
+            { // scalar math operations for C, double precision
+                m_doubleOpsC = new System.Collections.Generic.Dictionary<String, String>();
+                m_doubleOpsC[ScalarOp.SQRT] = "sqrt";
+                m_doubleOpsC[ScalarOp.EXP] = "exp";
+                m_doubleOpsC[ScalarOp.LOG] = "log";
+                m_doubleOpsC[ScalarOp.SIN] = "sin";
+                m_doubleOpsC[ScalarOp.COS] = "cos";
+                m_doubleOpsC[ScalarOp.TAN] = "tan";
+                m_doubleOpsC[ScalarOp.SINH] = "sinh";
+                m_doubleOpsC[ScalarOp.COSH] = "cosh";
+                m_doubleOpsC[ScalarOp.TANH] = "tanh";
+                m_doubleOpsC[ScalarOp.ABS] = "fabs";
+            }
+
+            { // scalar math operations for C, single precision (C has not single precision math functions)
+                m_floatOpsC = new System.Collections.Generic.Dictionary<String, String>();
+                m_floatOpsC[ScalarOp.SQRT] = "(float)sqrt";
+                m_floatOpsC[ScalarOp.EXP] = "(float)exp";
+                m_floatOpsC[ScalarOp.LOG] = "(float)log";
+                m_floatOpsC[ScalarOp.SIN] = "(float)sin";
+                m_floatOpsC[ScalarOp.COS] = "(float)cos";
+                m_floatOpsC[ScalarOp.TAN] = "(float)tan";
+                m_floatOpsC[ScalarOp.SINH] = "(float)sinh";
+                m_floatOpsC[ScalarOp.COSH] = "(float)cosh";
+                m_floatOpsC[ScalarOp.TANH] = "(float)tanh";
+                m_floatOpsC[ScalarOp.ABS] = "(float)fabs";
+            }
+            { // scalar math operations for C++, double precision
+                m_doubleOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
+                m_doubleOpsCpp[ScalarOp.SQRT] = "::sqrt";
+                m_doubleOpsCpp[ScalarOp.EXP] = "::exp";
+                m_doubleOpsCpp[ScalarOp.LOG] = "::log";
+                m_doubleOpsCpp[ScalarOp.SIN] = "::sin";
+                m_doubleOpsCpp[ScalarOp.COS] = "::cos";
+                m_doubleOpsCpp[ScalarOp.TAN] = "::tan";
+                m_doubleOpsCpp[ScalarOp.SINH] = "::sinh";
+                m_doubleOpsCpp[ScalarOp.COSH] = "::cosh";
+                m_doubleOpsCpp[ScalarOp.TANH] = "::tanh";
+                m_doubleOpsCpp[ScalarOp.ABS] = "::fabs";
+            }
+
+            { // scalar math operations for C++, single precision
+                m_floatOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
+                m_floatOpsCpp[ScalarOp.SQRT] = "::sqrtf";
+                m_floatOpsCpp[ScalarOp.EXP] = "::expf";
+                m_floatOpsCpp[ScalarOp.LOG] = "::logf";
+                m_floatOpsCpp[ScalarOp.SIN] = "::sinf";
+                m_floatOpsCpp[ScalarOp.COS] = "::cosf";
+                m_floatOpsCpp[ScalarOp.TAN] = "::tanf";
+                m_floatOpsCpp[ScalarOp.SINH] = "::sinhf";
+                m_floatOpsCpp[ScalarOp.COSH] = "::coshf";
+                m_floatOpsCpp[ScalarOp.TANH] = "::tanhf";
+                m_floatOpsCpp[ScalarOp.ABS] = "::fabsf";
+            }
+        }
 
 
-                /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for doubles).</summary>
-                private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsC = null;
-                /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for floats).</summary>
-                private static System.Collections.Generic.Dictionary<string, string> m_floatOpsC = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for doubles).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsC = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for floats).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_floatOpsC = null;
 
-                /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for doubles).</summary>
-                private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsCpp = null;
-                /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for floats).</summary>
-                private static System.Collections.Generic.Dictionary<string, string> m_floatOpsCpp = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for doubles).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsCpp = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for floats).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_floatOpsCpp = null;
 
 
 
-            } // end of class CodeUtil
-        } // end of namepace Shared
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class CodeUtil
+} // end of namepace G25.CG.Shared

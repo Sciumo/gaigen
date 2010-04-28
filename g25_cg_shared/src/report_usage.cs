@@ -18,125 +18,119 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+    
+    /// <summary>
+    /// Contains various utility functions for reporting the usage of specialized multivectors 
+    /// in functions over general multivectors.
+    /// </summary>
+    public class ReportUsage
     {
-        namespace Shared
+        private const string PLACE_HOLDER = "__place~holder__";
+        public const string INVALID = "INVALID";
+
+        public static string GetSpecializedConstantName(Specification S, string typename)
         {
-            
-            /// <summary>
-            /// Contains various utility functions for reporting the usage of specialized multivectors 
-            /// in functions over general multivectors.
-            /// </summary>
-            public class ReportUsage
+            return (S.m_namespace + "_" + typename).ToUpper();
+        }
+
+
+        // add someextra instructions for report usage?
+        // add extra verbatim code here if rep usage?
+        // what arguments are required??
+        public static Instruction GetReportInstruction(Specification S, G25.fgs F, FuncArgInfo[] FAI)
+        {
+            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) ||
+                (!S.m_reportUsage)  ||
+                (FAI.Length == 0)) return new NOPinstruction();
+
+            // check if all arguments are GMVs
+            for (int i = 0; i < FAI.Length; i++)
             {
-                private const string PLACE_HOLDER = "__place~holder__";
-                public const string INVALID = "INVALID";
+                if (!FAI[i].IsGMV()) return new NOPinstruction();
+            }
 
-                public static string GetSpecializedConstantName(Specification S, string typename)
+            // get XML spec
+            string XMLstr = GetXMLstring(S, F, FAI);
+
+            StringBuilder SB = new StringBuilder();
+
+            {
+                string MV_CONSTANT = GetSpecializedConstantName(S, S.m_GMV.Name);
+                string INVALID_CONSTANT = GetSpecializedConstantName(S, INVALID);
+                // output the test for all specialized MVs
+                SB.Append("if (");
+                for (int i = 0; i < FAI.Length; i++)
                 {
-                    return (S.m_namespace + "_" + typename).ToUpper();
-                }
-
-
-                // add someextra instructions for report usage?
-                // add extra verbatim code here if rep usage?
-                // what arguments are required??
-                public static Instruction GetReportInstruction(Specification S, G25.fgs F, FuncArgInfo[] FAI)
-                {
-                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) ||
-                        (!S.m_reportUsage)  ||
-                        (FAI.Length == 0)) return new NOPinstruction();
-
-                    // check if all arguments are GMVs
-                    for (int i = 0; i < FAI.Length; i++)
+                    if (i > 0)
                     {
-                        if (!FAI[i].IsGMV()) return new NOPinstruction();
+                        SB.AppendLine(" && ");
+                        SB.Append("\t");
+                    }
+                    SB.Append("(" + FAI[i].Name + ".m_t > " + MV_CONSTANT + ") && (" + FAI[i].Name + ".m_t < " + INVALID_CONSTANT + ")");
+                }
+                SB.AppendLine(") {");
+
+                SB.Append("\t\tstd::string reportUsageString = std::string(\"\") + ");
+                // output XMLstr, replace placeholders with code
+                int XMLstrIdx = 0;
+                int argIdx = 0;
+                while (XMLstrIdx < XMLstr.Length)
+                {
+                    string placeHolder = GetPlaceHolderString(argIdx);
+
+                    int nextIdx = XMLstr.IndexOf(placeHolder, XMLstrIdx);
+                    if (nextIdx < 0) nextIdx = XMLstr.Length;
+
+                    SB.Append(Util.StringToCode(XMLstr.Substring(XMLstrIdx, nextIdx - XMLstrIdx)));
+                    if (argIdx < FAI.Length)
+                    {
+                        SB.Append("+ g_" + S.m_namespace + "Typenames[" + FAI[argIdx].Name + ".m_t] + ");
                     }
 
-                    // get XML spec
-                    string XMLstr = GetXMLstring(S, F, FAI);
-
-                    StringBuilder SB = new StringBuilder();
-
-                    {
-                        string MV_CONSTANT = GetSpecializedConstantName(S, S.m_GMV.Name);
-                        string INVALID_CONSTANT = GetSpecializedConstantName(S, INVALID);
-                        // output the test for all specialized MVs
-                        SB.Append("if (");
-                        for (int i = 0; i < FAI.Length; i++)
-                        {
-                            if (i > 0)
-                            {
-                                SB.AppendLine(" && ");
-                                SB.Append("\t");
-                            }
-                            SB.Append("(" + FAI[i].Name + ".m_t > " + MV_CONSTANT + ") && (" + FAI[i].Name + ".m_t < " + INVALID_CONSTANT + ")");
-                        }
-                        SB.AppendLine(") {");
-
-                        SB.Append("\t\tstd::string reportUsageString = std::string(\"\") + ");
-                        // output XMLstr, replace placeholders with code
-                        int XMLstrIdx = 0;
-                        int argIdx = 0;
-                        while (XMLstrIdx < XMLstr.Length)
-                        {
-                            string placeHolder = GetPlaceHolderString(argIdx);
-
-                            int nextIdx = XMLstr.IndexOf(placeHolder, XMLstrIdx);
-                            if (nextIdx < 0) nextIdx = XMLstr.Length;
-
-                            SB.Append(Util.StringToCode(XMLstr.Substring(XMLstrIdx, nextIdx - XMLstrIdx)));
-                            if (argIdx < FAI.Length)
-                            {
-                                SB.Append("+ g_" + S.m_namespace + "Typenames[" + FAI[argIdx].Name + ".m_t] + ");
-                            }
-
-                            argIdx++;
-                            XMLstrIdx = nextIdx + placeHolder.Length;
-                        }
-                        SB.AppendLine(";");
-                        SB.AppendLine("\t\tReportUsage::mergeReport(new ReportUsage(reportUsageString));");
-
-                        SB.AppendLine("}");
-                    }
-
-                    int nbTabs = 1;
-                    return new VerbatimCodeInstruction(nbTabs, SB.ToString());
+                    argIdx++;
+                    XMLstrIdx = nextIdx + placeHolder.Length;
                 }
+                SB.AppendLine(";");
+                SB.AppendLine("\t\tReportUsage::mergeReport(new ReportUsage(reportUsageString));");
 
-                private static string GetPlaceHolderString(int idx)
-                {
-                    return PLACE_HOLDER + idx;
-                }
+                SB.AppendLine("}");
+            }
 
-                private static string GetXMLstring(Specification S, G25.fgs F, FuncArgInfo[] FAI)
-                {
-                    // no return forced type in XML
-                    string returnTypeName = null;
+            int nbTabs = 1;
+            return new VerbatimCodeInstruction(nbTabs, SB.ToString());
+        }
 
-                    // get placeholder arguments for XML
-                    string[] argumentTypeNames = new string[FAI.Length];
-                    for (int i = 0; i < FAI.Length; i++)
-                    {
-                        argumentTypeNames[i] = GetPlaceHolderString(i);
-                    }
+        private static string GetPlaceHolderString(int idx)
+        {
+            return PLACE_HOLDER + idx;
+        }
 
-                    // use a single float type only in XML
-                    string[] floatNames = new string[1] { FAI[0].FloatType.type };
+        private static string GetXMLstring(Specification S, G25.fgs F, FuncArgInfo[] FAI)
+        {
+            // no return forced type in XML
+            string returnTypeName = null;
 
-                    // get a copy of F, but put insert placeholders for the typenames
-                    G25.fgs tmpF = new G25.fgs(F.Name, F.OutputName, returnTypeName, argumentTypeNames,
-                        F.ArgumentVariableNames, floatNames, F.MetricName, F.Comment, F.Options);
+            // get placeholder arguments for XML
+            string[] argumentTypeNames = new string[FAI.Length];
+            for (int i = 0; i < FAI.Length; i++)
+            {
+                argumentTypeNames[i] = GetPlaceHolderString(i);
+            }
 
-                    string XMLstr = S.FunctionToXmlString(tmpF);
+            // use a single float type only in XML
+            string[] floatNames = new string[1] { FAI[0].FloatType.type };
 
-                    return XMLstr;
-                }
+            // get a copy of F, but put insert placeholders for the typenames
+            G25.fgs tmpF = new G25.fgs(F.Name, F.OutputName, returnTypeName, argumentTypeNames,
+                F.ArgumentVariableNames, floatNames, F.MetricName, F.Comment, F.Options);
+
+            string XMLstr = S.FunctionToXmlString(tmpF);
+
+            return XMLstr;
+        }
 
 
-            } // end of class ReportUsage
-        } // end of namepace Shared
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class ReportUsage
+} // end of namepace G25.CG.Shared

@@ -19,37 +19,31 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+
+    /// <summary>
+    /// The Specification.m_fgs split into converter and functions.
+    /// 
+    /// For each function, what plugin can implement it (can be null if
+    /// no plugin is available).
+    /// 
+    /// Initialized and used by Functions.WriteFunctions().
+    /// The information is re-used by TestSuite.GenerateCode().
+    /// </summary>
+    public class FunctionGeneratorInfo
     {
-        namespace Shared
-        {
+        public FunctionGeneratorInfo() { }
 
-            /// <summary>
-            /// The Specification.m_fgs split into converter and functions.
-            /// 
-            /// For each function, what plugin can implement it (can be null if
-            /// no plugin is available).
-            /// 
-            /// Initialized and used by Functions.WriteFunctions().
-            /// The information is re-used by TestSuite.GenerateCode().
-            /// </summary>
-            public class FunctionGeneratorInfo
-            {
-                public FunctionGeneratorInfo() { }
+        public List<G25.fgs> m_converterFGS = null;
+        public List<G25.fgs> m_functionFGS = null;
+        /// <summary>
+        ///  For each m_functionFGS, the FunctionGenerator that can implement it.
+        ///  This can be null when no FunctionGenerator is available for a particular
+        ///  FGS.
+        /// </summary>
+        public G25.CG.Shared.BaseFunctionGenerator[] m_functionGenerators = null;
+        public G25.CG.Shared.CGdata[] m_functionCgd = null;
+    } // end of class FunctionGeneratorInfo
 
-                public List<G25.fgs> m_converterFGS = null;
-                public List<G25.fgs> m_functionFGS = null;
-                /// <summary>
-                ///  For each m_functionFGS, the FunctionGenerator that can implement it.
-                ///  This can be null when no FunctionGenerator is available for a particular
-                ///  FGS.
-                /// </summary>
-                public G25.CG.Shared.BaseFunctionGenerator[] m_functionGenerators = null;
-                public G25.CG.Shared.CGdata[] m_functionCgd = null;
-            } // end of class FunctionGeneratorInfo
-            
-        } // end of namespace 'Shared'
-    } // end of namespace CG
-} // end of namespace G25
+} // end of namespace G25.CG.Shared

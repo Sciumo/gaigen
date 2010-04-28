@@ -18,33 +18,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.Matlab
 {
-    namespace CG
+    public class MainGenerator : G25.CodeGenerator
     {
-        namespace Matlab
+        /// <returns>what language this code generator generates for.</returns>
+        public String Language()
         {
-            public class MainGenerator : G25.CodeGenerator
-            {
-                /// <returns>what language this code generator generates for.</returns>
-                public String Language()
-                {
-                    return G25.Specification.XML_MATLAB;
-                }
+            return G25.Specification.XML_MATLAB;
+        }
 
-                /// <summary>
-                /// Should generate the code according to the specification of the algebra.
-                /// </summary>
-                /// <param name="S">The specification of the algebra. The specification also lists the names of the files
-                /// to be generated, or at least the base path.</param>
-                /// <param name="plugins">The plugins which Gaigen found that support the same language as this code generator.</param>
-                /// <returns>a list of filenames; the names of the files that were generated. This may be used
-                /// for post processing.</returns>
-                public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
-                {
-                    return new List<string>();
-                }
-            }
-        } // end of namespace 'Matlab'
-    } // end of namespace CG
-} // end of namespace G25
+        /// <summary>
+        /// Should generate the code according to the specification of the algebra.
+        /// </summary>
+        /// <param name="S">The specification of the algebra. The specification also lists the names of the files
+        /// to be generated, or at least the base path.</param>
+        /// <param name="plugins">The plugins which Gaigen found that support the same language as this code generator.</param>
+        /// <returns>a list of filenames; the names of the files that were generated. This may be used
+        /// for post processing.</returns>
+        public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
+        {
+            return new List<string>();
+        }
+    }
+} // end of namespace  G25.CG.Matlab

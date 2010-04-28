@@ -19,87 +19,81 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace G25
+namespace G25.CG.CPP
 {
-    namespace CG
+    /// <summary>
+    /// Handles code generation of constants.
+    /// </summary>
+    public class Constants
     {
-        namespace CPP
+        public static void WriteDeclarations(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
-            /// <summary>
-            /// Handles code generation of constants.
-            /// </summary>
-            public class Constants
+            // for each float type
+            foreach (G25.FloatType FT in S.m_floatTypes)
             {
-                public static void WriteDeclarations(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+                // for each som
+                foreach (G25.Constant C in S.m_constant)
                 {
-                    // for each float type
-                    foreach (G25.FloatType FT in S.m_floatTypes)
-                    {
-                        // for each som
-                        foreach (G25.Constant C in S.m_constant)
-                        {
-                            WriteDeclaration(SB, S, cgd, FT, C);
-                        }
-                        SB.AppendLine("");
-                    }
+                    WriteDeclaration(SB, S, cgd, FT, C);
+                }
+                SB.AppendLine("");
+            }
+        }
+
+        private static void WriteDeclaration(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Constant C)
+        {
+            // extern MANGLED_TYPENAME MANGLED_CONSTANT_NAME;
+            if (C.Comment.Length > 0)
+                SB.AppendLine("/** " + C.Comment + " */");
+            SB.Append("extern ");
+            SB.Append(FT.GetMangledName(S, C.Type.GetName()));
+            SB.Append(" ");
+            SB.Append(FT.GetMangledName(S, C.Name));
+            SB.AppendLine(";");
+        }
+
+        public static void WriteDefinitions(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            // for each float type
+            foreach (G25.FloatType FT in S.m_floatTypes)
+            {
+                // for each som
+                foreach (G25.Constant C in S.m_constant)
+                {
+                    WriteDefinition(SB, S, cgd, FT, C);
+                }
+                SB.AppendLine("");
+            }
+        }
+
+        private static void WriteDefinition(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Constant C)
+        {
+            // assume only SMV constants for now
+            G25.SMV smv = C.Type as G25.SMV;
+            ConstantSMV Csmv = C as ConstantSMV;
+
+            string className = FT.GetMangledName(S, smv.Name);
+
+            // MANGLED_TYPENAME MANGLED_CONSTANT_NAME = {...}
+            SB.Append(className);
+            SB.Append(" ");
+            SB.Append(FT.GetMangledName(S, C.Name));
+
+            if (smv.NbNonConstBasisBlade > 0) {
+                // MANGLED_TYPENAME MANGLED_CONSTANT_NAME(...)
+                SB.Append("(" + className + "::" + G25.CG.Shared.SmvUtil.GetCoordinateOrderConstant(S, smv));
+
+                for (int c = 0; c < smv.NbNonConstBasisBlade; c++)
+                {
+                    SB.Append(", ");
+                    SB.Append(FT.DoubleToString(S, Csmv.Value[c]));
                 }
 
-                private static void WriteDeclaration(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Constant C)
-                {
-                    // extern MANGLED_TYPENAME MANGLED_CONSTANT_NAME;
-                    if (C.Comment.Length > 0)
-                        SB.AppendLine("/** " + C.Comment + " */");
-                    SB.Append("extern ");
-                    SB.Append(FT.GetMangledName(S, C.Type.GetName()));
-                    SB.Append(" ");
-                    SB.Append(FT.GetMangledName(S, C.Name));
-                    SB.AppendLine(";");
-                }
+                SB.Append(")");
+            }
 
-                public static void WriteDefinitions(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
-                {
-                    // for each float type
-                    foreach (G25.FloatType FT in S.m_floatTypes)
-                    {
-                        // for each som
-                        foreach (G25.Constant C in S.m_constant)
-                        {
-                            WriteDefinition(SB, S, cgd, FT, C);
-                        }
-                        SB.AppendLine("");
-                    }
-                }
+            SB.AppendLine(";");
+        }
 
-                private static void WriteDefinition(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Constant C)
-                {
-                    // assume only SMV constants for now
-                    G25.SMV smv = C.Type as G25.SMV;
-                    ConstantSMV Csmv = C as ConstantSMV;
-
-                    string className = FT.GetMangledName(S, smv.Name);
-
-                    // MANGLED_TYPENAME MANGLED_CONSTANT_NAME = {...}
-                    SB.Append(className);
-                    SB.Append(" ");
-                    SB.Append(FT.GetMangledName(S, C.Name));
-
-                    if (smv.NbNonConstBasisBlade > 0) {
-                        // MANGLED_TYPENAME MANGLED_CONSTANT_NAME(...)
-                        SB.Append("(" + className + "::" + G25.CG.Shared.SmvUtil.GetCoordinateOrderConstant(S, smv));
-
-                        for (int c = 0; c < smv.NbNonConstBasisBlade; c++)
-                        {
-                            SB.Append(", ");
-                            SB.Append(FT.DoubleToString(S, Csmv.Value[c]));
-                        }
-
-                        SB.Append(")");
-                    }
-
-                    SB.AppendLine(";");
-                }
-
-            } // end of class Constants
-        } // end of namespace CPP
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class Constants
+} // end of namespace G25.CG.CPP

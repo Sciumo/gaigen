@@ -18,61 +18,55 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.C
 {
-    namespace CG
+    /// <summary>
+    /// Code generation for Mersenne Twister random number generator.
+    /// </summary>
+    class RandomMT
     {
-        namespace C
+
+        public static string GetRawMtHeaderFilename(Specification S)
         {
-            /// <summary>
-            /// Code generation for Mersenne Twister random number generator.
-            /// </summary>
-            class RandomMT
-            {
+            return S.m_namespace + "_mt.h";
+        }
 
-                public static string GetRawMtHeaderFilename(Specification S)
-                {
-                    return S.m_namespace + "_mt.h";
-                }
+        public static string GetRawMtSourceFilename(Specification S)
+        {
+            return S.m_namespace + "_mt.c";
+        }
 
-                public static string GetRawMtSourceFilename(Specification S)
-                {
-                    return S.m_namespace + "_mt.c";
-                }
+        /// <summary>
+        /// Generates files for random number generation using MT.
+        /// </summary>
+        /// <param name="S">Specification of algebra.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <returns>a list of filenames which were generated (full path).</returns>
+        public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            // get filename, list of generated filenames
+            List<string> generatedFiles = new List<string>();
 
-                /// <summary>
-                /// Generates files for random number generation using MT.
-                /// </summary>
-                /// <param name="S">Specification of algebra.</param>
-                /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-                /// <returns>a list of filenames which were generated (full path).</returns>
-                public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
-                {
-                    // get filename, list of generated filenames
-                    List<string> generatedFiles = new List<string>();
+            string headerFilename = S.GetOutputPath(G25.CG.C.RandomMT.GetRawMtHeaderFilename(S));
+            string sourceFilename = S.GetOutputPath(G25.CG.C.RandomMT.GetRawMtSourceFilename(S));
+            generatedFiles.Add(headerFilename);
 
-                    string headerFilename = S.GetOutputPath(G25.CG.C.RandomMT.GetRawMtHeaderFilename(S));
-                    string sourceFilename = S.GetOutputPath(G25.CG.C.RandomMT.GetRawMtSourceFilename(S));
-                    generatedFiles.Add(headerFilename);
+            { // header
+                StringBuilder SB = new StringBuilder();
+                cgd.m_cog.EmitTemplate(SB, "mersenneTwisterHeader", "S=", S);
+                G25.CG.Shared.Util.WriteFile(headerFilename, SB.ToString());
+            }
 
-                    { // header
-                        StringBuilder SB = new StringBuilder();
-                        cgd.m_cog.EmitTemplate(SB, "mersenneTwisterHeader", "S=", S);
-                        G25.CG.Shared.Util.WriteFile(headerFilename, SB.ToString());
-                    }
+            { // source
+                StringBuilder SB = new StringBuilder();
+                cgd.m_cog.EmitTemplate(SB, "mersenneTwisterSource", "S=", S);
+                G25.CG.Shared.Util.WriteFile(sourceFilename, SB.ToString());
+            }
 
-                    { // source
-                        StringBuilder SB = new StringBuilder();
-                        cgd.m_cog.EmitTemplate(SB, "mersenneTwisterSource", "S=", S);
-                        G25.CG.Shared.Util.WriteFile(sourceFilename, SB.ToString());
-                    }
-
-                    return generatedFiles;
-                } // end of GenerateCode()
+            return generatedFiles;
+        } // end of GenerateCode()
 
 
-            } // end of class RandomMT
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class RandomMT
+} // end of namespace G25.CG.C
 

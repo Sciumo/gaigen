@@ -19,13 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace G25
+namespace G25.CG.C
 {
-    namespace CG
-    {
-        namespace C
-        {
 
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
+} // end of namespace G25.CG.C

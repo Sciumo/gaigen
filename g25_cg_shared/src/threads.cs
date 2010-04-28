@@ -18,63 +18,57 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+
+    /// <summary>
+    /// Contains utility functions for dealing with arrays of threads.
+    /// </summary>
+    public class Threads
     {
-        namespace Shared
+
+        /// <summary>
+        /// Starts all threads in <c>T</c> (a check for null threads is made).
+        /// </summary>
+        /// <param name="T">Array of threads.</param>
+        public static void StartThreadArray(System.Threading.Thread[] T)
         {
-
-            /// <summary>
-            /// Contains utility functions for dealing with arrays of threads.
-            /// </summary>
-            public class Threads
+            for (int t = 0; t < T.Length; t++)
             {
+                if (T[t] != null)
+                    T[t].Start();
+            }
+        }
 
-                /// <summary>
-                /// Starts all threads in <c>T</c> (a check for null threads is made).
-                /// </summary>
-                /// <param name="T">Array of threads.</param>
-                public static void StartThreadArray(System.Threading.Thread[] T)
+        /// <summary>
+        /// Joins all threads in 'T' (a check for null threads is made).
+        /// </summary>
+        /// <param name="T">Array of threads.</param>
+        public static void JoinThreadArray(System.Threading.Thread[] T)
+        {
+            for (int t = 0; t < T.Length; t++)
+            {
+                if (T[t] != null)
+                    T[t].Join();
+            }
+        }
+
+        /// <summary>
+        /// Starts and joins all threads in 'T' one after another (this useful for debugging).
+        /// </summary>
+        /// <param name="T">Array of threads.</param>
+        public static void RunThreadArraySerially(System.Threading.Thread[] T)
+        {
+            System.Console.WriteLine("Warning: use of RunThreadArraySerially()");
+            for (int t = 0; t < T.Length; t++)
+            {
+                if (T[t] != null)
                 {
-                    for (int t = 0; t < T.Length; t++)
-                    {
-                        if (T[t] != null)
-                            T[t].Start();
-                    }
+                    T[t].Start();
+                    T[t].Join();
                 }
+            }
+        }
 
-                /// <summary>
-                /// Joins all threads in 'T' (a check for null threads is made).
-                /// </summary>
-                /// <param name="T">Array of threads.</param>
-                public static void JoinThreadArray(System.Threading.Thread[] T)
-                {
-                    for (int t = 0; t < T.Length; t++)
-                    {
-                        if (T[t] != null)
-                            T[t].Join();
-                    }
-                }
-
-                /// <summary>
-                /// Starts and joins all threads in 'T' one after another (this useful for debugging).
-                /// </summary>
-                /// <param name="T">Array of threads.</param>
-                public static void RunThreadArraySerially(System.Threading.Thread[] T)
-                {
-                    System.Console.WriteLine("Warning: use of RunThreadArraySerially()");
-                    for (int t = 0; t < T.Length; t++)
-                    {
-                        if (T[t] != null)
-                        {
-                            T[t].Start();
-                            T[t].Join();
-                        }
-                    }
-                }
-
-            } // end of class Threads
-        } // end of namepace Shared
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class Threads
+} // end of namepace G25.CG.Shared

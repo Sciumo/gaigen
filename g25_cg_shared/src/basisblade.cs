@@ -20,62 +20,56 @@ using System.Text;
 
 using RefGA.Symbolic;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+    /// <summary>
+    /// Utility functions for handling RefGA.BasisBlade.
+    /// </summary>
+    public class BasisBlade
     {
-        namespace Shared
+
+        /// <summary>
+        /// Utility function which takes a specialized multivector and returns an array of its variable
+        /// RefGA.BasisBlades. I.e., extracts 'smv.NonConstBasisBlade()'
+        /// </summary>
+        /// <param name="smv">Specialized multivector.</param>
+        /// <returns>Array of non-constant basis blades of 'smv'.</returns>
+        public static RefGA.BasisBlade[] GetNonConstBladeList(G25.SMV smv)
         {
-            /// <summary>
-            /// Utility functions for handling RefGA.BasisBlade.
-            /// </summary>
-            public class BasisBlade
+            RefGA.BasisBlade[] BL = new RefGA.BasisBlade[smv.NbNonConstBasisBlade];
+
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
+                BL[i] = smv.NonConstBasisBlade(i);
+
+            return BL;
+        }
+
+
+        /// <summary>
+        /// Converts a symbolic multivector value to a textual description of the specialized multivector 
+        /// type that would be required to store that value. This is used for presenting error messages 
+        /// to users when a suitable specialized type cannot be found for a specific multivector value.
+        /// </summary>
+        /// <param name="S">Specification, used for basis vector names.</param>
+        /// <param name="value">The value to describe.</param>
+        /// <returns>Textual description of the type that can store 'value'.</returns>
+        public static String MultivectorToTypeDescription(G25.Specification S, RefGA.Multivector value)
+        {
+            StringBuilder SB = new StringBuilder();
+
+            bool appendSpace = false;
+            foreach (RefGA.BasisBlade B in value.BasisBlades)
             {
+                if (appendSpace) SB.Append(" ");
 
-                /// <summary>
-                /// Utility function which takes a specialized multivector and returns an array of its variable
-                /// RefGA.BasisBlades. I.e., extracts 'smv.NonConstBasisBlade()'
-                /// </summary>
-                /// <param name="smv">Specialized multivector.</param>
-                /// <returns>Array of non-constant basis blades of 'smv'.</returns>
-                public static RefGA.BasisBlade[] GetNonConstBladeList(G25.SMV smv)
-                {
-                    RefGA.BasisBlade[] BL = new RefGA.BasisBlade[smv.NbNonConstBasisBlade];
+                SB.Append(new RefGA.BasisBlade(B.bitmap).ToString(S.m_basisVectorNames));
+                if (B.symScale == null)
+                    SB.Append("=" + B.scale);
 
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                        BL[i] = smv.NonConstBasisBlade(i);
+                appendSpace = true;
+            }
+            return SB.ToString();
+        }
 
-                    return BL;
-                }
-
-
-                /// <summary>
-                /// Converts a symbolic multivector value to a textual description of the specialized multivector 
-                /// type that would be required to store that value. This is used for presenting error messages 
-                /// to users when a suitable specialized type cannot be found for a specific multivector value.
-                /// </summary>
-                /// <param name="S">Specification, used for basis vector names.</param>
-                /// <param name="value">The value to describe.</param>
-                /// <returns>Textual description of the type that can store 'value'.</returns>
-                public static String MultivectorToTypeDescription(G25.Specification S, RefGA.Multivector value)
-                {
-                    StringBuilder SB = new StringBuilder();
-
-                    bool appendSpace = false;
-                    foreach (RefGA.BasisBlade B in value.BasisBlades)
-                    {
-                        if (appendSpace) SB.Append(" ");
-
-                        SB.Append(new RefGA.BasisBlade(B.bitmap).ToString(S.m_basisVectorNames));
-                        if (B.symScale == null)
-                            SB.Append("=" + B.scale);
-
-                        appendSpace = true;
-                    }
-                    return SB.ToString();
-                }
-
-            } // end of class BasisBlade
-        } // end of namepace Shared
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class BasisBlade
+} // end of namepace G25.CG.Shared

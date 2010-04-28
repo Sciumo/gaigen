@@ -18,19 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.C
 {
-    namespace CG
+    public class Unit : G25.CG.Shared.Func.Unit, CFunctionGenerator, G25.CodeGeneratorPlugin
     {
-        namespace C
-        {
-            public class Unit : G25.CG.Shared.Func.Unit, CFunctionGenerator, G25.CodeGeneratorPlugin
-            {
-                /// <returns>what language this code generator generates for.</returns>
-                public String Language() { return "c"; }
+        /// <returns>what language this code generator generates for.</returns>
+        public String Language() { return "c"; }
 
 
-            } // end of class Unit
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class Unit
+} // end of namespace G25.CG.C

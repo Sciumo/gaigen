@@ -20,41 +20,35 @@ using System.Text;
 
 using RefGA.Symbolic;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+    
+    /// <summary>
+    /// Contains various utility functions for generating SMV code.
+    /// </summary>
+    public class SmvUtil
     {
-        namespace Shared
+
+        public const string THIS = "this";
+        public const string COORDINATE_ORDER_ENUM = "CoordinateOrder";
+
+        /// <summary>
+        /// Returns the name of the constant as first argument to functions which have coordinate arguments.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="smv"></param>
+        public static string GetCoordinateOrderConstant(Specification S, G25.SMV smv)
         {
-            
-            /// <summary>
-            /// Contains various utility functions for generating SMV code.
-            /// </summary>
-            public class SmvUtil
+            StringBuilder SB = new StringBuilder("coord");
+            string wedgeSymbol = ""; // no symbol for wedge
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
             {
-
-                public const string THIS = "this";
-                public const string COORDINATE_ORDER_ENUM = "CoordinateOrder";
-
-                /// <summary>
-                /// Returns the name of the constant as first argument to functions which have coordinate arguments.
-                /// </summary>
-                /// <param name="S"></param>
-                /// <param name="smv"></param>
-                public static string GetCoordinateOrderConstant(Specification S, G25.SMV smv)
-                {
-                    StringBuilder SB = new StringBuilder("coord");
-                    string wedgeSymbol = ""; // no symbol for wedge
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                    {
-                        SB.Append("_");
-                        SB.Append(smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames, wedgeSymbol));
-                    }
-                    return SB.ToString();
-                }
+                SB.Append("_");
+                SB.Append(smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames, wedgeSymbol));
+            }
+            return SB.ToString();
+        }
 
 
-            } // end of class SmvUtil
-        } // end of namepace Shared
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class SmvUtil
+} // end of namepace G25.CG.Shared

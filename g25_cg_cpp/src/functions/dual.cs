@@ -18,20 +18,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.CPP
 {
-    namespace CG
+    public class Dual : G25.CG.Shared.Func.Dual, CppFunctionGenerator, G25.CodeGeneratorPlugin
     {
-        namespace CPP
-        {
-            public class Dual : G25.CG.Shared.Func.Dual, CppFunctionGenerator, G25.CodeGeneratorPlugin
-            {
-                /// <returns>what language this code generator generates for.</returns>
-                public String Language() { return "cpp"; }
+        /// <returns>what language this code generator generates for.</returns>
+        public String Language() { return "cpp"; }
 
 
-            } // end of class Dual
-        } // end of namespace CPP
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class Dual
+} // end of namespace G25.CG.CPP
 

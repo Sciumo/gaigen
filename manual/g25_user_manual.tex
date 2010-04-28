@@ -139,6 +139,13 @@ Example: {\tt g25 -s spec\_out.xml spec\_in.xml}
 \noindent {\tt -f, -filelist}: save a list of generated files to a file.\\
 Example: {\tt g25 -f filelist.txt spec.xml}
 
+\section{Generated Files}
+
+\subsubsection*{C}
+\subsubsection*{C++}
+\subsubsection*{C\#}
+\subsubsection*{Java}
+
 \section{Sample Algebras}
 \label{s:sample_algebras}
 
@@ -166,6 +173,7 @@ the documentation from the code.
 
 The generated test code is also a good way to get an example
 of use of each function.
+
 
 \section{Testing the Generated Code}
 
@@ -1092,7 +1100,7 @@ the {\tt norm} function. A custom metric can be specified.
 
 \subsubsection*{versorInverse}
 
-Computes the versor inverse of a multivector ($\frac{\gav{X}}{\gav{X}\rev{\gav{X}}}$). 
+Computes the versor inverse of a multivector ($\gav{X} / (\gav{X} \gp \rev{\gav{X}})$). 
 The norm is evaluated using the {\tt norm} function. A custom metric can be specified.
 \begin{verbatim}
 <function name="versorInverse" arg1="mv"/>
@@ -1102,7 +1110,7 @@ The norm is evaluated using the {\tt norm} function. A custom metric can be spec
 
 \subsubsection*{zero}
 
-Check whether a multivector is zero, up to a scalar epsilon (difference threshold) value.
+Checks whether a multivector is zero, up to a scalar epsilon (difference threshold) value.
 \begin{verbatim}
 <function name="zero" arg1="mv" arg2="double" 
           floatType="double"/>
@@ -1122,7 +1130,7 @@ Underscore constructors
 
 
 
-\section{Why did you write Gaigen 2.5 C\#?}
+\section{Why did you write Gaigen 2.5 in C\#?}
 
 I wrote Gaigen 2.5 in C\# because I wanted to try out the .Net platform
 (it's pretty nice).

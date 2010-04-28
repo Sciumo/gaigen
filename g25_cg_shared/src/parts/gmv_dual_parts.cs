@@ -18,74 +18,68 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.Shared
 {
-    namespace CG
+    public class GmvDualParts
     {
-        namespace Shared
+        public GmvDualParts(Specification S, G25.CG.Shared.CGdata cgd)
         {
-            public class GmvDualParts
-            {
-                public GmvDualParts(Specification S, G25.CG.Shared.CGdata cgd)
-                {
-                    m_specification = S;
-                    m_cgd = cgd;
-                }
+            m_specification = S;
+            m_cgd = cgd;
+        }
 
-                protected Specification m_specification;
-                protected G25.CG.Shared.CGdata m_cgd;
+        protected Specification m_specification;
+        protected G25.CG.Shared.CGdata m_cgd;
 
 
-                public void WriteGmvDualParts()
-                {
-                    G25.CG.Shared.DualParts.WriteDualParts(m_specification, m_cgd);
-                }
+        public void WriteGmvDualParts()
+        {
+            G25.CG.Shared.DualParts.WriteDualParts(m_specification, m_cgd);
+        }
 
 
-                /// <summary>
-                /// Writes any dual function for general multivectors,
-                /// based on dual parts code.
-                /// </summary>
-                /// <param name="S"></param>
-                /// <param name="cgd"></param>
-                /// <param name="FT"></param>
-                /// <param name="M"></param>
-                /// <param name="FAI"></param>
-                /// <param name="F"></param>
-                /// <param name="comment"></param>
-                /// <param name="dual">When true, 'dual' is generated, otherwise, 'undual' is generated.</param>
-                /// <returns>name of generated function.</returns>
-                public static string WriteDualFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M, 
-                    G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, String comment, bool dual)
-                {
-                    // setup instructions
-                    System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
-                    int nbTabs = 1;
+        /// <summary>
+        /// Writes any dual function for general multivectors,
+        /// based on dual parts code.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <param name="FT"></param>
+        /// <param name="M"></param>
+        /// <param name="FAI"></param>
+        /// <param name="F"></param>
+        /// <param name="comment"></param>
+        /// <param name="dual">When true, 'dual' is generated, otherwise, 'undual' is generated.</param>
+        /// <returns>name of generated function.</returns>
+        public static string WriteDualFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M, 
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, String comment, bool dual)
+        {
+            // setup instructions
+            System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+            int nbTabs = 1;
 
-                    // write this function:
-                    String code = G25.CG.Shared.DualParts.GetDualCode(S, cgd, FT, M, FAI, fgs.RETURN_ARG_NAME, dual);
+            // write this function:
+            String code = G25.CG.Shared.DualParts.GetDualCode(S, cgd, FT, M, FAI, fgs.RETURN_ARG_NAME, dual);
 
-                    // add one instruction (verbatim code)
-                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));
+            // add one instruction (verbatim code)
+            I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));
 
-                    // because of lack of overloading, function names include names of argument types
-                    G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
+            // because of lack of overloading, function names include names of argument types
+            G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
 
-                    // setup return type and argument:
-                    string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
+            // setup return type and argument:
+            string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
 
-                    G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
-                        returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
+            G25.CG.Shared.FuncArgInfo returnArgument = null;
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+                returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
-                    // write function
-                    bool inline = false; // never inline GMV functions
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            // write function
+            bool inline = false; // never inline GMV functions
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
 
-                    return CF.OutputName;
-                }
+            return CF.OutputName;
+        }
 
-            } // end of class GmvDualParts
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class GmvDualParts
+} // end of namespace G25.CG.Shared

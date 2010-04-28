@@ -19,44 +19,37 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace G25
+namespace G25.CG.C
 {
-    namespace CG
+
+
+    /// <summary>
+    /// This interface must be implemented by all classes which can generate implementations
+    /// of functions (like gp(), op(), sincosexp()).
+    /// 
+    /// It allows the class to be asked whether it can implement certain Function Generation Specifications
+    /// (G25.fgs). It allows the class to be asked to actually emit the declaration or definition of that
+    /// function.
+    /// </summary>
+    public interface CFunctionGenerator
     {
-        namespace C
+    } // end of class CFunctionGenerator
+        
+    /// <summary>
+    /// Handles code generation of all converter and algebra functions (G25.fgs).
+    /// </summary>
+    class Functions
+    {
+        public static List<G25.CG.Shared.BaseFunctionGenerator> GetFunctionGeneratorPlugins(G25.CG.Shared.CGdata cgd)
         {
-
-
-            /// <summary>
-            /// This interface must be implemented by all classes which can generate implementations
-            /// of functions (like gp(), op(), sincosexp()).
-            /// 
-            /// It allows the class to be asked whether it can implement certain Function Generation Specifications
-            /// (G25.fgs). It allows the class to be asked to actually emit the declaration or definition of that
-            /// function.
-            /// </summary>
-            public interface CFunctionGenerator
-            {
-            } // end of class CFunctionGenerator
-                
-            /// <summary>
-            /// Handles code generation of all converter and algebra functions (G25.fgs).
-            /// </summary>
-            class Functions
-            {
-                public static List<G25.CG.Shared.BaseFunctionGenerator> GetFunctionGeneratorPlugins(G25.CG.Shared.CGdata cgd)
+            List<G25.CG.Shared.BaseFunctionGenerator> plugins = new List<G25.CG.Shared.BaseFunctionGenerator>();
+            { // get only G25.CG.C.FunctionGenerator classes from plugins
+                foreach (CodeGeneratorPlugin P in cgd.m_plugins)
                 {
-                    List<G25.CG.Shared.BaseFunctionGenerator> plugins = new List<G25.CG.Shared.BaseFunctionGenerator>();
-                    { // get only G25.CG.C.FunctionGenerator classes from plugins
-                        foreach (CodeGeneratorPlugin P in cgd.m_plugins)
-                        {
-                            if (P is CFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
-                        }
-                    }
-                    return plugins;
+                    if (P is CFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
                 }
-            } // end of class Functions
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
-
+            }
+            return plugins;
+        }
+    } // end of class Functions
+} // end of namespace G25.CG.C

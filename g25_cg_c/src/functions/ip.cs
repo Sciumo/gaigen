@@ -18,20 +18,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25
+namespace G25.CG.C
 {
-    namespace CG
+    public class IP : G25.CG.Shared.Func.IP, CFunctionGenerator, G25.CodeGeneratorPlugin
     {
-        namespace C
-        {
-            public class IP : G25.CG.Shared.Func.IP, CFunctionGenerator, G25.CodeGeneratorPlugin
-            {
-                /// <returns>what language this code generator generates for.</returns>
-                public String Language() { return "c"; }
+        /// <returns>what language this code generator generates for.</returns>
+        public String Language() { return "c"; }
 
 
-            } // end of class IP
-        } // end of namespace 'C'
-    } // end of namespace CG
-} // end of namespace G25
+    } // end of class IP
+} // end of namespace G25.CG.C
 

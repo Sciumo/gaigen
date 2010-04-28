@@ -133,11 +133,15 @@ Maybe fix the float type stuff
 	V package first distribution files. Which packaging system for source? Just an SVN export?
 	V sample algebras for user manual
 
-	v write use manual
-		-> functions
+	v write user manual
+		-> converters
 	
 	Put user manual inside distributions
 		win, osx, linux
+		
+	Release 2.5.1 version
+	
+	Enable feedback / mailinglist on sourceforge
 	
 	Tell Robert to try it out
 	
@@ -146,6 +150,9 @@ Maybe fix the float type stuff
 	Put message on geometricalgebra.org
 	
 	Put link on uva website homepage
+	
+	
+	
 	
 
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
