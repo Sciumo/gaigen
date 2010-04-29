@@ -1,0 +1,3 @@
+g25 sample_spec.xml
+g++ c3ga.cpp c3ga_parse_mv.cpp main.cpp
+
