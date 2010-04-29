@@ -16,9 +16,6 @@
 
 <outputFilename defaultName="blah.cpp" customName="whee.cpp"/>
 
-<verbatim filename="c3ga.h" position="before" marker="namespace c3ga {">
-#include "my_double.h"
-</verbatim>
 
 
   <inline 

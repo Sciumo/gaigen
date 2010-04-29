@@ -175,6 +175,7 @@ C#:
 	
 	Announce on GA net
 	
+	Create small webpage on SourceForge with installation documentation
 	
 	Make member vars inaccessible in G25.Specification and other places, use setters and getter (properties)
 

@@ -147,7 +147,7 @@ namespace G25
                 }
                 if (!found)
                 {
-                    System.Console.WriteLine("Error: cannot find file '" + targetFilename + "' for verbatim code insertion.");
+                    System.Console.WriteLine("Error: cannot find file '" + targetFilename + "' (target for verbatim code insertion).");
                 }
             }
 

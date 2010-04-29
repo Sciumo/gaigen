@@ -808,6 +808,14 @@ namespace G25
             {
                 SetDefaultOperatorBindingsCpp();
             }
+            else if (m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            {
+                System.Console.WriteLine("Warning: No operator bindings are possible for output language Java");
+            }
+            else if (m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            {
+                SetDefaultOperatorBindingsCSharp();
+            }
             else System.Console.WriteLine("Internal error: Specification.SetDefaultOperatorBindings(): todo: implement this function !");
         }
 
@@ -816,6 +824,40 @@ namespace G25
         /// </summary>
         private void SetDefaultOperatorBindingsCpp()
         {
+            AddOperator(Operator.Binary("+", "add"));
+            AddOperator(Operator.Binary("-", "subtract"));
+            AddOperator(Operator.UnaryPrefix("-", "negate"));
+
+            AddOperator(Operator.Binary("%", "sp"));
+            AddOperator(Operator.Binary("<<", "lc"));
+            AddOperator(Operator.Binary(">>", "rc"));
+            AddOperator(Operator.Binary("^", "op"));
+            AddOperator(Operator.Binary("*", "gp"));
+            AddOperator(Operator.Binary("/", "igp"));
+
+            AddOperator(Operator.Binary("&", "meet"));
+            AddOperator(Operator.Binary("|", "join"));
+
+            AddOperator(Operator.UnaryPrefix("++", "increment"));
+            AddOperator(Operator.UnaryPostfix("++", "increment"));
+            AddOperator(Operator.UnaryPrefix("--", "decrement"));
+            AddOperator(Operator.UnaryPostfix("--", "decrement"));
+
+            AddOperator(Operator.UnaryPrefix("*", "dual"));
+            AddOperator(Operator.UnaryPrefix("!", "versorInverse"));
+            AddOperator(Operator.UnaryPrefix("~", "reverse"));
+
+            // remember the default operators (this is used by ToXmlString())
+            m_defaultOperators = new List<Operator>(m_operators);
+        }
+
+        /// <summary>
+        /// Set the default operator bindings for C#
+        /// </summary>
+        private void SetDefaultOperatorBindingsCSharp()
+        {
+            // todo: this is just the same code as C++
+            // Still have to check whether C# allows the same ops as C++
             AddOperator(Operator.Binary("+", "add"));
             AddOperator(Operator.Binary("-", "subtract"));
             AddOperator(Operator.UnaryPrefix("-", "negate"));
