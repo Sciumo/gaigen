@@ -25,7 +25,7 @@ namespace G25.CG.CSharp
     /// </summary>
     public class SMV
     {
-/*
+#if RIEN
         public SMV(Specification S, CG.Shared.CGdata cgd)
         {
             m_specification = S;
@@ -943,7 +943,7 @@ namespace G25.CG.CSharp
 
             WriteExtractScalarPart(m_specification, m_cgd);
         }
-
-    } // end of class SMV */
+#endif
+    } // end of class SMV 
 } // end of namespace G25.CG.CSharp
 

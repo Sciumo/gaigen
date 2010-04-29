@@ -25,7 +25,7 @@ namespace G25.CG.CSharp
     /// </summary>
     class Operators
     {
-    /*
+#if RIEN
 
         public static void WriteOperatorDefinitions(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
@@ -243,6 +243,6 @@ namespace G25.CG.CSharp
                 }
             }
         }
-*/
+#endif
     } // end of class Operators
 } // end of namespace G25.CG.CSharp

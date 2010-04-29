@@ -25,7 +25,8 @@ namespace G25.CG.Java
     /// </summary>
     public class GMV
     {
-    /*
+#if RIEN
+        
         public static string SET_GROUP_USAGE = "setGroupUsage";
 
         public GMV(Specification S, CG.Shared.CGdata cgd)
@@ -829,8 +830,8 @@ namespace G25.CG.Java
             WriteExtractScalarPart(m_specification, m_cgd);
             WriteCompressExpand(m_specification, m_cgd);
         }
-
+#endif
     } // end of class GMV
-    */
+
 } // end of namespace G25.CG.Java
 

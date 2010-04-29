@@ -45,7 +45,90 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\src\gmv.cs" />
+    <Compile Include="..\src\gom.cs" />
     <Compile Include="..\src\main.cs" />
+    <Compile Include="..\src\smv.cs" />
+    <Compile Include="..\src\som.cs" />
+    <Compile Include="..\src\source.cs" />
+    <Compile Include="..\src\functions\addsubtract.cs">
+      <Link>functions\addsubtract.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\applyversor.cs">
+      <Link>functions\applyversor.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\cgapoint.cs">
+      <Link>functions\cgapoint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\cgapointdistance.cs">
+      <Link>functions\cgapointdistance.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\gp.cs">
+      <Link>functions\gp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\igp.cs">
+      <Link>functions\igp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\hp.cs">
+      <Link>functions\hp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\op.cs">
+      <Link>functions\op.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\ip.cs">
+      <Link>functions\ip.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\extractgrade.cs">
+      <Link>functions\extractgrade.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\togglesign.cs">
+      <Link>functions\togglesign.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\norm.cs">
+      <Link>functions\norm.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\unit.cs">
+      <Link>functions\unit.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\versorinverse.cs">
+      <Link>functions\versorinverse.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\gradebitmap.cs">
+      <Link>functions\gradebitmap.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\zero.cs">
+      <Link>functions\zero.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\equals.cs">
+      <Link>functions\equals.cs</Link>
+    </Compile>    
+    <Compile Include="..\src\functions\dual.cs">
+      <Link>functions\dual.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\div.cs">
+      <Link>functions\div.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\sas.cs">
+      <Link>functions\sas.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\increment.cs">
+      <Link>functions\increment.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\sincosexp.cs">
+      <Link>functions\sincosexp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_scalar.cs">
+      <Link>functions\random_scalar.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_gmv.cs">
+      <Link>functions\random_gmv.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\random_smv.cs">
+      <Link>functions\random_smv.cs</Link>
+    </Compile>
+    <Compile Include="..\src\functions\applyom.cs">
+      <Link>functions\applyom.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

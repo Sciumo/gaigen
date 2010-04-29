@@ -25,7 +25,8 @@ namespace G25.CG.CSharp
     /// </summary>
     class GOM
     {
-/*        public GOM(Specification S, CG.Shared.CGdata cgd)
+#if RIEN
+        public GOM(Specification S, CG.Shared.CGdata cgd)
         {
             m_specification = S;
             m_cgd = cgd;
@@ -445,7 +446,7 @@ namespace G25.CG.CSharp
             
         }
 
-
-    } // end of class GOM*/
+#endif
+    } // end of class GOM
 } // end of namespace G25.CG.CSharp
 

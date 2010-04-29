@@ -25,7 +25,8 @@ namespace G25.CG.CSharp
     /// </summary>
     class SOM
     {
-/*        public SOM(Specification S, CG.Shared.CGdata cgd)
+#if RIEN
+        public SOM(Specification S, CG.Shared.CGdata cgd)
         {
             m_specification = S;
             m_cgd = cgd;
@@ -275,6 +276,6 @@ namespace G25.CG.CSharp
             G25.CG.Shared.OMinit.WriteSetMatrix(m_specification, m_cgd, true); // true = transpose 
         }
 
-
-    } // end of class SOM*/
+#endif
+    } // end of class SOM
 } // end of namespace G25.CG.CSharp

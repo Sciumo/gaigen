@@ -25,7 +25,7 @@ namespace G25.CG.Java
     /// </summary>
     class Source
     {
-/*
+#if RIEN
         public static string GetRawSourceFilename(Specification S)
         {
             return S.m_namespace + ".cpp";
@@ -339,8 +339,8 @@ namespace G25.CG.Java
 
             return generatedFiles;
         }
-
+#endif
     } // end of class Source
-*/
+
 } // end of namespace G25.CG.Java
 
