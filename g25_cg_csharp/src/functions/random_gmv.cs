@@ -18,13 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25.CG.CPP
+namespace G25.CG.CSharp
 {
     public class RandomGMV : G25.CG.Shared.Func.RandomGMV, CppFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
-        public String Language() { return "cpp"; }
+        public String Language() { return G25.XML.XML_CSHARP; }
 
 
     } // end of class RandomGMV
-} // end of namespace G25.CG.CPP
+} // end of namespace G25.CG.CSharp
