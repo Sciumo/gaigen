@@ -20,7 +20,7 @@ using System.Text;
 
 namespace G25.CG.CSharp
 {
-    public class RandomGMV : G25.CG.Shared.Func.RandomGMV, CppFunctionGenerator, G25.CodeGeneratorPlugin
+    public class RandomGMV : G25.CG.Shared.Func.RandomGMV, CSharpFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
         public String Language() { return G25.XML.XML_CSHARP; }

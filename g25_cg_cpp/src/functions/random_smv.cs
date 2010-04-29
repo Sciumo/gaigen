@@ -27,7 +27,7 @@ namespace G25
             public class RandomSMV : G25.CG.Shared.Func.RandomSMV, CppFunctionGenerator, G25.CodeGeneratorPlugin
             {
                 /// <returns>what language this code generator generates for.</returns>
-                public String Language() { return "cpp"; }
+                public String Language() { return G25.XML.XML_CPP; }
 
 
             } // end of class RandomSMV

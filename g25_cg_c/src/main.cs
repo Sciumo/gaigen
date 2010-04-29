@@ -108,6 +108,7 @@ namespace G25.CG.C
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            // disable all inlining since the C language does not support this:
             S.SetInlineNone();
 
             CoGsharp.CoG cog = InitCog(S);

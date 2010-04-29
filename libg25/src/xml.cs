@@ -27,18 +27,20 @@ namespace G25
     /// </summary>
     public class XML
     {
-        public const string XML_G25_SPEC = "g25spec";
-        public const string XML_LICENSE = "license";
-        public const string XML_GPL = "gpl";
-        public const string XML_BSD = "bsd";
-        public const string XML_CUSTOM = "custom";
-        public const string XML_LANGUAGE = "language";
+        
         public const string XML_C = "c";
         public const string XML_CPP = "cpp";
         public const string XML_JAVA = "java";
         public const string XML_CSHARP = "csharp";
         public const string XML_PYTHON = "python";
         public const string XML_MATLAB = "matlab";
+        
+        public const string XML_G25_SPEC = "g25spec";
+        public const string XML_LICENSE = "license";
+        public const string XML_GPL = "gpl";
+        public const string XML_BSD = "bsd";
+        public const string XML_CUSTOM = "custom";
+        public const string XML_LANGUAGE = "language";
         public const string XML_NAMESPACE = "namespace";
         public const string XML_COORD_STORAGE = "coordStorage";
         public const string XML_ARRAY = "array";

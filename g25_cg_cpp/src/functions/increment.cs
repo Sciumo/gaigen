@@ -23,7 +23,7 @@ namespace G25.CG.CPP
     public class Increment : G25.CG.Shared.Func.Increment, CppFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
-        public String Language() { return "cpp"; }
+        public String Language() { return G25.XML.XML_CPP; }
 
 
     } // end of class Increment

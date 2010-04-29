@@ -18,6 +18,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+/*! \mainpage Gaigen 2.5 library (g25_cg_java) Documentation
+ *
+ * Gaigen 2.5 by Daniel Fontijne, University of Amsterdam.
+ * 
+ * Released under GPL license.
+ */
 namespace G25.CG.Java
 {
     public class MainGenerator : G25.CodeGenerator
@@ -38,6 +44,7 @@ namespace G25.CG.Java
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+
             return new List<string>();
         }
     }

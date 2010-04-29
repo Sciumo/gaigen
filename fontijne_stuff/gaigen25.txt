@@ -66,23 +66,7 @@ V add hyperbolic sinh, cosh
 V -implement constants		
 V testing code
 V avoid clashes of cogsharp names while compiling (or at least detect them, and make up another name)
-
-check quality of documentation
-
---
-Maybe fix the float type stuff
-	-each type/float combination is a type on its own
-	-this simplifies the code and allows for mixing of types.
-	-do not care about recycling computation results, or if
-	you do, put them in a cache (signal cache when results are being computed
-	to avoid double work)
-	-have an option to have a XML function work for multiple float types
-	-problem: there will still be only one GMV type, or maybe remove m_GMV and have a function
-	to ask for GMV of a certain float type?
-	
---
-
--> C++ version 
+V C++ version 
 	V GVM and SMV set functions
 	V SMV set functions
 	V do we need _double _float? Guess so, if only for backward compat.
@@ -140,6 +124,54 @@ Maybe fix the float type stuff
 	V Put message on geometricalgebra.org
 	V Put link on uva website homepage
 	V remove XML stuff from G25.Specification and put into its own class
+
+check quality of documentation
+
+--
+Maybe fix the float type stuff
+	-each type/float combination is a type on its own
+	-this simplifies the code and allows for mixing of types.
+	-do not care about recycling computation results, or if
+	you do, put them in a cache (signal cache when results are being computed
+	to avoid double work)
+	-have an option to have a XML function work for multiple float types
+	-problem: there will still be only one GMV type, or maybe remove m_GMV and have a function
+	to ask for GMV of a certain float type?
+	
+--
+
+-add include/import element in XML
+
+	Design C# and Java classes.
+		...
+		
+	Write C# and Java output.
+		create classes
+			main
+			source
+				-> where most of the functions are implemented?
+			gmv
+				-> they write their own files?
+			smv
+				-> they write their own files?
+				
+		load template
+	
+	
+Java:
+	One file per class
+	One general interface for multivectors with a toMv() 
+	Each multivector class can also call its functions
+	use enum for coordinate order
+	
+C#: 	
+	One file per class too? You have to support it anyway due to java.
+	use enum for coordinate order
+	
+
+
+
+
 	
 	Announce on GA net
 	
@@ -176,7 +208,9 @@ Correcting design mistakes:
 ---------------------------------------------------
  
 
-C# version & Java version
+
+
+
 
 Matlab version or matlab binding
 

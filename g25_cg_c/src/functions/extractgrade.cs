@@ -23,7 +23,7 @@ namespace G25.CG.C
     public class Grade : G25.CG.Shared.Func.Grade, CFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
-        public String Language() { return "c"; }
+        public String Language() { return G25.XML.XML_C; }
 
 
     } // end of class Grade

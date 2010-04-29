@@ -23,7 +23,7 @@ namespace G25.CG.CPP
     public class Grade : G25.CG.Shared.Func.Grade, CppFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
-        public String Language() { return "cpp"; }
+        public String Language() { return G25.XML.XML_CPP; }
 
 
     } // end of class Grade

@@ -20,7 +20,7 @@ using System.Text;
 
 namespace G25.CG.CSharp
 {
-    public class SAS : G25.CG.Shared.Func.SAS, CppFunctionGenerator, G25.CodeGeneratorPlugin
+    public class SAS : G25.CG.Shared.Func.SAS, CSharpFunctionGenerator, G25.CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for.</returns>
         public String Language() { return G25.XML.XML_CSHARP; }

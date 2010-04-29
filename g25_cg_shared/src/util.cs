@@ -503,6 +503,7 @@ namespace G25.CG.Shared
         /// 
         /// Returns "" when inline is false, and the inline string + postFixStr otherwise.
         /// </summary>
+        /// <param name="S"></param>
         /// <param name="inline"></param>
         /// <param name="postFixStr">Concatenated to inline string. May be null.</param>
         /// <returns>Inline string, or ""</returns>
