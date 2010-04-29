@@ -18,13 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25.CG.CPP
+namespace G25.CG.Java
 {
-    public class RandomSMV : G25.CG.Shared.Func.RandomSMV, CppFunctionGenerator, G25.CodeGeneratorPlugin
+    public class Norm : G25.CG.Shared.Func.Norm, JavaFunctionGenerator, G25.CodeGeneratorPlugin
     {
-	/// <returns>what language this code generator generates for.</returns>
-	public String Language() { return G25.XML.XML_CPP; }
+        /// <returns>what language this code generator generates for.</returns>
+        public String Language() { return G25.XML.XML_JAVA; }
 
 
-    } // end of class RandomSMV
-} // end of namespace G25.CG.CPP
+    } // end of class Norm
+} // end of namespace G25.CG.Java
