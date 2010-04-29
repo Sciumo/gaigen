@@ -26,7 +26,7 @@ using System.Text;
  */
 namespace G25.CG.Java
 {
-    public class MainGenerator : G25.CodeGenerator
+    public class MainGenerator : G25.CG.Shared.Main, G25.CodeGenerator
     {
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
@@ -47,5 +47,23 @@ namespace G25.CG.Java
 
             return new List<string>();
         }
+
+        /// <summary>
+        /// Loads all templates for the 'Java' language into 'cog'. Also loads
+        /// shared templates by calling G25.CG.Shared.Util.LoadTemplates(cog);
+        /// </summary>
+        /// <param name="cog">Templates are loaded into this variable.</param>
+        /// <param name="S">Specification. Used to know whether testing code will be generated.</param>
+        public override void LoadTemplates(Specification S, CoGsharp.CoG cog)
+        {
+            // also load shared templates:
+            G25.CG.Shared.Util.LoadTemplates(cog);
+            G25.CG.Shared.Util.LoadCTemplates(cog);
+
+            cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_templates, "cg_java_templates.txt");
+            if (S.m_generateTestSuite) // only load when testing code is required
+                cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_test_templates, "cg_java_test_templates.txt");
+        }
+
     }
 } // end of namespace G25.CG.Java
