@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace G25.CG.CPP
+namespace G25.CG.CSharp
 {
 
 
@@ -31,9 +31,9 @@ namespace G25.CG.CPP
     /// (G25.fgs). It allows the class to be asked to actually emit the declaration or definition of that
     /// function.
     /// </summary>
-    public interface CppFunctionGenerator
+    public interface CSharpFunctionGenerator
     {
-    } // end of class CppFunctionGenerator
+    } // end of class CSharpFunctionGenerator
         
     /// <summary>
     /// Handles code generation of all converter and algebra functions (G25.fgs).
@@ -46,11 +46,11 @@ namespace G25.CG.CPP
             { // get only G25.CG.CSharp.FunctionGenerator classes from plugins
                 foreach (CodeGeneratorPlugin P in cgd.m_plugins)
                 {
-                    if (P is CppFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
+                    if (P is CSharpFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
                 }
             }
             return plugins;
         }
     } // end of class Functions
-} // end of namespace G25.CG.CPP
+} // end of namespace G25.CG.CSharp
 

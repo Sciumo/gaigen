@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace G25.CG.CPP
+namespace G25.CG.Java
 {
 
 
@@ -31,9 +31,9 @@ namespace G25.CG.CPP
     /// (G25.fgs). It allows the class to be asked to actually emit the declaration or definition of that
     /// function.
     /// </summary>
-    public interface CppFunctionGenerator
+    public interface JavaFunctionGenerator
     {
-    } // end of class CppFunctionGenerator
+    } // end of class JavaFunctionGenerator
         
     /// <summary>
     /// Handles code generation of all converter and algebra functions (G25.fgs).
@@ -43,14 +43,14 @@ namespace G25.CG.CPP
         public static List<G25.CG.Shared.BaseFunctionGenerator> GetFunctionGeneratorPlugins(G25.CG.Shared.CGdata cgd)
         {
             List<G25.CG.Shared.BaseFunctionGenerator> plugins = new List<G25.CG.Shared.BaseFunctionGenerator>();
-            { // get only G25.CG.CSharp.FunctionGenerator classes from plugins
+            { // get only G25.CG.Java.FunctionGenerator classes from plugins
                 foreach (CodeGeneratorPlugin P in cgd.m_plugins)
                 {
-                    if (P is CppFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
+                    if (P is JavaFunctionGenerator) plugins.Add(P as G25.CG.Shared.BaseFunctionGenerator);
                 }
             }
             return plugins;
         }
     } // end of class Functions
-} // end of namespace G25.CG.CPP
+} // end of namespace G25.CG.Java
 
