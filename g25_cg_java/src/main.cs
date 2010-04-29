@@ -44,6 +44,32 @@ namespace G25.CG.Java
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            CoGsharp.CoG cog = InitCog(S);
+
+            CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);
+            cgd.SetDependencyPrefix("missing_function_"); // this makes sure that the user sees the function call is a missing dependency
+            G25.CG.Shared.FunctionGeneratorInfo FGI = (S.m_generateTestSuite) ? new G25.CG.Shared.FunctionGeneratorInfo() : null; // the fields in this variable are set by Functions.WriteFunctions() and reused by TestSuite.GenerateCode()
+
+            { // pregenerated code that will go into main source
+                // generate code for parts of the geometric product, dual, etc (works in parallel internally)
+                try
+                {
+                    bool declOnly = false;
+                    G25.CG.Shared.PartsCode.GeneratePartsCode(S, cgd, declOnly);
+                }
+                catch (G25.UserException E) { cgd.AddError(E); }
+
+                // write set zero, set, copy, copy between float types, extract coordinate, largest coordinate, etc (works in parallel internally)
+          /*      try
+                {
+                    GenerateSetFunctions(S, plugins, cgd);
+                }
+                catch (G25.UserException E) { cgd.AddError(E); }*/
+
+                // write function (works in parallel internally)
+                G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
+            }
+
 
             return new List<string>();
         }
@@ -58,7 +84,6 @@ namespace G25.CG.Java
         {
             // also load shared templates:
             G25.CG.Shared.Util.LoadTemplates(cog);
-            G25.CG.Shared.Util.LoadCTemplates(cog);
 
             cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_templates, "cg_java_templates.txt");
             if (S.m_generateTestSuite) // only load when testing code is required

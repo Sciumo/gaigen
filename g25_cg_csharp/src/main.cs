@@ -26,7 +26,7 @@ using System.Text;
  */
 namespace G25.CG.CSharp
 {
-    public class MainGenerator : G25.CodeGenerator
+    public class MainGenerator : G25.CG.Shared.Main, G25.CodeGenerator
     {
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
@@ -44,11 +44,52 @@ namespace G25.CG.CSharp
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            CoGsharp.CoG cog = InitCog(S);
 
+            CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);
+            cgd.SetDependencyPrefix("missing_function_"); // this makes sure that the user sees the function call is a missing dependency
+            G25.CG.Shared.FunctionGeneratorInfo FGI = (S.m_generateTestSuite) ? new G25.CG.Shared.FunctionGeneratorInfo() : null; // the fields in this variable are set by Functions.WriteFunctions() and reused by TestSuite.GenerateCode()
+
+            { // pregenerated code that will go into main source
+                // generate code for parts of the geometric product, dual, etc (works in parallel internally)
+                try
+                {
+                    bool declOnly = false;
+                    G25.CG.Shared.PartsCode.GeneratePartsCode(S, cgd, declOnly);
+                }
+                catch (G25.UserException E) { cgd.AddError(E); }
+
+                // write set zero, set, copy, copy between float types, extract coordinate, largest coordinate, etc (works in parallel internally)
+                /*      try
+                      {
+                          GenerateSetFunctions(S, plugins, cgd);
+                      }
+                      catch (G25.UserException E) { cgd.AddError(E); }*/
+
+                // write function (works in parallel internally)
+                G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
+            }
 
 
 
             return new List<string>();
         }
+
+        /// <summary>
+        /// Loads all templates for the 'C#' language into 'cog'. Also loads
+        /// shared templates by calling G25.CG.Shared.Util.LoadTemplates(cog);
+        /// </summary>
+        /// <param name="cog">Templates are loaded into this variable.</param>
+        /// <param name="S">Specification. Used to know whether testing code will be generated.</param>
+        public override void LoadTemplates(Specification S, CoGsharp.CoG cog)
+        {
+            // also load shared templates:
+            G25.CG.Shared.Util.LoadTemplates(cog);
+
+            cog.LoadTemplates(g25_cg_csharp.Properties.Resources.cg_csharp_templates, "cg_csharp_templates.txt");
+            if (S.m_generateTestSuite) // only load when testing code is required
+                cog.LoadTemplates(g25_cg_csharp.Properties.Resources.cg_csharp_test_templates, "cg_csharp_test_templates.txt");
+        }
+
     }
 } // end of namespaceG25.CG.CSharp
