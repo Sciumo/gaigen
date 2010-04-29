@@ -67,12 +67,31 @@ namespace G25.CG.CSharp
                       catch (G25.UserException E) { cgd.AddError(E); }*/
 
                 // write function (works in parallel internally)
-                G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
+                //G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
+            }
+
+            List<string> generatedFiles = new List<string>();
+
+            // generate Doxyfile
+            generatedFiles.Add(G25.CG.Shared.Util.GenerateDoxyfile(S, cgd));
+            // todo: generate code (files) for all types
+            // todo: generate code (files) for all types
+            // todo: generate code (files) for all types
+            // generate source
+            generatedFiles.AddRange(Source.GenerateCode(S, cgd));
+
+            // report errors and missing deps to user
+            cgd.PrintErrors(S);
+            cgd.PrintMissingDependencies(S);
+            if ((cgd.GetNbErrors() == 0) && (cgd.GetNbMissingDependencies() == 0) && S.m_generateTestSuite)
+            {
+                // if no errors, then generate testing code
+                //TestSuite.GenerateCode(S, cgd, FGI);
             }
 
 
 
-            return new List<string>();
+            return generatedFiles;
         }
 
         /// <summary>

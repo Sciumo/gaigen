@@ -25,11 +25,11 @@ namespace G25.CG.Java
     /// </summary>
     class Source
     {
-#if RIEN
         public static string GetRawSourceFilename(Specification S)
         {
-            return S.m_namespace + ".cpp";
+            return S.m_namespace + ".java";
         }
+#if RIEN
 
         public static void GenerateBasicInfo(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
@@ -266,6 +266,7 @@ namespace G25.CG.Java
 
         } // end of GenerateTables()
 
+#endif 
 
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
@@ -280,17 +281,17 @@ namespace G25.CG.Java
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
-
-            { // #includes
+#if RIEN
+            { // todo: import ...
                 SB.AppendLine("#include <stdio.h>");
                 SB.AppendLine("#include <utility> // for std::swap");
                 if (cgd.GetFeedback(G25.CG.Shared.Main.NEED_TIME) == "true")
                     SB.AppendLine("#include <time.h> /* used to seed random generator */");
                 SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S)) + "\"");
             }
-
+#endif 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
-
+#if RIEN
             GenerateTables(S, cgd, SB);
 
             // the list of names of smv types
@@ -326,7 +327,7 @@ namespace G25.CG.Java
             // write operators
             if (!S.m_inlineOperators)
                 Operators.WriteOperatorDefinitions(SB, S, cgd);
-
+#endif
             SB.AppendLine("// def SB:");
             SB.Append(cgd.m_defSB);
 
@@ -339,7 +340,7 @@ namespace G25.CG.Java
 
             return generatedFiles;
         }
-#endif
+
     } // end of class Source
 
 } // end of namespace G25.CG.Java

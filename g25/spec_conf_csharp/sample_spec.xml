@@ -2,7 +2,7 @@
 
 <g25spec 
 	license="gpl" 
-	language="java"
+	language="csharp"
 	namespace="c3ga"
 	coordStorage="variables"
 	defaultOperatorBindings="true"

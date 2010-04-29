@@ -25,12 +25,12 @@ namespace G25.CG.CSharp
     /// </summary>
     class Source
     {
-#if RIEN
         public static string GetRawSourceFilename(Specification S)
         {
-            return S.m_namespace + ".cpp";
+            return S.m_namespace + ".cs";
         }
 
+#if RIEN
         public static void GenerateBasicInfo(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
             // dimension of space
@@ -266,6 +266,7 @@ namespace G25.CG.CSharp
 
         } // end of GenerateTables()
 
+#endif 
 
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
@@ -280,17 +281,20 @@ namespace G25.CG.CSharp
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
-
-            { // #includes
+#if RIEN
+            { // todo: using .... 
                 SB.AppendLine("#include <stdio.h>");
                 SB.AppendLine("#include <utility> // for std::swap");
                 if (cgd.GetFeedback(G25.CG.Shared.Main.NEED_TIME) == "true")
                     SB.AppendLine("#include <time.h> /* used to seed random generator */");
                 SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CSharp.Header.GetRawHeaderFilename(S)) + "\"");
             }
+#endif 
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
+            WriteOpenClass(SB, S, S.m_namespace, AccessModifier.AM_public);
+#if RIEN
             GenerateTables(S, cgd, SB);
 
             // the list of names of smv types
@@ -327,8 +331,13 @@ namespace G25.CG.CSharp
             if (!S.m_inlineOperators)
                 Operators.WriteOperatorDefinitions(SB, S, cgd);
 
+#endif
+
             SB.AppendLine("// def SB:");
             SB.Append(cgd.m_defSB);
+
+            // close class
+            WriteCloseClass(SB, S, S.m_namespace);
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);                    
@@ -339,7 +348,7 @@ namespace G25.CG.CSharp
 
             return generatedFiles;
         }
-#endif
+
     } // end of class Source
 } // end of namespace G25.CG.CSharp
 

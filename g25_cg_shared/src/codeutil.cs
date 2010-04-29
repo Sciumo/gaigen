@@ -615,6 +615,7 @@ namespace G25.CG.Shared
                 m_floatOpsC[ScalarOp.TANH] = "(float)tanh";
                 m_floatOpsC[ScalarOp.ABS] = "(float)fabs";
             }
+
             { // scalar math operations for C++, double precision
                 m_doubleOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
                 m_doubleOpsCpp[ScalarOp.SQRT] = "::sqrt";
@@ -642,20 +643,85 @@ namespace G25.CG.Shared
                 m_floatOpsCpp[ScalarOp.TANH] = "::tanhf";
                 m_floatOpsCpp[ScalarOp.ABS] = "::fabsf";
             }
+
+            { // scalar math operations for C#, double precision
+                m_doubleOpsCSharp = new System.Collections.Generic.Dictionary<String, String>();
+                m_doubleOpsCSharp[ScalarOp.SQRT] = "Math.Sqrt";
+                m_doubleOpsCSharp[ScalarOp.EXP] = "Math.Exp";
+                m_doubleOpsCSharp[ScalarOp.LOG] = "Math.Log";
+                m_doubleOpsCSharp[ScalarOp.SIN] = "Math.Sin";
+                m_doubleOpsCSharp[ScalarOp.COS] = "Math.Cos";
+                m_doubleOpsCSharp[ScalarOp.TAN] = "Math.Tan";
+                m_doubleOpsCSharp[ScalarOp.SINH] = "Math.Sinh";
+                m_doubleOpsCSharp[ScalarOp.COSH] = "Math.Cosh";
+                m_doubleOpsCSharp[ScalarOp.TANH] = "Math.Tanh";
+                m_doubleOpsCSharp[ScalarOp.ABS] = "Math.Abs";
+            }
+
+            { // scalar math operations for C#, single precision
+                m_floatOpsCSharp = new System.Collections.Generic.Dictionary<String, String>();
+                m_floatOpsCSharp[ScalarOp.SQRT] = "(float)Math.Sqrt";
+                m_floatOpsCSharp[ScalarOp.EXP] = "(float)Math.Exp";
+                m_floatOpsCSharp[ScalarOp.LOG] = "(float)Math.Log";
+                m_floatOpsCSharp[ScalarOp.SIN] = "(float)Math.Sin";
+                m_floatOpsCSharp[ScalarOp.COS] = "(float)Math.Cos";
+                m_floatOpsCSharp[ScalarOp.TAN] = "(float)Math.Tan";
+                m_floatOpsCSharp[ScalarOp.SINH] = "(float)Math.Sinh";
+                m_floatOpsCSharp[ScalarOp.COSH] = "(float)Math.Cosh";
+                m_floatOpsCSharp[ScalarOp.TANH] = "(float)Math.Tanh";
+                m_floatOpsCSharp[ScalarOp.ABS] = "Math.Abs";
+            }
+
+            { // scalar math operations for Java, double precision
+                m_doubleOpsJava = new System.Collections.Generic.Dictionary<String, String>();
+                m_doubleOpsJava[ScalarOp.SQRT] = "Math.sqrt";
+                m_doubleOpsJava[ScalarOp.EXP] = "Math.exp";
+                m_doubleOpsJava[ScalarOp.LOG] = "Math.log";
+                m_doubleOpsJava[ScalarOp.SIN] = "Math.sin";
+                m_doubleOpsJava[ScalarOp.COS] = "Math.cos";
+                m_doubleOpsJava[ScalarOp.TAN] = "Math.tan";
+                m_doubleOpsJava[ScalarOp.SINH] = "Math.sinh";
+                m_doubleOpsJava[ScalarOp.COSH] = "Math.cosh";
+                m_doubleOpsJava[ScalarOp.TANH] = "Math.tanh";
+                m_doubleOpsJava[ScalarOp.ABS] = "Math.abs";
+            }
+
+            { // scalar math operations for Java, single precision
+                m_floatOpsJava = new System.Collections.Generic.Dictionary<String, String>();
+                m_floatOpsJava[ScalarOp.SQRT] = "(float)Math.sqrt";
+                m_floatOpsJava[ScalarOp.EXP] = "(float)Math.exp";
+                m_floatOpsJava[ScalarOp.LOG] = "(float)Math.log";
+                m_floatOpsJava[ScalarOp.SIN] = "(float)Math.sin";
+                m_floatOpsJava[ScalarOp.COS] = "(float)Math.cos";
+                m_floatOpsJava[ScalarOp.TAN] = "(float)Math.tan";
+                m_floatOpsJava[ScalarOp.SINH] = "(float)Math.sinh";
+                m_floatOpsJava[ScalarOp.COSH] = "(float)Math.cosh";
+                m_floatOpsJava[ScalarOp.TANH] = "(float)Math.tanh";
+                m_floatOpsJava[ScalarOp.ABS] = "Math.abs";
+            }
+
         }
 
 
-        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for doubles).</summary>
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C standard library function names (for doubles).</summary>
         private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsC = null;
-        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C standard library function names (for floats).</summary>
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C standard library function names (for floats).</summary>
         private static System.Collections.Generic.Dictionary<string, string> m_floatOpsC = null;
 
-        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for doubles).</summary>
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C++ standard library function names (for doubles).</summary>
         private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsCpp = null;
-        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp opnames to C++ standard library function names (for floats).</summary>
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C++ standard library function names (for floats).</summary>
         private static System.Collections.Generic.Dictionary<string, string> m_floatOpsCpp = null;
 
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C# function names (for doubles).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsCSharp = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to C# function names (for floats).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_floatOpsCSharp = null;
 
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to Java function names (for doubles).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_doubleOpsJava = null;
+        /// <summary>A dictionary from RefGA.Symbolic.ScalarOp op-names to Java function names (for floats).</summary>
+        private static System.Collections.Generic.Dictionary<string, string> m_floatOpsJava = null;
 
     } // end of class CodeUtil
 } // end of namepace G25.CG.Shared

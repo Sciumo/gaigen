@@ -96,7 +96,7 @@ namespace G25.CG.Shared
         /// </summary>
         /// <param name="filename">The filename to be converted.</param>
         /// <returns>'filename', but all characters which are not a digit or a letter are converted to '_'.</returns>
-        public static String InvalidCharsToUnderscores(String filename)
+        public static string InvalidCharsToUnderscores(String filename)
         {
             StringBuilder SB = new StringBuilder();
             for (int i = 0; i < filename.Length; i++)
@@ -142,11 +142,20 @@ namespace G25.CG.Shared
             switch (S.m_outputLanguage)
             {
                 case OUTPUT_LANGUAGE.CPP:
+                case OUTPUT_LANGUAGE.CSHARP:
                     if (S.m_namespace.Length > 0)
                     {
                         SB.Append("namespace ");
                         SB.Append(namespaceName);
                         SB.AppendLine(" {");
+                    }
+                    break;
+                case OUTPUT_LANGUAGE.JAVA:
+                    if (S.m_namespace.Length > 0)
+                    {
+                        SB.Append("package ");
+                        SB.Append(namespaceName);
+                        SB.AppendLine(";");
                     }
                     break;
                 default:
@@ -164,10 +173,14 @@ namespace G25.CG.Shared
             switch (S.m_outputLanguage)
             {
                 case OUTPUT_LANGUAGE.CPP:
+                case OUTPUT_LANGUAGE.CSHARP:
                     if (S.m_namespace.Length > 0)
                     {
                         SB.AppendLine("} // end of namespace " + namespaceName);
                     }
+                    break;
+                case OUTPUT_LANGUAGE.JAVA:
+                    // nothing to do
                     break;
                 default:
                     throw new Exception("G25.CG.Shared.Util.WriteCloseNamespace(): output language not supported");
