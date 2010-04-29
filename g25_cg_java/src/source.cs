@@ -291,6 +291,10 @@ namespace G25.CG.Java
             }
 #endif 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
+
+            // open class
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
+
 #if RIEN
             GenerateTables(S, cgd, SB);
 
@@ -328,8 +332,11 @@ namespace G25.CG.Java
             if (!S.m_inlineOperators)
                 Operators.WriteOperatorDefinitions(SB, S, cgd);
 #endif
-            SB.AppendLine("// def SB:");
-            SB.Append(cgd.m_defSB);
+            //SB.AppendLine("// def SB:");
+            //SB.Append(cgd.m_defSB);
+
+            // close class
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, S.m_namespace);
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);                    

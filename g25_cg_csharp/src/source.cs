@@ -293,7 +293,7 @@ namespace G25.CG.CSharp
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
-            WriteOpenClass(SB, S, S.m_namespace, AccessModifier.AM_public);
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
 #if RIEN
             GenerateTables(S, cgd, SB);
 
@@ -333,11 +333,11 @@ namespace G25.CG.CSharp
 
 #endif
 
-            SB.AppendLine("// def SB:");
-            SB.Append(cgd.m_defSB);
+//            SB.AppendLine("// def SB:");
+  //          SB.Append(cgd.m_defSB);
 
             // close class
-            WriteCloseClass(SB, S, S.m_namespace);
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, S.m_namespace);
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);                    

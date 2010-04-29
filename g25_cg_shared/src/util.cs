@@ -59,6 +59,19 @@ using System.Text;
  */
 namespace G25.CG.Shared
 {
+    /// <summary>
+    /// Output language for generated code.
+    /// </summary>
+    // Define an Enum with FlagsAttribute.
+    [FlagsAttribute]
+    public enum AccessModifier : short
+    {
+        AM_protected = 1,
+        AM_public = 2,
+        AM_internal = 4,
+        AM_private = 8
+    };
+
     
     /// <summary>
     /// Contains various utility functions, such as opening and closing comments,
@@ -532,6 +545,98 @@ namespace G25.CG.Shared
             }
             else return "";
         }
+
+        public static void WriteOpenClass(StringBuilder SB, Specification S, AccessModifier accessMod, string className, string[] extends, string[] implements)
+        {
+            if ((accessMod & AccessModifier.AM_protected) != 0) SB.Append("protected ");
+            if ((accessMod & AccessModifier.AM_public) != 0) SB.Append("public ");
+            if ((accessMod & AccessModifier.AM_internal) != 0) SB.Append("internal ");
+            if ((accessMod & AccessModifier.AM_private) != 0) SB.Append("private ");
+
+            SB.Append("class ");
+
+            SB.Append(className);
+            SB.Append(" ");
+
+            SB.Append(GetClassExtendsImplements(S, extends, implements));
+            SB.AppendLine();
+
+            SB.AppendLine("{ ");
+        }
+
+        public static void WriteCloseClass(StringBuilder SB, Specification S, string className)
+        {
+            SB.AppendLine("} // end of class " + className);
+        }
+
+        /// <summary>
+        /// Writes the code for a the 'extends/implements' part of a class definition.
+        /// </summary>
+        /// <param name="S">Used for output language.</param>
+        /// <param name="extends">classes that are extended (can be null)</param>
+        /// <param name="implements">interfaces that are implemented (can be null)</param>
+        /// <returns>part of class definition.</returns>
+        private static string GetClassExtendsImplements(Specification S, string[] extends, string[] implements)
+        {
+            bool extendsOpened = false;
+            bool implementsOpened = false;
+            bool commaRequired = false;
+            StringBuilder SB = new StringBuilder();
+
+            if (extends != null)
+            {
+                foreach (string E in extends)
+                {
+                    if (!extendsOpened)
+                    {
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                        {
+                            SB.Append(" : ");
+                            extendsOpened = implementsOpened = true;
+                        }
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                        {
+                            SB.Append(" extends ");
+                            extendsOpened = true;
+                        }
+                    }
+
+                    if (commaRequired) SB.Append(", ");
+                    SB.Append(" " + E);
+                    commaRequired = true;
+                }
+            }
+
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                commaRequired = false;
+
+            if (implements != null)
+            {
+                foreach (string I in implements)
+                {
+                    if (!implementsOpened)
+                    {
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                        {
+                            SB.Append(" : ");
+                            extendsOpened = implementsOpened = true;
+                        }
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                        {
+                            SB.Append(" implements ");
+                            extendsOpened = true;
+                        }
+                    }
+
+                    if (commaRequired) SB.Append(", ");
+                    SB.Append(" " + I);
+                    commaRequired = true;
+                }
+            }
+
+            return SB.ToString();
+        } // end of GetClassExtendsImplements()
+
 
 
 

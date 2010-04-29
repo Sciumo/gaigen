@@ -22,7 +22,7 @@ using RefGA.Symbolic;
 
 namespace G25.CG.Shared
 {
-    
+
     /// <summary>
     /// Contains various utility functions for generating code.
     /// </summary>
