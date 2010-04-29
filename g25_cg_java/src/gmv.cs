@@ -25,19 +25,6 @@ namespace G25.CG.Java
     /// </summary>
     public class GMV
     {
-#if RIEN
-        
-        public static string SET_GROUP_USAGE = "setGroupUsage";
-
-        public GMV(Specification S, CG.Shared.CGdata cgd)
-        {
-            m_specification = S;
-            m_cgd = cgd;
-        }
-
-        protected Specification m_specification;
-        protected CG.Shared.CGdata m_cgd;
-
         /// <summary>
         /// Writes comments of a GMV class to 'SB'.
         /// </summary>
@@ -86,6 +73,68 @@ namespace G25.CG.Java
 
             SB.AppendLine(" */");
         }
+
+
+        /// <summary>
+        /// Generates a source file with the GMV class definition.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <param name="FT"></param>
+        /// <returns></returns>
+        public static string GenerateCode(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            string className = FT.GetMangledName(S, gmv.Name);
+
+            // get filename, list of generated filenames
+            List<string> generatedFiles = new List<string>();
+            string sourceFilename = S.GetOutputPath(className + ".java");
+            generatedFiles.Add(sourceFilename);
+
+            // get StringBuilder where all generated code goes
+            StringBuilder SB = new StringBuilder();
+
+            // output license, copyright
+            G25.CG.Shared.Util.WriteCopyright(SB, S);
+            G25.CG.Shared.Util.WriteLicense(SB, S);
+
+            // open namespace
+            G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
+
+            // write class comment
+            WriteComment(SB, S, cgd, FT, gmv);
+
+            // open class
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
+
+            // ....
+
+            // close class
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
+
+            // close namespace
+            G25.CG.Shared.Util.WriteCloseNamespace(SB, S);
+
+            // write all to file
+            G25.CG.Shared.Util.WriteFile(sourceFilename, SB.ToString());
+
+            return sourceFilename;
+        }
+
+#if RIEN
+        
+        public static string SET_GROUP_USAGE = "setGroupUsage";
+
+        public GMV(Specification S, CG.Shared.CGdata cgd)
+        {
+            m_specification = S;
+            m_cgd = cgd;
+        }
+
+        protected Specification m_specification;
+        protected CG.Shared.CGdata m_cgd;
+
 
         /// <summary>
         /// Writes member variables of a GMV class to 'SB'.

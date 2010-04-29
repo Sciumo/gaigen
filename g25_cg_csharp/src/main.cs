@@ -74,9 +74,8 @@ namespace G25.CG.CSharp
 
             // generate Doxyfile
             generatedFiles.Add(G25.CG.Shared.Util.GenerateDoxyfile(S, cgd));
-            // todo: generate code (files) for all types
-            // todo: generate code (files) for all types
-            // todo: generate code (files) for all types
+            // generate source files / classes for all GMV, SMV, GOM, SOM types
+            generatedFiles.AddRange(GenerateClasses(S, cgd));
             // generate source
             generatedFiles.AddRange(Source.GenerateCode(S, cgd));
 
@@ -109,6 +108,36 @@ namespace G25.CG.CSharp
             if (S.m_generateTestSuite) // only load when testing code is required
                 cog.LoadTemplates(g25_cg_csharp.Properties.Resources.cg_csharp_test_templates, "cg_csharp_test_templates.txt");
         }
+
+        /// <summary>
+        /// Generates source code for all GA types (GMV, SMV, GOM, SOM)
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <returns>List of generated files.</returns>
+        private List<string> GenerateClasses(Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            List<string> generatedFiles = new List<string>();
+
+            foreach (FloatType FT in S.m_floatTypes)
+            {
+                generatedFiles.Add(GMV.GenerateCode(S, cgd, FT));
+
+                foreach (G25.SMV smv in S.m_SMV)
+                    generatedFiles.Add(SMV.GenerateCode(S, cgd, smv, FT));
+
+                if (S.m_GOM != null)
+                    generatedFiles.Add(GOM.GenerateCode(S, cgd, FT));
+
+                foreach (G25.SOM som in S.m_SOM)
+                    generatedFiles.Add(SOM.GenerateCode(S, cgd, som, FT));
+            }
+
+            return generatedFiles;
+        }
+
+
+
 
     }
 } // end of namespaceG25.CG.CSharp

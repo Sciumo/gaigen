@@ -29,7 +29,7 @@
 
 <floatType type="double" suffix=""/>
 <floatType type="float" suffix="_f"/>
-<floatType type="myDouble" suffix="_md"/>
+<!-- <floatType type="myDouble" suffix="_md"/> -->
 
   <basisVectorNames 
 	name1="no"
@@ -303,15 +303,11 @@
 
   <function name="norm" arg1="flatPoint" floatType="double"/>
   <function name="norm" arg1="flatPoint" floatType="float"/>
-  <function name="norm" arg1="flatPoint" floatType="myDouble"/>
   <function name="norm" arg1="normalizedPoint" floatType="double"/>
   <function name="norm" arg1="sphere" floatType="double"/>
   <function name="norm" arg1="sphere" floatType="float"/>
-  <function name="norm" arg1="sphere" floatType="myDouble"/>
   <function name="norm" arg1="weirdType" floatType="double"/>
   <function name="norm" arg1="weirdType" floatType="float"/>
-  <function name="norm" arg1="weirdType" floatType="myDouble"/>
-  <function name="random_myDouble" returnType="myDouble" floatType="myDouble"/>
 
   <function name="increment" arg1="rotorE3GA" floatType="double"/>
   <function name="decrement" arg1="rotorE3GA" floatType="double"/>

@@ -147,6 +147,8 @@ Maybe fix the float type stuff
 		
 	Write C# and Java output.
 		create classes
+			-> first GMVs, then SMVs
+		
 			main
 			source
 				-> where most of the functions are implemented?

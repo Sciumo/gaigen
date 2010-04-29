@@ -144,7 +144,7 @@ namespace G25.CG.Shared
             if (S.m_copyright.Length > 0)
             {
                 WriteOpenMultilineComment(SB, S);
-                SB.Append(S.m_copyright);
+                SB.AppendLine(S.m_copyright);
                 WriteCloseMultilineComment(SB, S);
             }
         }

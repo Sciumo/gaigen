@@ -25,6 +25,53 @@ namespace G25.CG.Java
     /// </summary>
     public class SMV
     {
+
+        /// <summary>
+        /// Generates a source file with the SMV class definition.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <param name="smv"></param>
+        /// <param name="FT"></param>
+        /// <returns></returns>
+        public static string GenerateCode(Specification S, G25.CG.Shared.CGdata cgd, G25.SMV smv, FloatType FT)
+        {
+            string className = FT.GetMangledName(S, smv.Name);
+
+            // get filename, list of generated filenames
+            List<string> generatedFiles = new List<string>();
+            string sourceFilename = S.GetOutputPath(className + ".java");
+            generatedFiles.Add(sourceFilename);
+
+            // get StringBuilder where all generated code goes
+            StringBuilder SB = new StringBuilder();
+
+            // output license, copyright
+            G25.CG.Shared.Util.WriteCopyright(SB, S);
+            G25.CG.Shared.Util.WriteLicense(SB, S);
+
+            // open namespace
+            G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
+
+            // todo: write class comment
+
+            // open class
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
+
+            // ....
+
+            // close class
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
+
+            // close namespace
+            G25.CG.Shared.Util.WriteCloseNamespace(SB, S);
+
+            // write all to file
+            G25.CG.Shared.Util.WriteFile(sourceFilename, SB.ToString());
+
+            return sourceFilename;
+        }
+
 #if RIEN
         public SMV(Specification S, CG.Shared.CGdata cgd)
         {
