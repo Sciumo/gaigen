@@ -286,7 +286,7 @@ namespace G25.CG.CSharp
                 SB.AppendLine("#include <utility> // for std::swap");
                 if (cgd.GetFeedback(G25.CG.Shared.Main.NEED_TIME) == "true")
                     SB.AppendLine("#include <time.h> /* used to seed random generator */");
-                SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S)) + "\"");
+                SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CSharp.Header.GetRawHeaderFilename(S)) + "\"");
             }
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
@@ -294,10 +294,10 @@ namespace G25.CG.CSharp
             GenerateTables(S, cgd, SB);
 
             // the list of names of smv types
-            G25.CG.CPP.SMV.WriteSMVtypenames(SB, S, cgd);
+            G25.CG.CSharp.SMV.WriteSMVtypenames(SB, S, cgd);
 
             // write constant definitions
-            G25.CG.CPP.Constants.WriteDefinitions(SB, S, cgd);
+            G25.CG.CSharp.Constants.WriteDefinitions(SB, S, cgd);
 
             // write report usage
             cgd.m_cog.EmitTemplate(SB, (S.m_reportUsage) ? "ReportUsageSource" : "NoReportUsageSource");
@@ -320,7 +320,7 @@ namespace G25.CG.CSharp
 
             { // write toString 
                 bool def = true;
-                G25.CG.CPP.ToString.WriteToString(SB, S, cgd, def);
+                G25.CG.CSharp.ToString.WriteToString(SB, S, cgd, def);
             }
 
             // write operators
