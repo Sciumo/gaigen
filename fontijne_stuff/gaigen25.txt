@@ -147,6 +147,9 @@ Maybe fix the float type stuff
 		
 	Write C# and Java output.
 		create classes
+			enum for SMVs
+			Put that in c3ga_constants?
+			
 			-> first GMVs, then SMVs
 		
 			main
