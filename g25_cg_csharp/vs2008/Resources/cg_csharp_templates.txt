@@ -46,34 +46,34 @@ bool repUsage = S.m_reportUsage;
     /// <summary>
 	/// Copy constructor.
     /// </summary>
-	public <%className%>(<%className%> A) {set(A);}
+	public <%className%>(<%className%> A) {Set(A);}
 
 <%foreach (G25.FloatType otherFT in S.m_floatTypes) {
 	 if (FT == otherFT) continue;%>
     /// <summary>
 	/// Copies from <%otherFT.type%> to <%FT.type%>.
     /// </summary>
-	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {set(A);}	 
+	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {Set(A);}	 
 <%}%>
 
     /// <summary>
 	/// Constructs a new <%className%> with scalar value 'scalar'.
     /// </summary>
-	public <%className%>(<%FT.type%> scalar) {set(scalar);}
+	public <%className%>(<%FT.type%> scalar) {Set(scalar);}
 
     /// <summary>
 	/// Constructs a new <%className%> from compressed 'coordinates'.
 	/// <param name="gu">bitwise OR of the GRADEs or GROUPs that are non-zero.</param>
 	/// <param name="coordinates"> compressed coordinates.</param>
     /// </summary>
-	public <%className%>(int gu, <%FT.type%>[] coordinates) {set(gu, coordinates);}
+	public <%className%>(int gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
 
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
     /// <summary>
 	/// Converts a <%smvClassName%> to a <%className%>.
     /// </summary>
-	public <%className%>(<%smvClassName%> A) {set(A);}
+	public <%className%>(<%smvClassName%> A) {Set(A);}
 <%}%>
 
 <%}%>

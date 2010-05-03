@@ -120,7 +120,7 @@ namespace G25.CG.CSharp
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-            string funcDecl = "\tpublic " + funcName + "()";
+            string funcDecl = "\tpublic void " + funcName + "()";
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
@@ -148,19 +148,19 @@ namespace G25.CG.CSharp
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = "Set";
 
-            string funcDecl = "public " + funcName + "(" + FT.type + " val)";
+            string funcDecl = "\tpublic void " + funcName + "(" + FT.type + " val)";
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
-            SB.AppendLine("\tm_c[0] = val;");
+            SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            SB.AppendLine("\t\tm_c[0] = val;");
 
             if (S.m_reportUsage)
             {
-                SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
+                SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
             }
 
-            SB.AppendLine("}");
+            SB.AppendLine("\t}");
         }
 
         /// <summary>
@@ -177,19 +177,19 @@ namespace G25.CG.CSharp
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = "Set";
 
-            string funcDecl = "public " + funcName + "(int gu, " + FT.type + "[] arr)";
+            string funcDecl = "\tpublic void " + funcName + "(int gu, " + FT.type + "[] arr)";
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t" + SET_GROUP_USAGE + "(gu);");
-            SB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + "_mvSize[gu]"));
+            SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(gu);");
+            SB.AppendLine("\t\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + ".MvSize[gu]"));
 
             if (S.m_reportUsage)
             {
-                SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+                SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
             }
 
-            SB.AppendLine("}");
+            SB.AppendLine("\t}");
         }
 
         /// <summary>
@@ -210,28 +210,28 @@ namespace G25.CG.CSharp
 
                 string funcName = "Set";
 
-                string funcDecl = "public " + funcName + "(" + srcClassName + " src)";
+                string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 
                 SB.Append(funcDecl);
                 SB.AppendLine(" {");
-                SB.AppendLine("\t" + SET_GROUP_USAGE + "(src.gu());");
-                SB.AppendLine("\tconst " + srcFT.type + "*srcC = src.getC();");
+                SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(src.gu());");
+                SB.AppendLine("\t\t" + srcFT.type + "[] srcC = src.c();");
                 if (dstFT == srcFT)
                 {
-                    SB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + "_mvSize[src.gu()]"));
+                    SB.AppendLine("\t\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + ".MvSize[src.gu()]"));
                 }
                 else
                 {
-                    SB.AppendLine("\tfor (int i = 0; i < " + S.m_namespace + "_mvSize[src.gu()]; i++)");
-                    SB.AppendLine("\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
+                    SB.AppendLine("\t\tfor (int i = 0; i < " + S.m_namespace + ".mvSize[src.gu()]; i++)");
+                    SB.AppendLine("\t\t\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
                 }
 
                 if (S.m_reportUsage)
                 {
-                    SB.AppendLine("\tm_t = src.m_t;");
+                    SB.AppendLine("\t\tm_t = src.m_t;");
                 }
 
-                SB.AppendLine("}");
+                SB.AppendLine("\t}");
             }
         }
 
@@ -259,12 +259,12 @@ namespace G25.CG.CSharp
                 // do we inline this func?
                 string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
+                string funcDecl ="\tpublic void " + funcName + "(" + srcClassName + " src)";
 
                 SB.Append(funcDecl);
                 {
                     SB.AppendLine(" {");
-                    SB.AppendLine("\tconst " + FT.type + " *ptr = src.getC();\n");
+                    SB.AppendLine("\t\t" + FT.type + "[] ptr = src.c();\n");
 
                     // get a dictionary which tells you for each basis blade of 'smv' where it is in 'gmv'
                     Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
@@ -289,7 +289,7 @@ namespace G25.CG.CSharp
                         }
 
                         // if group is present in GMV:
-                        SB.AppendLine("\tif (src.gu() & " + (1 << g) + ") {");
+                        SB.AppendLine("\t\tif (src.gu() & " + (1 << g) + ") {");
                         if (groupIsUsedBySMV)
                         {
                             bool mustCast = false;
@@ -301,21 +301,21 @@ namespace G25.CG.CSharp
                             SB.Append(str);
                         }
                         if ((g + 1) <= highestGroup)
-                            SB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
+                            SB.AppendLine("\t\t\tptr += " + gmv.Group(g).Length + ";");
                         SB.AppendLine("\t}");
 
                         // else, if group is not present in GMV:
                         if (groupIsUsedBySMV)
                         {
-                            SB.AppendLine("\telse {");
+                            SB.AppendLine("\t\telse {");
                             foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
                                 if ((KVP.Value.Value1 == g) && (!smv.IsCoordinateConstant(KVP.Key.Value2)))
                                 {
                                     // translate KVP.Key.Value2 to non-const idx, because the accessStrs are only about non-const blades blades!
                                     int bladeIdx = smv.BladeIdxToNonConstBladeIdx(KVP.Key.Value2);
-                                    SB.AppendLine("\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
+                                    SB.AppendLine("\t\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
                                 }
-                            SB.AppendLine("\t}");
+                            SB.AppendLine("\t\t}");
                         }
                     }
                     SB.AppendLine("}");
@@ -351,7 +351,7 @@ namespace G25.CG.CSharp
                 // do we inline this func?
                 string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
+                string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 
                 SB.Append(funcDecl);
 
@@ -371,11 +371,11 @@ namespace G25.CG.CSharp
                         gu |= 1 << KVP.Value.Value1;
 
                     // generate the code to set group usage:
-                    SB.AppendLine("\t" + SET_GROUP_USAGE + "(" + gu + ");");
+                    SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(" + gu + ");");
 
                     // a helper pointer which is incremented
                     string dstArrName = "ptr";
-                    SB.AppendLine("\t" + FT.type + " *" + dstArrName + " = m_c;");
+                    SB.AppendLine("\t\t" + FT.type + "[] " + dstArrName + " = m_c;");
 
 
                     // for each used group, generate the assignment code
@@ -390,17 +390,17 @@ namespace G25.CG.CSharp
                             SB.Append(str);
 
                             if ((1 << (g + 1)) <= gu)
-                                SB.AppendLine("\tptr += " + gmv.Group(g).Length + ";");
+                                SB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
                         }
 
                     }
 
                     if (S.m_reportUsage)
                     {
-                        SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
+                        SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
                     }
 
-                    SB.AppendLine("}");
+                    SB.AppendLine("\t}");
                 }
             } // end of loop over all SMVs
         } // end of WriteGMVtoSMVcopy()
@@ -865,21 +865,6 @@ namespace G25.CG.CSharp
         }
 
 
-        /// <summary>
-        /// Writes set, setZero, copy and copyCrossFloat, coord extract, largest coordinate functions for all general multivector types.
-        /// </summary>
-        public void WriteSetFunctions()
-        {
-            WriteSetZero(m_specification, m_cgd);
-            WriteSetScalar(m_specification, m_cgd);
-            WriteSetArray(m_specification, m_cgd);
-            WriteGMVtoGMVcopy(m_specification, m_cgd);
-            WriteGMVtoSMVcopy(m_specification, m_cgd);
-            WriteSMVtoGMVcopy(m_specification, m_cgd);
-            WriteLargestCoordinateDefinitions(m_specification, m_cgd);
-            WriteExtractScalarPart(m_specification, m_cgd);
-            WriteCompressExpand(m_specification, m_cgd);
-        }
 
 #endif
     } // end of class GMV

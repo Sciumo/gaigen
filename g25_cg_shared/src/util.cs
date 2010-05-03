@@ -429,25 +429,25 @@ namespace G25.CG.Shared
             }
         }
 
-        /// <summary>
-        /// If the output language is C, appends the non-mangled typenames of the type of all arguments to the <c>m_outputName</c> in <c>F</c>.
-        /// </summary>
-        /// <param name="S">Used for output language.</param>
-        /// <param name="F">The function (it is copied, but with changed name).</param>
-        /// <param name="FAI">Info on function arguments.</param>
-        /// <returns>a copy of <c>F</c> with a new name.</returns>
-        /*public static G25.fgs AppendTypenameToFuncName(G25.Specification S, G25.FloatType FT, G25.fgs F, G25.CG.Shared.FuncArgInfo[] FAI)
-        {
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
-                return AppendTypenameToFuncName(S, FT, F, FAI);
-            else return new G25.fgs(F, F.OutputName);
-        }*/
-
         private static string GetZeroCodePrefix(G25.Specification S, G25.FloatType FT)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
-                ? (S.m_namespace + "_" + FT.type + "_")
-                : S.m_namespace + "::";
+            switch (S.m_outputLanguage)
+            {
+                case OUTPUT_LANGUAGE.C:
+                    return S.m_namespace + "_" + FT.type + "_";
+                case OUTPUT_LANGUAGE.CPP:
+                    return S.m_namespace + "::";
+                case OUTPUT_LANGUAGE.CSHARP:
+                case OUTPUT_LANGUAGE.JAVA:
+                    return S.m_namespace + ".";
+                default:
+                    return "GetZeroCodePrefix(): not implemented yet";
+            }
+        }
+
+        private static string GetZeroFuncName(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Zero" : "zero";
         }
 
         /// <summary>
@@ -455,7 +455,7 @@ namespace G25.CG.Shared
         /// </summary>
         public static string GetSetToZeroCode(G25.Specification S, G25.FloatType FT, string ptrName, int nb) {
             if (nb <= Main.MAX_EXPLICIT_ZERO)
-                return GetZeroCodePrefix(S, FT) + "zero_" + nb + "(" + ptrName + ");\n";
+                return GetZeroCodePrefix(S, FT) + GetZeroFuncName(S) + "_" + nb + "(" + ptrName + ");\n";
             else return GetSetToZeroCode(S, FT, ptrName, nb.ToString());
         }
 
@@ -464,7 +464,13 @@ namespace G25.CG.Shared
         /// </summary>
         public static string GetSetToZeroCode(G25.Specification S, G25.FloatType FT, string ptrName, string nb)
         {
-            return GetZeroCodePrefix(S, FT) + "zero_N(" + ptrName + ", " + nb + ");\n";
+            return GetZeroCodePrefix(S, FT) + GetZeroFuncName(S) + "_N(" + ptrName + ", " + nb + ");\n";
+        }
+
+
+        private static string GetCopyFuncName(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Copy" : "copy";
         }
 
         /// <summary>
@@ -473,7 +479,7 @@ namespace G25.CG.Shared
         public static string GetCopyCode(G25.Specification S, G25.FloatType FT, string srcPtrName, string dstPtrName, int nb)
         {
             if (nb <= Main.MAX_EXPLICIT_ZERO)
-                return GetZeroCodePrefix(S, FT) + "copy_" + nb + "(" + dstPtrName + ", " + srcPtrName + ");\n";
+                return GetZeroCodePrefix(S, FT) + GetCopyFuncName(S) + "_" + nb + "(" + dstPtrName + ", " + srcPtrName + ");\n";
             else return GetCopyCode(S, FT, srcPtrName, dstPtrName, nb.ToString());
         }
 
@@ -482,7 +488,8 @@ namespace G25.CG.Shared
         /// </summary>
         public static string GetCopyCode(G25.Specification S, G25.FloatType FT, string srcPtrName, string dstPtrName, string nb)
         {
-            return GetZeroCodePrefix(S, FT) + "copy_N(" + dstPtrName + ", " + srcPtrName + ", " + nb + ");\n";
+
+            return GetZeroCodePrefix(S, FT) + GetCopyFuncName(S) + "_N(" + dstPtrName + ", " + srcPtrName + ", " + nb + ");\n";
         }
 
         /// <summary>

@@ -40,8 +40,8 @@ namespace G25.CG.CPP
             SB.AppendLine("const int " + S.m_namespace + "_nbGroups = " + S.m_GMV.NbGroups + ";");
 
             // Euclidean metric?
-            SB.AppendLine("const int " + S.m_namespace + "_metricEuclidean = " +
-                (S.GetMetric("default").m_metric.IsEuclidean() ? "1" : "0") + ";");
+            SB.AppendLine("const bool " + S.m_namespace + "_metricEuclidean = " +
+                (S.GetMetric("default").m_metric.IsEuclidean() ? "true" : "false") + ";");
 
             // basis vector names
             SB.AppendLine("const char *" + S.m_namespace + "_basisVectorNames[" + S.m_dimension + "] = {");

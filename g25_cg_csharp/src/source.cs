@@ -80,37 +80,36 @@ namespace G25.CG.CSharp
         }
 
 
-#if RIEN
         public static void GenerateBasicInfo(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
             // dimension of space
-            SB.AppendLine("const int " + S.m_namespace + "_spaceDim = " + S.m_dimension + ";");
+            SB.AppendLine("\tpublic const int SpaceDim = " + S.m_dimension + ";");
 
             // number of groups of space
-            SB.AppendLine("const int " + S.m_namespace + "_nbGroups = " + S.m_GMV.NbGroups + ";");
+            SB.AppendLine("\tpublic const int NbGroups = " + S.m_GMV.NbGroups + ";");
 
             // Euclidean metric?
-            SB.AppendLine("const int " + S.m_namespace + "_metricEuclidean = " +
-                (S.GetMetric("default").m_metric.IsEuclidean() ? "1" : "0") + ";");
+            SB.AppendLine("\tpublic const bool MetricEuclidean = " +
+                (S.GetMetric("default").m_metric.IsEuclidean() ? "true" : "false") + ";");
 
             // basis vector names
-            SB.AppendLine("const char *" + S.m_namespace + "_basisVectorNames[" + S.m_dimension + "] = {");
-            SB.Append("\t");
+            SB.AppendLine("\tpublic const string[] BasisVectorNames = new string[] {");
+            SB.Append("\t\t");
             for (int i = 0; i < S.m_dimension; i++)
             {
                 if (i > 0) SB.Append(", ");
                 SB.Append("\"" + S.m_basisVectorNames[i] + "\"");
             }
             SB.AppendLine("");
-            SB.AppendLine("};");
+            SB.AppendLine("\t};");
         } // end of GenerateBasicInfo()
 
         public static void GenerateGradeArray(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
             // constants for the grades in an array:
-            SB.Append("const int " + S.m_namespace + "_grades[] = {");
+            SB.Append("\tpublic const int[] Grades = {");
 
-            String gStr = "GRADE_";
+            string gStr = "GRADE_";
             for (int i = 0; i <= S.m_dimension; i++)
             {
                 if (i > 0) SB.Append(", ");
@@ -128,9 +127,9 @@ namespace G25.CG.CSharp
 
         public static void GenerateGroupArray(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {// constants for the groups in an array:
-            SB.Append("const int " + S.m_namespace + "_groups[] = {");
+            SB.Append("\tpublic const int[] Groups = {");
 
-            String gStr = "GROUP_";
+            string gStr = "GROUP_";
             for (int i = 0; i < S.m_GMV.NbGroups; i++)
             {
                 if (i > 0) SB.Append(", ");
@@ -143,15 +142,13 @@ namespace G25.CG.CSharp
         public static void GenerateGroupSizeArray(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         { // group size
             G25.GMV gmv = S.m_GMV;
-            SB.AppendLine("const int " + S.m_namespace + "_groupSize[" + gmv.NbGroups + "] = {");
-            SB.Append("\t");
+            SB.Append("\tpublic const int[] GroupSize = { ");
             for (int i = 0; i < gmv.NbGroups; i++)
             {
                 if (i > 0) SB.Append(", ");
                 SB.Append(gmv.Group(i).Length);
             }
-            SB.AppendLine("");
-            SB.AppendLine("};");
+            SB.AppendLine(" };");
         }
 
         public static void GenerateMultivectorSizeArray(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
@@ -159,8 +156,8 @@ namespace G25.CG.CSharp
             G25.GMV gmv = S.m_GMV;
 
             // size of multivector based on grade usage bitmap
-            SB.AppendLine("const int " + S.m_namespace + "_mvSize[" + (1 << gmv.NbGroups) + "] = {");
-            SB.Append("\t");
+            SB.AppendLine("\tpublic const int[] MvSize = new int[] {");
+            SB.Append("\t\t");
             for (int i = 0; i < (1 << gmv.NbGroups); i++)
             {
                 int s = 0;
@@ -172,18 +169,18 @@ namespace G25.CG.CSharp
                 if ((i % 20) == 19)
                 {
                     SB.AppendLine("");
-                    SB.Append("\t");
+                    SB.Append("\t\t");
                 }
             }
 
-            SB.AppendLine("};");
+            SB.AppendLine("\t};");
         }
 
         public static void GenerateBasisElementsArray(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
             G25.GMV gmv = S.m_GMV;
             // basis vectors in basis elements
-            SB.AppendLine("const int " + S.m_namespace + "_basisElements[" + (1 << S.m_dimension) + "][" + (S.m_dimension + 1) + "] = {");
+            SB.AppendLine("\tpublic const int[][] BasisElements = new int[][] {");
             {
                 bool comma = false;
                 for (int i = 0; i < gmv.NbGroups; i++)
@@ -192,7 +189,7 @@ namespace G25.CG.CSharp
                     {
                         if (comma) SB.Append(",\n");
                         RefGA.BasisBlade B = gmv.Group(i)[j];
-                        SB.Append("\t{");
+                        SB.Append("\t\tnew int[] {");
                         for (int k = 0; k < S.m_dimension; k++)
                             if ((B.bitmap & (1 << k)) != 0)
                                 SB.Append(k + ", ");
@@ -202,7 +199,7 @@ namespace G25.CG.CSharp
                 }
             }
             SB.AppendLine("");
-            SB.AppendLine("};");
+            SB.AppendLine("\t};");
         }
 
         public static void GenerateBasisElementArrays(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
@@ -214,8 +211,8 @@ namespace G25.CG.CSharp
             int[] BitmapByIndex = new int[1 << S.m_dimension];
             int[] GradeByBitmap = new int[1 << S.m_dimension];
             int[] GroupByBitmap = new int[1 << S.m_dimension];
-            SB.AppendLine("const double " + S.m_namespace + "_basisElementSignByIndex[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const double[] BasisElementSignByIndex = new double[]");
+            SB.Append("\t\t{");
             {
                 bool comma = false;
                 int idx = 0;
@@ -238,8 +235,8 @@ namespace G25.CG.CSharp
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("const double " + S.m_namespace + "_basisElementSignByBitmap[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const double[] BasisElementSignByBitmap = new double[]");
+            SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
                 {
@@ -249,8 +246,8 @@ namespace G25.CG.CSharp
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("const int " + S.m_namespace + "_basisElementIndexByBitmap[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const int[] BasisElementIndexByBitmap = new int[]");
+            SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
                 {
@@ -260,8 +257,8 @@ namespace G25.CG.CSharp
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("const int " + S.m_namespace + "_basisElementBitmapByIndex[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const int[] BasisElementBitmapByIndex = new int[]");
+            SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
                 {
@@ -271,8 +268,8 @@ namespace G25.CG.CSharp
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("const int " + S.m_namespace + "_basisElementGradeByBitmap[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const int[] BasisElementGradeByBitmap = new int[]");
+            SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
                 {
@@ -282,8 +279,8 @@ namespace G25.CG.CSharp
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("const int " + S.m_namespace + "_basisElementGroupByBitmap[" + (1 << S.m_dimension) + "] =");
-            SB.Append("\t{");
+            SB.AppendLine("\tpublic const int[] BasisElementGroupByBitmap = new int[]");
+            SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
                 {
@@ -316,8 +313,6 @@ namespace G25.CG.CSharp
 
         } // end of GenerateTables()
 
-#endif 
-
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
             // get filename, list of generated filenames
@@ -348,9 +343,10 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
 
             WriteSMVtypenames(SB, S, cgd);
-#if RIEN
+
             GenerateTables(S, cgd, SB);
 
+#if RIEN
             // the list of names of smv types
             G25.CG.CSharp.SMV.WriteSMVtypenames(SB, S, cgd);
 
@@ -387,7 +383,7 @@ namespace G25.CG.CSharp
 
 #endif
 
-//            SB.AppendLine("// def SB:");
+            //            SB.AppendLine("// def SB:");
   //          SB.Append(cgd.m_defSB);
 
             // close class

@@ -151,6 +151,13 @@ Maybe fix the float type stuff
 			
 			-> first GMVs, then SMVs
 			
+			main class:
+				copy
+				zero
+				V mv size & friends
+				
+				->share this code with Java
+			
 			GMV:
 			  constructors
 			  set functions

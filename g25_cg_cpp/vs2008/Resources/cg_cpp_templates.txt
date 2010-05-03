@@ -35,7 +35,7 @@ extern const int <%S.m_namespace%>_groups[];
 extern const int <%S.m_namespace%>_grades[];
 
 /// Is the metric of the space Euclidean? (0 or 1)
-extern const int <%S.m_namespace%>_metricEuclidean;
+extern const bool <%S.m_namespace%>_metricEuclidean;
 
 /// This array can be used to lookup the number of coordinates for a group part of a general multivector
 extern const int <%S.m_namespace%>_groupSize[<%S.m_GMV.NbGroups%>];
