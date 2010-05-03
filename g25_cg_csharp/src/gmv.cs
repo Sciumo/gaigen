@@ -25,6 +25,8 @@ namespace G25.CG.CSharp
     /// </summary>
     public class GMV
     {
+        public static string SET_GROUP_USAGE = "setGroupUsage";
+
         /// <summary>
         /// Writes comments of a GMV class to 'SB'.
         /// </summary>
@@ -87,6 +89,315 @@ namespace G25.CG.CSharp
             cgd.m_cog.EmitTemplate(SB, "GMVmemberVariables", "S=", S, "FT=", FT);
         }
 
+        /// <summary>
+        /// Writes constructors of a GMV class to 'SB'.
+        /// </summary>
+        /// <param name="SB">Where the comment goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float point type of 'SMV'.</param>
+        /// <param name="gmv">The general multivector for which the struct should be written.</param>
+        /// <param name="className">Mangled name of GMV class.</param>
+        public static void WriteConstructors(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv, string className)
+        {
+            cgd.m_cog.EmitTemplate(SB, "GMVconstructors", "S=", S, "FT=", FT, "className=", className);
+        }
+
+        /// <summary>
+        /// Writes functions to set the GMV types to zero.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSetZero(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            string className = FT.GetMangledName(S, gmv.Name);
+            string funcName = "set";
+
+            // do we inline this func?
+            string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
+
+            string funcDecl = "\tpublic " + funcName + "()";
+
+            defSB.Append(funcDecl);
+            defSB.AppendLine(" {");
+            defSB.AppendLine("\t\t" + SET_GROUP_USAGE + "(0);");
+
+            if (S.m_reportUsage)
+            {
+                defSB.AppendLine("\t\tm_t = SmvType."xxx + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+            }
+
+            defSB.AppendLine("}");
+        }
+
+        /// <summary>
+        /// Writes functions to set the GMV types to scalar value.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSetScalar(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            string className = FT.GetMangledName(S, gmv.Name);
+            string funcName = "set";
+
+            string funcDecl = "public " + funcName + "(" + FT.type + " val)";
+
+            defSB.Append(funcDecl);
+            defSB.AppendLine(" {");
+            defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            defSB.AppendLine("\tm_c[0] = val;");
+
+            if (S.m_reportUsage)
+            {
+                defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
+            }
+
+            defSB.AppendLine("}");
+        }
+
+        /// <summary>
+        /// Writes functions to set the GMV types by array value.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSetArray(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            
+            string className = FT.GetMangledName(S, gmv.Name);
+            string funcName = "set";
+
+            string funcDecl = "public " + funcName + "(int gu, " + FT.type + "[] arr)";
+
+            defSB.Append(funcDecl);
+            defSB.AppendLine(" {");
+            defSB.AppendLine("\t" + SET_GROUP_USAGE + "(gu);");
+            defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + "_mvSize[gu]"));
+
+            if (S.m_reportUsage)
+            {
+                defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+            }
+
+            defSB.AppendLine("}");
+        }
+
+        /// <summary>
+        /// Writes functions to copy GMVs from one float type to another.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteGMVtoGMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType dstFT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            foreach (G25.FloatType srcFT in S.m_floatTypes)
+            {
+                string srcClassName = srcFT.GetMangledName(S, gmv.Name);
+
+                string dstClassName = dstFT.GetMangledName(S, gmv.Name);
+
+                string funcName = "set";
+
+                string funcDecl = "public " + funcName + "(" + srcClassName + " src)";
+
+                defSB.Append(funcDecl);
+                defSB.AppendLine(" {");
+                defSB.AppendLine("\t" + SET_GROUP_USAGE + "(src.gu());");
+                defSB.AppendLine("\tconst " + srcFT.type + "*srcC = src.getC();");
+                if (dstFT == srcFT)
+                {
+                    defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + "_mvSize[src.gu()]"));
+                }
+                else
+                {
+                    defSB.AppendLine("\tfor (int i = 0; i < " + S.m_namespace + "_mvSize[src.gu()]; i++)");
+                    defSB.AppendLine("\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
+                }
+
+                if (S.m_reportUsage)
+                {
+                    defSB.AppendLine("\tm_t = src.m_t;");
+                }
+
+                defSB.AppendLine("}");
+            }
+        }
+
+        /// <summary>
+        /// Writes functions to copy GMVs to SMVs
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteGMVtoSMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            string srcClassName = FT.GetMangledName(S, gmv.Name);
+            for (int s = 0; s < S.m_SMV.Count; s++)
+            {
+                G25.SMV smv = S.m_SMV[s];
+                string dstClassName = FT.GetMangledName(S, smv.Name);
+
+                bool dstPtr = true;
+                string[] smvAccessStr = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr);
+
+                string funcName = "set";
+
+                // do we inline this func?
+                string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
+
+                string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
+
+                defSB.Append(funcDecl);
+                {
+                    defSB.AppendLine(" {");
+                    defSB.AppendLine("\tconst " + FT.type + " *ptr = src.getC();\n");
+
+                    // get a dictionary which tells you for each basis blade of 'smv' where it is in 'gmv'
+                    Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
+
+                    // what is the highest group of the 'gmv' that must be (partially) copied to the 'smv'
+                    int highestGroup = -1;
+                    foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                        if (KVP.Value.Value1 > highestGroup) highestGroup = KVP.Value.Value1;
+
+                    // generate code for each group
+                    for (int g = 0; g <= highestGroup; g++)
+                    {
+                        // determine if group 'g' is to be copied to smv:
+                        bool groupIsUsedBySMV = false;
+                        foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                        {
+                            if (KVP.Value.Value1 == g)
+                            {
+                                groupIsUsedBySMV = true;
+                                break;
+                            }
+                        }
+
+                        // if group is present in GMV:
+                        defSB.AppendLine("\tif (src.gu() & " + (1 << g) + ") {");
+                        if (groupIsUsedBySMV)
+                        {
+                            bool mustCast = false;
+                            bool srcPtr = true;
+                            int nbTabs = 2;
+                            RefGA.Multivector[] value = G25.CG.Shared.Symbolic.GMVtoSymbolicMultivector(S, gmv, "ptr", srcPtr, g);
+                            bool writeZeros = false;
+                            string str = G25.CG.Shared.CodeUtil.GenerateSMVassignmentCode(S, FT, mustCast, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr, value[g], nbTabs, writeZeros);
+                            defSB.Append(str);
+                        }
+                        if ((g + 1) <= highestGroup)
+                            defSB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
+                        defSB.AppendLine("\t}");
+
+                        // else, if group is not present in GMV:
+                        if (groupIsUsedBySMV)
+                        {
+                            defSB.AppendLine("\telse {");
+                            foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                                if ((KVP.Value.Value1 == g) && (!smv.IsCoordinateConstant(KVP.Key.Value2)))
+                                {
+                                    // translate KVP.Key.Value2 to non-const idx, because the accessStrs are only about non-const blades blades!
+                                    int bladeIdx = smv.BladeIdxToNonConstBladeIdx(KVP.Key.Value2);
+                                    defSB.AppendLine("\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
+                                }
+                            defSB.AppendLine("\t}");
+                        }
+                    }
+                    defSB.AppendLine("}");
+                }
+            } // end of loop over all SMVs
+        } // end of WriteGMVtoSMVcopy()
+
+
+        /// <summary>
+        /// Writes functions to copy SMVs to GMVs
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSMVtoGMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GMV gmv = S.m_GMV;
+            bool gmvParityPure = (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE);
+
+            string dstClassName = FT.GetMangledName(S, gmv.Name);
+            for (int s = 0; s < S.m_SMV.Count; s++)
+            {
+                G25.SMV smv = S.m_SMV[s];
+
+                // do not generate converter if the GMV cannot hold the type
+                if (gmvParityPure && (!smv.IsParityPure())) continue;
+
+                string srcClassName = FT.GetMangledName(S, smv.Name);
+
+                string funcName = "set";
+
+                // do we inline this func?
+                string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
+
+                string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
+
+                defSB.Append(funcDecl);
+
+                {
+                    defSB.AppendLine(" {");
+
+                    // get a dictionary which tells you for each basis blade of 'gmv' where it is in 'smv'
+                    Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
+
+                    // convert SMV to symbolic Multivector:
+                    bool smvPtr = false;
+                    RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, "src", smvPtr);
+
+                    // find out which groups are present
+                    int gu = 0;
+                    foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                        gu |= 1 << KVP.Value.Value1;
+
+                    // generate the code to set group usage:
+                    defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + gu + ");");
+
+                    // a helper pointer which is incremented
+                    string dstArrName = "ptr";
+                    defSB.AppendLine("\t" + FT.type + " *" + dstArrName + " = m_c;");
+
+
+                    // for each used group, generate the assignment code
+                    for (int g = 0; (1 << g) <= gu; g++)
+                    {
+                        if (((1 << g) & gu) != 0)
+                        {
+                            bool mustCast = false;
+                            int nbTabs = 1;
+                            bool writeZeros = true;
+                            string str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, value, nbTabs, writeZeros);
+                            defSB.Append(str);
+
+                            if ((1 << (g + 1)) <= gu)
+                                defSB.AppendLine("\tptr += " + gmv.Group(g).Length + ";");
+                        }
+
+                    }
+
+                    if (S.m_reportUsage)
+                    {
+                        defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
+                    }
+
+                    defSB.AppendLine("}");
+                }
+            } // end of loop over all SMVs
+        } // end of WriteGMVtoSMVcopy()
+
 
         /// <summary>
         /// Generates a source file with the GMV class definition.
@@ -124,7 +435,17 @@ namespace G25.CG.CSharp
             // write member vars
             WriteMemberVariables(SB, S, cgd, FT, gmv);
 
-            // ....???
+            // write constructors
+            WriteConstructors(SB, S, cgd, FT, gmv, className);
+
+            // write 'set' functions
+            WriteSetZero(SB, S, cgd, FT);
+            WriteSetScalar(SB, S, cgd, FT);
+            WriteSetArray(SB, S, cgd, FT);
+            WriteGMVtoGMVcopy(SB, S, cgd, FT);
+            WriteGMVtoSMVcopy(SB, S, cgd, FT);
+            WriteSMVtoGMVcopy(SB, S, cgd, FT);
+
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
@@ -139,7 +460,6 @@ namespace G25.CG.CSharp
         }
 
 #if RIEN
-        public static string SET_GROUP_USAGE = "setGroupUsage";
 
         public GMV(Specification S, CG.Shared.CGdata cgd)
         {
@@ -191,20 +511,6 @@ namespace G25.CG.CSharp
         public static void WriteConstructors(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv, string className)
         {
             cgd.m_cog.EmitTemplate(SB, "GMVconstructors", "S=", S, "FT=", FT, "className=", className);
-        }
-
-         /// <summary>
-        /// Writes assignment operators of a GMV class to 'SB'.
-        /// </summary>
-        /// <param name="SB">Where the comment goes.</param>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        /// <param name="FT">Float point type of 'SMV'.</param>
-        /// <param name="gmv">The general multivector for which the struct should be written.</param>
-        /// <param name="className">Mangled name of GMV class.</param>
-        public static void WriteAssignmentOperators(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv, string className)
-        {
-            cgd.m_cog.EmitTemplate(SB, "GMVassignmentOps", "S=", S, "FT=", FT, "className=", className);
         }
 
          /// <summary>
@@ -359,335 +665,6 @@ namespace G25.CG.CSharp
             }
         }
 
-        /// <summary>
-        /// Writes functions to set the GMV types to zero.
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetZero(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            //StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                string className = FT.GetMangledName(S, gmv.Name);
-                string funcName = "set";
-
-                // do we inline this func?
-                string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                string funcDecl = inlineStr + "void " + className + "::" + funcName + "()";
-
-                //declSB.Append(funcDecl);
-                //declSB.AppendLine(";");
-
-                defSB.Append(funcDecl);
-                defSB.AppendLine(" {");
-                defSB.AppendLine("\t" + SET_GROUP_USAGE + "(0);");
-
-                if (S.m_reportUsage)
-                {
-                    defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
-                }
-
-                defSB.AppendLine("}");
-            }
-        }
-
-        /// <summary>
-        /// Writes functions to set the GMV types to scalar value.
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetScalar(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            //StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                string className = FT.GetMangledName(S, gmv.Name);
-                string funcName = "set";
-
-                // do we inline this func?
-                string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                string funcDecl = inlineStr + "void " + className + "::" + funcName + "(" + FT.type + " val)";
-
-                defSB.Append(funcDecl);
-                defSB.AppendLine(" {");
-                defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
-                defSB.AppendLine("\tm_c[0] = val;");
-
-                if (S.m_reportUsage)
-                {
-                    defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
-                }
-
-                defSB.AppendLine("}");
-            }
-        }
-
-        /// <summary>
-        /// Writes functions to set the GMV types by array value.
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetArray(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            //StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                string className = FT.GetMangledName(S, gmv.Name);
-                string funcName = "set";
-
-                // do we inline this func?
-                string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                string funcDecl = inlineStr + "void " + className + "::" + funcName + "(int gu, const " + FT.type + " *arr)";
-
-                defSB.Append(funcDecl);
-                defSB.AppendLine(" {");
-                defSB.AppendLine("\t" + SET_GROUP_USAGE + "(gu);");
-                defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + "_mvSize[gu]"));
-
-                if (S.m_reportUsage)
-                {
-                    defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
-                }
-
-                defSB.AppendLine("}");
-            }
-        }
-
-        /// <summary>
-        /// Writes functions to copy GMVs from one float type to another.
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteGMVtoGMVcopy(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            foreach (G25.FloatType srcFT in S.m_floatTypes)
-            {
-                String srcClassName = srcFT.GetMangledName(S, gmv.Name);
-                foreach (G25.FloatType dstFT in S.m_floatTypes)
-                {
-                    string dstClassName = dstFT.GetMangledName(S, gmv.Name);
-
-                    string funcName = "set";
-
-                    // do we inline this func?
-                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                    string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
-
-                    defSB.Append(funcDecl);
-                    defSB.AppendLine(" {");
-                    defSB.AppendLine("\t" + SET_GROUP_USAGE + "(src.gu());");
-                    defSB.AppendLine("\tconst " + srcFT.type + "*srcC = src.getC();");
-                    if (dstFT == srcFT)
-                    {
-                        defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + "_mvSize[src.gu()]"));
-                    }
-                    else
-                    {
-                        defSB.AppendLine("\tfor (int i = 0; i < " + S.m_namespace + "_mvSize[src.gu()]; i++)");
-                        defSB.AppendLine("\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
-                    }
-
-                    if (S.m_reportUsage)
-                    {
-                        defSB.AppendLine("\tm_t = src.m_t;");
-                    }
-
-                    defSB.AppendLine("}");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes functions to copy GMVs to SMVs
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteGMVtoSMVcopy(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                string srcClassName = FT.GetMangledName(S, gmv.Name);
-                for (int s = 0; s < S.m_SMV.Count; s++)
-                {
-                    G25.SMV smv = S.m_SMV[s];
-                    string dstClassName = FT.GetMangledName(S, smv.Name);
-
-                    bool dstPtr = true;
-                    String[] smvAccessStr = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr);
-
-                    string funcName = "set";
-
-                    // do we inline this func?
-                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                    string funcDecl = inlineStr + "void " +dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
-
-                    defSB.Append(funcDecl);
-                    {
-                        defSB.AppendLine(" {");
-                        defSB.AppendLine("\tconst " + FT.type + " *ptr = src.getC();\n");
-
-                        // get a dictionary which tells you for each basis blade of 'smv' where it is in 'gmv'
-                        Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
-
-                        // what is the highest group of the 'gmv' that must be (partially) copied to the 'smv'
-                        int highestGroup = -1;
-                        foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
-                            if (KVP.Value.Value1 > highestGroup) highestGroup = KVP.Value.Value1;
-
-                        // generate code for each group
-                        for (int g = 0; g <= highestGroup; g++)
-                        {
-                            // determine if group 'g' is to be copied to smv:
-                            bool groupIsUsedBySMV = false;
-                            foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
-                            {
-                                if (KVP.Value.Value1 == g)
-                                {
-                                    groupIsUsedBySMV = true;
-                                    break;
-                                }
-                            }
-
-                            // if group is present in GMV:
-                            defSB.AppendLine("\tif (src.gu() & " + (1 << g) + ") {");
-                            if (groupIsUsedBySMV)
-                            {
-                                bool mustCast = false;
-                                bool srcPtr = true;
-                                int nbTabs = 2;
-                                RefGA.Multivector[] value = G25.CG.Shared.Symbolic.GMVtoSymbolicMultivector(S, gmv, "ptr", srcPtr, g);
-                                bool writeZeros = false;
-                                string str = G25.CG.Shared.CodeUtil.GenerateSMVassignmentCode(S, FT, mustCast, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr, value[g], nbTabs, writeZeros);
-                                defSB.Append(str);
-                            }
-                            if ((g+1) <= highestGroup)
-                                defSB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
-                            defSB.AppendLine("\t}");
-
-                            // else, if group is not present in GMV:
-                            if (groupIsUsedBySMV)
-                            {
-                                defSB.AppendLine("\telse {");
-                                foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
-                                    if ((KVP.Value.Value1 == g) && (!smv.IsCoordinateConstant(KVP.Key.Value2)))
-                                    {
-                                        // translate KVP.Key.Value2 to non-const idx, because the accessStrs are only about non-const blades blades!
-                                        int bladeIdx = smv.BladeIdxToNonConstBladeIdx(KVP.Key.Value2);
-                                        defSB.AppendLine("\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
-                                    }
-                                defSB.AppendLine("\t}");
-                            }
-                        }
-                        defSB.AppendLine("}");
-                    }
-                } // end of loop over all SMVs
-            } // end of loop over all float types
-        } // end of WriteGMVtoSMVcopy()
-
-
-        /// <summary>
-        /// Writes functions to copy SMVs to GMVs
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSMVtoGMVcopy(Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            G25.GMV gmv = S.m_GMV;
-            Boolean gmvParityPure = (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE);
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                String dstClassName = FT.GetMangledName(S, gmv.Name);
-                for (int s = 0; s < S.m_SMV.Count; s++)
-                {
-                    G25.SMV smv = S.m_SMV[s];
-
-                    // do not generate converter if the GMV cannot hold the type
-                    if (gmvParityPure && (!smv.IsParityPure())) continue;
-
-                    string srcClassName = FT.GetMangledName(S, smv.Name);
-
-                    string funcName = "set";
-
-                    // do we inline this func?
-                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-
-                    string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
-
-                    defSB.Append(funcDecl);
-
-                    {
-                        defSB.AppendLine(" {");
-
-                        // get a dictionary which tells you for each basis blade of 'gmv' where it is in 'smv'
-                        Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
-
-                        // convert SMV to symbolic Multivector:
-                        bool smvPtr = false;
-                        RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, "src", smvPtr);
-
-                        // find out which groups are present
-                        int gu = 0;
-                        foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
-                            gu |= 1 << KVP.Value.Value1;
-
-                        // generate the code to set group usage:
-                        defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + gu + ");");
-
-                        // a helper pointer which is incremented
-                        string dstArrName = "ptr";
-                        defSB.AppendLine("\t" + FT.type + " *" + dstArrName + " = m_c;");
-
-
-                        // for each used group, generate the assignment code
-                        for (int g = 0; (1 << g) <= gu; g++)
-                        {
-                            if (((1 << g) & gu) != 0)
-                            {
-                                bool mustCast = false;
-                                int nbTabs = 1;
-                                bool writeZeros = true;
-                                String str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, value, nbTabs, writeZeros);
-                                defSB.Append(str);
-
-                                if ((1 << (g+1)) <= gu)
-                                    defSB.AppendLine("\tptr += " + gmv.Group(g).Length + ";");
-                            }
-
-                        }
-
-                        if (S.m_reportUsage)
-                        {
-                            defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
-                        }
-
-                        defSB.AppendLine("}");
-                    }
-                } // end of loop over all SMVs
-            } // end of loop over all float types
-        } // end of WriteGMVtoSMVcopy()
 
 
         private static void WriteGetCoordFunction(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, StringBuilder SB,

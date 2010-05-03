@@ -29,3 +29,54 @@ ${CODEBLOCK GMVmemberVariables}
 <%}%>
 ${ENDCODEBLOCK}
  
+ // S = specification
+// className = mangled class name
+// FT = floatType
+${CODEBLOCK GMVconstructors}
+<%{
+bool dynMem = S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC;
+bool repUsage = S.m_reportUsage;
+%>
+
+    /// <summary>
+	/// Constructs a new <%className%> with value 0.
+    /// </summary>
+	public <%className%>() {set();}
+
+    /// <summary>
+	/// Copy constructor.
+    /// </summary>
+	public <%className%>(<%className%> A) {set(A);}
+
+<%foreach (G25.FloatType otherFT in S.m_floatTypes) {
+	 if (FT == otherFT) continue;%>
+    /// <summary>
+	/// Copies from <%otherFT.type%> to <%FT.type%>.
+    /// </summary>
+	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {set(A);}	 
+<%}%>
+
+    /// <summary>
+	/// Constructs a new <%className%> with scalar value 'scalar'.
+    /// </summary>
+	public <%className%>(<%FT.type%> scalar) {set(scalar);}
+
+    /// <summary>
+	/// Constructs a new <%className%> from compressed 'coordinates'.
+	/// <param name="gu">bitwise OR of the GRADEs or GROUPs that are non-zero.</param>
+	/// <param name="coordinates"> compressed coordinates.</param>
+    /// </summary>
+	public <%className%>(int gu, <%FT.type%>[] coordinates) {set(gu, coordinates);}
+
+<%foreach(G25.SMV smv in S.m_SMV) {
+string smvClassName = FT.GetMangledName(S, smv.Name);%>
+    /// <summary>
+	/// Converts a <%smvClassName%> to a <%className%>.
+    /// </summary>
+	public <%className%>(<%smvClassName%> A) {set(A);}
+<%}%>
+
+<%}%>
+${ENDCODEBLOCK}
+
+

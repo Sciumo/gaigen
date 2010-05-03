@@ -44,6 +44,9 @@ namespace G25.CG.Java
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            // disable all inlining since the Java language does not support this:
+            S.SetInlineNone();
+
             CreatePackageDirectory(S);
 
             CoGsharp.CoG cog = InitCog(S);

@@ -146,11 +146,14 @@ Maybe fix the float type stuff
 		...
 		
 	Write C# and Java output.
-		create classes
-			enum for SMVs
-			Put that in c3ga_constants?
+		V create classes
+			V enum for SMVs
 			
 			-> first GMVs, then SMVs
+			
+			GMV:
+			  constructors
+			  set functions
 		
 			main
 			source

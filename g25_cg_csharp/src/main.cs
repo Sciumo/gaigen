@@ -44,6 +44,9 @@ namespace G25.CG.CSharp
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            // disable all inlining since the C# language does not support this:
+            S.SetInlineNone();
+
             CoGsharp.CoG cog = InitCog(S);
 
             CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);

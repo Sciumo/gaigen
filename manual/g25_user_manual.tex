@@ -110,11 +110,14 @@ To avoid its use, simply ask for the built-in parser in the specification.
 
 To compile an algebra specification, run {\tt g25 specfile.xml} from the command line.
 	
-The first time you run {\tt g25} it may be a bit slow because it is compiling
-a lot of code templates on the fly. Compiled templates are stored in a temporary 
+The first time you run {\tt g25} for a particular language 
+it may be a bit slow because it is compiling a lot of code templates on the fly. 
+Compiled templates are stored in a temporary 
 directory and recycled in future runs.
 On Linux and OSX, the first run can take a even more time because Mono is a bit
 slower than Microsofts CLR implementation.
+On OSX this problem is worse, because OSX seems to delete the file in the temp directory
+on reboot (to do: check if this is true, is there a solution?).
 
 	
 The following command line options are available:
