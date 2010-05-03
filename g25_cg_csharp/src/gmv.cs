@@ -106,10 +106,11 @@ namespace G25.CG.CSharp
         /// <summary>
         /// Writes functions to set the GMV types to zero.
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteSetZero(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteSetZero(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             G25.GMV gmv = S.m_GMV;
 
@@ -121,25 +122,27 @@ namespace G25.CG.CSharp
 
             string funcDecl = "\tpublic " + funcName + "()";
 
-            defSB.Append(funcDecl);
-            defSB.AppendLine(" {");
-            defSB.AppendLine("\t\t" + SET_GROUP_USAGE + "(0);");
+            SB.Append(funcDecl);
+            SB.AppendLine(" {");
+            SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(0);");
 
             if (S.m_reportUsage)
             {
-                defSB.AppendLine("\t\tm_t = SmvType."xxx + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+                // hier was ie
+                SB.AppendLine("\t\tm_t = SmvType." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
             }
 
-            defSB.AppendLine("}");
+            SB.AppendLine("}");
         }
 
         /// <summary>
         /// Writes functions to set the GMV types to scalar value.
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteSetScalar(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteSetScalar(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             G25.GMV gmv = S.m_GMV;
             string className = FT.GetMangledName(S, gmv.Name);
@@ -147,26 +150,27 @@ namespace G25.CG.CSharp
 
             string funcDecl = "public " + funcName + "(" + FT.type + " val)";
 
-            defSB.Append(funcDecl);
-            defSB.AppendLine(" {");
-            defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
-            defSB.AppendLine("\tm_c[0] = val;");
+            SB.Append(funcDecl);
+            SB.AppendLine(" {");
+            SB.AppendLine("\t" + SET_GROUP_USAGE + "(" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            SB.AppendLine("\tm_c[0] = val;");
 
             if (S.m_reportUsage)
             {
-                defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
+                SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, FT.type) + ";");
             }
 
-            defSB.AppendLine("}");
+            SB.AppendLine("}");
         }
 
         /// <summary>
         /// Writes functions to set the GMV types by array value.
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteSetArray(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteSetArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             G25.GMV gmv = S.m_GMV;
             
@@ -175,26 +179,27 @@ namespace G25.CG.CSharp
 
             string funcDecl = "public " + funcName + "(int gu, " + FT.type + "[] arr)";
 
-            defSB.Append(funcDecl);
-            defSB.AppendLine(" {");
-            defSB.AppendLine("\t" + SET_GROUP_USAGE + "(gu);");
-            defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + "_mvSize[gu]"));
+            SB.Append(funcDecl);
+            SB.AppendLine(" {");
+            SB.AppendLine("\t" + SET_GROUP_USAGE + "(gu);");
+            SB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + "_mvSize[gu]"));
 
             if (S.m_reportUsage)
             {
-                defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+                SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
             }
 
-            defSB.AppendLine("}");
+            SB.AppendLine("}");
         }
 
         /// <summary>
         /// Writes functions to copy GMVs from one float type to another.
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteGMVtoGMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType dstFT)
+        public static void WriteGMVtoGMVcopy(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType dstFT)
         {
             G25.GMV gmv = S.m_GMV;
             foreach (G25.FloatType srcFT in S.m_floatTypes)
@@ -207,36 +212,37 @@ namespace G25.CG.CSharp
 
                 string funcDecl = "public " + funcName + "(" + srcClassName + " src)";
 
-                defSB.Append(funcDecl);
-                defSB.AppendLine(" {");
-                defSB.AppendLine("\t" + SET_GROUP_USAGE + "(src.gu());");
-                defSB.AppendLine("\tconst " + srcFT.type + "*srcC = src.getC();");
+                SB.Append(funcDecl);
+                SB.AppendLine(" {");
+                SB.AppendLine("\t" + SET_GROUP_USAGE + "(src.gu());");
+                SB.AppendLine("\tconst " + srcFT.type + "*srcC = src.getC();");
                 if (dstFT == srcFT)
                 {
-                    defSB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + "_mvSize[src.gu()]"));
+                    SB.AppendLine("\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + "_mvSize[src.gu()]"));
                 }
                 else
                 {
-                    defSB.AppendLine("\tfor (int i = 0; i < " + S.m_namespace + "_mvSize[src.gu()]; i++)");
-                    defSB.AppendLine("\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
+                    SB.AppendLine("\tfor (int i = 0; i < " + S.m_namespace + "_mvSize[src.gu()]; i++)");
+                    SB.AppendLine("\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
                 }
 
                 if (S.m_reportUsage)
                 {
-                    defSB.AppendLine("\tm_t = src.m_t;");
+                    SB.AppendLine("\tm_t = src.m_t;");
                 }
 
-                defSB.AppendLine("}");
+                SB.AppendLine("}");
             }
         }
 
         /// <summary>
         /// Writes functions to copy GMVs to SMVs
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteGMVtoSMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteGMVtoSMVcopy(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             G25.GMV gmv = S.m_GMV;
             string srcClassName = FT.GetMangledName(S, gmv.Name);
@@ -255,10 +261,10 @@ namespace G25.CG.CSharp
 
                 string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
 
-                defSB.Append(funcDecl);
+                SB.Append(funcDecl);
                 {
-                    defSB.AppendLine(" {");
-                    defSB.AppendLine("\tconst " + FT.type + " *ptr = src.getC();\n");
+                    SB.AppendLine(" {");
+                    SB.AppendLine("\tconst " + FT.type + " *ptr = src.getC();\n");
 
                     // get a dictionary which tells you for each basis blade of 'smv' where it is in 'gmv'
                     Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
@@ -283,7 +289,7 @@ namespace G25.CG.CSharp
                         }
 
                         // if group is present in GMV:
-                        defSB.AppendLine("\tif (src.gu() & " + (1 << g) + ") {");
+                        SB.AppendLine("\tif (src.gu() & " + (1 << g) + ") {");
                         if (groupIsUsedBySMV)
                         {
                             bool mustCast = false;
@@ -292,27 +298,27 @@ namespace G25.CG.CSharp
                             RefGA.Multivector[] value = G25.CG.Shared.Symbolic.GMVtoSymbolicMultivector(S, gmv, "ptr", srcPtr, g);
                             bool writeZeros = false;
                             string str = G25.CG.Shared.CodeUtil.GenerateSMVassignmentCode(S, FT, mustCast, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr, value[g], nbTabs, writeZeros);
-                            defSB.Append(str);
+                            SB.Append(str);
                         }
                         if ((g + 1) <= highestGroup)
-                            defSB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
-                        defSB.AppendLine("\t}");
+                            SB.AppendLine("\t\tptr += " + gmv.Group(g).Length + ";");
+                        SB.AppendLine("\t}");
 
                         // else, if group is not present in GMV:
                         if (groupIsUsedBySMV)
                         {
-                            defSB.AppendLine("\telse {");
+                            SB.AppendLine("\telse {");
                             foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
                                 if ((KVP.Value.Value1 == g) && (!smv.IsCoordinateConstant(KVP.Key.Value2)))
                                 {
                                     // translate KVP.Key.Value2 to non-const idx, because the accessStrs are only about non-const blades blades!
                                     int bladeIdx = smv.BladeIdxToNonConstBladeIdx(KVP.Key.Value2);
-                                    defSB.AppendLine("\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
+                                    SB.AppendLine("\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
                                 }
-                            defSB.AppendLine("\t}");
+                            SB.AppendLine("\t}");
                         }
                     }
-                    defSB.AppendLine("}");
+                    SB.AppendLine("}");
                 }
             } // end of loop over all SMVs
         } // end of WriteGMVtoSMVcopy()
@@ -321,10 +327,11 @@ namespace G25.CG.CSharp
         /// <summary>
         /// Writes functions to copy SMVs to GMVs
         /// </summary>
+        /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteSMVtoGMVcopy(StringBuilder defSB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteSMVtoGMVcopy(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             G25.GMV gmv = S.m_GMV;
             bool gmvParityPure = (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE);
@@ -346,10 +353,10 @@ namespace G25.CG.CSharp
 
                 string funcDecl = inlineStr + "void " + dstClassName + "::" + funcName + "(const " + srcClassName + " &src)";
 
-                defSB.Append(funcDecl);
+                SB.Append(funcDecl);
 
                 {
-                    defSB.AppendLine(" {");
+                    SB.AppendLine(" {");
 
                     // get a dictionary which tells you for each basis blade of 'gmv' where it is in 'smv'
                     Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
@@ -364,11 +371,11 @@ namespace G25.CG.CSharp
                         gu |= 1 << KVP.Value.Value1;
 
                     // generate the code to set group usage:
-                    defSB.AppendLine("\t" + SET_GROUP_USAGE + "(" + gu + ");");
+                    SB.AppendLine("\t" + SET_GROUP_USAGE + "(" + gu + ");");
 
                     // a helper pointer which is incremented
                     string dstArrName = "ptr";
-                    defSB.AppendLine("\t" + FT.type + " *" + dstArrName + " = m_c;");
+                    SB.AppendLine("\t" + FT.type + " *" + dstArrName + " = m_c;");
 
 
                     // for each used group, generate the assignment code
@@ -380,20 +387,20 @@ namespace G25.CG.CSharp
                             int nbTabs = 1;
                             bool writeZeros = true;
                             string str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, value, nbTabs, writeZeros);
-                            defSB.Append(str);
+                            SB.Append(str);
 
                             if ((1 << (g + 1)) <= gu)
-                                defSB.AppendLine("\tptr += " + gmv.Group(g).Length + ";");
+                                SB.AppendLine("\tptr += " + gmv.Group(g).Length + ";");
                         }
 
                     }
 
                     if (S.m_reportUsage)
                     {
-                        defSB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
+                        SB.AppendLine("\tm_t = " + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, smv.Name) + ";");
                     }
 
-                    defSB.AppendLine("}");
+                    SB.AppendLine("}");
                 }
             } // end of loop over all SMVs
         } // end of WriteGMVtoSMVcopy()

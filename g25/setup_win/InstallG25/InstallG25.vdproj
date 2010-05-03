@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1D275E2536114B23A2E7EE9B9E00C0B3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1DB72B5FB97E25B15F94BC8F8B361991"
         "OwnerKey" = "8:_EA88FAB37423D9AD98EB7EB42F638D6E"
         "MsmSig" = "8:_UNDEFINED"
@@ -785,6 +791,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D06400399E88469FA2D5D702A9C51858"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1D275E2536114B23A2E7EE9B9E00C0B3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2468,6 +2480,34 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1D275E2536114B23A2E7EE9B9E00C0B3"
+            {
+            "SourcePath" = "8:..\\..\\..\\g25_cg_csj_shared\\vs2008\\obj\\Release\\g25_cg_csj_shared.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_936C15859ADD44F591C67A42D5766F1E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{84059991-D5C1-4BF9-8563-96C101B4521C}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2CD46FFA03FA4D80A4E7DA190479865F"
             {
             "SourcePath" = "8:..\\..\\..\\g25_cg_java\\vs2008\\obj\\Release\\g25_cg_java.dll"
