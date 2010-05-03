@@ -1061,7 +1061,7 @@ namespace G25
         }
 
         /// <returns>the directory name for file output.</returns>
-        public String GetOutputDir()
+        public string GetOutputDir()
         {
             return m_outputDirectory;
         }

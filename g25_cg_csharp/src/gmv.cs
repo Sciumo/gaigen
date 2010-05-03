@@ -102,7 +102,7 @@ namespace G25.CG.CSharp
 
             // get filename, list of generated filenames
             List<string> generatedFiles = new List<string>();
-            string sourceFilename = S.GetOutputPath(className + ".cs");
+            string sourceFilename = MainGenerator.GetClassOutputPath(S, className);
             generatedFiles.Add(sourceFilename);
 
             // get StringBuilder where all generated code goes

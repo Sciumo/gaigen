@@ -27,7 +27,7 @@ namespace G25.CG.CSharp
     {
         public static string GetRawSourceFilename(Specification S)
         {
-            return S.m_namespace + ".cs";
+            return MainGenerator.GetClassOutputPath(S, S.m_namespace); 
         }
 
 #if RIEN

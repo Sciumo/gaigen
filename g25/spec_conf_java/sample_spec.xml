@@ -2,7 +2,7 @@
 
 <g25spec 
 	license="gpl" 
-	language="csharp"
+	language="java"
 	namespace="c3ga"
 	coordStorage="variables"
 	defaultOperatorBindings="true"
@@ -15,6 +15,7 @@
 >
 
 <outputFilename defaultName="blah.cpp" customName="whee.cpp"/>
+<outputDirectory path="C:\svn\g25\g25\spec_conf_java\c3ga\src"/>
 
   <inline 
 	constructors="true" 

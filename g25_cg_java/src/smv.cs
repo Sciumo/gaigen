@@ -40,7 +40,7 @@ namespace G25.CG.Java
 
             // get filename, list of generated filenames
             List<string> generatedFiles = new List<string>();
-            string sourceFilename = S.GetOutputPath(className + ".java");
+            string sourceFilename = MainGenerator.GetClassOutputPath(S, className);
             generatedFiles.Add(sourceFilename);
 
             // get StringBuilder where all generated code goes

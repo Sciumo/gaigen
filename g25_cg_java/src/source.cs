@@ -27,7 +27,7 @@ namespace G25.CG.Java
     {
         public static string GetRawSourceFilename(Specification S)
         {
-            return S.m_namespace + ".java";
+            return MainGenerator.GetClassOutputPath(S, S.m_namespace);
         }
 #if RIEN
 

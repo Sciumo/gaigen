@@ -136,6 +136,15 @@ namespace G25.CG.CSharp
             return generatedFiles;
         }
 
+        /// <returns>Output path for a class named 'className'.</returns>
+        internal static string GetClassOutputPath(Specification S, string className)
+        {
+            string path =
+                className +  // class
+                ".cs"; // extenesion
+
+            return S.GetOutputPath(path);
+        }
 
 
 

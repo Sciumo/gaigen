@@ -44,6 +44,8 @@ namespace G25.CG.Java
         /// for post processing.</returns>
         public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
         {
+            CreatePackageDirectory(S);
+
             CoGsharp.CoG cog = InitCog(S);
 
             CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);
@@ -74,9 +76,8 @@ namespace G25.CG.Java
 
             // generate Doxyfile
             generatedFiles.Add(G25.CG.Shared.Util.GenerateDoxyfile(S, cgd));
-            // todo: generate code (files) for all types
-            // todo: generate code (files) for all types
-            // todo: generate code (files) for all types
+            // generate source files / classes for all GMV, SMV, GOM, SOM types
+            generatedFiles.AddRange(GenerateClasses(S, cgd));
             // generate source
             generatedFiles.AddRange(Source.GenerateCode(S, cgd));
 
@@ -111,5 +112,72 @@ namespace G25.CG.Java
                 cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_test_templates, "cg_java_test_templates.txt");
         }
 
-    }
+        /// <summary>
+        /// Creates the directory required for the Java package S.m_namespace.
+        /// </summary>
+        /// <param name="S"></param>
+        private static void CreatePackageDirectory(Specification S) {
+            // get path
+            string path = S.GetOutputDir() + System.IO.Path.DirectorySeparatorChar + S.m_namespace.Replace('.', System.IO.Path.DirectorySeparatorChar);
+            Console.WriteLine("path: " + path);
+
+            // check if exists already; if so: do nothing, return
+            if (System.IO.Directory.Exists(path)) return;
+
+            // try to create the directory
+            try
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
+            catch (Exception E)
+            {
+                throw new G25.UserException("Error creating package directory " + path);
+            }
+        }
+
+        /// <summary>
+        /// Generates source code for all GA types (GMV, SMV, GOM, SOM)
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <returns>List of generated files.</returns>
+        private static List<string> GenerateClasses(Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            List<string> generatedFiles = new List<string>();
+
+            foreach (FloatType FT in S.m_floatTypes)
+            {
+                generatedFiles.Add(GMV.GenerateCode(S, cgd, FT));
+
+                foreach (G25.SMV smv in S.m_SMV)
+                    generatedFiles.Add(SMV.GenerateCode(S, cgd, smv, FT));
+
+                if (S.m_GOM != null)
+                    generatedFiles.Add(GOM.GenerateCode(S, cgd, FT));
+
+                foreach (G25.SOM som in S.m_SOM)
+                    generatedFiles.Add(SOM.GenerateCode(S, cgd, som, FT));
+            }
+
+            return generatedFiles;
+        }
+
+        /// <returns>Output path for a class named 'className'.</returns>
+        internal static string GetClassOutputPath(Specification S, string className)
+        {
+            string path = 
+                S.m_namespace.Replace('.', System.IO.Path.DirectorySeparatorChar) +  // package dir
+                System.IO.Path.DirectorySeparatorChar +  // slash
+                className +  // class
+                ".java"; // extenesion
+
+            return S.GetOutputPath(path);
+
+        }
+
+
+
+    } // end of class MainGenerator
+
+
 } // end of namespace G25.CG.Java
