@@ -47,7 +47,7 @@ namespace G25.CG.Java
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
-            SB.AppendLine("public enum SmvType {");
+            SB.AppendLine("public enum " + G25.CG.CSJ.GMV.SMV_TYPE + " {");
 
             Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
 
@@ -64,32 +64,6 @@ namespace G25.CG.Java
             SB.AppendLine(";");
 
             cgd.m_cog.EmitTemplate(SB, "SmvTypeEnum");
-
-            /*
-public enum SmvType {
-	ANIMAL(1, "Animal"),
-    MINERAL(2, "Mineral"),
-    VEGETABLE(3, "Vegetable");
-	
-	private final int id;
-    private final String label;
-
-    SmvType(final int id, final String label) {
-        this.id = id;
-        this.label = label;
-    }
-    
-    public int getId() {
-        return id;
-    }
- 
-    public String toString() {
-        return label;
-    }
- 
-    
-}
-*/
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);

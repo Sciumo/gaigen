@@ -109,6 +109,8 @@ namespace G25.CG.Java
         /// <param name="S">Specification. Used to know whether testing code will be generated.</param>
         public override void LoadTemplates(Specification S, CoGsharp.CoG cog)
         {
+            cog.AddReference((new G25.CG.CSJ.GMV()).GetType().Assembly.Location); // add reference for g25_cg_csj
+
             // also load shared templates:
             G25.CG.Shared.Util.LoadTemplates(cog);
 

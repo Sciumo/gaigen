@@ -15,7 +15,7 @@ ${CODEBLOCK GMVmemberVariables}
 <%}%>
 <%if (S.m_reportUsage) {%>
     /** Specialized multivector type. Used to report about non-optimized function usage. */
-	protected SmvType m_t = SmvType.<%G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "none")%>; 
+	protected SmvType m_t = <%G25.CG.CSJ.GMV.SMV_TYPE%>.<%G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "none")%>; 
 <%}%>
 ${ENDCODEBLOCK}
 

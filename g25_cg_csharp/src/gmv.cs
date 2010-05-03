@@ -25,7 +25,7 @@ namespace G25.CG.CSharp
     /// </summary>
     public class GMV
     {
-        public static string SET_GROUP_USAGE = "setGroupUsage";
+        public static string SET_GROUP_USAGE = "SetGroupUsage";
 
         /// <summary>
         /// Writes comments of a GMV class to 'SB'.
@@ -115,7 +115,7 @@ namespace G25.CG.CSharp
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = "set";
+            string funcName = "Set";
 
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
@@ -129,10 +129,10 @@ namespace G25.CG.CSharp
             if (S.m_reportUsage)
             {
                 // hier was ie
-                SB.AppendLine("\t\tm_t = SmvType." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+                SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
             }
 
-            SB.AppendLine("}");
+            SB.AppendLine("\t}");
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace G25.CG.CSharp
         {
             G25.GMV gmv = S.m_GMV;
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = "set";
+            string funcName = "Set";
 
             string funcDecl = "public " + funcName + "(" + FT.type + " val)";
 
@@ -175,7 +175,7 @@ namespace G25.CG.CSharp
             G25.GMV gmv = S.m_GMV;
             
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = "set";
+            string funcName = "Set";
 
             string funcDecl = "public " + funcName + "(int gu, " + FT.type + "[] arr)";
 
@@ -198,7 +198,7 @@ namespace G25.CG.CSharp
         /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        /// <param name="FT"></param>
+        /// <param name="dstFT"></param>
         public static void WriteGMVtoGMVcopy(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType dstFT)
         {
             G25.GMV gmv = S.m_GMV;
@@ -208,7 +208,7 @@ namespace G25.CG.CSharp
 
                 string dstClassName = dstFT.GetMangledName(S, gmv.Name);
 
-                string funcName = "set";
+                string funcName = "Set";
 
                 string funcDecl = "public " + funcName + "(" + srcClassName + " src)";
 
@@ -254,7 +254,7 @@ namespace G25.CG.CSharp
                 bool dstPtr = true;
                 string[] smvAccessStr = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr);
 
-                string funcName = "set";
+                string funcName = "Set";
 
                 // do we inline this func?
                 string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
@@ -346,7 +346,7 @@ namespace G25.CG.CSharp
 
                 string srcClassName = FT.GetMangledName(S, smv.Name);
 
-                string funcName = "set";
+                string funcName = "Set";
 
                 // do we inline this func?
                 string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
@@ -453,6 +453,8 @@ namespace G25.CG.CSharp
             WriteGMVtoSMVcopy(SB, S, cgd, FT);
             WriteSMVtoGMVcopy(SB, S, cgd, FT);
 
+            // function for setting grade/group usage, reallocting memory
+            cgd.m_cog.EmitTemplate(SB, "GMVsetGroupUsage", "S=", S, "FT=", FT, "className=", className, "gmv=", gmv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

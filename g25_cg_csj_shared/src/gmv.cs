@@ -22,6 +22,7 @@ namespace G25.CG.CSJ
 {
     public class GMV
     {
+        public const string SMV_TYPE = "SmvType";
 
     } // end of class GMV
 } // end of namespace G25.CG.CSJ

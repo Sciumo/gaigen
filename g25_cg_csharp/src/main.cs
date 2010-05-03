@@ -104,12 +104,15 @@ namespace G25.CG.CSharp
         /// <param name="S">Specification. Used to know whether testing code will be generated.</param>
         public override void LoadTemplates(Specification S, CoGsharp.CoG cog)
         {
+            cog.AddReference((new G25.CG.CSJ.GMV()).GetType().Assembly.Location); // add reference for g25_cg_csj
+
             // also load shared templates:
             G25.CG.Shared.Util.LoadTemplates(cog);
 
             cog.LoadTemplates(g25_cg_csharp.Properties.Resources.cg_csharp_templates, "cg_csharp_templates.txt");
             if (S.m_generateTestSuite) // only load when testing code is required
                 cog.LoadTemplates(g25_cg_csharp.Properties.Resources.cg_csharp_test_templates, "cg_csharp_test_templates.txt");
+
         }
 
         /// <summary>

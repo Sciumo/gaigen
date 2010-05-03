@@ -79,4 +79,21 @@ string smvClassName = FT.GetMangledName(S, smv.Name);%>
 <%}%>
 ${ENDCODEBLOCK}
 
+// S = specification
+// gmv = gmv type
+// FT = floatType
+${CODEBLOCK GMVsetGroupUsage}
+    /// <summary>
+	/// Set m_gu, allocates m_c to the size required by gu
+    /// </summary>
+	private void SetGroupUsage(int gu) {
+		if (m_gu == gu) return;
+		m_gu = gu;
+<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
+		int nbCoords = <%S.m_namespace%>.MvSize[m_gu];
+		if (nbCoords > 0)
+			m_c = new <%FT.type%>[nbCoords];
+<%}%>
+	}
+${ENDCODEBLOCK}
 

@@ -40,7 +40,7 @@ namespace G25.CG.CSharp
             SB.AppendLine("/// </summary>");
 
             Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
-            SB.AppendLine("public enum SmvType {");
+            SB.AppendLine("public enum " + G25.CG.CSJ.GMV.SMV_TYPE + " {");
             SB.AppendLine("\t" + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "NONE") + " = -1,");
 
             foreach (KeyValuePair<string, int> kvp in STD)

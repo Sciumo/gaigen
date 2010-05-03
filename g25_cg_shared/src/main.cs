@@ -28,6 +28,7 @@ namespace G25.CG.Shared
             cog.AddReference(RefGA.BasisBlade.ZERO.GetType().Assembly.Location); // add reference for RefGA
             cog.AddReference(this.GetType().Assembly.Location); // add reference for this assembly
             cog.AddReference((new G25.CG.Shared.Util()).GetType().Assembly.Location); // add reference for g25_cg_shared
+
             LoadTemplates(S, cog);
             return cog;
         }
