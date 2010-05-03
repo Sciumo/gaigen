@@ -80,6 +80,8 @@ namespace G25.CG.Java
             generatedFiles.AddRange(GenerateClasses(S, cgd));
             // generate source
             generatedFiles.AddRange(Source.GenerateCode(S, cgd));
+            // generate smv type enum
+            generatedFiles.AddRange(SmvType.GenerateCode(S, cgd));
 
 
             // report errors and missing deps to user
@@ -119,7 +121,6 @@ namespace G25.CG.Java
         private static void CreatePackageDirectory(Specification S) {
             // get path
             string path = S.GetOutputDir() + System.IO.Path.DirectorySeparatorChar + S.m_namespace.Replace('.', System.IO.Path.DirectorySeparatorChar);
-            Console.WriteLine("path: " + path);
 
             // check if exists already; if so: do nothing, return
             if (System.IO.Directory.Exists(path)) return;
@@ -131,7 +132,7 @@ namespace G25.CG.Java
             }
             catch (Exception E)
             {
-                throw new G25.UserException("Error creating package directory " + path);
+                throw new G25.UserException("Error creating package directory " + path + ":\n" + E.Message);
             }
         }
 

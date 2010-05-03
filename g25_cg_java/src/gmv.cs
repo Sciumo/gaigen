@@ -74,6 +74,18 @@ namespace G25.CG.Java
             SB.AppendLine(" */");
         }
 
+        /// <summary>
+        /// Writes member variables of a GMV class to 'SB'.
+        /// </summary>
+        /// <param name="SB">Where the comment goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float point type of 'SMV'.</param>
+        /// <param name="gmv">The general multivector for which the struct should be written.</param>
+        public static void WriteMemberVariables(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
+        {
+            cgd.m_cog.EmitTemplate(SB, "GMVmemberVariables", "S=", S, "FT=", FT);
+        }
 
         /// <summary>
         /// Generates a source file with the GMV class definition.
@@ -108,6 +120,9 @@ namespace G25.CG.Java
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
 
+            // write member vars
+            WriteMemberVariables(SB, S, cgd, FT, gmv);
+
             // ....
 
             // close class
@@ -135,19 +150,6 @@ namespace G25.CG.Java
         protected Specification m_specification;
         protected CG.Shared.CGdata m_cgd;
 
-
-        /// <summary>
-        /// Writes member variables of a GMV class to 'SB'.
-        /// </summary>
-        /// <param name="SB">Where the comment goes.</param>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        /// <param name="FT">Float point type of 'SMV'.</param>
-        /// <param name="gmv">The general multivector for which the struct should be written.</param>
-        public static void WriteMemberVariables(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
-        {
-            cgd.m_cog.EmitTemplate(SB, "GMVmemberVariables", "S=", S, "FT=", FT);
-        }
 
 
         /// <summary>

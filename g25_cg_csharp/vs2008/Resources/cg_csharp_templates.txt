@@ -19,13 +19,13 @@ ${CODEBLOCK GMVmemberVariables}
     /// <summary>
 	/// the coordinates
     /// </summary>
-	protected internal<%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates%>]; 
+	protected internal <%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates%>]; 
 <%}%>
 <%if (S.m_reportUsage) {%>
     /// <summary>
 	/// Specialized multivector type. Used to report about non-optimized function usage.
     /// </summary>
-	protected internal SMV_TYPE m_t = ...; 
+	protected internal SmvType m_t = SmvType.<%G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "none")%>; 
 <%}%>
 ${ENDCODEBLOCK}
  

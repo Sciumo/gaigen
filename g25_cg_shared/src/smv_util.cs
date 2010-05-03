@@ -49,6 +49,33 @@ namespace G25.CG.Shared
             return SB.ToString();
         }
 
+        public static Dictionary<string, int> GetSpecializedTypeDictionary(Specification S)
+        {
+            Dictionary<string, int> D = new Dictionary<string, int>();
+
+            int idx = 0;
+
+            // gmv
+            D[S.m_GMV.Name] = idx;
+            idx++;
+
+            // float types
+            foreach (FloatType FT in S.m_floatTypes)
+            {
+                D[FT.GetName()] = idx;
+                idx++;
+            }
+
+            // specialized types
+            foreach (G25.SMV smv in S.m_SMV)
+            {
+                D[smv.GetName()] = idx;
+                idx++;
+            }
+
+            return D;
+
+        }
 
     } // end of class SmvUtil
 } // end of namepace G25.CG.Shared

@@ -112,7 +112,7 @@ namespace G25
 
 
         /**
-         * Inserts the verbatim code (in m_verbatimCode</c>) into the generated files.
+         * Inserts the verbatim code (in <c>m_verbatimCode</c>) into the generated files.
          * The list <c>generatedFiles</c> is used to find the names of the files.
          * 
          * Warnings are issued when code could not be inserted.

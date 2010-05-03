@@ -30,6 +30,56 @@ namespace G25.CG.CSharp
             return MainGenerator.GetClassOutputPath(S, S.m_namespace); 
         }
 
+        public static void WriteSMVtypeConstants(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            SB.AppendLine("");
+
+            SB.AppendLine("/// <summary>");
+            SB.AppendLine("/// These constants define a unique number for each specialized multivector type.");
+            SB.AppendLine("/// They are used to report usage of non-optimized functions.");
+            SB.AppendLine("/// </summary>");
+
+            Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
+            SB.AppendLine("public enum SmvType {");
+            SB.AppendLine("\t" + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "NONE") + " = -1,");
+
+            foreach (KeyValuePair<string, int> kvp in STD)
+            {
+                string name = G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, kvp.Key);
+                SB.AppendLine("\t" + name + " = " + kvp.Value + ",");
+            }
+
+            SB.AppendLine("\t" + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, G25.CG.Shared.ReportUsage.INVALID));
+            SB.AppendLine("}");
+
+            SB.AppendLine("");
+
+        }
+
+
+        public static void WriteSMVtypenames(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
+
+            SB.AppendLine("");
+            SB.AppendLine("\tprotected internal string[] typenames = ");
+            SB.AppendLine("\t\tnew string[] {");
+            {
+                bool first = true;
+                foreach (KeyValuePair<string, int> kvp in STD)
+                {
+                    if (!first) SB.AppendLine(",");
+                    SB.Append("\t\t\t\"" + kvp.Key + "\"");
+                    first = false;
+                }
+
+                if (STD.Count == 0) SB.Append("\t\t\t\"There are no specialized types defined\"");
+            }
+            SB.AppendLine("");
+            SB.AppendLine("\t\t};");
+        }
+
+
 #if RIEN
         public static void GenerateBasicInfo(Specification S, G25.CG.Shared.CGdata cgd, StringBuilder SB)
         {
@@ -293,7 +343,11 @@ namespace G25.CG.CSharp
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
+            WriteSMVtypeConstants(SB, S, cgd);
+
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
+
+            WriteSMVtypenames(SB, S, cgd);
 #if RIEN
             GenerateTables(S, cgd, SB);
 

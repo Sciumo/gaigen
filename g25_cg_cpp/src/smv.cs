@@ -35,34 +35,6 @@ namespace G25.CG.CPP
         protected Specification m_specification;
         protected CG.Shared.CGdata m_cgd;
 
-        public static Dictionary<string, int> GetSpecializedTypeDictionary(Specification S) {
-            Dictionary<string, int> D = new Dictionary<string, int>();
-
-            int idx = 0;
-
-            // gmv
-            D[S.m_GMV.Name] = idx;
-            idx++;
-
-            // float types
-            foreach (FloatType FT in S.m_floatTypes)
-            {
-                D[FT.GetName()] = idx;
-                idx++;
-            }
-
-            // specialized types
-            foreach (G25.SMV smv in S.m_SMV)
-            {
-                D[smv.GetName()] = idx;
-                idx++;
-            }
-
-            return D;
-
-        }
-
-
         public static void WriteSMVtypeConstants(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
             SB.AppendLine("");
@@ -85,7 +57,7 @@ namespace G25.CG.CPP
                     }
                 }
             }*/
-            Dictionary<string, int> STD = GetSpecializedTypeDictionary(S);
+            Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
             SB.AppendLine("typedef enum {");
             SB.AppendLine("\t" + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "NONE") + " = -1,");
 
@@ -108,7 +80,7 @@ namespace G25.CG.CPP
 
         public static void WriteSMVtypenames(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
-            Dictionary<string, int> STD = GetSpecializedTypeDictionary(S);
+            Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
 
             SB.AppendLine("");
             SB.AppendLine("const char *g_" + S.m_namespace + "Typenames[] = ");
