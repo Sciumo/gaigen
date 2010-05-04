@@ -140,6 +140,9 @@ Maybe fix the float type stuff
 	
 --
 
+Check out the problem in:
+D:\temp\TestG25\c3ga_c_5xVAGB_x_x_Pmultivector_1f_mt_scalar
+
 -add include/import element in XML
 
 	Design C# and Java classes.

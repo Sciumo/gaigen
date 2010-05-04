@@ -763,7 +763,7 @@ namespace G25
                         case XML_METRIC:
                             {
                                 // name
-                                String name = E.GetAttribute(XML_NAME);
+                                string name = E.GetAttribute(XML_NAME);
                                 if (name == null) name = "default";
 
                                 // parse actual metric:
@@ -1053,8 +1053,8 @@ namespace G25
             double value = ParseMetric(S, name, FA.Arguments[1], str);
 
             // get, check names of basis vectors
-            String basisVectorName1 = XdotY.Arguments[0] as String;
-            String basisVectorName2 = XdotY.Arguments[1] as String;
+            string basisVectorName1 = XdotY.Arguments[0] as String;
+            string basisVectorName2 = XdotY.Arguments[1] as String;
             if ((basisVectorName1 == null) || (basisVectorName2 == null))
                 throw new G25.UserException("Invalid basis vector names in metric specification '" + str + "'");
 
@@ -1094,7 +1094,7 @@ namespace G25
                 throw new G25.UserException("Invalid value in metric specification '" + str + "'");
 
             if (FA.FunctionName == "negate")
-                return ParseMetricValue(S, FA.Arguments[0], str);
+                return -ParseMetricValue(S, FA.Arguments[0], str);
             else return ParseMetricValue(S, FA.Arguments[0], str);
         }
 

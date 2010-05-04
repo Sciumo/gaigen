@@ -287,7 +287,7 @@ namespace G25.CG.Shared.Func
                 }
                 else m_randomVectorFuncName[FT.type] = "not_set";
 
-                m_spFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "sp", new String[] { m_fgs.m_returnTypeName, m_fgs.m_returnTypeName }, defaultReturnTypeName, FT, null);
+                m_spFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "sp", new String[] { m_fgs.m_returnTypeName, m_fgs.m_returnTypeName }, defaultReturnTypeName, FT, m_G25M.m_name);
             }
         }
 
