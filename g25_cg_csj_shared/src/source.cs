@@ -26,13 +26,8 @@ namespace G25.CG.CSJ
         {
             Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
 
-            string accessModifier = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "static protected internal"
-                : "static protected final";
-
-            string stringType = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "string"
-                : "String";
+            string accessModifier = Keywords.ProtectedStaticAccessModifier(S);
+            string stringType = Keywords.StringType(S);
 
             SB.AppendLine("");
             SB.AppendLine("\t" + accessModifier + " " + stringType + "[] typenames = ");
@@ -54,21 +49,10 @@ namespace G25.CG.CSJ
 
         public static void GenerateBasicInfo(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
-            string accessModifier = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "const"
-                : "static final";
-
-            string accessModifierArr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "static readonly"
-                : "static final";
-
-            string stringType = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "string"
-                : "String";
-
-            string boolType = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? "bool"
-                : "boolean";
+            string accessModifier = Keywords.ConstAccessModifier(S);
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+            string stringType = Keywords.StringType(S);
+            string boolType = Keywords.BoolType(S);
 
             // dimension of space
             SB.AppendLine("\tpublic " + accessModifier + " int SpaceDim = " + S.m_dimension + ";");
@@ -94,8 +78,11 @@ namespace G25.CG.CSJ
 
         public static void GenerateGradeArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+            string groupBitmapType = Keywords.GroupBitmapType(S);
+
             // constants for the grades in an array:
-            SB.Append("\tpublic static readonly " + G25.CG.CSJ.GMV.GROUP_BITMAP + "[] Grades = {");
+            SB.Append("\tpublic " + accessModifierArr + " " + groupBitmapType + "[] Grades = {");
 
             string gStr = G25.CG.CSJ.GMV.GROUP_BITMAP + ".GRADE_";
             for (int i = 0; i <= S.m_dimension; i++)
@@ -115,7 +102,9 @@ namespace G25.CG.CSJ
 
         public static void GenerateGroupArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {// constants for the groups in an array:
-            SB.Append("\tpublic static readonly " + G25.CG.CSJ.GMV.GROUP_BITMAP + "[] Groups = {");
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+
+            SB.Append("\tpublic " + accessModifierArr + " " + G25.CG.CSJ.GMV.GROUP_BITMAP + "[] Groups = {");
 
             string gStr = G25.CG.CSJ.GMV.GROUP_BITMAP + ".GROUP_";
             for (int i = 0; i < S.m_GMV.NbGroups; i++)
@@ -129,8 +118,10 @@ namespace G25.CG.CSJ
 
         public static void GenerateGroupSizeArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         { // group size
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+
             G25.GMV gmv = S.m_GMV;
-            SB.Append("\tpublic static readonly int[] GroupSize = { ");
+            SB.Append("\tpublic " + accessModifierArr + " int[] GroupSize = { ");
             for (int i = 0; i < gmv.NbGroups; i++)
             {
                 if (i > 0) SB.Append(", ");
@@ -141,10 +132,12 @@ namespace G25.CG.CSJ
 
         public static void GenerateMultivectorSizeArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+
             G25.GMV gmv = S.m_GMV;
 
             // size of multivector based on grade usage bitmap
-            SB.AppendLine("\tpublic static readonly int[] MvSize = new int[] {");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] MvSize = new int[] {");
             SB.Append("\t\t");
             for (int i = 0; i < (1 << gmv.NbGroups); i++)
             {
@@ -166,9 +159,11 @@ namespace G25.CG.CSJ
 
         public static void GenerateBasisElementsArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+
             G25.GMV gmv = S.m_GMV;
             // basis vectors in basis elements
-            SB.AppendLine("\tpublic static readonly int[][] BasisElements = new int[][] {");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[][] BasisElements = new int[][] {");
             {
                 bool comma = false;
                 for (int i = 0; i < gmv.NbGroups; i++)
@@ -192,6 +187,7 @@ namespace G25.CG.CSJ
 
         public static void GenerateBasisElementArrays(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
             G25.GMV gmv = S.m_GMV;
 
             double[] s = new double[1 << S.m_dimension];
@@ -199,7 +195,7 @@ namespace G25.CG.CSJ
             int[] BitmapByIndex = new int[1 << S.m_dimension];
             int[] GradeByBitmap = new int[1 << S.m_dimension];
             int[] GroupByBitmap = new int[1 << S.m_dimension];
-            SB.AppendLine("\tpublic static readonly double[] BasisElementSignByIndex = new double[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " double[] BasisElementSignByIndex = new double[]");
             SB.Append("\t\t{");
             {
                 bool comma = false;
@@ -223,7 +219,7 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("\tpublic static readonly double[] BasisElementSignByBitmap = new double[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " double[] BasisElementSignByBitmap = new double[]");
             SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
@@ -234,7 +230,7 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("\tpublic static readonly int[] BasisElementIndexByBitmap = new int[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementIndexByBitmap = new int[]");
             SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
@@ -245,7 +241,7 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("\tpublic static readonly int[] BasisElementBitmapByIndex = new int[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementBitmapByIndex = new int[]");
             SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
@@ -256,7 +252,7 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("\tpublic static readonly int[] BasisElementGradeByBitmap = new int[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementGradeByBitmap = new int[]");
             SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)
@@ -267,7 +263,7 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
-            SB.AppendLine("\tpublic static readonly int[] BasisElementGroupByBitmap = new int[]");
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementGroupByBitmap = new int[]");
             SB.Append("\t\t{");
             {
                 for (int i = 0; i < s.Length; i++)

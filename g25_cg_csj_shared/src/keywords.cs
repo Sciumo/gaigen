@@ -35,6 +35,13 @@ namespace G25.CG.CSJ
                 : "String";
         }
 
+        public static string GroupBitmapType(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                ? "GroupBitmap"
+                : "int";
+        }
+
         public static string ConstAccessModifier(Specification S)
         {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
