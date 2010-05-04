@@ -140,8 +140,20 @@ Maybe fix the float type stuff
 	
 --
 
-Check out the problem in:
-D:\temp\TestG25\c3ga_c_5xVAGB_x_x_Pmultivector_1f_mt_scalar
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
+DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
 
 -add include/import element in XML
 
