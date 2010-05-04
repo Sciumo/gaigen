@@ -196,7 +196,8 @@ namespace G25.CG.Shared
 
                                 if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND) 
                                 { // code for full expansion
-                                    code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, gd, M3, nbTabs, writeZeros);
+                                    int dstBaseIdx = 0;
+                                    code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, gd, dstBaseIdx, M3, nbTabs, writeZeros);
                                     // replace '=' with '+='
                                     code = code.Replace("=", "+=");
                                 }

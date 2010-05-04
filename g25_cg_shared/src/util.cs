@@ -62,7 +62,6 @@ namespace G25.CG.Shared
     /// <summary>
     /// Output language for generated code.
     /// </summary>
-    // Define an Enum with FlagsAttribute.
     [FlagsAttribute]
     public enum AccessModifier : short
     {
@@ -71,7 +70,6 @@ namespace G25.CG.Shared
         AM_internal = 4,
         AM_private = 8
     };
-
     
     /// <summary>
     /// Contains various utility functions, such as opening and closing comments,

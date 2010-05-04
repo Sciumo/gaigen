@@ -603,7 +603,8 @@ namespace G25.CG.CPP
                                 bool mustCast = false;
                                 int nbTabs = 1;
                                 bool writeZeros = true;
-                                String str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, value, nbTabs, writeZeros);
+                                int dstBaseIdx = 0;
+                                string str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, dstBaseIdx, value, nbTabs, writeZeros);
                                 defSB.Append(str);
 
                                 if ((1 << (g+1)) <= gu)

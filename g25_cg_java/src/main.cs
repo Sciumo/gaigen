@@ -85,6 +85,8 @@ namespace G25.CG.Java
             generatedFiles.AddRange(Source.GenerateCode(S, cgd));
             // generate smv type enum
             generatedFiles.AddRange(SmvType.GenerateCode(S, cgd));
+            // generate smv type enum
+            generatedFiles.AddRange(GroupBitmap.GenerateCode(S, cgd));
 
 
             // report errors and missing deps to user

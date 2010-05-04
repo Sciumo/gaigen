@@ -86,13 +86,14 @@ namespace G25.CG.Shared
         /// <param name="gmvName">The variable name of the _array_ of float to be used in the access strings. 
         /// For example, specify <c>"A"</c> to get <c>"A[0]"</c> and so on.</param>
         /// <param name="groupIdx">Specifies for that group index the access strings should be generated.</param>
+        /// <param name="baseIdx">Index of first coordinate of group (required for C# and Java)</param>
         /// <returns>Array of strings that can be used to access the coordinates of group <c>groupIdx</c> of the <c>gmv</c>.</returns>
-        public static String[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx)
+        public static String[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx, int baseIdx)
         {
             String[] AL = new String[gmv.Group(groupIdx).Length];
 
             for (int i = 0; i < gmv.Group(groupIdx).Length; i++)
-                AL[i] = gmvName + "[" + i + "]";
+                AL[i] = gmvName + "[" + (baseIdx + i) + "]";
 
             return AL;
         } // end of GetAccessStr()
@@ -158,16 +159,17 @@ namespace G25.CG.Shared
         /// <param name="mustCast">set to true if a cast to 'FT' must be performed before assigned to 'dstName'.</param>
         /// <param name="dstGmv">Type of general multivector assigned to.</param>
         /// <param name="dstName">Name of specialized multivector assigned to.</param>
-        /// <param name="groupIdx">Write to which group?</param>
+        /// <param name="dstGroupIdx">Write to which group in destination type?</param>
+        /// <param name="dstBaseIdx">Base index of coordinate 0 of group (needed for C# and Java)</param>
         /// <param name="value">Multivector value to assign to the GMV. Must not contain basis blades inside the symbolic scalars.</param>
         /// <param name="nbTabs">Number of tabs to put before the code.</param>
         /// <param name="writeZeros">Some callers want to skip "= 0.0" assignments because they would be redundant. So they set this argument to true.</param>
         /// <returns>String of code for dstName = value;</returns>
         public static string GenerateGMVassignmentCode(Specification S, FloatType FT, bool mustCast,
-            G25.GMV dstGmv, string dstName, int groupIdx, RefGA.Multivector value, int nbTabs, bool writeZeros)
+            G25.GMV dstGmv, string dstName, int dstGroupIdx, int dstBaseIdx, RefGA.Multivector value, int nbTabs, bool writeZeros)
         {
-            RefGA.BasisBlade[] BL = dstGmv.Group(groupIdx);
-            string[] accessStr = GetAccessStr(S, dstGmv, dstName, groupIdx);
+            RefGA.BasisBlade[] BL = dstGmv.Group(dstGroupIdx);
+            string[] accessStr = GetAccessStr(S, dstGmv, dstName, dstGroupIdx, dstBaseIdx);
             string[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
 
             return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);

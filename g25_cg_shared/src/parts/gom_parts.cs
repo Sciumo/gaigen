@@ -110,7 +110,8 @@ namespace G25.CG.Shared
                         bool mustCast = false;
                         int nbTabs = 1;
                         bool writeZeros = false; // no need to generate "+= 0.0;"
-                        string code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, nameDstGMV, dstGroup, returnValue, nbTabs, writeZeros);
+                        int dstBaseIdx = 0;
+                        string code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, nameDstGMV, dstGroup, dstBaseIdx, returnValue, nbTabs, writeZeros);
 
                         string funcName = GetGomPartFunctionName(S, FT, srcGroup, dstGroup);
                         cgd.m_gmvGomPartFuncNames[new Tuple<string, string>(FT.type, funcName)] = (code.Length > 0);

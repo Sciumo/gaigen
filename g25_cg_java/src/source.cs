@@ -295,6 +295,8 @@ namespace G25.CG.Java
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
 
+
+
 #if RIEN
             GenerateTables(S, cgd, SB);
 

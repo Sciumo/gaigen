@@ -578,7 +578,8 @@ namespace G25.CG.Shared
                         {
                             if (!((op == EQUALS) || (op == ZERO))) { // EQUALS and ZERO are different: they generate their own code
                                 // get assignment code
-                                code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstName, g1, value, nbTabs, writeZeros);
+                                int dstBaseIdx = 0;
+                                code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstName, g1, dstBaseIdx, value, nbTabs, writeZeros);
 
                                 // replace assignment symbols if required
                                 if (op == ADD) code = code.Replace("=", "+=");

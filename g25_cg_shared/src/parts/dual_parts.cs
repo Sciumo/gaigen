@@ -158,7 +158,8 @@ namespace G25.CG.Shared
 
                                     if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND)
                                     { // full code expansion
-                                        code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, g3, value, nbTabs, writeZeros);
+                                        int dstBaseIdx = 0;
+                                        code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, g3, dstBaseIdx, value, nbTabs, writeZeros);
                                     }
                                     else if (S.m_gmvCodeGeneration == GMV_CODE.RUNTIME)
                                     { // runtime code

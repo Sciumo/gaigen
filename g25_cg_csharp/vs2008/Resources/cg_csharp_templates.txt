@@ -4,7 +4,7 @@ ${CODEBLOCK GMVmemberVariables}
     /// <summary>
 	/// group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below).
     /// </summary>
-	protected internal int m_gu = 0; 
+	protected internal <%G25.CG.CSJ.GMV.GROUP_BITMAP%> m_gu = 0; 
 <%if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
     /// <summary>
 	/// the coordinates
@@ -41,7 +41,7 @@ bool repUsage = S.m_reportUsage;
     /// <summary>
 	/// Constructs a new <%className%> with value 0.
     /// </summary>
-	public <%className%>() {set();}
+	public <%className%>() {Set();}
 
     /// <summary>
 	/// Copy constructor.
@@ -66,7 +66,7 @@ bool repUsage = S.m_reportUsage;
 	/// <param name="gu">bitwise OR of the GRADEs or GROUPs that are non-zero.</param>
 	/// <param name="coordinates"> compressed coordinates.</param>
     /// </summary>
-	public <%className%>(int gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
+	public <%className%>(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
 
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
@@ -86,14 +86,60 @@ ${CODEBLOCK GMVsetGroupUsage}
     /// <summary>
 	/// Set m_gu, allocates m_c to the size required by gu
     /// </summary>
-	private void SetGroupUsage(int gu) {
+	private void SetGroupUsage(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
 		if (m_gu == gu) return;
 		m_gu = gu;
 <%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
-		int nbCoords = <%S.m_namespace%>.MvSize[m_gu];
+		int nbCoords = <%S.m_namespace%>.MvSize[(int)m_gu];
 		if (nbCoords > 0)
 			m_c = new <%FT.type%>[nbCoords];
 <%}%>
 	}
 ${ENDCODEBLOCK}
 
+
+// S = specification
+// FT = floatType
+${CODEBLOCK GMVgetGroupUsageCoords}
+	/// returns group usage bitmap
+	public <%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu() { return m_gu; }
+	/// returns coordinates
+	public <%FT.type%>[] c() { return m_c; }
+	
+${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// MAX_N = maximum number of coordinates to set to zero explicitly
+// FT = float type
+${CODEBLOCK float_zero_copy_def}
+<%for (int n = 1; n <= MAX_N; n++) {%>
+	protected internal static void Zero_<%n%>(<%FT.type%>[] dst) {
+		<%for (int i = 0; i < n; i++) {%>dst[<%i%>]=<%}%><%FT.DoubleToString(S, 0.0)%>;
+	}
+	protected internal static void Copy_<%n%>(<%FT.type%>[] dst, <%FT.type%>[] src) {
+	<%for (int i = 0; i < n; i++) {%>
+		dst[<%i%>] = src[<%i%>];
+	<%}%>
+}
+<%}%>
+/** Sets N <%FT.type%>s to zero */
+protected internal static void Zero_N(<%FT.type%>[] dst, int N) {
+	int i = 0;
+	while ((N-i) > <%MAX_N%>) {
+		zero_<%MAX_N%>(dst + i);
+		i += <%MAX_N%>;
+	}
+	for (; i < N; i++)
+		dst[i] = <%FT.DoubleToString(S, 0.0)%>;
+}
+/** Copies N <%FT.type%>s from 'src' to 'dst' */
+protected internal static void Copy_N(<%FT.type%>[] dst, <%FT.type%>[] src, int N) {
+	int i = 0;
+	while ((N-i) > <%MAX_N%>) {
+		copy_<%MAX_N%>(dst + i, src + i);
+		i += <%MAX_N%>;
+	}
+	for (; i < N; i++)
+		dst[i] = src[i];
+}
+${ENDCODEBLOCK}
