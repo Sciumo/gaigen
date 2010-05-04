@@ -103,8 +103,9 @@ namespace G25.CG.CSJ
         public static void GenerateGroupArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {// constants for the groups in an array:
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+            string groupBitmapType = Keywords.GroupBitmapType(S);
 
-            SB.Append("\tpublic " + accessModifierArr + " " + G25.CG.CSJ.GMV.GROUP_BITMAP + "[] Groups = {");
+            SB.Append("\tpublic " + accessModifierArr + " " + groupBitmapType + "[] Groups = {");
 
             string gStr = G25.CG.CSJ.GMV.GROUP_BITMAP + ".GROUP_";
             for (int i = 0; i < S.m_GMV.NbGroups; i++)
@@ -296,6 +297,15 @@ namespace G25.CG.CSJ
             GenerateBasisElementArrays(SB, S, cgd);
 
         } // end of GenerateTables()
+
+        public static void WriteSetZeroCopyFloats(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            // set to zero / copy floats
+            foreach (FloatType FT in S.m_floatTypes)
+            {
+                cgd.m_cog.EmitTemplate(SB, "float_zero_copy_def", "S=", S, "FT=", FT, "MAX_N=", G25.CG.Shared.Main.MAX_EXPLICIT_ZERO);
+            }
+        }
 
 
 

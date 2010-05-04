@@ -298,6 +298,8 @@ namespace G25.CG.Java
             G25.CG.CSJ.Source.WriteSMVtypenames(SB, S, cgd);
 
             G25.CG.CSJ.Source.GenerateTables(SB, S, cgd);
+
+            G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
 #if RIEN
             GenerateTables(S, cgd, SB);
 

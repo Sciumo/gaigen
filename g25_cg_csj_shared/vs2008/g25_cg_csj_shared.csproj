@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -51,6 +51,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\cogsharp\cogsharp\vs2008\cogsharp.csproj">
+      <Project>{AB55FF76-52B1-4D50-9514-42B75548DAA3}</Project>
+      <Name>cogsharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\g25_cg_shared\vs2008\g25_cg_shared.csproj">
       <Project>{3442FC1F-E44B-41ED-869B-E77B53EE1BC1}</Project>
       <Name>g25_cg_shared</Name>

@@ -94,15 +94,6 @@ namespace G25.CG.CSharp
         }
 
 
-        private static void WriteSetZeroCopyFloats(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
-        {
-            // set to zero / copy floats
-            foreach (FloatType FT in S.m_floatTypes)
-            {
-                cgd.m_cog.EmitTemplate(SB, "float_zero_copy_def", "S=", S, "FT=", FT, "MAX_N=", G25.CG.Shared.Main.MAX_EXPLICIT_ZERO);
-            }
-        }
-
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
             // get filename, list of generated filenames
@@ -139,7 +130,7 @@ namespace G25.CG.CSharp
 
             G25.CG.CSJ.Source.GenerateTables(SB, S, cgd);
 
-            WriteSetZeroCopyFloats(SB, S, cgd);
+            G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
             
 
 #if RIEN

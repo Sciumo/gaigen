@@ -38,3 +38,29 @@ ${CODEBLOCK SmvTypeEnum}
     }
 }
 ${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// MAX_N = maximum number of coordinates to set to zero explicitly
+// FT = float type
+${CODEBLOCK float_zero_copy_def}
+<%for (int n = 1; n <= MAX_N; n++) {%>
+	protected static void Zero_<%n%>(<%FT.type%>[] dst) {
+		<%for (int i = 0; i < n; i++) {%>dst[<%i%>]=<%}%><%FT.DoubleToString(S, 0.0)%>;
+	}
+	protected static void Copy_<%n%>(<%FT.type%>[] dst, <%FT.type%>[] src) {
+	<%for (int i = 0; i < n; i++) {%>
+		dst[<%i%>] = src[<%i%>];
+	<%}%>
+}
+<%}%>
+	/** Sets N <%FT.type%>s to zero */
+	protected static void Zero_N(<%FT.type%>[] dst, int N) {
+		for (int i = 0; i < N; i++)
+			dst[i] = <%FT.DoubleToString(S, 0.0)%>;
+	}
+	/** Copies N <%FT.type%>s from 'src' to 'dst' */
+	protected  static void Copy_N(<%FT.type%>[] dst, <%FT.type%>[] src, int N) {
+		for (int i = 0; i < N; i++)
+			dst[i] = src[i];
+	}
+${ENDCODEBLOCK}
