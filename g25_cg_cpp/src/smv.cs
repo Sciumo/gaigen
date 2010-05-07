@@ -42,21 +42,6 @@ namespace G25.CG.CPP
             SB.AppendLine("// These constants define a unique number for each specialized multivector type.");
             SB.AppendLine("// They are used to report usage of non-optimized functions.");
 
-            /*{
-                int idx = 0;
-                // for each floating point type
-                foreach (G25.FloatType FT in S.m_floatTypes)
-                {
-                    // for each smv
-                    foreach (G25.SMV smv in S.m_SMV)
-                    {
-                        string name = (S.m_namespace + "_" + FT.GetMangledName(smv.Name)).ToUpper();
-                        SB.AppendLine("#define " + name + " " + idx);
-                        idx++;
-
-                    }
-                }
-            }*/
             Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
             SB.AppendLine("typedef enum {");
             SB.AppendLine("\t" + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "NONE") + " = -1,");
@@ -86,17 +71,6 @@ namespace G25.CG.CPP
             SB.AppendLine("const char *g_" + S.m_namespace + "Typenames[] = ");
             SB.AppendLine("{");
             {
-                /*// for each floating point type
-                foreach (G25.FloatType FT in S.m_floatTypes)
-                {
-                    // for each smv
-                    foreach (G25.SMV smv in S.m_SMV)
-                    {
-                        if (idx > 0) SB.AppendLine(",");
-                        SB.Append("\t\"" + FT.GetMangledName(smv.Name) + "\"");
-                        idx++;
-                    }
-                }*/
                 bool first = true;
                 foreach (KeyValuePair<string, int> kvp in STD)
                 {
@@ -125,7 +99,6 @@ namespace G25.CG.CPP
         public static string GetCoordIndexDefine(Specification S, FloatType FT, G25.SMV smv, int idx)
         {
             return smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
-//                    return FT.GetMangledName(smv.Name) + "::" + smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
         }
 
         /// <summary>

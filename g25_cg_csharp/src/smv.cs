@@ -58,7 +58,14 @@ namespace G25.CG.CSharp
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
 
-            // ....
+            // member variables
+            G25.CG.CSJ.SMV.WriteMemberVariables(SB, S, cgd, FT, smv);
+
+            // indices into arrays
+            G25.CG.CSJ.SMV.WriteSMVcoordIndices(SB, S, FT, smv);
+
+            // special type to safeguard coordinates order in functions
+            G25.CG.CSJ.SMV.WriteCoordinateOrder(SB, S, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
@@ -122,7 +129,6 @@ namespace G25.CG.CSharp
         public static string GetCoordIndexDefine(Specification S, FloatType FT, G25.SMV smv, int idx)
         {
             return smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
-//                    return FT.GetMangledName(smv.Name) + "::" + smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
         }
 
         /// <summary>
@@ -205,42 +211,6 @@ namespace G25.CG.CSharp
                 SB.AppendLine(" * " + smv.Comment);
             }
             SB.AppendLine(" */");
-        }
-
-        /// <summary>
-        /// Writes the SMV class to 'SB' (including comments).
-        /// </summary>
-        /// <param name="SB">Where the code goes.</param>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="cgd">Not used yet.</param>
-        /// <param name="FT">Float point type of 'SMV'.</param>
-        /// <param name="smv">The specialized multivector for which the struct should be written.</param>
-        public static void WriteMemberVariables(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv)
-        {
-            SB.AppendLine("public:");
-            // individual coordinates or one array?
-            if (S.m_coordStorage == COORD_STORAGE.VARIABLES)
-            {
-                for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                {
-                    SB.AppendLine("\t/// The " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + " coordinate.");
-                    SB.AppendLine("\t" + FT.type + " m_" + smv.GetCoordLangID(i, S) + ";");
-                }
-            }
-            else
-            {
-                if (smv.NbNonConstBasisBlade > 0) {
-                    // emit: float c[3]; // e1, e2, e3
-                    SB.AppendLine("\t/// The coordinates (stored in an array).");
-                    SB.Append("\t" + FT.type + " m_c[" + smv.NbNonConstBasisBlade + "]; // ");
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                    {
-                        if (i > 0) SB.Append(", ");
-                        SB.Append(smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames));
-                    }
-                    SB.AppendLine("");
-                }
-            }
         }
 
 

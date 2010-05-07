@@ -58,7 +58,14 @@ namespace G25.CG.Java
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
 
-            // ....
+            // member variables
+            G25.CG.CSJ.SMV.WriteMemberVariables(SB, S, cgd, FT, smv);
+
+            // indices into arrays
+            G25.CG.CSJ.SMV.WriteSMVcoordIndices(SB, S, FT, smv);
+
+            // special type to safeguard coordinates order in functions
+            G25.CG.CSJ.SMV.WriteCoordinateOrder(SB, S, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

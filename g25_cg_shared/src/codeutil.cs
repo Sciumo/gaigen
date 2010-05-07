@@ -67,6 +67,11 @@ namespace G25.CG.Shared
                     accessStr = "";
                 }
             }
+            else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ||
+                (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA))
+            {
+                memberPrefix = "m_";
+            }
 
             string prefix = smvName + accessStr + memberPrefix;
 

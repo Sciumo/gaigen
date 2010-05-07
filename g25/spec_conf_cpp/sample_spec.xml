@@ -4,7 +4,7 @@
 	license="gpl" 
 	language="cpp"
 	namespace="c3ga"
-	coordStorage="variables"
+	coordStorage="array"
 	defaultOperatorBindings="true"
 	dimension="5"
   	reportUsage="true"

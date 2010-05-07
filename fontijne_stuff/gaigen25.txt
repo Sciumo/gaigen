@@ -149,6 +149,8 @@ Maybe fix the float type stuff
 		V create classes
 			V enum for SMVs
 			
+			V -> smv coordinates
+			-> add c() function for SMVs
 			-> first GMVs, then SMVs
 			
 			main class:
@@ -156,10 +158,27 @@ Maybe fix the float type stuff
 				V zero
 				V mv size & friends
 				
+				
 			
 			GMV:
 			  V constructors
 			  V set functions
+			  get
+			  reservegroup
+			  set
+			  compress, expand (needs ptr class?)
+			  largest coordinate (2x)
+			  toString & friends
+			  
+			SMV:
+			  ....
+			  
+			GOM
+			 
+			 
+			SOM
+			
+			regular functions
 		
 			main
 			source
@@ -169,12 +188,12 @@ Maybe fix the float type stuff
 			smv
 				-> they write their own files?
 				
-		load template
+		V load templates
 	
 	
 Java:
-	One file per class
-	One general interface for multivectors with a toMv() 
+	V One file per class
+	V One general interface for multivectors with a toMv() 
 	Each multivector class can also call its functions
 	use enum for coordinate order
 	

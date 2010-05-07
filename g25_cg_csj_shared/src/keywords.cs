@@ -29,7 +29,15 @@ namespace G25.CG.CSJ
                 : "static protected final";
         }
 
-        public static string StringType(Specification S) {
+        public static string PackageProtectedAccessModifier(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                ? "protected internal"
+                : "protected";
+        }
+
+        public static string StringType(Specification S)
+        {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
                 ? "string"
                 : "String";
