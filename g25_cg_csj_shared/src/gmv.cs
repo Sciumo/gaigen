@@ -37,6 +37,9 @@ namespace G25.CG.CSJ
         {
             G25.GMV gmv = S.m_GMV;
 
+            int nbTabs = 1;
+            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to 0.", null, null);
+
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = "Set";
 
@@ -63,6 +66,9 @@ namespace G25.CG.CSJ
         /// <param name="FT"></param>
         public static void WriteSetScalar(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
+            int nbTabs = 1;
+            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to scalar value.", null, null);
+
             G25.GMV gmv = S.m_GMV;
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = "Set";
@@ -91,12 +97,21 @@ namespace G25.CG.CSJ
         /// <param name="FT"></param>
         public static void WriteSetArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
+            int nbTabs = 1;
+            List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
+                new Tuple<string, string>("gu", "bitwise or of the GROUPs and GRADEs which are present in 'arr'."),
+                new Tuple<string, string>("arr", "compressed coordinates.")
+            };
+            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this coordinates in 'arr'.", paramComments, null);
+
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = "Set";
 
-            string funcDecl = "\tpublic void " + funcName + "(GroupBitmap gu, " + FT.type + "[] arr)";
+            string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+
+            string funcDecl = "\tpublic void " + funcName + "(" + groupBitmapStr + " gu, " + FT.type + "[] arr)";
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
@@ -131,6 +146,9 @@ namespace G25.CG.CSJ
 
                 string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 
+                int nbTabs = 1;
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to multivector value.", null, null);
+
                 SB.Append(funcDecl);
                 SB.AppendLine(" {");
                 SB.AppendLine("\t\t" + SET_GROUP_USAGE + "(src.gu());");
@@ -163,6 +181,7 @@ namespace G25.CG.CSJ
         /// <param name="FT"></param>
         public static void WriteSMVtoGMVcopy(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
+            int nbTabs;
             G25.GMV gmv = S.m_GMV;
             bool gmvParityPure = (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE);
 
@@ -174,7 +193,11 @@ namespace G25.CG.CSJ
                 // do not generate converter if the GMV cannot hold the type
                 if (gmvParityPure && (!smv.IsParityPure())) continue;
 
+
                 string srcClassName = FT.GetMangledName(S, smv.Name);
+
+                nbTabs = 1;
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to " + srcClassName + " value.", null, null);
 
                 string funcName = "Set";
 
@@ -221,7 +244,7 @@ namespace G25.CG.CSJ
                         if (((1 << g) & gu) != 0)
                         {
                             bool mustCast = false;
-                            int nbTabs = 2;
+                            nbTabs = 2;
                             bool writeZeros = true;
                             string str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, dstBaseIdx, value, nbTabs, writeZeros);
                             SB.Append(str);

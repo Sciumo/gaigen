@@ -122,23 +122,23 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK float_zero_copy_def}
 <%for (int n = 1; n <= MAX_N; n++) {%>
 	/** Sets <%n%> <%FT.type%>s to zero. */
-	protected static void Zero_<%n%>(<%FT.type%>[] dst) {
+	protected static void zero_<%n%>(<%FT.type%>[] dst) {
 		<%for (int i = 0; i < n; i++) {%>dst[<%i%>]=<%}%><%FT.DoubleToString(S, 0.0)%>;
 	}
 	/** Copies <%n%> <%FT.type%>s from 'src' to 'dst.' */
-	protected static void Copy_<%n%>(<%FT.type%>[] dst, <%FT.type%>[] src) {
+	protected static void copy_<%n%>(<%FT.type%>[] dst, <%FT.type%>[] src) {
 	<%for (int i = 0; i < n; i++) {%>
 		dst[<%i%>] = src[<%i%>];
 	<%}%>
 }
 <%}%>
 	/** Sets N <%FT.type%>s to zero. */
-	protected static void Zero_N(<%FT.type%>[] dst, int N) {
+	protected static void zero_N(<%FT.type%>[] dst, int N) {
 		for (int i = 0; i < N; i++)
 			dst[i] = <%FT.DoubleToString(S, 0.0)%>;
 	}
 	/** Copies N <%FT.type%>s from 'src' to 'dst'. */
-	protected  static void Copy_N(<%FT.type%>[] dst, <%FT.type%>[] src, int N) {
+	protected  static void copy_N(<%FT.type%>[] dst, <%FT.type%>[] src, int N) {
 		for (int i = 0; i < N; i++)
 			dst[i] = src[i];
 	}

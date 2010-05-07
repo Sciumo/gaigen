@@ -643,6 +643,129 @@ namespace G25.CG.Shared
         } // end of GetClassExtendsImplements()
 
 
+        private static void WriteMultilineComment(StringBuilder SB, Specification S, int nbTabs, string str)
+        {
+            string lineOpen = new string('\t', nbTabs);
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                lineOpen = lineOpen + " * ";
+            else lineOpen = lineOpen + "/// ";
+
+            string[] splitStr = str.Split('\n');
+            bool firstLine = true;
+            foreach (string lineStr in splitStr) 
+            {
+                if (!firstLine) SB.Append(lineOpen);
+                firstLine = false;
+                SB.AppendLine(lineStr);
+            }
+        }
+
+        /// <summary>
+        /// Writes a function comment according to the output language.
+        /// </summary>
+        /// <param name="SB">Where the output goes.</param>
+        /// <param name="S">Used for output language.</param>
+        /// <param name="nbTabs">Number of tabs to put in front of output comment (can be null).</param>
+        /// <param name="mainComment">The main comment.</param>
+        /// <param name="paramComments">Pairs of parameter name, parameter comment (can be null).</param>
+        /// <param name="returnComment">Comment on the return value of the function (can be null).</param>
+        public static void WriteFunctionComment(StringBuilder SB, Specification S,
+            int nbTabs,
+            string mainComment,
+            List<Tuple<string, string>> paramComments,
+            string returnComment)
+        {
+            // open comment, summary
+            SB.Append('\t', nbTabs);
+            switch (S.m_outputLanguage)
+            {
+                case OUTPUT_LANGUAGE.CPP:
+                    SB.Append("/// ");
+                    break;
+                case OUTPUT_LANGUAGE.JAVA:
+                    SB.AppendLine("/**");
+                    SB.Append('\t', nbTabs);
+                    SB.Append(" * ");
+                    break;
+                case OUTPUT_LANGUAGE.CSHARP:
+                    SB.Append("/// <summary>");
+                    break;
+            }
+
+            WriteMultilineComment(SB, S, nbTabs, mainComment);
+
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            {
+                SB.Append('\t', nbTabs);
+                SB.AppendLine("/// </summary>");
+            }
+
+            // parameters
+            if (paramComments != null)
+            {
+                foreach (Tuple<string, string> P in paramComments)
+                {
+                    SB.Append('\t', nbTabs);
+
+                    switch (S.m_outputLanguage)
+                    {
+                        case OUTPUT_LANGUAGE.CPP:
+                            SB.Append("/// \\param " + P.Value1 + " ");
+                            break;
+                        case OUTPUT_LANGUAGE.JAVA:
+                            SB.Append(" * @param " + P.Value1 + " ");
+                            break;
+                        case OUTPUT_LANGUAGE.CSHARP:
+                            SB.Append("/// <param name=\"" + P.Value1 + "\">");
+                            break;
+                    }
+                    WriteMultilineComment(SB, S, nbTabs, P.Value2);
+
+                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                    {
+                        SB.Append('\t', nbTabs);
+                        SB.AppendLine("/// </param>");
+                    }
+                }
+            }
+
+
+            // return comment
+            if (returnComment != null)
+            {
+                SB.Append('\t', nbTabs);
+                switch (S.m_outputLanguage)
+                {
+                    case OUTPUT_LANGUAGE.CPP:
+                        SB.Append("/// \\return ");
+                        break;
+                    case OUTPUT_LANGUAGE.JAVA:
+                        SB.Append(" * @return ");
+                        break;
+                    case OUTPUT_LANGUAGE.CSHARP:
+                        SB.Append("/// <returns>");
+                        break;
+                }
+                WriteMultilineComment(SB, S, nbTabs, returnComment);
+                if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                {
+                    SB.Append('\t', nbTabs);
+                    SB.AppendLine("/// </returns>");
+                }
+            }
+
+            // end of comment
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            {
+                SB.Append('\t', nbTabs);
+                SB.AppendLine("*/");
+            }
+        }
+            
+        public int XXX() {
+            return 0;
+        }
+
 
 
     } // end of class Util
