@@ -88,6 +88,33 @@ namespace G25.CG.Java
         }
 
         /// <summary>
+        /// Writes constructors of a GMV class to 'SB'.
+        /// </summary>
+        /// <param name="SB">Where the comment goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float point type of 'SMV'.</param>
+        /// <param name="gmv">The general multivector for which the struct should be written.</param>
+        /// <param name="className">Mangled name of GMV class.</param>
+        public static void WriteConstructors(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv, string className)
+        {
+            cgd.m_cog.EmitTemplate(SB, "GMVconstructors", "S=", S, "FT=", FT, "className=", className);
+        }
+
+        /// <summary>
+        /// Writes gu() and c() functions.
+        /// </summary>
+        /// <param name="SB"></param>
+        /// <param name="S"></param>
+        /// <param name="cgd"></param>
+        /// <param name="FT"></param>
+        public static void WriteGetGuC(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            cgd.m_cog.EmitTemplate(SB, "GMVgetGroupUsageCoords", "S=", S, "FT=", FT);
+        }
+
+
+        /// <summary>
         /// Generates a source file with the GMV class definition.
         /// </summary>
         /// <param name="S"></param>
@@ -123,7 +150,20 @@ namespace G25.CG.Java
             // write member vars
             WriteMemberVariables(SB, S, cgd, FT, gmv);
 
-            // ....
+            // write constructors
+            WriteConstructors(SB, S, cgd, FT, gmv, className);
+
+            WriteGetGuC(SB, S, cgd, FT);
+
+            // write 'set' functions
+            G25.CG.CSJ.GMV.WriteSetZero(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteSetScalar(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteSetArray(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteGMVtoGMVcopy(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteSMVtoGMVcopy(SB, S, cgd, FT);
+
+            // function for setting grade/group usage, reallocting memory
+            cgd.m_cog.EmitTemplate(SB, "GMVsetGroupUsage", "S=", S, "FT=", FT, "className=", className, "gmv=", gmv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

@@ -1075,7 +1075,7 @@ namespace G25
         private static double ParseMetricValue(Specification S, Object O, String str)
         {
             // is it a string? If so, parse it
-            String Ostr = O as String;
+            string Ostr = O as String;
             if (Ostr != null)
             {
                 try

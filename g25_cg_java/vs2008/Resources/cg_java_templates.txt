@@ -39,6 +39,83 @@ ${CODEBLOCK SmvTypeEnum}
 }
 ${ENDCODEBLOCK}
 
+ // S = specification
+// className = mangled class name
+// FT = floatType
+${CODEBLOCK GMVconstructors}
+<%{
+bool dynMem = S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC;
+bool repUsage = S.m_reportUsage;
+%>
+
+    /**
+	* Constructs a new <%className%> with value 0.
+     */
+	public <%className%>() {Set();}
+
+    /**
+	 * Copy constructor.
+     */
+	public <%className%>(<%className%> A) {Set(A);}
+
+<%foreach (G25.FloatType otherFT in S.m_floatTypes) {
+	 if (FT == otherFT) continue;%>
+    /** 
+	 * Copies from <%otherFT.type%> to <%FT.type%>.
+     */
+	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {Set(A);}	 
+<%}%>
+
+    /**
+	 * Constructs a new <%className%> with scalar value 'scalar'.
+     */
+	public <%className%>(<%FT.type%> scalar) {Set(scalar);}
+
+    /** 
+     * Constructs a new <%className%> from compressed 'coordinates'.
+ 	 * @param gu bitwise OR of the GRADEs or GROUPs that are non-zero.
+	 * @param coordinates compressed coordinates.
+     */
+	public <%className%>(int gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
+
+<%foreach(G25.SMV smv in S.m_SMV) {
+string smvClassName = FT.GetMangledName(S, smv.Name);%>
+    /** Converts a <%smvClassName%> to a <%className%>. */
+	public <%className%>(<%smvClassName%> A) {Set(A);}
+<%}%>
+
+<%}%>
+${ENDCODEBLOCK}
+
+// S = specification
+// gmv = gmv type
+// FT = floatType
+${CODEBLOCK GMVsetGroupUsage}
+    /** Sets m_gu, allocates m_c to the size required by gu. */
+	private void SetGroupUsage(int gu) {
+		if (m_gu == gu) return;
+		m_gu = gu;
+<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
+		int nbCoords = <%S.m_namespace%>.MvSize[m_gu];
+		if (nbCoords > 0)
+			m_c = new <%FT.type%>[nbCoords];
+<%}%>
+	}
+${ENDCODEBLOCK}
+
+
+// S = specification
+// FT = floatType
+${CODEBLOCK GMVgetGroupUsageCoords}
+	/** returns group usage bitmap. */
+	public int gu() { return m_gu; }
+	/** returns coordinates */
+	public <%FT.type%>[] c() { return m_c; }
+	
+${ENDCODEBLOCK}
+
+
+
 // S = Specification of algebra.
 // MAX_N = maximum number of coordinates to set to zero explicitly
 // FT = float type

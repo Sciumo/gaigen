@@ -140,21 +140,6 @@ Maybe fix the float type stuff
 	
 --
 
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
-
 -add include/import element in XML
 
 	Design C# and Java classes.
@@ -167,15 +152,14 @@ DOWNLOAD wget http://www.euvt.eu/Accenture/voc2009test.zip
 			-> first GMVs, then SMVs
 			
 			main class:
-				copy
-				zero
+				V copy
+				V zero
 				V mv size & friends
 				
-				->share this code with Java
 			
 			GMV:
-			  constructors
-			  set functions
+			  V constructors
+			  V set functions
 		
 			main
 			source
