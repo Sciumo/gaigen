@@ -54,9 +54,9 @@ bool repUsage = S.m_reportUsage;
 
     /// <summary>
 	/// Constructs a new <%className%> from 'coordinates'.
-	/// <param name="coordinates">The coordinates (one array for each group, entries may be null).</param>
+	/// <param name="coordinates">The coordinates (one array for each group, entries may be null). The arrays are kept.</param>
     /// </summary>
-	public <%className%>(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu, <%FT.type%>[][] coordinates) {Set(coordinates);}
+	public <%className%>(<%FT.type%>[][] coordinates) {Set(coordinates);}
 	
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
@@ -77,7 +77,7 @@ ${CODEBLOCK GMVsetGroupUsage}
 	/// Reserves memory for the groups specified by 'gu'.
 	/// Keeps old memory (and values) when possible.
     /// </summary>
-	private void ReserveGroups(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
+	private void AllocateGroups(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
 		for (int i = 0; (1 << i) <= (int)gu; i++) {
 			if (((1 << i) & (int)gu) != 0) {
 				if (m_c[i] == null)

@@ -29,7 +29,7 @@ namespace G25.CG.CSJ
         private const string SET_RESERVE_GROUP_CSHARP = "ReserveGroup_";
         private const string SET_RESERVE_GROUP_JAVA = "reserveGroups_";
 
-        public static string AllocateGroupsString(Specification S)
+        public static string GetAllocateGroupsString(Specification S)
         {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
                 ? ALLOCATE_GROUPS_CSHARP
@@ -95,7 +95,7 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(GroupBitmap.GROUP_" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(GroupBitmap.GROUP_" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
             SB.AppendLine("\t\tm_c[0][0] = val;");
 
             if (S.m_reportUsage)
@@ -107,13 +107,13 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
-        /// Writes functions to set the GMV types by array value.
+        /// Writes functions to set the GMV types by compressed array value.
         /// </summary>
         /// <param name="SB">Where the output goes.</param>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteSetArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        public static void WriteSetCompressedArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             int nbTabs = 1;
             List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
@@ -133,14 +133,60 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(gu);");
-            SB.AppendLine("\t\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + ".MvSize[(int)gu]"));
 
+            SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(gu);");
             if (S.m_reportUsage)
             {
                 SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
             }
 
+            SB.AppendLine("\t\tint idx = 0;");
+
+            for (int g = 0; g < S.m_GMV.NbGroups; g++)
+            {
+                SB.AppendLine("\t\tif ((gu & " + GroupBitmap.GetGroupBitmapCode(g) + ") != 0) {");
+                SB.AppendLine("\t\t\tfor (int i = 0; i < " + S.m_GMV.Group(g).Length + "; i++)");
+                SB.AppendLine("\t\t\t\tm_c[" + g + "][i] = arr[idx + i];");
+                SB.AppendLine("\t\t\tidx += " + S.m_GMV.Group(g).Length + ";");
+                SB.AppendLine("\t\t}");
+            }
+
+
+            SB.AppendLine("\t}");
+        }
+
+        /// <summary>
+        /// Writes functions to set the GMV types by expanded array value.
+        /// </summary>
+        /// <param name="SB">Where the output goes.</param>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSetExpandedArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            int nbTabs = 1;
+            List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
+                new Tuple<string, string>("arr", "coordinates.")
+            };
+            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this coordinates in 'arr'. \n'arr' is kept, so changes to 'arr' will be reflected in the value of this multivector. Make sure 'arr' has length " + S.m_GMV.NbGroups + " and each subarray has the length of the respective group/grade", paramComments, null);
+
+            G25.GMV gmv = S.m_GMV;
+
+            string className = FT.GetMangledName(S, gmv.Name);
+            string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+
+            string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+
+            string funcDecl = "\tpublic void " + funcName + "(" + FT.type + "[][] arr)";
+
+            SB.Append(funcDecl);
+            SB.AppendLine(" {");
+
+            SB.AppendLine("\t\tm_c = arr;");
+            if (S.m_reportUsage)
+            {
+                SB.AppendLine("\t\tm_t = " + G25.CG.CSJ.GMV.SMV_TYPE + "." + G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, gmv.Name) + ";");
+            }
             SB.AppendLine("\t}");
         }
 
@@ -169,16 +215,23 @@ namespace G25.CG.CSJ
 
                 SB.Append(funcDecl);
                 SB.AppendLine(" {");
-                SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(src.gu());");
-                SB.AppendLine("\t\t" + srcFT.type + "[] srcC = src.c();");
-                if (dstFT == srcFT)
+
+                SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(src.gu());");
+
+                for (int g = 0; g < gmv.NbGroups; g++)
                 {
-                    SB.AppendLine("\t\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "srcC", "m_c", S.m_namespace + ".MvSize[(int)src.gu()]"));
-                }
-                else
-                {
-                    SB.AppendLine("\t\tfor (int i = 0; i < " + S.m_namespace + ".MvSize[(int)src.gu()]; i++)");
-                    SB.AppendLine("\t\t\t\tm_c[i] = (" + dstFT.type + ")srcC[i];");
+                    SB.AppendLine("\t\tif (m_c[" + g + "] != null) {");
+                    if (dstFT == srcFT)
+                    {
+                        SB.Append("\t\t\t" + G25.CG.Shared.Util.GetCopyCode(S, dstFT, "src.m_c[" + g + "]", "m_c[" + g + "]", gmv.Group(g).Length));
+                    }
+                    else
+                    {
+                        SB.AppendLine("\t\t\tfor (int i = 0; i < " + gmv.Group(g).Length + "; i++)");
+                        SB.AppendLine("\t\t\t\tm_c[" + g + "][i] = (" + dstFT.type + ")src.m_c[" + g + "][i];");
+                    }
+
+                    SB.AppendLine("\t\t}");
                 }
 
                 if (S.m_reportUsage)
@@ -248,7 +301,7 @@ namespace G25.CG.CSJ
                     }
 
                     // generate the code to set group usage:
-                    SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(" + guSB.ToString() + ");");
+                    SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(" + guSB.ToString() + ");");
 
                     // a helper pointer which is incremented
                     string dstArrName = "ptr";
@@ -296,18 +349,10 @@ namespace G25.CG.CSJ
             int nbTabs = 1;
             G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "Returns the " + bladeName + " coordinate of this " + gmvTypeName, null, null);
 
-            
-            string lowerGroupStr = GroupBitmap.GetBelowGroupBitmapCode(groupIdx); // used to be ((1 << groupIdx) - 1)
-            string groupStr = GroupBitmap.GetGroupBitmapName(groupIdx); // used to be (1 << groupIdx)
-
-            string mvSizeIndexStr = (lowerGroupStr.Length > 0) 
-                ? "(int)(m_gu & " + lowerGroupStr + ")"
-                : "0";
-
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\treturn ((m_gu & GroupBitmap." + groupStr + ") == 0) ? " +
-                "m_c[" + S.m_namespace + ".MvSize[" + mvSizeIndexStr + "] + " + elementIdx + "] : " +
+            SB.AppendLine("\t\treturn (m_c[" + groupIdx + "] == null) ? " +
+                "m_c[" + groupIdx + "][" + elementIdx + "] : " +
                 FT.DoubleToString(S, 0.0) + ";");
             SB.AppendLine("\t}");
         }
@@ -373,13 +418,9 @@ namespace G25.CG.CSJ
             SB.Append(funcDecl);
             SB.AppendLine(" {");
 
-            string reserveGroup = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "ReserveGroup_" : "reserveGroup_";
-            string lowerGroupStr = GroupBitmap.GetBelowGroupBitmapCode(groupIdx); // used to be ((1 << groupIdx) - 1)
-            //string groupStr = GroupBitmap.GetGroupBitmapName(groupIdx); // used to be (1 << groupIdx)
+            SB.AppendLine("\t\t" + GetReserveGroupString(S, groupIdx) + "();");
 
-            SB.AppendLine("\t\t" + reserveGroup + groupIdx + "();");
-
-            SB.AppendLine("\t\tm_c[" + S.m_namespace + ".MvSize[(int)(m_gu & " + lowerGroupStr + ")] + " + elementIdx + "] = " + coordName + ";");
+            SB.AppendLine("\t\tm_c[" + groupIdx + "][" + elementIdx + "] =  " + coordName + ";");
 
             SB.AppendLine("\t}");
         }

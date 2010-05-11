@@ -160,7 +160,8 @@ namespace G25.CG.CSharp
             // write 'set' functions
             G25.CG.CSJ.GMV.WriteSetZero(SB, S, cgd, FT);
             G25.CG.CSJ.GMV.WriteSetScalar(SB, S, cgd, FT);
-            G25.CG.CSJ.GMV.WriteSetArray(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteSetCompressedArray(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteSetExpandedArray(SB, S, cgd, FT);
             G25.CG.CSJ.GMV.WriteGMVtoGMVcopy(SB, S, cgd, FT);
             G25.CG.CSJ.GMV.WriteSMVtoGMVcopy(SB, S, cgd, FT);
 
