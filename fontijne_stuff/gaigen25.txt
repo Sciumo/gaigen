@@ -164,8 +164,8 @@ Maybe fix the float type stuff
 			  V constructors
 			  V set functions
 			  V get coords
-			  reservegroup
-			  set coords
+			  V reservegroup
+			  V set coords
 			  compress, expand (needs ptr class?)
 			  largest coordinate (2x)
 			  toString & friends

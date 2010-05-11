@@ -24,16 +24,24 @@ namespace G25.CG.CSJ
     {
         public const string SMV_TYPE = "SmvType";
         public const string GROUP_BITMAP = "GroupBitmap";
-        private const string SET_GROUP_USAGE_CSHARP = "SetGroupUsage";
-        private const string SET_GROUP_USAGE_JAVA = "setGroupUsage";
+        private const string ALLOCATE_GROUPS_CSHARP = "AllocateGroups";
+        private const string ALLOCATE_GROUPS_JAVA = "allocateGroups";
+        private const string SET_RESERVE_GROUP_CSHARP = "ReserveGroup_";
+        private const string SET_RESERVE_GROUP_JAVA = "reserveGroups_";
 
-        public static string GetSetGroupUsageString(Specification S)
+        public static string AllocateGroupsString(Specification S)
         {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
-                ? SET_GROUP_USAGE_CSHARP
-                : SET_GROUP_USAGE_JAVA;
+                ? ALLOCATE_GROUPS_CSHARP
+                : ALLOCATE_GROUPS_JAVA;
         }
 
+        public static string GetReserveGroupString(Specification S, int groupIdx)
+        {
+            return ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                ? SET_RESERVE_GROUP_CSHARP
+                : SET_RESERVE_GROUP_JAVA) + groupIdx;
+        }
 
         /// <summary>
         /// Writes functions to set the GMV types to zero.
@@ -56,7 +64,8 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + GetSetGroupUsageString(S) + "(0);");
+            for (int g = 0; g < gmv.NbGroups; g++)
+                SB.AppendLine("\t\tm_c[(int)" + GroupBitmap.GetGroupBitmapCode(g) + "] = null;");
 
             if (S.m_reportUsage)
             {
@@ -86,8 +95,8 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + GetSetGroupUsageString(S) + "(GroupBitmap.GROUP_" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
-            SB.AppendLine("\t\tm_c[0] = val;");
+            SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(GroupBitmap.GROUP_" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            SB.AppendLine("\t\tm_c[0][0] = val;");
 
             if (S.m_reportUsage)
             {
@@ -124,7 +133,7 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + GetSetGroupUsageString(S) + "(gu);");
+            SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(gu);");
             SB.AppendLine("\t\t" + G25.CG.Shared.Util.GetCopyCode(S, FT, "arr", "m_c", S.m_namespace + ".MvSize[(int)gu]"));
 
             if (S.m_reportUsage)
@@ -160,7 +169,7 @@ namespace G25.CG.CSJ
 
                 SB.Append(funcDecl);
                 SB.AppendLine(" {");
-                SB.AppendLine("\t\t" + GetSetGroupUsageString(S) + "(src.gu());");
+                SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(src.gu());");
                 SB.AppendLine("\t\t" + srcFT.type + "[] srcC = src.c();");
                 if (dstFT == srcFT)
                 {
@@ -239,7 +248,7 @@ namespace G25.CG.CSJ
                     }
 
                     // generate the code to set group usage:
-                    SB.AppendLine("\t\t" + GetSetGroupUsageString(S) + "(" + guSB.ToString() + ");");
+                    SB.AppendLine("\t\t" + AllocateGroupsString(S) + "(" + guSB.ToString() + ");");
 
                     // a helper pointer which is incremented
                     string dstArrName = "ptr";

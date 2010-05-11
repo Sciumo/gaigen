@@ -2,25 +2,9 @@
 // FT = floatType
 ${CODEBLOCK GMVmemberVariables}
     /// <summary>
-	/// group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below).
-    /// </summary>
-	protected internal <%G25.CG.CSJ.GMV.GROUP_BITMAP%> m_gu = 0; 
-<%if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
-    /// <summary>
 	/// the coordinates
     /// </summary>
-	protected internal <%FT.type%>[] m_c = null; 
-<%} else if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
-    /// <summary>
-	/// the coordinates (note: parity pure)
-    /// </summary>
-	protected internal <%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates / 2%>]; 
-<%} else if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.FULL) {%>
-    /// <summary>
-	/// the coordinates
-    /// </summary>
-	protected internal <%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates%>]; 
-<%}%>
+	protected internal <%FT.type%>[][] m_c = null; 
 <%if (S.m_reportUsage) {%>
     /// <summary>
 	/// Specialized multivector type. Used to report about non-optimized function usage.
@@ -68,6 +52,12 @@ bool repUsage = S.m_reportUsage;
     /// </summary>
 	public <%className%>(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
 
+    /// <summary>
+	/// Constructs a new <%className%> from 'coordinates'.
+	/// <param name="coordinates">The coordinates (one array for each group, entries may be null).</param>
+    /// </summary>
+	public <%className%>(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu, <%FT.type%>[][] coordinates) {Set(coordinates);}
+	
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
     /// <summary>
@@ -84,24 +74,17 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVsetGroupUsage}
     /// <summary>
-	/// Set m_gu, allocates m_c to the size required by gu.
-	/// Copies old contents of m_gu.
+	/// Reserves memory for the groups specified by 'gu'.
+	/// Keeps old memory (and values) when possible.
     /// </summary>
-	private void SetGroupUsage(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
-		if (m_gu == gu) return;
-		m_gu = gu;
-<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
-		int nbCoords = <%S.m_namespace%>.MvSize[(int)m_gu];
-		if (nbCoords > 0) {
-			<%FT.type%>[] oldC = m_c;
-			m_c = new <%FT.type%>[nbCoords];
-			
-			// copy old coordinates (this behavior is expected by e.g., reserve group)
-            for (int i = 0; i < System.Math.Min(oldC.Length, m_c.Length); i++)
-                m_c[i] = oldC[i];
-		}
-			
-<%}%>
+	private void ReserveGroups(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
+		for (int i = 0; (1 << i) <= (int)gu; i++) {
+			if (((1 << i) & (int)gu) != 0) {
+				if (m_c[i] == null)
+					m_c[i] = new <%FT.type%>[<%S.m_namespace%>.MvSize[1 << i]];
+			}
+			else m_c[i] = null;
+		}		
 	}
 ${ENDCODEBLOCK}
 
@@ -117,28 +100,8 @@ ${CODEBLOCK GMVreserveGroups}
 	and the coordinates for the group are set to zero.
 	*/
 	private void ReserveGroup_<%groupIdx%>() {
-		if ((m_gu & <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>) == 0) {
-			GroupBitmap groupUsageBelow = m_gu & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx)%>;
-			GroupBitmap newGroupUsage = m_gu | <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>;
-<%if (groupIdx < (gmv.NbGroups-1)) { %>
-			GroupBitmap groupUsageAbove = m_gu ^ groupUsageBelow;
-			GroupBitmap newGroupUsageBelowNextGroup = newGroupUsage & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx+1)%>;
-<%}%>
-
-			SetGroupUsage(newGroupUsage);
-
-			int dstIdx;
-<%if (groupIdx < (gmv.NbGroups-1)) { %>
-			// move coordinate beyond new group
-			dstIdx = <%S.m_namespace%>.MvSize[(int)newGroupUsageBelowNextGroup];
-			int srcIdx = <%S.m_namespace%>.MvSize[(int)groupUsageBelow];
-			for (int i = <%S.m_namespace%>.MvSize[(int)groupUsageAbove]-1; i >= 0; i--) // work from end to start of array to avoid overwriting (dst is always beyond src)
-				m_c[dstIdx + i] = m_c[srcIdx + i];
-<%}%>
-
-			// set coordinates of new group to 0
-			dstIdx = <%S.m_namespace%>.MvSize[(int)groupUsageBelow];
-			<%for (int i = 0; i < gmv.Group(groupIdx).Length; i++) {%>m_c[dstIdx + <%i%>] = <%}%><%FT.DoubleToString(S, 0.0)%>;
+		if (m_c[<%groupIdx%>] == null) {
+			m_c[<%groupIdx%>] = new <%FT.type%>[<%gmv.Group(groupIdx).Length%>];
 		}
 	}
 <%}%>
@@ -152,11 +115,18 @@ ${CODEBLOCK GMVgetGroupUsageCoords}
     /// <summary>
 	/// returns group usage bitmap
     /// </summary>
-	public <%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu() { return m_gu; }
+	public <%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu() {
+		return 
+<%for (int g = 0; g < S.m_GMV.NbGroups; g++) {%>
+			((m_c[<%g%>] == null) ? 0 : <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(g)%>) |
+<%}%>
+			0;
+	}
     /// <summary>
-	/// Returns compressed array of coordinates.
+	/// Returns array of array of coordinates.
+	/// Each entry contain the coordinates for one group/grade.
     /// </summary>
-	public <%FT.type%>[] c() { return m_c; }
+	public <%FT.type%>[][] c() { return m_c; }
 	
 ${ENDCODEBLOCK}
 

@@ -36,6 +36,7 @@ namespace G25.CG.CSharp
         /// <param name="gmv">The general multivector for which the class should be written.</param>
         public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
         {
+
             SB.AppendLine("/**");
             SB.AppendLine(" * This class can hold a general multivector.");
             SB.AppendLine(" * ");
