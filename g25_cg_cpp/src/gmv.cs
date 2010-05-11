@@ -628,7 +628,7 @@ namespace G25.CG.CPP
         private static void WriteGetCoordFunction(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, StringBuilder SB,
             string gmvTypeName, int groupIdx, int elementIdx, RefGA.BasisBlade B)
         {
-            String bladeName = B.ToLangString(S.m_basisVectorNames);
+            string bladeName = B.ToLangString(S.m_basisVectorNames);
 
             // do we inline this func?
             string inlineStr = "inline ";
@@ -674,7 +674,7 @@ namespace G25.CG.CPP
         private static void WriteSetCoordFunction(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, StringBuilder SB,
             string gmvTypeName, int groupIdx, int elementIdx, int groupSize, RefGA.BasisBlade B)
         {
-            String bladeName = B.ToLangString(S.m_basisVectorNames);
+            string bladeName = B.ToLangString(S.m_basisVectorNames);
 
             // do we inline this func?
             string inlineStr = "inline ";

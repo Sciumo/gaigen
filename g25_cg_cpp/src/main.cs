@@ -23,9 +23,6 @@ namespace G25.CG.CPP
 {
     public class MainGenerator : G25.CG.Shared.Main, G25.CodeGenerator
     {
-        public const string GETTER_PREFIX = "get_";
-        public const string SETTER_PREFIX = "set_";
-
         /// <returns>what language this code generator generates for.</returns>
         public String Language()
         {

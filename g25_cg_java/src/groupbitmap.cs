@@ -55,7 +55,7 @@ namespace G25.CG.Java
             {
                 gradeBitmap[S.m_GMV.Group(i)[0].Grade()] |= 1 << i;
 
-                SB.Append("\tpublic static final int GROUP_" + i + "  = " + (1 << i) + "; // ");
+                SB.Append("\tpublic static final int " + G25.CG.CSJ.GroupBitmap.GetGroupBitmapName(i) + "  = " + (1 << i) + "; // ");
 
                 for (int j = 0; j < S.m_GMV.Group(i).Length; j++)
                 {
@@ -69,7 +69,7 @@ namespace G25.CG.Java
             // grade
             for (int i = 0; i <= S.m_dimension; i++)
             {
-                SB.AppendLine("\tpublic static final int GRADE_" + i + " = " + gradeBitmap[i] + ";");
+                SB.AppendLine("\tpublic static final int " + G25.CG.CSJ.GroupBitmap.GetGradeBitmapName(i) + " = " + gradeBitmap[i] + ";");
             }
 
 

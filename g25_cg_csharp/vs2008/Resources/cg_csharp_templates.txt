@@ -84,18 +84,66 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVsetGroupUsage}
     /// <summary>
-	/// Set m_gu, allocates m_c to the size required by gu
+	/// Set m_gu, allocates m_c to the size required by gu.
+	/// Copies old contents of m_gu.
     /// </summary>
 	private void SetGroupUsage(<%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu) {
 		if (m_gu == gu) return;
 		m_gu = gu;
 <%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
 		int nbCoords = <%S.m_namespace%>.MvSize[(int)m_gu];
-		if (nbCoords > 0)
+		if (nbCoords > 0) {
+			<%FT.type%>[] oldC = m_c;
 			m_c = new <%FT.type%>[nbCoords];
+			
+			// copy old coordinates (this behavior is expected by e.g., reserve group)
+            for (int i = 0; i < System.Math.Min(oldC.Length, m_c.Length); i++)
+                m_c[i] = oldC[i];
+		}
+			
 <%}%>
 	}
 ${ENDCODEBLOCK}
+
+// S = specification
+// gmv = gmv type
+// FT = floatType
+${CODEBLOCK GMVreserveGroups}
+<%for (int groupIdx = 0; groupIdx < gmv.NbGroups; groupIdx++) { %>
+	/**
+	Reserves memory for coordinate GROUP_<%groupIdx%>.
+	If the group is already present, nothing changes.
+	If the group is not present, memory is allocated for the new group,
+	and the coordinates for the group are set to zero.
+	*/
+	private void ReserveGroup_<%groupIdx%>() {
+		if ((m_gu & <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>) == 0) {
+			GroupBitmap groupUsageBelow = m_gu & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx)%>;
+			GroupBitmap newGroupUsage = m_gu | <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>;
+<%if (groupIdx < (gmv.NbGroups-1)) { %>
+			GroupBitmap groupUsageAbove = m_gu ^ groupUsageBelow;
+			GroupBitmap newGroupUsageBelowNextGroup = newGroupUsage & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx+1)%>;
+<%}%>
+
+			SetGroupUsage(newGroupUsage);
+
+			int dstIdx;
+<%if (groupIdx < (gmv.NbGroups-1)) { %>
+			// move coordinate beyond new group
+			dstIdx = <%S.m_namespace%>.MvSize[(int)newGroupUsageBelowNextGroup];
+			int srcIdx = <%S.m_namespace%>.MvSize[(int)groupUsageBelow];
+			for (int i = <%S.m_namespace%>.MvSize[(int)groupUsageAbove]-1; i >= 0; i--) // work from end to start of array to avoid overwriting (dst is always beyond src)
+				m_c[dstIdx + i] = m_c[srcIdx + i];
+<%}%>
+
+			// set coordinates of new group to 0
+			dstIdx = <%S.m_namespace%>.MvSize[(int)groupUsageBelow];
+			<%for (int i = 0; i < gmv.Group(groupIdx).Length; i++) {%>m_c[dstIdx + <%i%>] = <%}%><%FT.DoubleToString(S, 0.0)%>;
+		}
+	}
+<%}%>
+${ENDCODEBLOCK}
+
 
 
 // S = specification
@@ -106,7 +154,7 @@ ${CODEBLOCK GMVgetGroupUsageCoords}
     /// </summary>
 	public <%G25.CG.CSJ.GMV.GROUP_BITMAP%> gu() { return m_gu; }
     /// <summary>
-	/// returns coordinates
+	/// Returns compressed array of coordinates.
     /// </summary>
 	public <%FT.type%>[] c() { return m_c; }
 	
@@ -149,3 +197,4 @@ ${CODEBLOCK float_zero_copy_def}
 			dst[i] = src[i];
 	}
 ${ENDCODEBLOCK}
+

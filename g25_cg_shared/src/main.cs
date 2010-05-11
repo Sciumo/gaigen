@@ -6,6 +6,9 @@ namespace G25.CG.Shared
     /// </summary>
     public class Main
     {
+        public const string GETTER_PREFIX = "get_";
+        public const string SETTER_PREFIX = "set_";
+
         public const string MERSENNE_TWISTER = "MERSENNE_TWISTER";
         public const string NEED_TIME = "NEED_TIME";
 

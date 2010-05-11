@@ -45,10 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\src\smv.cs" />
     <Compile Include="..\src\gmv.cs" />
-    <Compile Include="..\src\source.cs" />
+    <Compile Include="..\src\groupbitmap.cs" />
     <Compile Include="..\src\keywords.cs" />
+    <Compile Include="..\src\smv.cs" />
+    <Compile Include="..\src\source.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

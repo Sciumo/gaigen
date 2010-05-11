@@ -163,8 +163,17 @@ namespace G25.CG.CSharp
             G25.CG.CSJ.GMV.WriteGMVtoGMVcopy(SB, S, cgd, FT);
             G25.CG.CSJ.GMV.WriteSMVtoGMVcopy(SB, S, cgd, FT);
 
-            // function for setting grade/group usage, reallocting memory
-            cgd.m_cog.EmitTemplate(SB, "GMVsetGroupUsage", "S=", S, "FT=", FT, "className=", className, "gmv=", gmv);
+            // write 'get coordinate' functions
+            G25.CG.CSJ.GMV.WriteGetCoord(SB, S, cgd, FT);
+
+            // write SetGroupUsage()
+            G25.CG.CSJ.GMV.WriteSetGroupUsage(SB, S, cgd, FT);        
+
+            // write 'reserve group' functions
+            G25.CG.CSJ.GMV.WriteReserveGroup(SB, S, cgd, FT);
+
+            // write 'set coordinate' functions
+            G25.CG.CSJ.GMV.WriteSetCoord(SB, S, cgd, FT);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

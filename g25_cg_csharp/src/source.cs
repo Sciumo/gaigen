@@ -44,7 +44,7 @@ namespace G25.CG.CSharp
             {
                 gradeBitmap[S.m_GMV.Group(i)[0].Grade()] |= 1 << i;
 
-                SB.Append("\tGROUP_" + i + "  = " + (1 << i) + ", //");
+                SB.Append("\t" + G25.CG.CSJ.GroupBitmap.GetGroupBitmapName(i) + "  = " + (1 << i) + ", //");
 
                 for (int j = 0; j < S.m_GMV.Group(i).Length; j++)
                 {
@@ -58,7 +58,7 @@ namespace G25.CG.CSharp
             // grade
             for (int i = 0; i <= S.m_dimension; i++)
             {
-                SB.Append("\tGRADE_" + i + " = " + gradeBitmap[i]);
+                SB.Append("\t" + G25.CG.CSJ.GroupBitmap.GetGradeBitmapName(i) + " = " + gradeBitmap[i]);
                 if (i == S.m_dimension) SB.AppendLine();
                 else SB.AppendLine(", ");
             }

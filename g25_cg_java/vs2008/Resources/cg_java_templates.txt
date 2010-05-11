@@ -51,37 +51,37 @@ bool repUsage = S.m_reportUsage;
     /**
 	* Constructs a new <%className%> with value 0.
      */
-	public <%className%>() {Set();}
+	public <%className%>() {set();}
 
     /**
 	 * Copy constructor.
      */
-	public <%className%>(<%className%> A) {Set(A);}
+	public <%className%>(<%className%> A) {set(A);}
 
 <%foreach (G25.FloatType otherFT in S.m_floatTypes) {
 	 if (FT == otherFT) continue;%>
     /** 
 	 * Copies from <%otherFT.type%> to <%FT.type%>.
      */
-	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {Set(A);}	 
+	public <%className%>(<%otherFT.GetMangledName(S, S.m_GMV.Name)%> A) {set(A);}	 
 <%}%>
 
     /**
 	 * Constructs a new <%className%> with scalar value 'scalar'.
      */
-	public <%className%>(<%FT.type%> scalar) {Set(scalar);}
+	public <%className%>(<%FT.type%> scalar) {set(scalar);}
 
     /** 
      * Constructs a new <%className%> from compressed 'coordinates'.
  	 * @param gu bitwise OR of the GRADEs or GROUPs that are non-zero.
 	 * @param coordinates compressed coordinates.
      */
-	public <%className%>(int gu, <%FT.type%>[] coordinates) {Set(gu, coordinates);}
+	public <%className%>(int gu, <%FT.type%>[] coordinates) {set(gu, coordinates);}
 
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
     /** Converts a <%smvClassName%> to a <%className%>. */
-	public <%className%>(<%smvClassName%> A) {Set(A);}
+	public <%className%>(<%smvClassName%> A) {set(A);}
 <%}%>
 
 <%}%>
@@ -92,24 +92,68 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVsetGroupUsage}
     /** Sets m_gu, allocates m_c to the size required by gu. */
-	private void SetGroupUsage(int gu) {
+	private void setGroupUsage(int gu) {
 		if (m_gu == gu) return;
 		m_gu = gu;
 <%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
 		int nbCoords = <%S.m_namespace%>.MvSize[m_gu];
-		if (nbCoords > 0)
+		if (nbCoords > 0) {
+			<%FT.type%>[] oldC = m_c;
 			m_c = new <%FT.type%>[nbCoords];
+			
+			// copy old coordinates (this behavior is expected by e.g., reserve group)
+            for (int i = 0; i < Math.min(oldC.length, m_c.length); i++)
+                m_c[i] = oldC[i];
+		}
 <%}%>
 	}
 ${ENDCODEBLOCK}
 
+// S = specification
+// gmv = gmv type
+// FT = floatType
+${CODEBLOCK GMVreserveGroups}
+<%for (int groupIdx = 0; groupIdx < gmv.NbGroups; groupIdx++) { %>
+	/**
+	Reserves memory for coordinate GROUP_<%groupIdx%>.
+	If the group is already present, nothing changes.
+	If the group is not present, memory is allocated for the new group,
+	and the coordinates for the group are set to zero.
+	*/
+	private void reserveGroup_<%groupIdx%>() {
+		if ((m_gu & <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>) == 0) {
+			int groupUsageBelow = m_gu & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx)%>;
+			int newGroupUsage = m_gu | <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(groupIdx)%>;
+<%if (groupIdx < (gmv.NbGroups-1)) { %>
+			int groupUsageAbove = m_gu ^ groupUsageBelow;
+			int newGroupUsageBelowNextGroup = newGroupUsage & <%G25.CG.CSJ.GroupBitmap.GetBelowGroupBitmapCode(groupIdx+1)%>;
+<%}%>
+
+			setGroupUsage(newGroupUsage);
+
+			int dstIdx;
+<%if (groupIdx < (gmv.NbGroups-1)) { %>
+			// move coordinate beyond new group
+			dstIdx = <%S.m_namespace%>.MvSize[newGroupUsageBelowNextGroup];
+			int srcIdx = <%S.m_namespace%>.MvSize[groupUsageBelow];
+			for (int i = <%S.m_namespace%>.MvSize[groupUsageAbove]-1; i >= 0; i--) // work from end to start of array to avoid overwriting (dst is always beyond src)
+				m_c[dstIdx + i] = m_c[srcIdx + i];
+<%}%>
+
+			// set coordinates of new group to 0
+			dstIdx = <%S.m_namespace%>.MvSize[groupUsageBelow];
+			<%for (int i = 0; i < gmv.Group(groupIdx).Length; i++) {%>m_c[dstIdx + <%i%>] = <%}%><%FT.DoubleToString(S, 0.0)%>;
+		}
+	}
+<%}%>
+${ENDCODEBLOCK}
 
 // S = specification
 // FT = floatType
 ${CODEBLOCK GMVgetGroupUsageCoords}
 	/** returns group usage bitmap. */
 	public int gu() { return m_gu; }
-	/** returns coordinates */
+	/** returns compressed array of coordinates. */
 	public <%FT.type%>[] c() { return m_c; }
 	
 ${ENDCODEBLOCK}
