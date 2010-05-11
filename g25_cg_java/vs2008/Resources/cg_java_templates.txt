@@ -114,6 +114,15 @@ ${CODEBLOCK GMVgetGroupUsageCoords}
 	
 ${ENDCODEBLOCK}
 
+// FT = floatType
+// COORD_TYPE_STRING = string of type which describes coordinates
+${CODEBLOCK SMVgetCoords}
+	/** returns coordinates; 
+	 * @param coordOrder pass the value <%COORD_TYPE_STRING%>.
+	 */
+	public <%FT.type%>[] c(<%G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM%> coordOrder) { return m_c; }
+	
+${ENDCODEBLOCK}
 
 
 // S = Specification of algebra.

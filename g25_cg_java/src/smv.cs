@@ -67,6 +67,9 @@ namespace G25.CG.Java
             // special type to safeguard coordinates order in functions
             G25.CG.CSJ.SMV.WriteCoordinateOrder(SB, S, FT, smv);
 
+            // get coordinates
+            G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

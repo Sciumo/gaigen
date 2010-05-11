@@ -150,7 +150,7 @@ Maybe fix the float type stuff
 			V enum for SMVs
 			
 			V -> smv coordinates
-			-> add c() function for SMVs
+			V -> add c() function for SMVs
 			-> first GMVs, then SMVs
 			
 			main class:
@@ -163,9 +163,9 @@ Maybe fix the float type stuff
 			GMV:
 			  V constructors
 			  V set functions
-			  get
+			  get coords
 			  reservegroup
-			  set
+			  set coords
 			  compress, expand (needs ptr class?)
 			  largest coordinate (2x)
 			  toString & friends
@@ -236,6 +236,7 @@ Correcting design mistakes:
 	
 -> one FGS for each function (not shared between float types)
 -> FGS final output name goes into separate field, not into m_outputName
+-> rename NonConstBasisBlade & such to 'VariableBasisBlade'
 	
 -be able to get dependency right for the template code (to simplify the test stuff)
 
