@@ -169,6 +169,8 @@ Maybe fix the float type stuff
 			  V largest coordinate (2x)
 			  toString & friends
 			  
+			  -> in Java, make all methods final!
+			  
 			SMV:
 			  ....
 			  

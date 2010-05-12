@@ -4,7 +4,7 @@ ${CODEBLOCK GMVmemberVariables}
     /// <summary>
 	/// the coordinates
     /// </summary>
-	protected internal <%FT.type%>[][] m_c = new <%FT.type%>[<%S.m_GMV.NbGroups()%>][]; 
+	protected internal <%FT.type%>[][] m_c = new <%FT.type%>[<%S.m_GMV.NbGroups%>][]; 
 	
 <%if (S.m_reportUsage) {%>
     /// <summary>
@@ -168,4 +168,164 @@ ${CODEBLOCK float_zero_copy_def}
 			dst[i] = src[i];
 	}
 ${ENDCODEBLOCK}
+
+// S = specification
+// FT = float type
+// gmv = gmv type
+// gmvName = name of first GMV type
+${CODEBLOCK sourceToString}
+
+	private const string DEFAULT_FP = "%2.2f";
+	private const string DEFAULT_START = "";
+	private const string DEFAULT_END = "";
+	private const string DEFAULT_MUL = "*";
+	private const string DEFAULT_WEDGE = "^";
+	private const string DEFAULT_PLUS = " + ";
+	private const string DEFAULT_MINUS = " - ";
+
+	// These strings determine how the output of string() is formatted.
+	// You can alter them at runtime using setStringFormat(). 
+	protected static string string_fp = DEFAULT_FP;
+	protected static string string_start = DEFAULT_START;
+	protected static string string_end = DEFAULT_END;
+	protected static string string_mul = DEFAULT_MUL;
+	protected static string string_wedge = DEFAULT_WEDGE;
+	protected static string string_plus = DEFAULT_PLUS;
+	protected static string string_minus = DEFAULT_MINUS;
+	
+	public const string STRING_FP = "fp";
+	public const string STRING_START = "start";
+	public const string STRING_END = "end";
+	public const string STRING_MUL = "mul";
+	public const string STRING_WEDGE = "wedge";
+	public const string STRING_PLUS = "plus";
+	public const string STRING_MINUS= "minus";
+
+	/// <summary>
+	/// Sets the formatting of toString().
+	/// </summary>
+	/// 
+	/// <param name="what">What formatter to set. Valid values: string_FP, string_START, string_END, string_MUL, string_WEDGE, string_PLUS, string_MINUS.</param>
+	/// <param name="format">The value for 'what'. Use 'null' to set the default value.</param>
+	public static void SetStringFormat(string what, string format) {
+		if (what.Equals(STRING_FP)) 
+			string_fp = (format != null) ? format : DEFAULT_FP;
+		else if (what.Equals(STRING_START)) 
+			string_start = (format != null) ? format : DEFAULT_START;
+		else if (what.Equals(STRING_END)) 
+			string_end = (format != null) ? format : DEFAULT_END;
+		else if (what.Equals(STRING_MUL)) 
+			string_mul = (format != null) ? format : DEFAULT_MUL;
+		else if (what.Equals(STRING_WEDGE)) 
+			string_wedge = (format != null) ? format : DEFAULT_WEDGE;
+		else if (what.Equals(STRING_PLUS)) 
+			string_plus = (format != null) ? format : DEFAULT_PLUS;
+		else if (what.Equals(STRING_MINUS)) 
+			string_minus = (format != null) ? format : DEFAULT_MINUS;
+		else throw new ArgumentException("invalid argument to setStringFormat(): " + what);
+	}
+	
+    /// <summary>Converts a multivector to a string using default float format.</summary>
+	public static string String(<%gmvName%> obj) {
+		return String(obj, null);
+	}
+	
+   /** 
+    * 
+	* @param fp 
+	*/
+	/// <summary>
+	/// Converts a multivector to a string according to a float format like  "%2.2f"
+	/// </summary>
+	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
+	public static string String(<%gmvName%> obj, string fp) {
+		System.Text.StringBuilder result = new System.Text.StringBuilder();
+		int ia = 0; // global index into coordinates (runs from 0 to <%(gmv.NbCoordinates-1)%>)
+		int cnt = 0; // how many coordinates printed so far
+
+		// set up the floating point precision
+		if (fp == null) fp = string_fp;
+
+		// start the string
+		result.Append(string_start);
+
+		// print all coordinates
+		for (int g = 0; g < <%gmv.NbGroups%>; g++) {
+			<%FT.type%>[] Cg = obj.m_c[g];
+			if (Cg != null) {
+				for (int b = 0; b < GroupSize[g]; b++) {
+					<%FT.type%> coord = (double)BasisElementSignByIndex[ia] * Cg[b];
+					
+					// goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN]
+					
+					string tmpFloatStr = string.Format(fp, Math.Abs(coord));
+
+					if (Double.Parse(tmpFloatStr) != 0.0) {
+						// print [+|-]
+						result.Append((coord >= 0.0) 
+							? ((cnt>0) ? string_plus : "")
+							: string_minus);
+						// print obj.m_c[k]
+						result.Append(tmpFloatStr);
+
+						if (g != 0) { // if not grade 0, print [* basisVector1 ^ ... ^ basisVectorN]
+							result.Append(string_mul);
+
+							// print all basis vectors
+							int bei = 0;
+							while (BasisElements[ia][bei] >= 0) {
+								if (bei > 0)
+									result.Append(string_wedge);
+								result.Append(BasisVectorNames[BasisElements[ia][bei]]);
+								bei++;
+							}
+						}
+
+						cnt++;
+					}
+					ia++;
+				}
+			}
+			else ia += GroupSize[g];
+		}
+
+		// if no coordinates printed: 0
+		if (cnt == 0) result.Append("0");
+
+		// end the string
+		result.Append(string_end);
+
+		return result.ToString();
+	}
+
+${ENDCODEBLOCK}
+
+// S = specification
+// FT = float type
+${CODEBLOCK GMVtoString}
+	/// <summary>
+	/// Returns this multivector, converted to a string.
+	/// The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat().
+	/// </summary>
+	public override string ToString() {
+<%if (FT == S.m_floatTypes[0]) {%>
+		return <%S.m_namespace%>.String(this);
+<%} else {%>
+		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this));
+<%}%>
+	}
+	
+	/// <summary>
+	/// Returns this multivector, converted to a string.
+	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
+	/// </summary>
+	public string ToString(String fp) {
+<%if (FT == S.m_floatTypes[0]) {%>
+		return <%S.m_namespace%>.String(this, fp);
+<%} else {%>
+		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this), fp);
+<%}%>
+	}
+${ENDCODEBLOCK}
+
 

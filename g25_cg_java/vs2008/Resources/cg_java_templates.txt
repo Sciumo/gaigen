@@ -196,7 +196,7 @@ ${CODEBLOCK sourceToString}
 	private final static String DEFAULT_PLUS = " + ";
 	private final static String DEFAULT_MINUS = " - ";
 
-	/**
+	/*
 	 * These strings determine how the output of string() is formatted.
 	 * You can alter them at runtime using setStringFormat(). 
 	 */
@@ -222,26 +222,26 @@ ${CODEBLOCK sourceToString}
 	 * @param what What formatter to set. Valid values: STRING_FP, STRING_START, STRING_END, STRING_MUL, STRING_WEDGE, STRING_PLUS, STRING_MINUS.
 	 * @param format The value for 'what'. Use 'null' to set the default value.
 	 */
-	void setStringFormat(String what, String format) {
+	public static void setStringFormat(String what, String format) {
 		if (what.equals(STRING_FP)) 
 			string_fp = (format != null) ? format : DEFAULT_FP;
 		else if (what.equals(STRING_START)) 
 			string_start = (format != null) ? format : DEFAULT_START;
 		else if (what.equals(STRING_END)) 
-			string_end = (format != null) ? format : STRING_END;
+			string_end = (format != null) ? format : DEFAULT_END;
 		else if (what.equals(STRING_MUL)) 
-			string_mul = (format != null) ? format : STRING_MUL;
+			string_mul = (format != null) ? format : DEFAULT_MUL;
 		else if (what.equals(STRING_WEDGE)) 
-			string_wedge = (format != null) ? format : STRING_WEDGE;
+			string_wedge = (format != null) ? format : DEFAULT_WEDGE;
 		else if (what.equals(STRING_PLUS)) 
-			string_plus = (format != null) ? format : STRING_PLUS;
+			string_plus = (format != null) ? format : DEFAULT_PLUS;
 		else if (what.equals(STRING_MINUS)) 
 			string_minus = (format != null) ? format : DEFAULT_MINUS;
 		else throw new RuntimeException("invalid argument to setStringFormat(): " + what);
 	}
 	
    /** Converts a multivector to a String using default float format. */
-	public static final String string(<%gmvName%> obj) {
+	public static String string(<%gmvName%> obj) {
 		return string(obj, null);
 	}
 	
@@ -249,9 +249,9 @@ ${CODEBLOCK sourceToString}
     * Converts a multivector to a String according to a float format like  "%2.2f"
 	* @param fp floating point format. Use 'null' for the default format (see setStringFormat()).
 	*/
-	public static final String string(<%gmvName%> obj, String fp) {
+	public static String string(<%gmvName%> obj, String fp) {
 		StringBuffer result = new StringBuffer();
-		int ia = 0; // global index into coordinates (runs from 0 to <%gmv.NbCoordinates%>)
+		int ia = 0; // global index into coordinates (runs from 0 to <%(gmv.NbCoordinates-1)%>)
 		int cnt = 0; // how many coordinates printed so far
 
 		// set up the floating point precision

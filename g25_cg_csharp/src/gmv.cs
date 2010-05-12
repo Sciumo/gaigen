@@ -183,6 +183,9 @@ namespace G25.CG.CSharp
             // write 'largest coordinate' functions
             G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
+            // write 'toString' functions
+            G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

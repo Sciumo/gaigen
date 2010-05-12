@@ -307,6 +307,10 @@ namespace G25.CG.CSJ
             }
         }
 
+        public static void WriteToString(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            cgd.m_cog.EmitTemplate(SB, "sourceToString", "S=", S, "FT=", S.m_floatTypes[0], "gmv=", S.m_GMV, "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name));
+        }
 
 
 

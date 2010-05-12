@@ -301,8 +301,7 @@ namespace G25.CG.Java
 
             G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
 
-            // write toString 
-            cgd.m_cog.EmitTemplate(SB, "sourceToString", "S=", S, "FT=", S.m_floatTypes[0], "gmv=", S.m_GMV, "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name));
+            G25.CG.CSJ.Source.WriteToString(SB, S, cgd);
 
 #if RIEN
             GenerateTables(S, cgd, SB);

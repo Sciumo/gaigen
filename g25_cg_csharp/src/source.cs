@@ -131,7 +131,8 @@ namespace G25.CG.CSharp
             G25.CG.CSJ.Source.GenerateTables(SB, S, cgd);
 
             G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
-            
+
+            G25.CG.CSJ.Source.WriteToString(SB, S, cgd);
 
 #if RIEN
             // the list of names of smv types
