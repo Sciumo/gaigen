@@ -267,6 +267,8 @@ namespace G25.CG.CSJ
 
                 string srcClassName = FT.GetMangledName(S, smv.Name);
 
+                SB.AppendLine();
+
                 nbTabs = 1;
                 G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to " + srcClassName + " value.", null, null);
 
@@ -303,25 +305,25 @@ namespace G25.CG.CSJ
                     // generate the code to set group usage:
                     SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(" + guSB.ToString() + ");");
 
-                    // a helper pointer which is incremented
+                    // a helper pointer 
                     string dstArrName = "ptr";
-                    SB.AppendLine("\t\t" + FT.type + "[] " + dstArrName + " = m_c;");
+                    SB.AppendLine("\t\t" + FT.type + "[] " + dstArrName + ";");
 
 
                     // for each used group, generate the assignment code
-                    int dstBaseIdx = 0;
                     for (int g = 0; (1 << g) <= gu; g++)
                     {
                         if (((1 << g) & gu) != 0)
                         {
+                            SB.AppendLine();
+                            SB.AppendLine("\t\tptr = m_c[" + g + "];");
+
+                            int dstBaseIdx = 0;
                             bool mustCast = false;
                             nbTabs = 2;
                             bool writeZeros = true;
                             string str = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstArrName, g, dstBaseIdx, value, nbTabs, writeZeros);
                             SB.Append(str);
-
-                            if ((1 << (g + 1)) <= gu)
-                                dstBaseIdx += gmv.Group(g).Length;
                         }
 
                     }

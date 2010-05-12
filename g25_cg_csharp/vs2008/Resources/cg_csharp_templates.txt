@@ -5,6 +5,7 @@ ${CODEBLOCK GMVmemberVariables}
 	/// the coordinates
     /// </summary>
 	protected internal <%FT.type%>[][] m_c = null; 
+	
 <%if (S.m_reportUsage) {%>
     /// <summary>
 	/// Specialized multivector type. Used to report about non-optimized function usage.

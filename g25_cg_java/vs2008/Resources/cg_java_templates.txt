@@ -1,18 +1,9 @@
 // S = specification
 // FT = floatType
 ${CODEBLOCK GMVmemberVariables}
-    /** group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below). */
-	protected int m_gu = 0; 
-<%if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
     /** the coordinates */
-	protected <%FT.type%>[] m_c = null; 
-<%} else if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
-    /** the coordinates (note: parity pure) */
-	protected <%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates / 2%>]; 
-<%} else if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.FULL) {%>
-    /** the coordinates */
-	protected <%FT.type%>[] m_c = new <%FT.type%>[<%S.m_GMV.NbCoordinates%>]; 
-<%}%>
+	protected <%FT.type%>[][] m_c = null; 
+	
 <%if (S.m_reportUsage) {%>
     /** Specialized multivector type. Used to report about non-optimized function usage. */
 	protected SmvType m_t = <%G25.CG.CSJ.GMV.SMV_TYPE%>.<%G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, "none")%>; 
@@ -78,6 +69,13 @@ bool repUsage = S.m_reportUsage;
      */
 	public <%className%>(int gu, <%FT.type%>[] coordinates) {set(gu, coordinates);}
 
+    /** 
+     * Constructs a new <%className%> from array of array of 'coordinates'.
+	 * @param coordinates The coordinates, one array for each group/grade. Make sure the
+	 * array length match the size of the groups. Entries may be null.
+     */
+	public <%className%>(<%FT.type%>[][] coordinates) {set(coordinates);}
+	
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
     /** Converts a <%smvClassName%> to a <%className%>. */
@@ -91,21 +89,18 @@ ${ENDCODEBLOCK}
 // gmv = gmv type
 // FT = floatType
 ${CODEBLOCK GMVsetGroupUsage}
-    /** Sets m_gu, allocates m_c to the size required by gu. */
-	private void setGroupUsage(int gu) {
-		if (m_gu == gu) return;
-		m_gu = gu;
-<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>
-		int nbCoords = <%S.m_namespace%>.MvSize[m_gu];
-		if (nbCoords > 0) {
-			<%FT.type%>[] oldC = m_c;
-			m_c = new <%FT.type%>[nbCoords];
-			
-			// copy old coordinates (this behavior is expected by e.g., reserve group)
-            for (int i = 0; i < Math.min(oldC.length, m_c.length); i++)
-                m_c[i] = oldC[i];
-		}
-<%}%>
+	/** 
+	 * Reserves memory for the groups specified by 'gu'.
+	 * Keeps old memory (and values) when possible. 
+	 */
+	private void allocateGroups(int gu) {
+		for (int i = 0; (1 << i) <= gu; i++) {
+			if (((1 << i) & gu) != 0) {
+				if (m_c[i] == null)
+					m_c[i] = new <%FT.type%>[<%S.m_namespace%>.MvSize[1 << i]];
+			}
+			else m_c[i] = null;
+		}		
 	}
 ${ENDCODEBLOCK}
 
@@ -152,9 +147,19 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVgetGroupUsageCoords}
 	/** returns group usage bitmap. */
-	public int gu() { return m_gu; }
-	/** returns compressed array of coordinates. */
-	public <%FT.type%>[] c() { return m_c; }
+	public int gu() {
+		return 
+<%for (int g = 0; g < S.m_GMV.NbGroups; g++) {%>
+			((m_c[<%g%>] == null) ? 0 : <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(g)%>) |
+<%}%>
+			0;
+	}
+	
+    /**
+	 * Returns array of array of coordinates.
+	 * Each entry contain the coordinates for one group/grade.
+     */
+	public <%FT.type%>[][] c() { return m_c; }
 	
 ${ENDCODEBLOCK}
 
