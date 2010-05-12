@@ -168,6 +168,8 @@ Maybe fix the float type stuff
 			  V set coords
 			  V largest coordinate (2x)
 			  toString & friends
+                    // todo: what formatting string to use 
+                    // see http://msdn.microsoft.com/en-us/library/kfsatb94.aspx
 			  
 			  -> in Java, make all methods final!
 			  
