@@ -2,7 +2,7 @@
 // FT = floatType
 ${CODEBLOCK GMVmemberVariables}
     /** the coordinates */
-	protected <%FT.type%>[][] m_c = null; 
+	protected <%FT.type%>[][] m_c = new <%FT.type%>[<%S.m_GMV.NbGroups%>][]; 
 	
 <%if (S.m_reportUsage) {%>
     /** Specialized multivector type. Used to report about non-optimized function usage. */
@@ -182,3 +182,135 @@ ${CODEBLOCK float_zero_copy_def}
 	}
 ${ENDCODEBLOCK}
 
+// S = specification
+// FT = float type
+// gmv = gmv type
+// gmvName = name of first GMV type
+${CODEBLOCK sourceToString}
+
+	private final static String DEFAULT_FP = "%1$f2";
+	private final static String DEFAULT_START = "";
+	private final static String DEFAULT_END = "";
+	private final static String DEFAULT_MUL = "*";
+	private final static String DEFAULT_WEDGE = "^";
+	private final static String DEFAULT_PLUS = " + ";
+	private final static String DEFAULT_MINUS = " - ";
+
+	/**
+	 * These strings determine how the output of string() is formatted.
+	 * You can alter them at runtime using setStringFormat(). 
+	 */
+	protected static String string_fp = DEFAULT_FP;
+	protected static String string_start = DEFAULT_START;
+	protected static String string_end = DEFAULT_END;
+	protected static String string_mul = DEFAULT_MUL;
+	protected static String string_wedge = DEFAULT_WEDGE;
+	protected static String string_plus = DEFAULT_PLUS;
+	protected static String string_minus = DEFAULT_MINUS;
+	
+	public final static String STRING_FP = "fp";
+	public final static String STRING_START = "start";
+	public final static String STRING_END = "end";
+	public final static String STRING_MUL = "mul";
+	public final static String STRING_WEDGE = "wedge";
+	public final static String STRING_PLUS = "plus";
+	public final static String STRING_MINUS= "minus";
+
+	/**
+	 * Sets the formatting of toString().
+	 * 
+	 * @param what What formatter to set. Valid values: STRING_FP, STRING_START, STRING_END, STRING_MUL, STRING_WEDGE, STRING_PLUS, STRING_MINUS.
+	 * @param format The value for 'what'. Use 'null' to set the default value.
+	 */
+	void setStringFormat(String what, String format) {
+		if (what.equals(STRING_FP)) 
+			string_fp = (format != null) ? format : DEFAULT_FP;
+		else if (what.equals(STRING_START)) 
+			string_start = (format != null) ? format : DEFAULT_START;
+		else if (what.equals(STRING_END)) 
+			string_end = (format != null) ? format : STRING_END;
+		else if (what.equals(STRING_MUL)) 
+			string_mul = (format != null) ? format : STRING_MUL;
+		else if (what.equals(STRING_WEDGE)) 
+			string_wedge = (format != null) ? format : STRING_WEDGE;
+		else if (what.equals(STRING_PLUS)) 
+			string_plus = (format != null) ? format : STRING_PLUS;
+		else if (what.equals(STRING_MINUS)) 
+			string_minus = (format != null) ? format : DEFAULT_MINUS;
+		else throw new RuntimeException("invalid argument to setStringFormat(): " + what);
+	}
+	
+   /** Converts a multivector to a String using default float format. */
+	public static final String string(<%gmvName%> obj) {
+		return string(obj, null);
+	}
+	
+   /** 
+    * Converts a multivector to a String according to a float format like  "%1$f2"
+	* @param fp floating point format. Use 'null' for the default format (see setStringFormat()).
+	*/
+	public static final String string(<%gmvName%> obj, String fp) {
+		StringBuffer result = new StringBuffer();
+		StringBuffer tmpSB = new StringBuffer();
+		int ia = 0;
+		int cnt = 0; // how many coordinates printed so far
+
+		// set up the floating point precision
+		if (fp == null) fp = string_fp;
+
+		java.util.Formatter fmt = new java.util.Formatter(tmpSB);
+
+		// start the string
+		result.append(string_start);
+
+		// print all coordinates
+		for (int g = 0; g <= <%gmv.NbGroups%>; g++) {
+			<%FT.type%>[] Cg = obj.m_c[g];
+			if (Cg != null) {
+				for (int b = 0; b < GroupSize[g]; b++) {
+					double coord = (double)BasisElementSignByIndex[ia] * Cg[b];
+					/* goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN] */			
+
+					tmpSB.delete(0, tmpSB.length());
+					fmt.format(fp, Math.abs(coord));
+					String tmpFloatStr = tmpSB.toString();
+
+					if (Double.parseDouble(tmpFloatStr) != 0.0) {
+						// print [+|-]
+						result.append((coord >= 0.0) 
+							? ((cnt>0) ? string_plus : "")
+							: string_minus);
+						// print obj.m_c[k]
+						result.append(tmpFloatStr);
+
+						if (g != 0) { // if not grade 0, print [* basisVector1 ^ ... ^ basisVectorN]
+							result.append(string_mul);
+
+							// print all basis vectors
+							int bei = 0;
+							while (BasisElements[ia][bei] >= 0) {
+								if (bei > 0)
+									result.append(string_wedge);
+								result.append(BasisVectorNames[BasisElements[ia][bei]]);
+								bei++;
+							}
+						}
+
+						cnt++;
+					}
+					ia++;
+				}
+			}
+			else ia += GroupSize[g];
+		}
+
+		// if no coordinates printed: 0
+		if (cnt == 0) result.append("0");
+
+		// end the string
+		result.append(string_end);
+
+		return result.toString();
+	}
+	
+${ENDCODEBLOCK}

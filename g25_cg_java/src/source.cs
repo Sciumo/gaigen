@@ -300,6 +300,10 @@ namespace G25.CG.Java
             G25.CG.CSJ.Source.GenerateTables(SB, S, cgd);
 
             G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
+
+            // write toString 
+            cgd.m_cog.EmitTemplate(SB, "sourceToString", "S=", S, "FT=", S.m_floatTypes[0], "gmv=", S.m_GMV, "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name));
+
 #if RIEN
             GenerateTables(S, cgd, SB);
 
@@ -328,10 +332,6 @@ namespace G25.CG.Java
                 G25.CG.Shared.Util.WriteCloseNamespace(SB, S, G25.CG.Shared.Main.RUNTIME_NAMESPACE);
             }
 
-            { // write toString 
-                bool def = true;
-                G25.CG.CPP.ToString.WriteToString(SB, S, cgd, def);
-            }
 
             // write operators
             if (!S.m_inlineOperators)
