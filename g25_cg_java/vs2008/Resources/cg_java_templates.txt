@@ -188,7 +188,7 @@ ${ENDCODEBLOCK}
 // gmvName = name of first GMV type
 ${CODEBLOCK sourceToString}
 
-	private final static String DEFAULT_FP = "%1$f2";
+	private final static String DEFAULT_FP = "%2.2f";
 	private final static String DEFAULT_START = "";
 	private final static String DEFAULT_END = "";
 	private final static String DEFAULT_MUL = "*";
@@ -246,34 +246,30 @@ ${CODEBLOCK sourceToString}
 	}
 	
    /** 
-    * Converts a multivector to a String according to a float format like  "%1$f2"
+    * Converts a multivector to a String according to a float format like  "%2.2f"
 	* @param fp floating point format. Use 'null' for the default format (see setStringFormat()).
 	*/
 	public static final String string(<%gmvName%> obj, String fp) {
 		StringBuffer result = new StringBuffer();
-		StringBuffer tmpSB = new StringBuffer();
-		int ia = 0;
+		int ia = 0; // global index into coordinates (runs from 0 to <%gmv.NbCoordinates%>)
 		int cnt = 0; // how many coordinates printed so far
 
 		// set up the floating point precision
 		if (fp == null) fp = string_fp;
 
-		java.util.Formatter fmt = new java.util.Formatter(tmpSB);
-
 		// start the string
 		result.append(string_start);
 
 		// print all coordinates
-		for (int g = 0; g <= <%gmv.NbGroups%>; g++) {
+		for (int g = 0; g < <%gmv.NbGroups%>; g++) {
 			<%FT.type%>[] Cg = obj.m_c[g];
 			if (Cg != null) {
 				for (int b = 0; b < GroupSize[g]; b++) {
 					double coord = (double)BasisElementSignByIndex[ia] * Cg[b];
-					/* goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN] */			
-
-					tmpSB.delete(0, tmpSB.length());
-					fmt.format(fp, Math.abs(coord));
-					String tmpFloatStr = tmpSB.toString();
+					
+					// goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN]
+					
+					String tmpFloatStr = String.format(fp, Math.abs(coord));
 
 					if (Double.parseDouble(tmpFloatStr) != 0.0) {
 						// print [+|-]
