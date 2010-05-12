@@ -174,9 +174,16 @@ namespace G25.CG.Shared
             }
         }
 
+        public static string GetNamespaceName(G25.Specification S)
+        {
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) return S.m_namespace + "_pkg";
+            else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) return S.m_namespace + "_ns";
+            else return S.m_namespace;
+        }
+
         public static void WriteOpenNamespace(StringBuilder SB, G25.Specification S)
         {
-            WriteOpenNamespace(SB, S, S.m_namespace);
+            WriteOpenNamespace(SB, S, GetNamespaceName(S));
         }
 
         public static void WriteCloseNamespace(StringBuilder SB, G25.Specification S, string namespaceName)
@@ -200,7 +207,7 @@ namespace G25.CG.Shared
 
         public static void WriteCloseNamespace(StringBuilder SB, G25.Specification S)
         {
-            WriteCloseNamespace(SB, S, S.m_namespace);
+            WriteCloseNamespace(SB, S, GetNamespaceName(S));
         }
 
         /// <summary>
@@ -762,11 +769,5 @@ namespace G25.CG.Shared
             }
         }
             
-        public int XXX() {
-            return 0;
-        }
-
-
-
     } // end of class Util
 } // end of namepace G25.CG.Shared

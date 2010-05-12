@@ -128,8 +128,9 @@ namespace G25.CG.Java
         /// </summary>
         /// <param name="S"></param>
         private static void CreatePackageDirectory(Specification S) {
-            // get path
-            string path = S.GetOutputDir() + System.IO.Path.DirectorySeparatorChar + S.m_namespace.Replace('.', System.IO.Path.DirectorySeparatorChar);
+            // get path 
+            string packageName = G25.CG.Shared.Util.GetNamespaceName(S);
+            string path = S.GetOutputDir() + System.IO.Path.DirectorySeparatorChar + packageName.Replace('.', System.IO.Path.DirectorySeparatorChar);
 
             // check if exists already; if so: do nothing, return
             if (System.IO.Directory.Exists(path)) return;
@@ -175,14 +176,14 @@ namespace G25.CG.Java
         /// <returns>Output path for a class named 'className'.</returns>
         internal static string GetClassOutputPath(Specification S, string className)
         {
-            string path = 
-                S.m_namespace.Replace('.', System.IO.Path.DirectorySeparatorChar) +  // package dir
+            string packageName = G25.CG.Shared.Util.GetNamespaceName(S);
+            string path =
+                packageName.Replace('.', System.IO.Path.DirectorySeparatorChar) +  // package dir
                 System.IO.Path.DirectorySeparatorChar +  // slash
                 className +  // class
-                ".java"; // extenesion
+                ".java"; // extension
 
             return S.GetOutputPath(path);
-
         }
 
 
