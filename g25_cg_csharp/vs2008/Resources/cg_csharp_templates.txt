@@ -94,12 +94,12 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVreserveGroups}
 <%for (int groupIdx = 0; groupIdx < gmv.NbGroups; groupIdx++) { %>
-	/**
-	Reserves memory for coordinate GROUP_<%groupIdx%>.
-	If the group is already present, nothing changes.
-	If the group is not present, memory is allocated for the new group,
-	and the coordinates for the group are set to zero.
-	*/
+	/// <summary>
+	/// Reserves memory for coordinate GROUP_<%groupIdx%>.
+	/// If the group is already present, nothing changes.
+	/// If the group is not present, memory is allocated for the new group,
+	/// and the coordinates for the group are set to zero.
+	/// </summary>
 	private void ReserveGroup_<%groupIdx%>() {
 		if (m_c[<%groupIdx%>] == null) {
 			m_c[<%groupIdx%>] = new <%FT.type%>[<%gmv.Group(groupIdx).Length%>];

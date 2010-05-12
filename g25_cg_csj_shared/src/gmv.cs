@@ -27,7 +27,7 @@ namespace G25.CG.CSJ
         private const string ALLOCATE_GROUPS_CSHARP = "AllocateGroups";
         private const string ALLOCATE_GROUPS_JAVA = "allocateGroups";
         private const string SET_RESERVE_GROUP_CSHARP = "ReserveGroup_";
-        private const string SET_RESERVE_GROUP_JAVA = "reserveGroups_";
+        private const string SET_RESERVE_GROUP_JAVA = "reserveGroup_";
 
         public static string GetAllocateGroupsString(Specification S)
         {
