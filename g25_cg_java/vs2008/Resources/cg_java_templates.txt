@@ -310,3 +310,31 @@ ${CODEBLOCK sourceToString}
 	}
 	
 ${ENDCODEBLOCK}
+
+// S = specification
+// FT = float type
+${CODEBLOCK GMVtoString}
+	/**
+	 * Returns this multivector, converted to a string.
+	 * The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat()
+	 */
+	public String toString() {
+<%if (FT == S.m_floatTypes[0]) {%>
+		return <%S.m_namespace%>.string(this);
+<%} else {%>
+		return <%S.m_namespace%>.string(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this));
+<%}%>
+	}
+	
+	/**
+	 * Returns this multivector, converted to a string.
+	 * @param fp floating point format. Use 'null' for the default format (see <%S.m_namespace%>.setStringFormat()).
+	 */
+	public String toString(String fp) {
+<%if (FT == S.m_floatTypes[0]) {%>
+		return <%S.m_namespace%>.string(this, fp);
+<%} else {%>
+		return <%S.m_namespace%>.string(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this), fp);
+<%}%>
+	}
+${ENDCODEBLOCK}

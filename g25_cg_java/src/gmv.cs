@@ -178,6 +178,9 @@ namespace G25.CG.Java
             // write 'largest coordinate' functions
             G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
+            // write 'toString' functions
+            cgd.m_cog.EmitTemplate(SB, "GMVtoString", "S=", S, "FT=", FT);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 
