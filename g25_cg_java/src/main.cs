@@ -116,6 +116,8 @@ namespace G25.CG.Java
             // also load shared templates:
             G25.CG.Shared.Util.LoadTemplates(cog);
 
+            cog.LoadTemplates(g25_cg_csj_shared.Properties.Resources.cg_csj_shared_templates , "cg_csj_shared_templates.txt");
+
             cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_templates, "cg_java_templates.txt");
             if (S.m_generateTestSuite) // only load when testing code is required
                 cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_test_templates, "cg_java_test_templates.txt");

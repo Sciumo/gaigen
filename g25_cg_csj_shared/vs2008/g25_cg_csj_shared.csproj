@@ -50,7 +50,13 @@
     <Compile Include="..\src\keywords.cs" />
     <Compile Include="..\src\smv.cs" />
     <Compile Include="..\src\source.cs" />
+    <Compile Include="..\src\util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cogsharp\cogsharp\vs2008\cogsharp.csproj">
@@ -69,6 +75,15 @@
       <Project>{5E5D126A-1095-42DC-9D25-CA0D7960CE01}</Project>
       <Name>refga</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cg_csj_shared_templates.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

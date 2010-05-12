@@ -182,16 +182,3 @@ ${CODEBLOCK float_zero_copy_def}
 	}
 ${ENDCODEBLOCK}
 
-// S = Specification of algebra. (G25.spec)
-// FT = floating point type (G25.FloatType)
-// gmvName = name of GMV class
-// fabsFunc = name of floating point absolute function
-${CODEBLOCK GMVlargestCoordinate}
-	public <%FT.type%> largestCoordinate() {
-		<%FT.type%> maxValue = <%FT.DoubleToString(S, 0.0)%>;
-		for (int g = 0; g < m_c.length; g++)
-			for (int b = 0; b < m_c[g].length; b++)
-				if (<%fabsFunc%>(m_c[g][b]) > maxValue) maxValue = <%fabsFunc%>(m_c[g][b]);
-		return maxValue;
-	}
-${ENDCODEBLOCK}

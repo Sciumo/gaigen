@@ -1,0 +1,49 @@
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// gmvName = name of GMV class
+// fabsFunc = name of floating point absolute function
+${CODEBLOCK GMVlargestCoordinate}
+	/** returns the absolute largest coordinate. */
+	public <%FT.type%> <%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() {
+		<%FT.type%> maxValue = <%FT.DoubleToString(S, 0.0)%>, C;
+		for (int g = 0; g < m_c.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; g++) {
+			if (m_c[g] != null) {
+				<%FT.type%>[] Cg = m_c[g];
+				for (int b = 0; b < Cg.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; b++) {
+					C = <%fabsFunc%>(Cg[b]);
+					if (C > maxValue) {
+						maxValue = C;
+					}
+				}
+			}
+		}
+		return maxValue;
+	}
+	
+	/** returns the absolute largest coordinate [0], and the corresponding basis blade bitmap [1]  */
+	public <%FT.type%>[] <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>() {
+		<%FT.type%> maxC = <%FT.DoubleToString(S, -1.0)%>, C;
+
+		int idx = 0; // global index into coordinates (run from 0 to <%S.m_GMV.NbCoordinates%>).
+		int bm = 0; // bitmap of basis blade
+		
+		for (int g = 0; g < m_c.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; g++) {
+			if (m_c[g] != null) {
+				<%FT.type%>[] Cg = m_c[g];
+				for (int b = 0; b < m_c[g].<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; b++) {
+					C = <%fabsFunc%>(Cg[b]);
+					if (C > maxC) {
+						maxC = C;
+						bm = <%S.m_namespace%>.BasisElementBitmapByIndex[idx];
+					}
+					idx++;
+				}
+			
+			}
+			else idx += <%S.m_namespace%>.GroupSize[g];
+		}
+
+		return new <%FT.type%>[]{maxC, (<%FT.type%>)bm};
+	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>()
+	
+${ENDCODEBLOCK}

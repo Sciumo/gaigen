@@ -72,5 +72,5 @@ namespace G25.CG.CSJ
         }
 
 
-    } // end of class GMV
+    } // end of class Keywords
 } // end of namespace G25.CG.CSJ

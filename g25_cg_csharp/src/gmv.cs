@@ -140,6 +140,9 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
 
+            // using ...
+            Util.WriteGenericUsing(SB, S);
+
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
@@ -176,6 +179,9 @@ namespace G25.CG.CSharp
 
             // write 'set coordinate' functions
             G25.CG.CSJ.GMV.WriteSetCoord(SB, S, cgd, FT);
+
+            // write 'largest coordinate' functions
+            G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

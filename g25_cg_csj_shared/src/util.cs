@@ -18,22 +18,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25.CG.CSharp
+namespace G25.CG.CSJ
 {
-
-    /// <summary>
-    /// Utility class for C# code generation
-    /// </summary>
-    class Util
+    public class Util
     {
         /// <summary>
-        /// Writes generic 'using' statements (at start of .cs source file).
+        /// Return 'name' with first letter in uppercase or lowercase, depending on output language
         /// </summary>
-        public static void WriteGenericUsing(StringBuilder SB, Specification S)
+        public static string GetFunctionName(Specification S, string name)
         {
-            SB.AppendLine("using System;");
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                return name.Substring(0, 1).ToLower() + name.Substring(1);
+            else return name.Substring(0, 1).ToUpper() + name.Substring(1);
         }
-
     } // end of class Util
-
-} // end of namespace G25.CG.CSharp 
+} // end of namespace G25.CG.CSJ

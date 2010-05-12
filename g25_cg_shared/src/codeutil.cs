@@ -559,17 +559,6 @@ namespace G25.CG.Shared
             }
             else
             {
-/*                switch (S.m_outputLanguage)
-                {
-                    case OUTPUT_LANGUAGE.C:
-                        if (FT.type == "float") return m_floatOpsC[Op.opName] + "(" + valueStr + ")";
-                        else return m_doubleOpsC[Op.opName] + "(" + valueStr + ")";
-                    case OUTPUT_LANGUAGE.CPP:
-                        if (FT.type == "float") return m_floatOpsCpp[Op.opName] + "(" + valueStr + ")";
-                        else return m_doubleOpsCpp[Op.opName] + "(" + valueStr + ")";
-                    default:
-                        throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
-                }*/
                 return OpNameToLangString(S, FT, Op.opName) + "(" + valueStr + ")";
             }
 
