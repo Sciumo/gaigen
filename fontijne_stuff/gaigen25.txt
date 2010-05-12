@@ -166,7 +166,6 @@ Maybe fix the float type stuff
 			  V get coords
 			  V reservegroup
 			  V set coords
-			  compress, expand (needs ptr class?)
 			  largest coordinate (2x)
 			  toString & friends
 			  
@@ -180,26 +179,27 @@ Maybe fix the float type stuff
 			
 			regular functions
 		
-			main
-			source
-				-> where most of the functions are implemented?
-			gmv
-				-> they write their own files?
-			smv
-				-> they write their own files?
+			GMV, together with regular functions
+			    compress, 
+			  	compress 1: check all groups, if null up to epsilon, shrink
+			  	old-school compress 2: array of coordinates -> 
+			    expand (needs ptr class?)
+			  
+			  
+			parser 
+			
+			testing
 				
 		V load templates
 	
 	
 Java:
-	V One file per class
-	V One general interface for multivectors with a toMv() 
 	Each multivector class can also call its functions
-	use enum for coordinate order
+		-> handle this via plugin
 	
 C#: 	
-	One file per class too? You have to support it anyway due to java.
-	use enum for coordinate order
+	Each multivector class can also call its functions
+		-> handle this via plugin
 	
 
 

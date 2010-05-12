@@ -175,6 +175,9 @@ namespace G25.CG.Java
             // write 'set coordinate' functions
             G25.CG.CSJ.GMV.WriteSetCoord(SB, S, cgd, FT);
 
+            // write 'largest coordinate' functions
+            G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

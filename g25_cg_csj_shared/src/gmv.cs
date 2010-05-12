@@ -448,7 +448,21 @@ namespace G25.CG.CSJ
             }
 
         }
-                    
+
+        /// <summary>
+        /// Writes function for setting grade/group usage, reallocting memory
+        /// </summary>
+        /// <param name="SB"></param>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteLargestCoordinates(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
+        {
+            string fabsFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
+
+            cgd.m_cog.EmitTemplate(SB, "GMVlargestCoordinate", "S=", S, "FT=", FT, "gmvName=", FT.GetMangledName(S, S.m_GMV.Name), "fabsFunc=", fabsFuncName);
+        }
+
 
 
     } // end of class GMV

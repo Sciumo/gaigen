@@ -559,7 +559,7 @@ namespace G25.CG.Shared
             }
             else
             {
-                switch (S.m_outputLanguage)
+/*                switch (S.m_outputLanguage)
                 {
                     case OUTPUT_LANGUAGE.C:
                         if (FT.type == "float") return m_floatOpsC[Op.opName] + "(" + valueStr + ")";
@@ -569,7 +569,8 @@ namespace G25.CG.Shared
                         else return m_doubleOpsCpp[Op.opName] + "(" + valueStr + ")";
                     default:
                         throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
-                }
+                }*/
+                return OpNameToLangString(S, FT, Op.opName) + "(" + valueStr + ")";
             }
 
         } // end of function ScalarOpToLangString()
@@ -583,6 +584,12 @@ namespace G25.CG.Shared
                 case OUTPUT_LANGUAGE.CPP:
                     if (FT.type == "float") return m_floatOpsCpp[opName];
                     else return m_doubleOpsCpp[opName];
+                case OUTPUT_LANGUAGE.CSHARP:
+                    if (FT.type == "float") return m_floatOpsCSharp[opName];
+                    else return m_doubleOpsCSharp[opName];
+                case OUTPUT_LANGUAGE.JAVA:
+                    if (FT.type == "float") return m_floatOpsJava[opName];
+                    else return m_doubleOpsJava[opName];
                 default:
                     throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): todo: language " + S.GetOutputLanguageString());
             }
