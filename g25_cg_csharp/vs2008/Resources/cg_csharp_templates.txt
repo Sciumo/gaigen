@@ -329,3 +329,32 @@ ${CODEBLOCK GMVtoString}
 ${ENDCODEBLOCK}
 
 
+// gmvName = name of gmv type
+${CODEBLOCK mvInterface}
+    /// <summary>
+    /// Converts this multivector to a '<%gmvName%>'.
+    /// </summary>
+    <%gmvName%> To_<%gmvName%>();
+${ENDCODEBLOCK}
+
+// gmvName = name of gmv type
+${CODEBLOCK GMVmvInterfaceImpl}
+    /// <summary>	
+    /// Converts this multivector to a 'mv' (implementation of interface '<%gmvName%>_interface')
+    /// </summary>
+    public <%gmvName%> To_<%gmvName%>()
+    {
+        return this;
+    }
+${ENDCODEBLOCK}
+
+// gmvName = name of gmv type
+${CODEBLOCK SMVmvInterfaceImpl}
+    /// <summary>	
+    /// Converts this multivector to a 'mv' (implementation of interface '<%gmvName%>_interface')
+    /// </summary>
+    public <%gmvName%> To_<%gmvName%>()
+    {
+        return new <%gmvName%>(this);
+    }
+${ENDCODEBLOCK}

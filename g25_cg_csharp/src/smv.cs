@@ -56,7 +56,8 @@ namespace G25.CG.CSharp
             // todo: write class comment
 
             // open class
-            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
+            string[] implements = new string[] { MvInterface.GetMvInterfaceName(S, FT) };
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, implements);
 
             // member variables
             G25.CG.CSJ.SMV.WriteMemberVariables(SB, S, cgd, FT, smv);
@@ -69,6 +70,9 @@ namespace G25.CG.CSharp
 
             // get coordinates
             G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
+
+            // write multivector interface implementation
+            G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

@@ -81,6 +81,8 @@ namespace G25.CG.CSharp
             generatedFiles.AddRange(GenerateClasses(S, cgd));
             // generate source
             generatedFiles.AddRange(Source.GenerateCode(S, cgd));
+            // generate multivector interfaces
+            generatedFiles.AddRange(MvInterface.GenerateCode(S, cgd));
 
             // report errors and missing deps to user
             cgd.PrintErrors(S);

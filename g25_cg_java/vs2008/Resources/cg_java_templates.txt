@@ -341,10 +341,8 @@ ${ENDCODEBLOCK}
 
 // gmvName = name of gmv type
 ${CODEBLOCK mvInterface}
-public interface <%gmvName%>_interface {
 	/** converts this multivector to type '<%gmvName%>' */
 	<%gmvName%> to_<%gmvName%>();
-}
 ${ENDCODEBLOCK}
 
 // gmvName = name of gmv type

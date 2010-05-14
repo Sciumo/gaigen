@@ -145,7 +145,8 @@ namespace G25.CG.Java
             WriteComment(SB, S, cgd, FT, gmv);
 
             // open class
-            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, new string[]{MvInterface.GetMvInterfaceName(S, FT)});
+            string[] implements = new string[]{MvInterface.GetMvInterfaceName(S, FT)};
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, implements);
 
             // write member vars
             WriteMemberVariables(SB, S, cgd, FT, gmv);
@@ -181,7 +182,7 @@ namespace G25.CG.Java
             // write 'toString' functions
             G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT);
 
-            // get coordinates
+            // write multivector interface implementation
             G25.CG.CSJ.GMV.WriteMultivectorInterface(SB, S, cgd, FT);
 
             // close class

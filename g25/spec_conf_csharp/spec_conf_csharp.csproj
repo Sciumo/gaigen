@@ -80,6 +80,8 @@
     <Compile Include="I5_t_f.cs" />
     <Compile Include="mv.cs" />
     <Compile Include="mv_f.cs" />
+    <Compile Include="mv_f_if.cs" />
+    <Compile Include="mv_if.cs" />
     <Compile Include="ni_t.cs" />
     <Compile Include="ni_t_f.cs" />
     <Compile Include="noni_t.cs" />
