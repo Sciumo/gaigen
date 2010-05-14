@@ -317,6 +317,30 @@ ${CODEBLOCK GMVtoString}
 	
 	/// <summary>
 	/// Returns this multivector, converted to a string.
+	/// The floating point formatter is "F".
+	/// </summary>
+	public string ToString_f() {
+		return ToString("F");
+	}
+	
+	/// <summary>
+	/// Returns this multivector, converted to a string.
+	/// The floating point formatter is "E".
+	/// </summary>
+	public string ToString_e() {
+		return ToString("E");
+	}
+	
+	/// <summary>
+	/// Returns this multivector, converted to a string.
+	/// The floating point formatter is "E20".
+	/// </summary>
+	public string ToString_e20() {
+		return ToString("E20");
+	}
+	
+	/// <summary>
+	/// Returns this multivector, converted to a string.
 	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
 	/// </summary>
 	public string ToString(string fp) {
@@ -357,4 +381,51 @@ ${CODEBLOCK SMVmvInterfaceImpl}
     {
         return new <%gmvName%>(this);
     }
+${ENDCODEBLOCK}
+
+// S = specification
+// smv = smv class
+// className = mangled class name
+// gmvClassName = mangled class name of GMV
+// FT = floatType
+${CODEBLOCK SMVconstructors}
+    /// <summary>
+	/// Constructs a new <%className%> with variable coordinates set to 0.
+    /// </summary>
+	public <%className%>() {Set();}
+
+    /// <summary>
+	/// Copy constructor.
+    /// </summary>
+	public <%className%>(<%className%> A) {Set(A);}
+
+<%foreach (G25.FloatType otherFT in S.m_floatTypes) {
+	 if (FT == otherFT) continue;%>
+    /// <summary>
+	/// Copies from <%otherFT.type%> to <%FT.type%>.
+    /// </summary>
+	public <%className%>(<%otherFT.GetMangledName(S, smv.Name)%> &A) {Set(A);}
+<%}%>
+
+<%if (smv.GetElementIdx(RefGA.BasisBlade.ONE) >= 0) {%>
+	/// Constructs a new <%className%> with scalar value 'scalar'.
+	inline <%className%>(<%FT.type%> scalar) {set(scalar);}
+<%}%>
+
+	/// Constructs a new <%className%> from <%gmvClassName%>.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	/// \param filler This argument can have any value; it's role
+	/// is only to prevent the compiler from using this constructor as a converter.
+	inline <%className%>(<%gmvClassName%> &A, int filler) {set(A);}
+
+<%if (smv.NbNonConstBasisBlade > 0) {%>
+	/// Constructs a new <%className%>. Coordinate values come from 'A'.
+	inline <%className%>(const CoordinateOrder co, const <%FT.type%> A[<%smv.NbNonConstBasisBlade%>]) {set(co, A);}
+	
+	/// Constructs a new <%className%> with each coordinate specified.
+	inline <%className%>(const CoordinateOrder co, <%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%><%if (i > 0) {%>,<%}%> <%FT.type%> <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>) {
+		set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
+	}
+<%}%>
 ${ENDCODEBLOCK}

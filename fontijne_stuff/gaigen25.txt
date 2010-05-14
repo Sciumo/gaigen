@@ -148,18 +148,26 @@ Maybe fix the float type stuff
 	Write C# and Java output.
 		V create classes
 			
-			GMV_NAME_if_float_suffx
-				todo next 
-				
 			
 			GMV:
-				expand and compress, once regular functions are up
+			  to string variations (_f, _e, _20)
+			  expand and compress, once regular functions are up
 			  
 			SMV:
 			  constructors
 			  	zero
 			  	copy (all types)
 			  	copy from MV
+			  	coordinates (array, one by one)
+			  set functions
+			  	the same set as constructors
+			  largestCoordinate
+			  toString & friends
+			  get & set coordinates 
+			  gettings all coordinates
+			  
+			  
+			  
 			  	
 			  	
 			  

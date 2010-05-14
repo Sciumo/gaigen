@@ -639,7 +639,7 @@ ${CODEBLOCK SMVconstructors}
 <%foreach (G25.FloatType otherFT in S.m_floatTypes) {
 	 if (FT == otherFT) continue;%>
 	/// Copies from <%otherFT.type%> to <%FT.type%>.
-	inline <%className%>(const <%otherFT.GetMangledName(S, smv.Name)%> &A) {set(A);}	 
+	inline <%className%>(const <%otherFT.GetMangledName(S, smv.Name)%> &A) {set(A);} 
 <%}%>
 
 <%if (smv.GetElementIdx(RefGA.BasisBlade.ONE) >= 0) {%>

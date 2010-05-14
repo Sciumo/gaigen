@@ -74,6 +74,8 @@ namespace G25.CG.CSharp
             // write multivector interface implementation
             G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
 
+            // constructors . . .
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

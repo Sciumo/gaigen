@@ -316,7 +316,7 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK GMVtoString}
 	/**
 	 * Returns this multivector, converted to a string.
-	 * The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat()
+	 * The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat().
 	 */
 	public final String toString() {
 <%if (FT == S.m_floatTypes[0]) {%>
@@ -324,6 +324,30 @@ ${CODEBLOCK GMVtoString}
 <%} else {%>
 		return <%S.m_namespace%>.string(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this));
 <%}%>
+	}
+	
+	/**
+	 * Returns this multivector, converted to a string.
+	 * The floating point formatter is "%f".
+	 */
+	public final String toString_f() {
+		return toString("%f");
+	}
+	
+	/**
+	 * Returns this multivector, converted to a string.
+	 * The floating point formatter is "%e".
+	 */
+	public final String toString_e() {
+		return toString("%e");
+	}
+	
+	/**
+	 * Returns this multivector, converted to a string.
+	 * The floating point formatter is "%2.20e".
+	 */
+	public final String toString_e20() {
+		return toString("%2.20e");
 	}
 	
 	/**
