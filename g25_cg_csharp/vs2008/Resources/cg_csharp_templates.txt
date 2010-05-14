@@ -175,7 +175,7 @@ ${ENDCODEBLOCK}
 // gmvName = name of first GMV type
 ${CODEBLOCK sourceToString}
 
-	private const string DEFAULT_FP = "%2.2f";
+	private const string DEFAULT_FP = "F2";
 	private const string DEFAULT_START = "";
 	private const string DEFAULT_END = "";
 	private const string DEFAULT_MUL = "*";
@@ -235,7 +235,7 @@ ${CODEBLOCK sourceToString}
 	* @param fp 
 	*/
 	/// <summary>
-	/// Converts a multivector to a string according to a float format like  "%2.2f"
+	/// Converts a multivector to a string according to a float format like  "F"
 	/// </summary>
 	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
 	public static string String(<%gmvName%> obj, string fp) {
@@ -258,7 +258,7 @@ ${CODEBLOCK sourceToString}
 					
 					// goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN]
 					
-					string tmpFloatStr = string.Format(fp, Math.Abs(coord));
+					string tmpFloatStr = Math.Abs(coord).ToString(fp);
 
 					if (Double.Parse(tmpFloatStr) != 0.0) {
 						// print [+|-]
