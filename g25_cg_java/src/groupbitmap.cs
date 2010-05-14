@@ -21,7 +21,7 @@ using System.Text;
 namespace G25.CG.Java
 {
     /// <summary>
-    /// Handles code generation for the type of specialized multivectors 
+    /// Handles code generation for GroupBitmap class
     /// </summary>
     public class GroupBitmap
     {

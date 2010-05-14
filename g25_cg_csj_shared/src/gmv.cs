@@ -428,7 +428,7 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
-        /// Writes functions to set coordinates of the GMV
+        /// Writes functions to set coordinates of the GMV.
         /// </summary>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
@@ -450,7 +450,7 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
-        /// Writes function for setting grade/group usage, reallocting memory
+        /// Writes function for obtaining the largest coordinate of a multivector.
         /// </summary>
         /// <param name="SB"></param>
         /// <param name="S"></param>
@@ -464,7 +464,7 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
-        /// Writes function for setting grade/group usage, reallocting memory
+        /// Writes function for converting to string.
         /// </summary>
         /// <param name="SB"></param>
         /// <param name="S"></param>
@@ -473,6 +473,19 @@ namespace G25.CG.CSJ
         public static void WriteToString(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
         {
             cgd.m_cog.EmitTemplate(SB, "GMVtoString", "S=", S, "FT=", FT);
+        }
+
+        /// <summary>
+        /// Writes the implementation of the multivector interface.
+        /// </summary>
+        /// <param name="SB"></param>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteMultivectorInterface(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
+        {
+            string gmvName = FT.GetMangledName(S, S.m_GMV.Name);
+            cgd.m_cog.EmitTemplate(SB, "GMVmvInterfaceImpl", "gmvName=", gmvName);
         }
 
     } // end of class GMV

@@ -319,7 +319,7 @@ ${CODEBLOCK GMVtoString}
 	/// Returns this multivector, converted to a string.
 	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
 	/// </summary>
-	public string ToString(String fp) {
+	public string ToString(string fp) {
 <%if (FT == S.m_floatTypes[0]) {%>
 		return <%S.m_namespace%>.String(this, fp);
 <%} else {%>

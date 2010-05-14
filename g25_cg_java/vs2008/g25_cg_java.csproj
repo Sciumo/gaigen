@@ -49,6 +49,7 @@
     <Compile Include="..\src\gmv.cs" />
     <Compile Include="..\src\gom.cs" />
     <Compile Include="..\src\groupbitmap.cs" />
+    <Compile Include="..\src\mvinterface.cs" />
     <Compile Include="..\src\main.cs" />
     <Compile Include="..\src\smv.cs" />
     <Compile Include="..\src\smvtype.cs" />

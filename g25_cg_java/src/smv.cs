@@ -56,7 +56,7 @@ namespace G25.CG.Java
             // todo: write class comment
 
             // open class
-            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, new string[] { MvInterface.GetMvInterfaceName(S, FT) });
 
             // member variables
             G25.CG.CSJ.SMV.WriteMemberVariables(SB, S, cgd, FT, smv);
@@ -69,6 +69,9 @@ namespace G25.CG.Java
 
             // get coordinates
             G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
+
+            // get coordinates
+            G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

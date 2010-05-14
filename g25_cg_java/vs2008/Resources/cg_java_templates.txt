@@ -20,11 +20,11 @@ ${CODEBLOCK SmvTypeEnum}
         this.label = label;
     }
     
-    public int getId() {
+    public final int getId() {
         return id;
     }
  
-    public String toString() {
+    public final String toString() {
         return label;
     }
 }
@@ -47,7 +47,7 @@ bool repUsage = S.m_reportUsage;
     /**
 	 * Copy constructor.
      */
-	public <%className%>(<%className%> A) {set(A);}
+	public <%className%>(final <%className%> A) {set(A);}
 
 <%foreach (G25.FloatType otherFT in S.m_floatTypes) {
 	 if (FT == otherFT) continue;%>
@@ -60,26 +60,26 @@ bool repUsage = S.m_reportUsage;
     /**
 	 * Constructs a new <%className%> with scalar value 'scalar'.
      */
-	public <%className%>(<%FT.type%> scalar) {set(scalar);}
+	public <%className%>(final <%FT.type%> scalar) {set(scalar);}
 
     /** 
      * Constructs a new <%className%> from compressed 'coordinates'.
  	 * @param gu bitwise OR of the GRADEs or GROUPs that are non-zero.
 	 * @param coordinates compressed coordinates.
      */
-	public <%className%>(int gu, <%FT.type%>[] coordinates) {set(gu, coordinates);}
+	public <%className%>(final int gu, final <%FT.type%>[] coordinates) {set(gu, coordinates);}
 
     /** 
      * Constructs a new <%className%> from array of array of 'coordinates'.
 	 * @param coordinates The coordinates, one array for each group/grade. Make sure the
 	 * array length match the size of the groups. Entries may be null.
      */
-	public <%className%>(<%FT.type%>[][] coordinates) {set(coordinates);}
+	public <%className%>(final <%FT.type%>[][] coordinates) {set(coordinates);}
 	
 <%foreach(G25.SMV smv in S.m_SMV) {
 string smvClassName = FT.GetMangledName(S, smv.Name);%>
     /** Converts a <%smvClassName%> to a <%className%>. */
-	public <%className%>(<%smvClassName%> A) {set(A);}
+	public <%className%>(final <%smvClassName%> A) {set(A);}
 <%}%>
 
 <%}%>
@@ -93,7 +93,7 @@ ${CODEBLOCK GMVsetGroupUsage}
 	 * Reserves memory for the groups specified by 'gu'.
 	 * Keeps old memory (and values) when possible. 
 	 */
-	private void allocateGroups(int gu) {
+	private final void allocateGroups(final int gu) {
 		for (int i = 0; (1 << i) <= gu; i++) {
 			if (((1 << i) & gu) != 0) {
 				if (m_c[i] == null)
@@ -115,7 +115,7 @@ ${CODEBLOCK GMVreserveGroups}
 	 *  If the group is not present, memory is allocated for the new group,
 	 *  and the coordinates for the group are set to zero.
 	 */
-	private void reserveGroup_<%groupIdx%>() {
+	private final void reserveGroup_<%groupIdx%>() {
 		if (m_c[<%groupIdx%>] == null) {
 			m_c[<%groupIdx%>] = new <%FT.type%>[<%gmv.Group(groupIdx).Length%>];
 		}
@@ -127,7 +127,7 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GMVgetGroupUsageCoords}
 	/** returns group usage bitmap. */
-	public int gu() {
+	public final int gu() {
 		return 
 <%for (int g = 0; g < S.m_GMV.NbGroups; g++) {%>
 			((m_c[<%g%>] == null) ? 0 : <%G25.CG.CSJ.GroupBitmap.GetGroupBitmapCode(g)%>) |
@@ -139,7 +139,7 @@ ${CODEBLOCK GMVgetGroupUsageCoords}
 	 * Returns array of array of coordinates.
 	 * Each entry contain the coordinates for one group/grade.
      */
-	public <%FT.type%>[][] c() { return m_c; }
+	public final <%FT.type%>[][] c() { return m_c; }
 	
 ${ENDCODEBLOCK}
 
@@ -149,7 +149,7 @@ ${CODEBLOCK SMVgetCoords}
 	/** returns coordinates; 
 	 * @param coordOrder pass the value <%COORD_TYPE_STRING%>.
 	 */
-	public <%FT.type%>[] c(<%G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM%> coordOrder) { return m_c; }
+	public final <%FT.type%>[] c(final <%G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM%> coordOrder) { return m_c; }
 	
 ${ENDCODEBLOCK}
 
@@ -160,23 +160,23 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK float_zero_copy_def}
 <%for (int n = 1; n <= MAX_N; n++) {%>
 	/** Sets <%n%> <%FT.type%>s to zero. */
-	protected static void zero_<%n%>(<%FT.type%>[] dst) {
+	protected final static void zero_<%n%>(final <%FT.type%>[] dst) {
 		<%for (int i = 0; i < n; i++) {%>dst[<%i%>]=<%}%><%FT.DoubleToString(S, 0.0)%>;
 	}
 	/** Copies <%n%> <%FT.type%>s from 'src' to 'dst.' */
-	protected static void copy_<%n%>(<%FT.type%>[] dst, <%FT.type%>[] src) {
+	protected final static void copy_<%n%>(final <%FT.type%>[] dst, final <%FT.type%>[] src) {
 	<%for (int i = 0; i < n; i++) {%>
 		dst[<%i%>] = src[<%i%>];
 	<%}%>
 }
 <%}%>
 	/** Sets N <%FT.type%>s to zero. */
-	protected static void zero_N(<%FT.type%>[] dst, int N) {
+	protected final static void zero_N(final <%FT.type%>[] dst, final int N) {
 		for (int i = 0; i < N; i++)
 			dst[i] = <%FT.DoubleToString(S, 0.0)%>;
 	}
 	/** Copies N <%FT.type%>s from 'src' to 'dst'. */
-	protected  static void copy_N(<%FT.type%>[] dst, <%FT.type%>[] src, int N) {
+	protected final static void copy_N(final <%FT.type%>[] dst, final <%FT.type%>[] src, final int N) {
 		for (int i = 0; i < N; i++)
 			dst[i] = src[i];
 	}
@@ -222,7 +222,7 @@ ${CODEBLOCK sourceToString}
 	 * @param what What formatter to set. Valid values: STRING_FP, STRING_START, STRING_END, STRING_MUL, STRING_WEDGE, STRING_PLUS, STRING_MINUS.
 	 * @param format The value for 'what'. Use 'null' to set the default value.
 	 */
-	public static void setStringFormat(String what, String format) {
+	public final static void setStringFormat(final String what, final String format) {
 		if (what.equals(STRING_FP)) 
 			string_fp = (format != null) ? format : DEFAULT_FP;
 		else if (what.equals(STRING_START)) 
@@ -241,7 +241,7 @@ ${CODEBLOCK sourceToString}
 	}
 	
    /** Converts a multivector to a String using default float format. */
-	public static String string(<%gmvName%> obj) {
+	public final static String string(final <%gmvName%> obj) {
 		return string(obj, null);
 	}
 	
@@ -249,7 +249,7 @@ ${CODEBLOCK sourceToString}
     * Converts a multivector to a String according to a float format like  "%2.2f"
 	* @param fp floating point format. Use 'null' for the default format (see setStringFormat()).
 	*/
-	public static String string(<%gmvName%> obj, String fp) {
+	public final static String string(final <%gmvName%> obj, String fp) {
 		StringBuffer result = new StringBuffer();
 		int ia = 0; // global index into coordinates (runs from 0 to <%(gmv.NbCoordinates-1)%>)
 		int cnt = 0; // how many coordinates printed so far
@@ -318,7 +318,7 @@ ${CODEBLOCK GMVtoString}
 	 * Returns this multivector, converted to a string.
 	 * The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat()
 	 */
-	public String toString() {
+	public final String toString() {
 <%if (FT == S.m_floatTypes[0]) {%>
 		return <%S.m_namespace%>.string(this);
 <%} else {%>
@@ -330,11 +330,33 @@ ${CODEBLOCK GMVtoString}
 	 * Returns this multivector, converted to a string.
 	 * @param fp floating point format. Use 'null' for the default format (see <%S.m_namespace%>.setStringFormat()).
 	 */
-	public String toString(String fp) {
+	public final String toString(final String fp) {
 <%if (FT == S.m_floatTypes[0]) {%>
 		return <%S.m_namespace%>.string(this, fp);
 <%} else {%>
 		return <%S.m_namespace%>.string(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this), fp);
 <%}%>
+	}
+${ENDCODEBLOCK}
+
+// gmvName = name of gmv type
+${CODEBLOCK mvInterface}
+public interface <%gmvName%>_interface {
+	/** converts this multivector to type '<%gmvName%>' */
+	<%gmvName%> to_<%gmvName%>();
+}
+${ENDCODEBLOCK}
+
+// gmvName = name of gmv type
+${CODEBLOCK GMVmvInterfaceImpl}
+	public final <%gmvName%> to_<%gmvName%>() {
+		return this;
+	}
+${ENDCODEBLOCK}
+
+// gmvName = name of gmv type
+${CODEBLOCK SMVmvInterfaceImpl}
+	public final <%gmvName%> to_<%gmvName%>() {
+		return new <%gmvName%>(this);
 	}
 ${ENDCODEBLOCK}

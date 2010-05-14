@@ -154,7 +154,20 @@ namespace G25.CG.CSJ
 
             cgd.m_cog.EmitTemplate(SB, "SMVgetCoords", "FT=", FT, "COORD_TYPE_STRING=", constantName);
         }
-            
+
+        /// <summary>
+        /// Writes the implementation of the multivector interface.
+        /// </summary>
+        /// <param name="SB"></param>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteMultivectorInterface(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv)
+        {
+            string gmvName = FT.GetMangledName(S, S.m_GMV.Name);
+            cgd.m_cog.EmitTemplate(SB, "SMVmvInterfaceImpl", "gmvName=", gmvName);
+        }
+    
 
 #if RIEN
         /// <summary>
