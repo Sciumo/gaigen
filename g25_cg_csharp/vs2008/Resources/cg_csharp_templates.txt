@@ -404,28 +404,26 @@ ${CODEBLOCK SMVconstructors}
     /// <summary>
 	/// Copies from <%otherFT.type%> to <%FT.type%>.
     /// </summary>
-	public <%className%>(<%otherFT.GetMangledName(S, smv.Name)%> &A) {Set(A);}
+	public <%className%>(<%otherFT.GetMangledName(S, smv.Name)%> A) {Set(A);}
 <%}%>
 
 <%if (smv.GetElementIdx(RefGA.BasisBlade.ONE) >= 0) {%>
 	/// Constructs a new <%className%> with scalar value 'scalar'.
-	inline <%className%>(<%FT.type%> scalar) {set(scalar);}
+	public <%className%>(<%FT.type%> scalar) {Set(scalar);}
 <%}%>
 
 	/// Constructs a new <%className%> from <%gmvClassName%>.
 	/// \param A The value to copy. Coordinates that cannot be represented
 	/// are silently dropped.
-	/// \param filler This argument can have any value; it's role
-	/// is only to prevent the compiler from using this constructor as a converter.
-	inline <%className%>(<%gmvClassName%> &A, int filler) {set(A);}
+	public <%className%>(<%gmvClassName%> A /*, int filler */) {Set(A);}
 
 <%if (smv.NbNonConstBasisBlade > 0) {%>
 	/// Constructs a new <%className%>. Coordinate values come from 'A'.
-	inline <%className%>(const CoordinateOrder co, const <%FT.type%> A[<%smv.NbNonConstBasisBlade%>]) {set(co, A);}
+	public <%className%>(CoordinateOrder co, <%FT.type%>[] A) {Set(co, A);}
 	
 	/// Constructs a new <%className%> with each coordinate specified.
-	inline <%className%>(const CoordinateOrder co, <%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%><%if (i > 0) {%>,<%}%> <%FT.type%> <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>) {
-		set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
+	public <%className%>(CoordinateOrder co, <%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%><%if (i > 0) {%>,<%}%> <%FT.type%> <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>) {
+		Set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
 	}
 <%}%>
 ${ENDCODEBLOCK}

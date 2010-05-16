@@ -28,6 +28,8 @@ namespace G25.CG.CSJ
         private const string ALLOCATE_GROUPS_JAVA = "allocateGroups";
         private const string SET_RESERVE_GROUP_CSHARP = "ReserveGroup_";
         private const string SET_RESERVE_GROUP_JAVA = "reserveGroup_";
+        private const string SET_CSHARP = "Set";
+        private const string SET_JAVA = "set";
 
         public static string GetAllocateGroupsString(Specification S)
         {
@@ -41,6 +43,11 @@ namespace G25.CG.CSJ
             return ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
                 ? SET_RESERVE_GROUP_CSHARP
                 : SET_RESERVE_GROUP_JAVA) + groupIdx;
+        }
+
+        public static string GetSetFuncName(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? SET_CSHARP : SET_JAVA;
         }
 
         /// <summary>
@@ -58,7 +65,7 @@ namespace G25.CG.CSJ
             G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to 0.", null, null);
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+            string funcName = GetSetFuncName(S); 
 
             string funcDecl = "\tpublic void " + funcName + "()";
 
@@ -89,7 +96,7 @@ namespace G25.CG.CSJ
 
             G25.GMV gmv = S.m_GMV;
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+            string funcName = GetSetFuncName(S); 
 
             string funcDecl = "\tpublic void " + funcName + "(" + FT.type + " val)";
 
@@ -125,7 +132,7 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+            string funcName = GetSetFuncName(S); 
 
             string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
 
@@ -173,7 +180,7 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+            string funcName = GetSetFuncName(S); 
 
             string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
 
@@ -206,7 +213,7 @@ namespace G25.CG.CSJ
 
                 string dstClassName = dstFT.GetMangledName(S, gmv.Name);
 
-                string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+                string funcName = GetSetFuncName(S); 
 
                 string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 
@@ -272,7 +279,7 @@ namespace G25.CG.CSJ
                 nbTabs = 1;
                 G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to " + srcClassName + " value.", null, null);
 
-                string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Set" : "set";
+                string funcName = GetSetFuncName(S);
 
                 string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 

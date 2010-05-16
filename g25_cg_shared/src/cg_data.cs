@@ -33,8 +33,7 @@ namespace G25.CG.Shared
         }
 
         /// <summary>
-        /// Constructor that allows you to set StringBuilders for each possible destination
-        /// of the generated code (decl, def, inline def).
+        /// Copy constructor
         /// </summary>
         /// <param name="cgd"></param>
         public CGdata(CGdata cgd)

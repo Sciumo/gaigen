@@ -621,12 +621,12 @@ namespace G25.CG.CPP
                 {
                     if (smv.NbNonConstBasisBlade == 0) continue;
 
-                    String className = FT.GetMangledName(S, smv.Name);
-                    String funcName = className + "::set";
+                    string className = FT.GetMangledName(S, smv.Name);
+                    string funcName = className + "::set";
                     bool mustCast = false;
 
-                    String[] argTypename = new String[2] { G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM, FT.type };
-                    String[] argName = new String[2]{"co", "A"};
+                    string[] argTypename = new string[2] { G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM, FT.type };
+                    string[] argName = new string[2] { "co", "A" };
 
                     System.Collections.ArrayList L = new System.Collections.ArrayList();
                     for (int i = 0; i < smv.NbNonConstBasisBlade; i++)

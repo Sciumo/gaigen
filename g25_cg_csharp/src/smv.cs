@@ -38,6 +38,7 @@ namespace G25.CG.CSharp
         {
             string className = FT.GetMangledName(S, smv.Name);
 
+
             // get filename, list of generated filenames
             List<string> generatedFiles = new List<string>();
             string sourceFilename = MainGenerator.GetClassOutputPath(S, className);
@@ -45,6 +46,20 @@ namespace G25.CG.CSharp
 
             // get StringBuilder where all generated code goes
             StringBuilder SB = new StringBuilder();
+
+            // todo: get copy of cgd with own SB???
+            // use:
+            /*
+                     /// <summary>
+        /// Constructor that allows you to set StringBuilders for each possible destination
+        /// of the generated code (decl, def, inline def).
+        /// </summary>
+        /// <param name="cgd"></param>
+        /// <param name="declSB"></param>
+        /// <param name="defSB"></param>
+        /// <param name="inlineDefSB"></param>
+        public CGdata(CGdata cgd, StringBuilder declSB, StringBuilder defSB, StringBuilder inlineDefSB) : this(cgd)
+*/ 
 
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
@@ -74,7 +89,11 @@ namespace G25.CG.CSharp
             // write multivector interface implementation
             G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
 
-            // constructors . . .
+            // write constructors
+            G25.CG.CSJ.SMV.WriteConstructors(SB, S, cgd, FT, smv);
+
+            // write constructors
+            G25.CG.CSJ.SMV.WriteSetFunctions(SB, S, cgd, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
