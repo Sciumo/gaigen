@@ -83,6 +83,9 @@ namespace G25.CG.Java
             // write set functions
             G25.CG.CSJ.SMV.WriteSetFunctions(SB, S, cgd, FT, smv);
 
+            // write largest coordinate functions
+            G25.CG.CSJ.SMV.WriteLargestCoordinateFunctions(S, cgd, FT, smv);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

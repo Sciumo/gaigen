@@ -6,7 +6,7 @@ ${CODEBLOCK GMVlargestCoordinate}
 <%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CSHARP) {%>
 	/// <summary>returns the absolute largest coordinate.</summary>
 <%} else {%>
-	/** <summary>returns the absolute largest coordinate.*/
+	/** returns the absolute largest coordinate.*/
 <%}%>
 	public <%FT.type%> <%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() {
 		<%FT.type%> maxValue = <%FT.DoubleToString(S, 0.0)%>, C;

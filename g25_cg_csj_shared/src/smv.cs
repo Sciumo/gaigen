@@ -526,45 +526,67 @@ namespace G25.CG.CSJ
             {
                 bool returnBitmap = (_returnBitmap != 0);
 
+                // write comment
+                int nbTabs = 1;
+                if (returnBitmap)
+                    G25.CG.Shared.Util.WriteFunctionComment(defSB, S, nbTabs, "Returns the absolute largest coordinate,\nand the corresponding basis blade bitmap.", null, null);
+                else G25.CG.Shared.Util.WriteFunctionComment(defSB, S, nbTabs, "Returns the absolute largest coordinate.", null, null);
+
                 string funcName = Util.GetFunctionName(S, ((returnBitmap) ? "largestBasisBlade" : "largestCoordinate"));
 
                 string funcDecl;
-                if (returnBitmap)
+                if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) && returnBitmap)
                 {
                     funcDecl = FT.type + " " + funcName + "(int bm) ";
+                }
+                else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                {
+                    funcDecl = FT.type + "[] " + funcName + "() ";
                 }
                 else
                 {
                     funcDecl = FT.type + " " + funcName + "()";
                 }
 
+
                 defSB.Append("\tpublic " + funcDecl);
                 {
                     defSB.AppendLine(" {");
+
+                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                        defSB.AppendLine("\t\tint bm;");
+
                     int startIdx = 0;
                     if (maxBasisBlade != null)
                     {
-                        defSB.AppendLine("\t" + FT.type + " maxValue = " + FT.DoubleToString(S, Math.Abs(maxBasisBlade.scale)) + ";");
+                        defSB.AppendLine("\t\t" + FT.type + " maxValue = " + FT.DoubleToString(S, Math.Abs(maxBasisBlade.scale)) + ";");
                         if (returnBitmap)
-                            defSB.AppendLine("\tbm = " + maxBasisBlade.bitmap + ";");
+                            defSB.AppendLine("\t\tbm = " + maxBasisBlade.bitmap + ";");
                     }
                     else
                     {
-                        defSB.AppendLine("\t" + FT.type + " maxValue = " + fabsFunc + "(" + AS[0] + ");");
+                        defSB.AppendLine("\t\t" + FT.type + " maxValue = " + fabsFunc + "(" + AS[0] + ");");
                         if (returnBitmap)
-                            defSB.AppendLine("\tbm = 0;");
+                            defSB.AppendLine("\t\tbm = 0;");
                         startIdx = 1;
                     }
 
                     for (int c = startIdx; c < smv.NbNonConstBasisBlade; c++)
                     {
-                        defSB.Append("\tif (" + fabsFunc + "(" + AS[c] + ") > maxValue) { maxValue = " + fabsFunc + "(" + AS[c] + "); ");
+                        defSB.Append("\t\tif (" + fabsFunc + "(" + AS[c] + ") > maxValue) { maxValue = " + fabsFunc + "(" + AS[c] + "); ");
                         if (returnBitmap) defSB.Append("bm = " + smv.NonConstBasisBlade(c).bitmap + "; ");
                         defSB.AppendLine("}");
                     }
 
-                    defSB.AppendLine("\treturn maxValue;");
-                    defSB.AppendLine("}");
+                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                    {
+                        defSB.AppendLine("\t\treturn new " + FT.type + "[]{maxValue, (" + FT.type + ")bm};");
+                    }
+                    else
+                    {
+                        defSB.AppendLine("\t\treturn maxValue;");
+                    }
+                    defSB.AppendLine("\t}");
                 }
             }
         } // end of WriteLargestCoordinateFunctions()
