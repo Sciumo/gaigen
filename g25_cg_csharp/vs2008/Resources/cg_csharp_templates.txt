@@ -408,20 +408,27 @@ ${CODEBLOCK SMVconstructors}
 <%}%>
 
 <%if (smv.GetElementIdx(RefGA.BasisBlade.ONE) >= 0) {%>
+    /// <summary>
 	/// Constructs a new <%className%> with scalar value 'scalar'.
+    /// </summary>
 	public <%className%>(<%FT.type%> scalar) {Set(scalar);}
 <%}%>
 
+    /// <summary>
 	/// Constructs a new <%className%> from <%gmvClassName%>.
-	/// \param A The value to copy. Coordinates that cannot be represented
-	/// are silently dropped.
+    /// </summary>
+	/// <param name="A">The value to copy. Coordinates that cannot be represented are silently dropped. </param>
 	public <%className%>(<%gmvClassName%> A /*, int filler */) {Set(A);}
 
 <%if (smv.NbNonConstBasisBlade > 0) {%>
+    /// <summary>
 	/// Constructs a new <%className%>. Coordinate values come from 'A'.
+    /// </summary>
 	public <%className%>(CoordinateOrder co, <%FT.type%>[] A) {Set(co, A);}
 	
+    /// <summary>
 	/// Constructs a new <%className%> with each coordinate specified.
+    /// </summary>
 	public <%className%>(CoordinateOrder co, <%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%><%if (i > 0) {%>,<%}%> <%FT.type%> <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>) {
 		Set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
 	}

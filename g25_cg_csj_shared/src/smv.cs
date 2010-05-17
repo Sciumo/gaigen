@@ -211,7 +211,7 @@ namespace G25.CG.CSJ
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         private static void WriteSetZero(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            if (smv.NbNonConstBasisBlade == 0) return;
+            //if (smv.NbNonConstBasisBlade == 0) return;
 
             cgd.m_defSB.AppendLine("");
 
@@ -233,9 +233,9 @@ namespace G25.CG.CSJ
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
         public static void WriteSetScalar(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            cgd.m_defSB.AppendLine("");
+            //if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0) return; // if no scalar coordinate, continue
 
-            if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0) return; // if no scalar coordinate, continue
+            cgd.m_defSB.AppendLine("");
 
             string className = FT.GetMangledName(S, smv.Name);
             string funcName = GMV.GetSetFuncName(S);
@@ -272,7 +272,7 @@ namespace G25.CG.CSJ
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
         public static void WriteSetCoords(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            if (smv.NbNonConstBasisBlade == 0) return;
+            //if (smv.NbNonConstBasisBlade == 0) return;
 
             cgd.m_defSB.AppendLine("");
 
@@ -316,7 +316,7 @@ namespace G25.CG.CSJ
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
         public static void WriteSetArray(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            if (smv.NbNonConstBasisBlade == 0) return;
+            //if (smv.NbNonConstBasisBlade == 0) return;
 
             cgd.m_defSB.AppendLine("");
 
@@ -392,7 +392,7 @@ namespace G25.CG.CSJ
             {
                 if (srcFT.type == dstFT.type) continue;
 
-                if (smv.NbNonConstBasisBlade == 0) continue;
+                //if (smv.NbNonConstBasisBlade == 0) continue;
 
                 cgd.m_defSB.AppendLine("");
 

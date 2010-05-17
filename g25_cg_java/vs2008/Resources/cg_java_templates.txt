@@ -382,3 +382,43 @@ ${CODEBLOCK SMVmvInterfaceImpl}
 		return new <%gmvName%>(this);
 	}
 ${ENDCODEBLOCK}
+
+// S = specification
+// smv = smv class
+// className = mangled class name
+// gmvClassName = mangled class name of GMV
+// FT = floatType
+${CODEBLOCK SMVconstructors}
+    /** Constructs a new <%className%> with variable coordinates set to 0. */
+	public <%className%>() {set();}
+
+    /** Copy constructor. */
+	public <%className%>(final <%className%> A) {set(A);}
+
+<%foreach (G25.FloatType otherFT in S.m_floatTypes) {
+	 if (FT == otherFT) continue;%>
+    /** Copies from <%otherFT.type%> to <%FT.type%>. */
+	public <%className%>(final <%otherFT.GetMangledName(S, smv.Name)%> A) {set(A);}
+<%}%>
+
+<%if (smv.GetElementIdx(RefGA.BasisBlade.ONE) >= 0) {%>
+	/** Constructs a new <%className%> with scalar value 'scalar'. */
+	public <%className%>(final <%FT.type%> scalar) {set(scalar);}
+<%}%>
+
+	/** Constructs a new <%className%> from <%gmvClassName%>.
+	 *  @param A The value to copy. Coordinates that cannot be represented
+	 *  are silently dropped.
+	 */
+	public <%className%>(final <%gmvClassName%> A /*, final int filler */) {set(A);}
+
+<%if (smv.NbNonConstBasisBlade > 0) {%>
+	/** Constructs a new <%className%>. Coordinate values come from 'A'. */
+	public <%className%>(final CoordinateOrder co, final <%FT.type%>[] A) {set(co, A);}
+	
+	/** Constructs a new <%className%> with each coordinate specified. */
+	public <%className%>(final CoordinateOrder co, <%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%><%if (i > 0) {%>,<%}%> final <%FT.type%> <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>) {
+		set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
+	}
+<%}%>
+${ENDCODEBLOCK}

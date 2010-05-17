@@ -81,7 +81,7 @@ namespace G25.CG.CSharp
             // write constructors
             G25.CG.CSJ.SMV.WriteConstructors(SB, S, cgd, FT, smv);
 
-            // write constructors
+            // write set functions
             G25.CG.CSJ.SMV.WriteSetFunctions(SB, S, cgd, FT, smv);
 
             // close class
