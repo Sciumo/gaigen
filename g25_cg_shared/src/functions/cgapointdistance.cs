@@ -88,6 +88,7 @@ namespace G25.CG.Shared.Func
             {
                 bool ptr = m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C;
                 m_fgs.m_argumentPtr = new bool[] { ptr, ptr };
+                m_fgs.m_argumentArr = new bool[] { false, false };
             }
 
             // get all function info
