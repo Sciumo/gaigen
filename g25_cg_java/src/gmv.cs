@@ -180,7 +180,7 @@ namespace G25.CG.Java
             G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
             // write 'toString' functions
-            G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT);
+            G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT, gmv);
 
             // write multivector interface implementation
             G25.CG.CSJ.GMV.WriteMultivectorInterface(SB, S, cgd, FT);

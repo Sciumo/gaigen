@@ -273,6 +273,12 @@ namespace G25.CG.Shared
             bool inline, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments)
         {
+            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                SB.Append("public final ");
+            else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                SB.Append("public ");
+
+
             SB.Append(G25.CG.Shared.Util.GetInlineString(S, inline, " "));
             if (returnArgument != null) returnType = "void";
             SB.Append(returnType);

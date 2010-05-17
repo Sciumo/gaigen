@@ -226,19 +226,16 @@ ${CODEBLOCK sourceToString}
 	}
 	
     /// <summary>Converts a multivector to a string using default float format.</summary>
-	public static string String(<%gmvName%> obj) {
-		return String(obj, null);
+	public static string String(<%G25.CG.CSharp.MvInterface.GetMvInterfaceName(S, FT)%> value) {
+		return String(value, null);
 	}
 	
-   /** 
-    * 
-	* @param fp 
-	*/
 	/// <summary>
-	/// Converts a multivector to a string according to a float format like  "F"
+	/// Converts a multivector to a string according to a float format like "F".
 	/// </summary>
 	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
-	public static string String(<%gmvName%> obj, string fp) {
+	public static string String(<%G25.CG.CSharp.MvInterface.GetMvInterfaceName(S, FT)%> value, string fp) {
+		<%gmvName%> obj = value.To_<%gmvName%>();
 		System.Text.StringBuilder result = new System.Text.StringBuilder();
 		int ia = 0; // global index into coordinates (runs from 0 to <%(gmv.NbCoordinates-1)%>)
 		int cnt = 0; // how many coordinates printed so far
@@ -302,7 +299,8 @@ ${ENDCODEBLOCK}
 
 // S = specification
 // FT = float type
-${CODEBLOCK GMVtoString}
+// mvName = NON-mangled name of multivector
+${CODEBLOCK MVtoString}
 	/// <summary>
 	/// Returns this multivector, converted to a string.
 	/// The floating point formatter is controlled via <%S.m_namespace%>.setStringFormat().
@@ -311,7 +309,7 @@ ${CODEBLOCK GMVtoString}
 <%if (FT == S.m_floatTypes[0]) {%>
 		return <%S.m_namespace%>.String(this);
 <%} else {%>
-		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this));
+		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, mvName)%>(this));
 <%}%>
 	}
 	
@@ -347,7 +345,7 @@ ${CODEBLOCK GMVtoString}
 <%if (FT == S.m_floatTypes[0]) {%>
 		return <%S.m_namespace%>.String(this, fp);
 <%} else {%>
-		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name)%>(this), fp);
+		return <%S.m_namespace%>.String(new <%S.m_floatTypes[0].GetMangledName(S, mvName)%>(this), fp);
 <%}%>
 	}
 ${ENDCODEBLOCK}

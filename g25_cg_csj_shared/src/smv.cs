@@ -548,8 +548,8 @@ namespace G25.CG.CSJ
                     funcDecl = FT.type + " " + funcName + "()";
                 }
 
-
-                defSB.Append("\tpublic " + funcDecl);
+                string FINAL = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "final " : "";
+                defSB.Append("\tpublic " + FINAL + funcDecl);
                 {
                     defSB.AppendLine(" {");
 

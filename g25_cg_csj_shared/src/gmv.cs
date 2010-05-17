@@ -482,9 +482,10 @@ namespace G25.CG.CSJ
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT"></param>
-        public static void WriteToString(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
+        /// <param name="mvType"></param>
+        public static void WriteToString(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, MV mvType)
         {
-            cgd.m_cog.EmitTemplate(SB, "GMVtoString", "S=", S, "FT=", FT);
+            cgd.m_cog.EmitTemplate(SB, "MVtoString", "S=", S, "FT=", FT, "mvName=", mvType.Name);
         }
 
         /// <summary>

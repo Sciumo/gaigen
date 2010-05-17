@@ -156,17 +156,11 @@ Maybe fix the float type stuff
 			SMV:
 			  V constructors
 			  V set functions
+			  V largestCoordinate
+			  V toString & friends
 			  
-			  largestCoordinate
-			  toString & friends
-			  	toString: convert to GMV, then call tostring (maybe even use MV interface for both GMV and SMV)
 			  get & set coordinates 
-			  gettings all coordinates
-			  
-			  
-			  
-			  	
-			  	
+			  gettings all coordinates in array mode
 			  
 			GOM
 			 
@@ -175,16 +169,17 @@ Maybe fix the float type stuff
 			
 			regular functions
 		
-			GMV, together with regular functions
-			    compress, 
-			  	compress 1: check all groups, if null up to epsilon, shrink
-			  	old-school compress 2: array of coordinates -> 
-			    expand (needs ptr class?)
-			  
-			  
+				->GMV, together with regular functions
+				    compress, 
+					compress 1: check all groups, if null up to epsilon, shrink
+					old-school compress 2: array of coordinates -> 
+				    expand (needs ptr class?)
+
 			parser 
 			
 			testing
+			
+			makefile for all platforms
 				
 		V load templates
 	
