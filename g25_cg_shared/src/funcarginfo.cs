@@ -57,6 +57,9 @@ namespace G25.CG.Shared
             // set pointer / non pointer flag
             m_pointer = F.GetArgumentPtr(S, argIdx);
 
+            // set array  flag
+            m_array = F.GetArgumentArr(S, argIdx);
+
             m_constant = (argIdx >= 0);
             
 
@@ -146,14 +149,17 @@ namespace G25.CG.Shared
         /// <summary>Set to true when variable is constant.</summary>
         public bool Constant { get { return m_constant; } }
 
-        /// <summary>Set to true when variable is a pointer.</summary>
+        /// <summary>True when variable is a pointer.</summary>
         public bool Pointer { get { return m_pointer; } }
 
+        /// <summary>True when variable is a array.</summary>
+        public bool Array { get { return m_array; } }
+
         /// <summary>Name of argument (e.g., "A").</summary>
-        protected String m_name;
+        protected string m_name;
 
         /// <summary>Name of type, e.g., "float" or "vectorE3GA".</summary>
-        protected String m_typeName;
+        protected string m_typeName;
 
         /// <summary>Mangled version of m_typeName, e.g., "float" or "vectorE3GA_f".</summary>
         protected String m_mangledTypeName;
@@ -180,9 +186,14 @@ namespace G25.CG.Shared
         protected bool m_constant;
 
         /// <summary>
-        /// Set to true when variable is a pointer.
+        /// True when variable is a pointer.
         /// </summary>
         protected bool m_pointer;
+
+        /// <summary>
+        /// True when variable is an array.
+        /// </summary>
+        protected bool m_array;
 
     }// end of class FuncArgInfo
 } // end of namepace G25.CG.Shared

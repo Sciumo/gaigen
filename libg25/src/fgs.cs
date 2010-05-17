@@ -101,6 +101,7 @@ namespace G25
             m_argumentTypeNames = argumentTypeNames;
             m_argumentVariableNames = argumentVariableNames;
             m_argumentPtr = new bool[0];
+            m_argumentArr = new bool[0];
             m_floatNames = floatNames;
             m_metricName = (metricName == null) ? "default" : metricName;
             m_comment = comment;
@@ -125,6 +126,7 @@ namespace G25
             m_argumentTypeNames = F.m_argumentTypeNames;
             m_argumentVariableNames = F.m_argumentVariableNames;
             m_argumentPtr = F.m_argumentPtr;
+            m_argumentArr = F.m_argumentArr;
             m_floatNames = F.m_floatNames;
             m_metricName = F.m_metricName;
             m_comment = F.m_comment;
@@ -165,6 +167,10 @@ namespace G25
             if (m_argumentPtr != null)
                 for (int i = 0; i < m_argumentPtr.Length; i++)
                     hashCode ^= m_argumentPtr[i].GetHashCode() << (1 + i);
+
+            if (m_argumentArr != null)
+                for (int i = 0; i < m_argumentArr.Length; i++)
+                    hashCode ^= m_argumentArr[i].GetHashCode() << (1 + i);
 
             // do not use comment for hashcode!
 
@@ -232,6 +238,8 @@ namespace G25
                 if ((C = CompareArrays(m_argumentVariableNames, B.m_argumentVariableNames)) != 0) return C;
 
                 if ((C = CompareBoolArrays(m_argumentPtr, B.m_argumentPtr)) != 0) return C;
+
+                if ((C = CompareBoolArrays(m_argumentArr, B.m_argumentArr)) != 0) return C;
 
                 if (m_options.Count < B.m_options.Count) return -1;
                 else if (m_options.Count > B.m_options.Count) return 1;
@@ -339,6 +347,8 @@ namespace G25
         public String[] ArgumentVariableNames { get { return m_argumentVariableNames; } }
         /// <summary>Whether arguments are pointers or not. After fill-in always has the same length as ArgumentTypeNames.</summary>
         public bool[] ArgumentPtr { get { return m_argumentPtr; } }
+        /// <summary>Whether arguments are arrays or not. After fill-in always has the same length as ArgumentTypeNames.</summary>
+        public bool[] ArgumentArr { get { return m_argumentArr; } }
         /// <summary>The number of floating point typenames listed.</summary>
         public int NbFloatNames { get { return this.m_floatNames.Length; } }
         /// <summary>Name(s) of floating point type(s) for which the function should be generated.</summary>
@@ -411,8 +421,22 @@ namespace G25
         public bool GetArgumentPtr(Specification S, int argIdx)
         {
             if (argIdx < 0) return (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? true : false;
-            if (NbArguments == 0) return false;
+            else if (NbArguments == 0) return false;
             else return ArgumentPtr[argIdx];
+        }
+
+        /// <summary>
+        /// Returns the whether argument 'argIdx' is an array.
+        /// If not filled in, 'false' is returned.
+        /// </summary>
+        /// <param name="S">Specification.</param>
+        /// <param name="argIdx">Index of argument.</param>
+        /// <returns>name of argument 'argIdx'.</returns>
+        public bool GetArgumentArr(Specification S, int argIdx)
+        {
+            if (argIdx < 0) return false;
+            else if (NbArguments == 0) return false;
+            else return ArgumentArr[argIdx];
         }
 
         public override string ToString()
@@ -498,8 +522,11 @@ namespace G25
             if (m_argumentTypeNames == null) return;
 
             int i = (m_argumentPtr == null) ? 0 : m_argumentPtr.Length;
-            if (i != m_argumentTypeNames.Length) // resize the array
+            if (i != m_argumentTypeNames.Length)
+            {// resize the array
                 System.Array.Resize<bool>(ref m_argumentPtr, m_argumentTypeNames.Length);
+                System.Array.Resize<bool>(ref m_argumentArr, m_argumentTypeNames.Length);
+            }
 
             if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) {
                 // if it is not a float or a double, then it is a pointer
@@ -515,6 +542,13 @@ namespace G25
         public void SetArgumentPtr(int argIdx, bool value) 
         {
             m_argumentPtr[argIdx] = value;
+        }
+
+        /// <summary>
+        /// Sets <c>m_argumentArr</c>c> to <c>value</c> for argument <c>[argIdx]</c>.
+        public void SetArgumentArr(int argIdx, bool value)
+        {
+            m_argumentArr[argIdx] = value;
         }
 
         /// <summary>
@@ -557,6 +591,14 @@ namespace G25
         /// This variable can be written to, such that code generators can fill it in (fill in the blanks).
         /// </summary>
         public bool[] m_argumentPtr;
+
+        /// <summary>
+        /// The whether arguments are arrays.
+        /// Must be of the same length as m_argumentTypeNames.
+        /// 
+        /// This variable can be written to, such that code generators can fill it in (fill in the blanks).
+        /// </summary>
+        public bool[] m_argumentArr;
 
         /// <summary>
         /// Name(s) of floating point type(s) for which the function should be generated.

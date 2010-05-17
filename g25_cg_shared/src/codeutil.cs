@@ -57,7 +57,7 @@ namespace G25.CG.Shared
             string memberPrefix = "";
 
 
-            // override "this->" to ""
+            // C++: override "this->" to ""
             if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
             {
                 memberPrefix = "m_";
@@ -67,10 +67,17 @@ namespace G25.CG.Shared
                     accessStr = "";
                 }
             }
+
+            // C#, Java: override "this." to ""
             else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ||
                 (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA))
             {
                 memberPrefix = "m_";
+                if ((smvName == SmvUtil.THIS) && (ptr == false))
+                {
+                    smvName = "";
+                    accessStr = "";
+                }
             }
 
             string prefix = smvName + accessStr + memberPrefix;

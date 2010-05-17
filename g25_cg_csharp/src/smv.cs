@@ -47,19 +47,8 @@ namespace G25.CG.CSharp
             // get StringBuilder where all generated code goes
             StringBuilder SB = new StringBuilder();
 
-            // todo: get copy of cgd with own SB???
-            // use:
-            /*
-                     /// <summary>
-        /// Constructor that allows you to set StringBuilders for each possible destination
-        /// of the generated code (decl, def, inline def).
-        /// </summary>
-        /// <param name="cgd"></param>
-        /// <param name="declSB"></param>
-        /// <param name="defSB"></param>
-        /// <param name="inlineDefSB"></param>
-        public CGdata(CGdata cgd, StringBuilder declSB, StringBuilder defSB, StringBuilder inlineDefSB) : this(cgd)
-*/ 
+            // get a new 'cgd' where all ouput goes to the one StringBuilder SB 
+            cgd = new G25.CG.Shared.CGdata(cgd, SB, SB, SB);
 
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);

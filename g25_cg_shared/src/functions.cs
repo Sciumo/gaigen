@@ -296,13 +296,26 @@ namespace G25.CG.Shared
 
                     if (appendComma) SB.Append(", ");
 
-                    if (A.Constant) SB.Append("const ");
+                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                        SB.Append("final ");
+
+                    if (A.Constant && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))) 
+                        SB.Append("const ");
+
                     SB.Append(A.MangledTypeName);
+
+                    if ((A.Array) && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)))
+                        SB.Append("[]");
+
                     SB.Append(" ");
+
                     if (A.Pointer) SB.Append("*");
                     else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) && (A.IsMVorOM())) // append '&'?
                             SB.Append("&");
                     SB.Append(A.Name);
+
+                    if ((A.Array) && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C)))
+                        SB.Append("[]");
 
                     appendComma = true;
                 }
@@ -452,8 +465,11 @@ namespace G25.CG.Shared
             // where the definition goes:
             StringBuilder defSB = (inline) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
-            // declaration:
-            if (!(dstName.Equals(G25.CG.Shared.SmvUtil.THIS) && (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)))
+            // write declaration yes/no?
+            bool writeDecl = (!(dstName.Equals(G25.CG.Shared.SmvUtil.THIS) && (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))) && // no declaration for C++ member functions
+                (S.m_outputLanguage != OUTPUT_LANGUAGE.CSHARP) &&  // no declaration in C#
+                (S.m_outputLanguage != OUTPUT_LANGUAGE.JAVA); // no declaration in Java
+            if (writeDecl) 
             {
                 WriteDeclaration(cgd.m_declSB, S, cgd, inline, returnType, functionName, returnArgument, arguments);
                 cgd.m_declSB.AppendLine(";");
@@ -464,7 +480,7 @@ namespace G25.CG.Shared
             defSB.AppendLine("");
             defSB.AppendLine("{");
 
-            int nbTabs = 1;
+            int nbTabs = 1; // (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? 2 : 1;
             bool declareVariable = false;
             AssignInstruction AI = new AssignInstruction(nbTabs, dstSmv, dstFT, mustCastDst, value, dstName, dstPtr, declareVariable);
             AI.Write(defSB, S, cgd);

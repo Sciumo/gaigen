@@ -197,6 +197,11 @@ namespace G25.CG.CSJ
         public static void WriteSetFunctions(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv)
         {
             WriteSetZero(S, cgd, FT, smv);
+            WriteSetScalar(S, cgd, FT, smv);
+            WriteSetCoords(S, cgd, FT, smv);
+            WriteSetArray(S, cgd, FT, smv);
+            WriteSetCopy(S, cgd, FT, smv);
+            WriteSetCopyCrossFloat(S, cgd, FT, smv);
         }
 
         /// <summary>
@@ -215,162 +220,135 @@ namespace G25.CG.CSJ
 
             string returnVarName = null;
             string dstName = G25.CG.Shared.SmvUtil.THIS;
-            bool dstPtr = true;
+            bool dstPtr = false;
 
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
                     S.m_inlineSet, "void", returnVarName, funcName, null, null, FT, mustCast, smv, dstName, dstPtr, new RefGA.Multivector(0.0));
         } // end of WriteSetZero()
 
-#if RIEN
         /// <summary>
         /// Writes a function to set an SMV struct to a scalar coordinate, for all floating point types which have a non-constant scalar coordinate.
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetScalar(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetScalar(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-            declSB.AppendLine("");
-            defSB.AppendLine("");
+            cgd.m_defSB.AppendLine("");
 
-            foreach (G25.FloatType FT in S.m_floatTypes)
+            if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0) return; // if no scalar coordinate, continue
+
+            string className = FT.GetMangledName(S, smv.Name);
+            string funcName = GMV.GetSetFuncName(S);
+            bool mustCast = false;
+
+            System.Collections.ArrayList L = new System.Collections.ArrayList();
+            const int NB_COORDS = 1;
+            string[] argTypename = new String[NB_COORDS];
+            string[] argName = new String[NB_COORDS];
             {
-                foreach (G25.SMV smv in S.m_SMV)
-                {
-                    if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0) continue; // if no scalar coordinate, continue
-
-                    string className = FT.GetMangledName(S, smv.Name);
-                    string funcName = GMV.GetSetFuncName(S);
-                    bool mustCast = false;
-
-                    System.Collections.ArrayList L = new System.Collections.ArrayList();
-                    const int NB_COORDS = 1;
-                    string[] argTypename = new String[NB_COORDS];
-                    string[] argName = new String[NB_COORDS];
-                    {
-                        RefGA.BasisBlade B = RefGA.BasisBlade.ONE;
-                        argTypename[0] = FT.type;
-                        argName[0] = "scalarVal";
-                        L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, argName[0]));
-                    }
-                    RefGA.Multivector mvValue = new RefGA.Multivector(L);
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-                    //G25.CG.Shared.FuncArgInfo returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, smv.Name, computeMultivectorValue);
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_COORDS, FT, null, computeMultivectorValue);
-
-                    string dstName = G25.CG.Shared.SmvUtil.THIS;
-                    bool dstPtr = true;
-
-                    G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
-                }
+                RefGA.BasisBlade B = RefGA.BasisBlade.ONE;
+                argTypename[0] = FT.type;
+                argName[0] = "scalarVal";
+                L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, argName[0]));
             }
+            RefGA.Multivector mvValue = new RefGA.Multivector(L);
+
+            G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_COORDS, FT, null, computeMultivectorValue);
+
+            string dstName = G25.CG.Shared.SmvUtil.THIS;
+            bool dstPtr = false;
+
+            G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
+                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
         }
 
         /// <summary>
-        /// Writes a function to set an SMV struct to specified coordinates, for all floating point types.
+        /// Writes a function to set an SMV class to specified coordinates, for all floating point types.
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSet(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetCoords(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-            defSB.AppendLine("");
+            if (smv.NbNonConstBasisBlade == 0) return;
 
-            foreach (G25.FloatType FT in S.m_floatTypes)
+            cgd.m_defSB.AppendLine("");
+
+            string className = FT.GetMangledName(S, smv.Name);
+            string funcName = GMV.GetSetFuncName(S);
+            bool mustCast = false;
+
+            System.Collections.ArrayList L = new System.Collections.ArrayList();
+            int NB_ARGS = 1 + smv.NbNonConstBasisBlade;
+            string[] argTypename = new String[NB_ARGS];
+            string[] argName = new String[NB_ARGS];
+            argTypename[0] = G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM;
+            argName[0] = "co";
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
             {
-                foreach (G25.SMV smv in S.m_SMV)
-                {
-                    if (smv.NbNonConstBasisBlade == 0) continue;
-
-                    string className = FT.GetMangledName(S, smv.Name);
-                    string funcName = GMV.GetSetFuncName(S);
-                    bool mustCast = false;
-
-
-                    System.Collections.ArrayList L = new System.Collections.ArrayList();
-                    int NB_ARGS = 1 + smv.NbNonConstBasisBlade;
-                    string[] argTypename = new String[NB_ARGS];
-                    string[] argName = new String[NB_ARGS];
-                    argTypename[0] = G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM;
-                    argName[0] = "co";
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                    {
-                        RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
-                        argTypename[i + 1] = FT.type;
-                        string coordStr = "_" + smv.GetCoordLangID(i, S, COORD_STORAGE.VARIABLES);
-                        argName[i + 1] = coordStr;
-                        L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, coordStr));
-                    }
-                    RefGA.Multivector mvValue = new RefGA.Multivector(L);
-
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new String[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-                    //G25.CG.Shared.FuncArgInfo returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, smv.Name, computeMultivectorValue);
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, null, computeMultivectorValue);
-
-                    string dstName = G25.CG.Shared.SmvUtil.THIS;
-                    bool dstPtr = true;
-
-                    G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
-                }
+                RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
+                argTypename[i + 1] = FT.type;
+                string coordStr = "_" + smv.GetCoordLangID(i, S, COORD_STORAGE.VARIABLES);
+                argName[i + 1] = coordStr;
+                L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, coordStr));
             }
-        } // end of WriteSet()
+            RefGA.Multivector mvValue = new RefGA.Multivector(L);
+
+
+            G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new String[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, null, computeMultivectorValue);
+
+            string dstName = G25.CG.Shared.SmvUtil.THIS;
+            bool dstPtr = false;
+
+            G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
+                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
+        } // end of WriteSetCoords()
 
         /// <summary>
         /// Writes a function to set an SMV struct to an array of specified coordinates, for all floating point types.
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetArray(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetArray(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-            defSB.AppendLine("");
+            if (smv.NbNonConstBasisBlade == 0) return;
 
-            foreach (G25.FloatType FT in S.m_floatTypes)
+            cgd.m_defSB.AppendLine("");
+
+            string className = FT.GetMangledName(S, smv.Name);
+            string funcName = GMV.GetSetFuncName(S);
+            bool mustCast = false;
+
+            string[] argTypename = new string[2] { G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM, FT.type };
+            string[] argName = new string[2] { "co", "A" };
+
+            System.Collections.ArrayList L = new System.Collections.ArrayList();
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
             {
-                foreach (G25.SMV smv in S.m_SMV)
-                {
-                    if (smv.NbNonConstBasisBlade == 0) continue;
-
-                    string className = FT.GetMangledName(S, smv.Name);
-                    string funcName = GMV.GetSetFuncName(S);
-                    bool mustCast = false;
-
-                    string[] argTypename = new string[2] { G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM, FT.type };
-                    string[] argName = new string[2] { "co", "A" };
-
-                    System.Collections.ArrayList L = new System.Collections.ArrayList();
-                    for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                    {
-                        RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
-                        String coordStr = argName[1] + "[" + i + "]";
-                        L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, coordStr));
-                    }
-                    RefGA.Multivector mvValue = new RefGA.Multivector(L);
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new String[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    F.SetArgumentPtr(1, true); // second argument is a pointer to array
-
-                    bool computeMultivectorValue = false;
-                    int NB_ARGS = 2; // enum + one array of coordinates
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, null, computeMultivectorValue);
-
-                    string dstName = G25.CG.Shared.SmvUtil.THIS;
-                    bool dstPtr = true;
-
-                    G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
-                }
+                RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
+                String coordStr = argName[1] + "[" + i + "]";
+                L.Add(new RefGA.BasisBlade(B.bitmap, B.scale, coordStr));
             }
+            RefGA.Multivector mvValue = new RefGA.Multivector(L);
+
+            G25.fgs F = new G25.fgs(funcName, funcName, "", argTypename, argName, new string[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            F.SetArgumentArr(1, true); // second argument is an array
+
+            bool computeMultivectorValue = false;
+            int NB_ARGS = 2; // enum + one array of coordinates
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, null, computeMultivectorValue);
+
+            string dstName = G25.CG.Shared.SmvUtil.THIS;
+            bool dstPtr = false;
+
+            G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
+                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
         } // end of WriteSetArray()
 
         /// <summary>
@@ -378,83 +356,67 @@ namespace G25.CG.CSJ
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteCopy(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetCopy(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
         {
-            //StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-            defSB.AppendLine("");
+            cgd.m_defSB.AppendLine("");
 
-            foreach (G25.FloatType FT in S.m_floatTypes)
-            {
-                foreach (G25.SMV smv in S.m_SMV)
-                {
-//                            if (smv.NbNonConstBasisBlade == 0) continue;
+            string className = FT.GetMangledName(S, smv.Name);
+            string funcName = GMV.GetSetFuncName(S);
+            bool mustCast = false;
 
-                    string className = FT.GetMangledName(S, smv.Name);
-                    string funcName = GMV.GetSetFuncName(S);
-                    bool mustCast = false;
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { smv.Name }, null, new String[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-                    int nbArgs = 1;
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, nbArgs, FT, null, computeMultivectorValue);
+            G25.fgs F = new G25.fgs(funcName, funcName, "", new string[] { smv.Name }, null, new string[] { FT.type }, null, null, null); // null, null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+            int nbArgs = 1;
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, nbArgs, FT, null, computeMultivectorValue);
 
 
-                    RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
+            RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
 
-                    string dstName = G25.CG.Shared.SmvUtil.THIS;
-                    bool dstPtr = true;
+            string dstName = G25.CG.Shared.SmvUtil.THIS;
+            bool dstPtr = false;
 
-                    G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, value);
-                }
-            }
-        } // end of WriteCopy()
+            G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
+                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, value);
+        } // end of WriteSetCopy()
 
         /// <summary>
         /// Writes a function to copy the value of one SMV struct to another with a different floating point type, for all combinations of floating point types.
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteCopyCrossFloat(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetCopyCrossFloat(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType dstFT, G25.SMV smv)
         {
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-            defSB.AppendLine("");
 
             foreach (G25.FloatType srcFT in S.m_floatTypes)
             {
-                foreach (G25.FloatType dstFT in S.m_floatTypes)
-                {
-                    if (srcFT.type == dstFT.type) continue;
-                    foreach (G25.SMV smv in S.m_SMV)
-                    {
-                        if (smv.NbNonConstBasisBlade == 0) continue;
+                if (srcFT.type == dstFT.type) continue;
 
-                        //string srcClassName = srcFT.GetMangledName(smv.Name);
-                        string dstClassName = dstFT.GetMangledName(S, smv.Name);
-                        string funcName = GMV.GetSetFuncName(S);
-                        bool mustCast = dstFT.MustCastIfAssigned(S, srcFT);
+                if (smv.NbNonConstBasisBlade == 0) continue;
 
-                        G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { smv.Name }, null, new String[] { srcFT.type }, null, null, null); // null, null, null = metricName, comment, options
-                        F.InitArgumentPtrFromTypeNames(S);
-                        bool computeMultivectorValue = false;
-                        int nbArgs = 1;
-                        G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, nbArgs, srcFT, null, computeMultivectorValue);
+                cgd.m_defSB.AppendLine("");
 
-                        RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
+                //string srcClassName = srcFT.GetMangledName(smv.Name);
+                string dstClassName = dstFT.GetMangledName(S, smv.Name);
+                string funcName = GMV.GetSetFuncName(S);
+                bool mustCast = dstFT.MustCastIfAssigned(S, srcFT);
 
-                        string dstName = G25.CG.Shared.SmvUtil.THIS;
-                        bool dstPtr = true;
+                G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { smv.Name }, null, new String[] { srcFT.type }, null, null, null); // null, null, null = metricName, comment, options
+                F.InitArgumentPtrFromTypeNames(S);
+                bool computeMultivectorValue = false;
+                int nbArgs = 1;
+                G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, nbArgs, srcFT, null, computeMultivectorValue);
 
-                        G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                            S.m_inlineSet, "void", null, funcName, null, FAI, dstFT, mustCast, smv, dstName, dstPtr, value);
-                    }
-                }
+                RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
+
+                string dstName = G25.CG.Shared.SmvUtil.THIS;
+                bool dstPtr = false;
+
+                G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
+                    S.m_inlineSet, "void", null, funcName, null, FAI, dstFT, mustCast, smv, dstName, dstPtr, value);
             }
-        } // end of WriteCopyCrossFloat()
+        } // end of WriteSetCopyCrossFloat()
 
-#endif 
 
 
 #if RIEN

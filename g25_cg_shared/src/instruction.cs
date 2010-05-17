@@ -355,9 +355,9 @@ namespace G25.CG.Shared
                     SB.AppendLine("/* cannot yet assign and declare SMV type at the same time */");
 
                 RefGA.BasisBlade[] BL = BasisBlade.GetNonConstBladeList(dstSmv);
-                String[] accessStr = CodeUtil.GetAccessStr(S, dstSmv, m_name, m_ptr);
+                string[] accessStr = CodeUtil.GetAccessStr(S, dstSmv, m_name, m_ptr);
                 bool writeZeros = true;
-                String[] valueStr = CodeUtil.GetAssignmentStrings(S, m_floatType, m_mustCast, BL, m_value, writeZeros);
+                string[] valueStr = CodeUtil.GetAssignmentStrings(S, m_floatType, m_mustCast, BL, m_value, writeZeros);
 
                 // apply post operation (like "/ n2")
                 ApplyPostOp(S, cgd, BL, valueStr);
