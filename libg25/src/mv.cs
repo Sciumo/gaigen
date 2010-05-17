@@ -258,6 +258,7 @@ namespace G25
         /// </summary>
         /// <param name="src">Src multivector (can be SMV or GMV).</param>
         /// <param name="dst">Dst multivector (can be SMV or GMV).</param>
+        /// <returns>The first entry of each pair is the group, the second entry is the entry.</returns>
         public static Dictionary<Tuple<int, int>, Tuple<int, int>> GetCoordMap(MV src, MV dst)
         {
             Dictionary<Tuple<int, int>, Tuple<int, int>> D = new Dictionary<Tuple<int, int>, Tuple<int, int>>();

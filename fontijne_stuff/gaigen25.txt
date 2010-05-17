@@ -154,15 +154,12 @@ Maybe fix the float type stuff
 			  expand and compress, once regular functions are up
 			  
 			SMV:
-			  constructors
-			  	zero
-			  	copy (all types)
-			  	copy from MV
-			  	coordinates (array, one by one)
-			  set functions
-			  	the same set as constructors
+			  V constructors
+			  V set functions
+			  
 			  largestCoordinate
 			  toString & friends
+			  	toString: convert to GMV, then call tostring (maybe even use MV interface for both GMV and SMV)
 			  get & set coordinates 
 			  gettings all coordinates
 			  

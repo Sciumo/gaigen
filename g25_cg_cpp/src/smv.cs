@@ -557,7 +557,7 @@ namespace G25.CG.CPP
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSet(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetCoords(Specification S, G25.CG.Shared.CGdata cgd)
         {
             StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
             defSB.AppendLine("");
@@ -880,7 +880,7 @@ namespace G25.CG.CPP
         {
             WriteSetZero(m_specification, m_cgd);
             WriteSetScalar(m_specification, m_cgd);
-            WriteSet(m_specification, m_cgd);
+            WriteSetCoords(m_specification, m_cgd);
             WriteSetArray(m_specification, m_cgd);
             WriteCopy(m_specification, m_cgd);
             WriteCopyCrossFloat(m_specification, m_cgd);

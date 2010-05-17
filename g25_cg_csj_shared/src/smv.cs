@@ -202,6 +202,7 @@ namespace G25.CG.CSJ
             WriteSetArray(S, cgd, FT, smv);
             WriteSetCopy(S, cgd, FT, smv);
             WriteSetCopyCrossFloat(S, cgd, FT, smv);
+            WriteGMVtoSMVcopy(S, cgd, FT, smv);
         }
 
         /// <summary>
@@ -392,8 +393,6 @@ namespace G25.CG.CSJ
             {
                 if (srcFT.type == dstFT.type) continue;
 
-                //if (smv.NbNonConstBasisBlade == 0) continue;
-
                 cgd.m_defSB.AppendLine("");
 
                 //string srcClassName = srcFT.GetMangledName(smv.Name);
@@ -417,6 +416,90 @@ namespace G25.CG.CSJ
             }
         } // end of WriteSetCopyCrossFloat()
 
+        /// <summary>
+        /// Writes functions to copy GMVs to SMVs
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        public static void WriteGMVtoSMVcopy(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
+        {
+            StringBuilder defSB = cgd.m_defSB;
+
+            G25.GMV gmv = S.m_GMV;
+            string srcClassName = FT.GetMangledName(S, gmv.Name);
+
+            string dstClassName = FT.GetMangledName(S, smv.Name);
+
+            bool dstPtr = false;
+            string[] smvAccessStr = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr);
+
+            string funcName = GMV.GetSetFuncName(S);
+
+            string FINAL = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "final " : "";
+            string funcDecl = "\tpublic " + FINAL + "void " + funcName + "(" + FINAL + srcClassName + " src)";
+
+            defSB.Append(funcDecl);
+            {
+                defSB.AppendLine(" {");
+
+                // get a dictionary which tells you for each basis blade of 'smv' where it is in 'gmv'
+                // A dictionary from <smv group, smv element> to <gmv group, gmv element>
+                Dictionary<Tuple<int, int>, Tuple<int, int>> D = G25.MV.GetCoordMap(smv, gmv);
+
+                // what is the highest group of the 'gmv' that must be (partially) copied to the 'smv'
+                int highestGroup = -1;
+                foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                    if (KVP.Value.Value1 > highestGroup) highestGroup = KVP.Value.Value1;
+
+                // generate code for each group
+                for (int g = 0; g <= highestGroup; g++)
+                {
+                    // determine if group 'g' is to be copied to smv:
+                    bool groupIsUsedBySMV = false;
+                    foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                    {
+                        // KVP.Key = SMV<group, element>
+                        // KVP.Value = GMV<group, element>
+                        if (KVP.Value.Value1 == g)
+                        {
+                            if (!smv.IsCoordinateConstant(KVP.Key.Value2))
+                            {
+                                groupIsUsedBySMV = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // if group is present in GMV:
+                    if (groupIsUsedBySMV)
+                    {
+                        defSB.AppendLine("\t\tif (src.c()[" + g + "] != null) {");
+                        defSB.AppendLine("\t\t\t" + FT.type + "[] ptr = src.c()[" + g + "];");
+                        bool mustCast = false;
+                        bool srcPtr = true;
+                        int nbTabs = 3;
+                        RefGA.Multivector[] value = G25.CG.Shared.Symbolic.GMVtoSymbolicMultivector(S, gmv, "ptr", srcPtr, g);
+                        bool writeZeros = false;
+                        string str = G25.CG.Shared.CodeUtil.GenerateSMVassignmentCode(S, FT, mustCast, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr, value[g], nbTabs, writeZeros);
+                        defSB.Append(str);
+                        defSB.AppendLine("\t\t}");
+
+                        defSB.AppendLine("\t\telse {");
+                        foreach (KeyValuePair<Tuple<int, int>, Tuple<int, int>> KVP in D)
+                        {
+                            if ((KVP.Value.Value1 == g) && (!smv.IsCoordinateConstant(KVP.Key.Value2)))
+                            {
+                                // translate KVP.Key.Value2 to non-const idx, because the accessStrs are only about non-const blades blades!
+                                int bladeIdx = smv.BladeIdxToNonConstBladeIdx(KVP.Key.Value2);
+                                defSB.AppendLine("\t\t\t" + smvAccessStr[bladeIdx] + " = " + FT.DoubleToString(S, 0.0) + ";");
+                            }
+                        }
+                        defSB.AppendLine("\t\t}");
+                    }
+                }
+                defSB.AppendLine("\t}");
+            }
+        } // end of WriteGMVtoSMVcopy()
 
 
 #if RIEN
