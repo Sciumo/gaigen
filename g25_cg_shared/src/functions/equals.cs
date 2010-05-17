@@ -251,7 +251,8 @@ namespace G25.CG.Shared.Func
                 else if ((m_smv1 != null) &&
                     (m_smv2 != null) &&
                     m_smv1.CanConvertToGmv(m_specification) &&
-                    m_smv2.CanConvertToGmv(m_specification))
+                    m_smv2.CanConvertToGmv(m_specification) &&
+                    MV.CanConvertSumToGmv(m_specification, m_smv1, m_smv2))
                 { // SMV test
                     testFuncNames.Add(testFuncName);
                     System.Collections.Hashtable argTable = new System.Collections.Hashtable();

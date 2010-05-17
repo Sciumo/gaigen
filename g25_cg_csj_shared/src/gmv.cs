@@ -31,6 +31,11 @@ namespace G25.CG.CSJ
         private const string SET_CSHARP = "Set";
         private const string SET_JAVA = "set";
 
+        public static string GetGroupBitmapType(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+        }
+
         public static string GetAllocateGroupsString(Specification S)
         {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
@@ -132,9 +137,9 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = GetSetFuncName(S); 
+            string funcName = GetSetFuncName(S);
 
-            string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+            string groupBitmapStr = GetGroupBitmapType(S);
 
             string funcDecl = "\tpublic void " + funcName + "(" + groupBitmapStr + " gu, " + FT.type + "[] arr)";
 
@@ -180,9 +185,9 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);
-            string funcName = GetSetFuncName(S); 
+            string funcName = GetSetFuncName(S);
 
-            string groupBitmapStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+            string groupBitmapStr = GetGroupBitmapType(S);
 
             string funcDecl = "\tpublic void " + funcName + "(" + FT.type + "[][] arr)";
 

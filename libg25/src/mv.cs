@@ -381,6 +381,13 @@ namespace G25
             else return true;
         }
 
+        public static bool CanConvertSumToGmv(Specification S, SMV smv1, SMV smv2)
+        {
+            if (S.m_GMV.MemoryAllocationMethod == GMV.MEM_ALLOC_METHOD.PARITY_PURE)
+                return (smv1.IsEven() && smv2.IsEven()) || (smv1.IsOdd() && smv2.IsOdd());
+            else return true;
+        }
+
         /// <summary>
         /// Returns 'unit' multivector value (i.e., a multivector constructed from the unit basis 
         /// blades). 

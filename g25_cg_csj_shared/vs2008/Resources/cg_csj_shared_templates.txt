@@ -3,7 +3,11 @@
 // gmvName = name of GMV class
 // fabsFunc = name of floating point absolute function
 ${CODEBLOCK GMVlargestCoordinate}
-	/** returns the absolute largest coordinate. */
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CSHARP) {%>
+	/// <summary>returns the absolute largest coordinate.</summary>
+<%} else {%>
+	/** <summary>returns the absolute largest coordinate.*/
+<%}%>
 	public <%FT.type%> <%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() {
 		<%FT.type%> maxValue = <%FT.DoubleToString(S, 0.0)%>, C;
 		for (int g = 0; g < m_c.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; g++) {
@@ -20,12 +24,20 @@ ${CODEBLOCK GMVlargestCoordinate}
 		return maxValue;
 	}
 	
-	/** returns the absolute largest coordinate [0], and the corresponding basis blade bitmap [1]  */
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CSHARP) {%>
+	/// <summary>returns the absolute largest coordinate and the corresponding basis blade bitmap (in 'bm') .</summary>
+	public <%FT.type%> <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>(ref int bm) {
+<%} else {%>
+	/** returns the absolute largest coordinate (entry [0]), and the corresponding basis blade bitmap (entry [1])  */
 	public <%FT.type%>[] <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>() {
+<%}%>
 		<%FT.type%> maxC = <%FT.DoubleToString(S, -1.0)%>, C;
 
 		int idx = 0; // global index into coordinates (run from 0 to <%S.m_GMV.NbCoordinates%>).
-		int bm = 0; // bitmap of basis blade
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.JAVA) {%>
+		int bm; // bitmap of basis blade
+<%}%>
+		bm = 0;
 		
 		for (int g = 0; g < m_c.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; g++) {
 			if (m_c[g] != null) {
@@ -43,7 +55,11 @@ ${CODEBLOCK GMVlargestCoordinate}
 			else idx += <%S.m_namespace%>.GroupSize[g];
 		}
 
+<%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CSHARP) {%>
+		return maxC;
+<%} else {%>
 		return new <%FT.type%>[]{maxC, (<%FT.type%>)bm};
+<%}%>
 	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>()
 	
 ${ENDCODEBLOCK}

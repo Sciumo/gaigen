@@ -753,24 +753,23 @@ namespace G25.CG.CPP
 
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
-                String fabsFunc = "fabs";
-                if (FT.type == "float") fabsFunc = "fabsf";
+                string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
 
                 foreach (G25.SMV smv in S.m_SMV)
                 {
-                    String[] AS = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, smvName, ptr);
+                    string[] AS = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, smvName, ptr);
 
                     RefGA.BasisBlade maxBasisBlade = smv.AbsoluteLargestConstantBasisBlade();
 
-                    String className = FT.GetMangledName(S, smv.Name);
+                    string className = FT.GetMangledName(S, smv.Name);
 
                     for (int _returnBitmap = 0; _returnBitmap <= 1; _returnBitmap++)
                     {
                         bool returnBitmap = (_returnBitmap != 0);
 
-                        String funcName = className + ((returnBitmap) ? "::largestBasisBlade" : "::largestCoordinate");
+                        string funcName = className + ((returnBitmap) ? "::largestBasisBlade" : "::largestCoordinate");
 
-                        String funcDecl;
+                        string funcDecl;
                         if (returnBitmap) {
                             funcDecl = FT.type + " " + funcName + "(unsigned int &bm) const";
                         }

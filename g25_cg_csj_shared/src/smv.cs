@@ -501,7 +501,74 @@ namespace G25.CG.CSJ
             }
         } // end of WriteGMVtoSMVcopy()
 
+        /// <summary>
+        /// Writes code for abs largest coordinate
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        public static void WriteLargestCoordinateFunctions(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SMV smv)
+        {
+            StringBuilder defSB = cgd.m_defSB;
+            defSB.AppendLine("");
 
+            const string smvName = G25.CG.Shared.SmvUtil.THIS;
+            const bool ptr = false;
+
+            string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
+
+            string[] AS = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, smvName, ptr);
+
+            RefGA.BasisBlade maxBasisBlade = smv.AbsoluteLargestConstantBasisBlade();
+
+            string className = FT.GetMangledName(S, smv.Name);
+
+            for (int _returnBitmap = 0; _returnBitmap <= 1; _returnBitmap++)
+            {
+                bool returnBitmap = (_returnBitmap != 0);
+
+                string funcName = Util.GetFunctionName(S, ((returnBitmap) ? "largestBasisBlade" : "largestCoordinate"));
+
+                string funcDecl;
+                if (returnBitmap)
+                {
+                    funcDecl = FT.type + " " + funcName + "(int bm) ";
+                }
+                else
+                {
+                    funcDecl = FT.type + " " + funcName + "()";
+                }
+
+                defSB.Append("\tpublic " + funcDecl);
+                {
+                    defSB.AppendLine(" {");
+                    int startIdx = 0;
+                    if (maxBasisBlade != null)
+                    {
+                        defSB.AppendLine("\t" + FT.type + " maxValue = " + FT.DoubleToString(S, Math.Abs(maxBasisBlade.scale)) + ";");
+                        if (returnBitmap)
+                            defSB.AppendLine("\tbm = " + maxBasisBlade.bitmap + ";");
+                    }
+                    else
+                    {
+                        defSB.AppendLine("\t" + FT.type + " maxValue = " + fabsFunc + "(" + AS[0] + ");");
+                        if (returnBitmap)
+                            defSB.AppendLine("\tbm = 0;");
+                        startIdx = 1;
+                    }
+
+                    for (int c = startIdx; c < smv.NbNonConstBasisBlade; c++)
+                    {
+                        defSB.Append("\tif (" + fabsFunc + "(" + AS[c] + ") > maxValue) { maxValue = " + fabsFunc + "(" + AS[c] + "); ");
+                        if (returnBitmap) defSB.Append("bm = " + smv.NonConstBasisBlade(c).bitmap + "; ");
+                        defSB.AppendLine("}");
+                    }
+
+                    defSB.AppendLine("\treturn maxValue;");
+                    defSB.AppendLine("}");
+                }
+            }
+        } // end of WriteLargestCoordinateFunctions()
+        
 #if RIEN
         /// <summary>
         /// Writes the SMV class comment 'SB'.

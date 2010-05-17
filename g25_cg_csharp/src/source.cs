@@ -108,7 +108,8 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
 
-            SB.AppendLine("using System;");
+            // using ...
+            Util.WriteGenericUsing(SB, S);
 #if RIEN
             { // todo: using .... 
                 SB.AppendLine("#include <stdio.h>");

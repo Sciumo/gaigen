@@ -54,6 +54,9 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
 
+            // using ...
+            Util.WriteGenericUsing(SB, S);
+
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
@@ -83,6 +86,9 @@ namespace G25.CG.CSharp
 
             // write set functions
             G25.CG.CSJ.SMV.WriteSetFunctions(SB, S, cgd, FT, smv);
+
+            // write largest coordinate functions
+            G25.CG.CSJ.SMV.WriteLargestCoordinateFunctions(S, cgd, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
