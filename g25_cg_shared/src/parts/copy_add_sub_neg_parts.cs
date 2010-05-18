@@ -666,10 +666,18 @@ namespace G25.CG.Shared
         /// <param name="FAI">Info about function arguments.</param>
         /// <param name="resultName">Name of variable where the result goes (in the generated code).</param>
         /// <returns>code for the requested product type.</returns>
-        public static String GetAddSubtractHpCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
+        public static string GetAddSubtractHpCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
             ADD_SUB_HP_TYPE funcType,
             G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
         {
+            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                return GetAddSubtractHpCode_C_CPP(S, cgd, FT, funcType, FAI, resultName);
+            else return GetAddSubtractHpCode_CSharp_Java(S, cgd, FT, funcType, FAI, resultName);
+        }
+
+        private static string GetAddSubtractHpCode_C_CPP(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
+            ADD_SUB_HP_TYPE funcType,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName) {
             G25.GMV gmv = S.m_GMV;
 
             bool NOT_HP = (!((funcType == ADD_SUB_HP_TYPE.HP) || (funcType == ADD_SUB_HP_TYPE.IHP)));
@@ -704,9 +712,9 @@ namespace G25.CG.Shared
             {
                 SB.AppendLine("");
 
-                String funcName1_1 = GetCopyPartFunctionName(S, FT, g);
-                String funcName2 = null;
-                String funcName1_2 = null;
+                string funcName1_1 = GetCopyPartFunctionName(S, FT, g);
+                string funcName2 = null;
+                string funcName1_2 = null;
                 switch (funcType) 
                 {
                     case ADD_SUB_HP_TYPE.ADD:
@@ -768,8 +776,92 @@ namespace G25.CG.Shared
             }
 
             return SB.ToString();
-        } // end of GetAddSubtractHpCode()
+        } // end of GetAddSubtractHpCode_C_CPP()
                         
+        private static string GetAddSubtractHpCode_CSharp_Java(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
+            ADD_SUB_HP_TYPE funcType,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName) {
+            G25.GMV gmv = S.m_GMV;
+
+            bool NOT_HP = (!((funcType == ADD_SUB_HP_TYPE.HP) || (funcType == ADD_SUB_HP_TYPE.IHP)));
+
+            StringBuilder SB= new StringBuilder();
+
+            // get number of groups, and possible assurances that a group is always present:
+            int nbGroups = gmv.NbGroups;
+
+            SB.AppendLine(FT.type + "[][] ac = a.c();");
+            SB.AppendLine(FT.type + "[][] bc = b.c();");
+            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+
+            // for each group
+            // test if present in both-> then add both, etc
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                string funcName1_1 = GetCopyPartFunctionName(S, FT, g);
+                string funcName2 = null;
+                string funcName1_2 = null;
+                switch (funcType) 
+                {
+                    case ADD_SUB_HP_TYPE.ADD:
+                        funcName2 = GetAdd2PartFunctionName(S, FT, g);
+                        funcName1_2 = GetCopyPartFunctionName(S, FT, g);
+                        break;
+                    case ADD_SUB_HP_TYPE.SUB:
+                        funcName2 = GetSub2PartFunctionName(S, FT, g);
+                        funcName1_2 = GetNegPartFunctionName(S, FT, g);
+                        break;
+                    case ADD_SUB_HP_TYPE.HP:
+                        funcName2 = GetHadamardProductPartFunctionName(S, FT, g);
+                        funcName1_2 = null;
+                        break;
+                    case ADD_SUB_HP_TYPE.IHP:
+                        funcName2 = GetInverseHadamardProductPartFunctionName(S, FT, g);
+                        funcName1_2 = null;
+                        break;
+                }
+
+                string allocCcode = "cc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];";
+
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                if (NOT_HP)
+                    SB.AppendLine("\t" + allocCcode);
+
+                SB.AppendLine("\tif (bc[" + g + "] != null) {");
+
+                if (!NOT_HP)
+                    SB.AppendLine("\t\t" + allocCcode);
+
+                SB.AppendLine("\t\t" + funcName2 + "(ac[" + g + "], bc[" + g + "], cc[" + g + "]);");
+                SB.AppendLine("\t}");
+
+                if (NOT_HP)
+                    SB.AppendLine("\telse " + funcName1_1 + "(ac[" + g + "], cc[" + g + "]);");
+
+                SB.AppendLine("}");
+                if (NOT_HP)
+                {
+                    SB.AppendLine("else if (bc[" + g + "] != null) {");
+
+                    SB.AppendLine("\t" + allocCcode);
+                    SB.AppendLine("\t" + funcName1_2 + "(bc[" + g + "], cc[" + g + "]);");
+
+                    SB.AppendLine("}");
+                }
+
+            }
+
+            // return result
+            if (S.m_outputLanguage != OUTPUT_LANGUAGE.C)
+            {
+                SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+            }
+
+            return SB.ToString();
+        } // end of GetAddSubtractHpCode()
+
         /// <summary>
         /// Returns the code for any negation, reversion, conjugation or grade involution function of general multivectors.
         /// The code is composed of calls to functions generated by <c>WriteCASNparts()</c>.

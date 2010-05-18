@@ -607,6 +607,8 @@ namespace G25.CG.Shared
             {
                 case OUTPUT_LANGUAGE.C:
                 case OUTPUT_LANGUAGE.CPP:
+                case OUTPUT_LANGUAGE.CSHARP:
+                case OUTPUT_LANGUAGE.JAVA:
                     foreach (String str in m_text)
                     {
                         AppendTabs(SB); SB.AppendLine(str);

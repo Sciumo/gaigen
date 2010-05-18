@@ -192,13 +192,17 @@ namespace G25.CG.Shared
             StringBuilder SB = new StringBuilder();
             string smvName = FT.GetMangledName(S, smv.Name);
 
+            string STATIC_MEMBER_ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) ? "::" : ".";
+
             SB.Append('\t', nbTabs);
             SB.Append("return ");
+            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA))
+                SB.Append("new ");
             SB.Append(smvName);
             SB.Append("(");
             if (valueStr.Length > 0)
             {
-                SB.AppendLine(smvName + "::" + SmvUtil.GetCoordinateOrderConstant(S, smv) + ",");
+                SB.AppendLine(smvName + STATIC_MEMBER_ACCESS + SmvUtil.GetCoordinateOrderConstant(S, smv) + ",");
             }
             for (int i = 0; i < valueStr.Length; i++) {
                 SB.Append('\t', nbTabs+2);

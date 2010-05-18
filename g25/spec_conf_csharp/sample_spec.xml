@@ -7,7 +7,7 @@
 	coordStorage="variables"
 	defaultOperatorBindings="true"
 	dimension="5"
-  	reportUsage="true"
+  	reportUsage="false"
   	gmvCode="expand"
   	parser="builtin"
   	testSuite="true"

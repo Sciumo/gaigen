@@ -273,6 +273,10 @@ namespace G25.CG.Shared
             bool inline, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments)
         {
+            // how to know when function is static????
+            // how to know when function is static????
+            // how to know when function is static????
+            // how to know when function is static????
             if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
                 SB.Append("public final ");
             else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
@@ -384,7 +388,7 @@ namespace G25.CG.Shared
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
             System.Collections.Generic.List<Instruction> instructions, string comment)
         {
-            bool writeDecl = true;
+            bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP);
             WriteFunction(S, cgd, F, inline, returnType, functionName, returnArgument, arguments, instructions, comment, writeDecl);
         }
 
