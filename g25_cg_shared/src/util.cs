@@ -653,7 +653,7 @@ namespace G25.CG.Shared
         private static void WriteMultilineComment(StringBuilder SB, Specification S, int nbTabs, string str)
         {
             string lineOpen = new string('\t', nbTabs);
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))
                 lineOpen = lineOpen + " * ";
             else lineOpen = lineOpen + "/// ";
 
@@ -689,6 +689,7 @@ namespace G25.CG.Shared
                 case OUTPUT_LANGUAGE.CPP:
                     SB.Append("/// ");
                     break;
+                case OUTPUT_LANGUAGE.C:
                 case OUTPUT_LANGUAGE.JAVA:
                     SB.AppendLine("/**");
                     SB.Append('\t', nbTabs);
@@ -716,6 +717,9 @@ namespace G25.CG.Shared
 
                     switch (S.m_outputLanguage)
                     {
+                        case OUTPUT_LANGUAGE.C:
+                            SB.Append(" *  \\param " + P.Value1 + " ");
+                            break;
                         case OUTPUT_LANGUAGE.CPP:
                             SB.Append("/// \\param " + P.Value1 + " ");
                             break;
@@ -743,6 +747,9 @@ namespace G25.CG.Shared
                 SB.Append('\t', nbTabs);
                 switch (S.m_outputLanguage)
                 {
+                    case OUTPUT_LANGUAGE.C:
+                        SB.Append(" * \\return ");
+                        break;
                     case OUTPUT_LANGUAGE.CPP:
                         SB.Append("/// \\return ");
                         break;
@@ -762,10 +769,10 @@ namespace G25.CG.Shared
             }
 
             // end of comment
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))
             {
                 SB.Append('\t', nbTabs);
-                SB.AppendLine("*/");
+                SB.AppendLine(" */");
             }
         }
             

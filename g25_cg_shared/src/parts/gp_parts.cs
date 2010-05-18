@@ -147,7 +147,8 @@ namespace G25.CG.Shared
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbTabs = 1;
+            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbCodeTabs = 1 + nbBaseTabs;
             bool writeZeros = false;
 
             // get two symbolic multivectors (with different symbolic names):
@@ -186,18 +187,13 @@ namespace G25.CG.Shared
                                 // get function name
                                 string funcName = GetGPpartFunctionName(S, FT, M, g1, g2, gd);
 
-                                //if ((g1 == 0) && (g2 == 7) && (gd == 7))
-                                //{
-                                //    Console.WriteLine("Arr!");
-                                //}
-
                                 // get assignment code
                                 string code = ""; // empty string means 'no code for this combo of g1, g2, gd and metric'.
 
                                 if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND) 
                                 { // code for full expansion
                                     int dstBaseIdx = 0;
-                                    code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, gd, dstBaseIdx, M3, nbTabs, writeZeros);
+                                    code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, gd, dstBaseIdx, M3, nbCodeTabs, writeZeros);
                                     // replace '=' with '+='
                                     code = code.Replace("=", "+=");
                                 }
@@ -221,7 +217,7 @@ namespace G25.CG.Shared
                                     if ((S.m_gmvCodeGeneration == GMV_CODE.EXPAND) && generatedCode.ContainsKey(code))
                                     {
                                         // ready generated: call that function
-                                        code = "\t" + generatedCode[code] + "(" + name1 + ", " + name2 + ", " + name3 + ");\n";
+                                        code = new string('\t', nbCodeTabs) + generatedCode[code] + "(" + name1 + ", " + name2 + ", " + name3 + ");\n";
                                     }
                                     else
                                     {
@@ -229,19 +225,36 @@ namespace G25.CG.Shared
                                         generatedCode[code] = funcName;
                                     }
 
-                                    // write comment
-                                    cgd.m_declSB.AppendLine("/* Computes the partial geometric product of two multivectors (group " + g1 + "  x  group " + g2 + " -> group " + gd + ") */");
+                                    string comment = "Computes the partial geometric product of two multivectors (group " + g1 + "  x  group " + g2 + " -> group " + gd + ")";
+                                    string funcDecl;
 
-                                    String funcDecl = "void " + funcName + "(const " + FT.type + " *" + name1 + ", const " + FT.type + " *" + name2 + ", " + FT.type + " *" + name3 + ")";
+                                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                                    {
+                                        funcDecl = "void " + funcName + "(const " + FT.type + " *" + name1 + ", const " + FT.type + " *" + name2 + ", " + FT.type + " *" + name3 + ")";
 
-                                    // emit decl
-                                    cgd.m_declSB.Append(funcDecl);
-                                    cgd.m_declSB.AppendLine(";");
+                                        // write comment
+                                        int nbCommentTabs = nbBaseTabs;
+                                        Util.WriteFunctionComment(cgd.m_declSB, S, nbCommentTabs, comment, null, null);
+                                        // emit decl
+                                        cgd.m_declSB.Append(funcDecl);
+                                        cgd.m_declSB.AppendLine(";");
+                                    }
+                                    else
+                                    {
+                                        string ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "protected final " : "protected internal ";
+                                        funcDecl = ACCESS + "void " + funcName + "(" + FT.type + "[] " + name1 + ", " + FT.type + "[] " + name2 + ", " + FT.type + "[] " + name3 + ")";
+
+                                        // write comment
+                                        int nbCommentTabs = nbBaseTabs;
+                                        Util.WriteFunctionComment(cgd.m_defSB, S, nbCommentTabs, comment, null, null);
+                                    }
 
                                     // emit def
+                                    cgd.m_defSB.Append('\t', nbBaseTabs);
                                     cgd.m_defSB.Append(funcDecl);
                                     cgd.m_defSB.AppendLine(" {");
                                     cgd.m_defSB.Append(code);
+                                    cgd.m_defSB.Append('\t', nbBaseTabs);
                                     cgd.m_defSB.AppendLine("}");
                                 } // end of 'if code not empty'
                             } // end of loop over the grade of 'C'

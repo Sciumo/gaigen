@@ -142,11 +142,7 @@ Maybe fix the float type stuff
 
 -add include/import element in XML
 
-	Design C# and Java classes.
-		...
-		
 	Write C# and Java output.
-		V create classes
 			
 			
 			GMV:
@@ -154,13 +150,9 @@ Maybe fix the float type stuff
 			  expand and compress, once regular functions are up
 			  
 			SMV:
-			  V constructors
-			  V set functions
-			  V largestCoordinate
-			  V toString & friends
-			  
-			  V get & set coordinates, gettings all coordinates in array mode
-			  
+				member function shortcuts (for regular functions)
+				converters (SMV->SMV and such)
+			
 			GOM
 			 
 			 
@@ -179,8 +171,14 @@ Maybe fix the float type stuff
 			testing
 			
 			makefile for all platforms
+			
+			operators
+			
+			constants
+			
+			report usage
+			
 				
-		V load templates
 	
 	
 Java:
