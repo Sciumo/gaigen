@@ -102,14 +102,16 @@ namespace G25.CG.Shared
         {
             G25.GMV gmv = S.m_GMV;
 
-            String name1 = "A";
-            String name2 = "B";
-            String name3 = "C";
+            string name1 = "A";
+            string name2 = "B";
+            string name3 = "C";
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbTabs = 1;
+            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbCodeTabs = nbBaseTabs + 1;
             bool writeZeros = false;
+
             // get symbolic multivectors
             RefGA.Multivector[] M1 = null;
             if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND)
@@ -118,7 +120,7 @@ namespace G25.CG.Shared
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 // map from code fragment to name of function
-                Dictionary<String, String> generatedCode = new Dictionary<String, String>();
+                Dictionary<string, string> generatedCode = new Dictionary<string, string>();
 
                 foreach (G25.Metric M in S.m_metric)
                 {
@@ -159,7 +161,7 @@ namespace G25.CG.Shared
                                     if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND)
                                     { // full code expansion
                                         int dstBaseIdx = 0;
-                                        code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, g3, dstBaseIdx, value, nbTabs, writeZeros);
+                                        code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, name3, g3, dstBaseIdx, value, nbCodeTabs, writeZeros);
                                     }
                                     else if (S.m_gmvCodeGeneration == GMV_CODE.RUNTIME)
                                     { // runtime code
@@ -178,7 +180,7 @@ namespace G25.CG.Shared
                                     if (generatedCode.ContainsKey(code))
                                     {
                                         // ready generated: call that function
-                                        code = "\t" + generatedCode[code] + "(" + name1 + ", " + name3 + ");\n";
+                                        code = new string('\t', nbCodeTabs) + generatedCode[code] + "(" + name1 + ", " + name3 + ");\n";
                                     }
                                     else
                                     {
@@ -187,18 +189,32 @@ namespace G25.CG.Shared
                                     }
 
                                     // write comment
-                                    cgd.m_declSB.AppendLine("/* Computes the partial " + ((d == 0) ? "un" : "") + "dual (w.r.t. full space) of a multivector */");
+                                    string comment = "Computes the partial " + ((d == 0) ? "un" : "") + "dual (w.r.t. full space) of a multivector.";
 
-                                    String funcDecl = "void " + funcName + "(const " + FT.type + " *" + name1 + ", " + FT.type + " *" + name3 + ")";
+                                    string ACCESS = "";
+                                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
+                                    else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
+                                    string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
+                                    string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
 
-                                    // emit decl
-                                    cgd.m_declSB.Append(funcDecl);
-                                    cgd.m_declSB.AppendLine(";");
+                                    string funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + name1 + ", " + FT.type + ARR + name3 + ")";
+
+                                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                                    {
+                                        Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
+                                        cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");
+                                    }
+                                    else
+                                    {
+                                        Util.WriteFunctionComment(cgd.m_defSB, S, nbBaseTabs, comment, null, null);
+                                    }
 
                                     // emit def
+                                    cgd.m_defSB.Append('\t', nbBaseTabs);
                                     cgd.m_defSB.Append(funcDecl);
                                     cgd.m_defSB.AppendLine(" {");
                                     cgd.m_defSB.Append(code);
+                                    cgd.m_defSB.Append('\t', nbBaseTabs);
                                     cgd.m_defSB.AppendLine("}");
                                 }
                             } // end of loop over all output groups
