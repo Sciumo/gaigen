@@ -241,7 +241,7 @@ namespace G25.CG.Shared
                                     }
                                     else
                                     {
-                                        string ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "protected final " : "protected internal ";
+                                        string ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "protected final static " : "protected internal static ";
                                         funcDecl = ACCESS + "void " + funcName + "(" + FT.type + "[] " + name1 + ", " + FT.type + "[] " + name2 + ", " + FT.type + "[] " + name3 + ")";
 
                                         // write comment

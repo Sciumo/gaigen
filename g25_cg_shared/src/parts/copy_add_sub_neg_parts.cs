@@ -393,7 +393,7 @@ namespace G25.CG.Shared
 
             for (int i = 0; i < S.m_GMV.Group(groupIdx).Length; i++)
                 SB.Append("\t\tif ((" + src + "[" + i + "] < -" + epsilon + ") || (" + src + "[" + i + "] > " + epsilon + ")) return " + FALSE + ";\n");
-            SB.Append("\treturn " + TRUE + ";\n");
+            SB.Append("\t\treturn " + TRUE + ";\n");
 
             return SB.ToString();
         }
@@ -422,7 +422,8 @@ namespace G25.CG.Shared
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbTabs = 1;
+            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbCodeTabs = nbBaseTabs + 1;
             bool writeZeros = false;
 
             // get two symbolic multivectors (with different symbolic names):
@@ -579,7 +580,7 @@ namespace G25.CG.Shared
                             if (!((op == EQUALS) || (op == ZERO))) { // EQUALS and ZERO are different: they generate their own code
                                 // get assignment code
                                 int dstBaseIdx = 0;
-                                code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstName, g1, dstBaseIdx, value, nbTabs, writeZeros);
+                                code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, dstName, g1, dstBaseIdx, value, nbCodeTabs, writeZeros);
 
                                 // replace assignment symbols if required
                                 if (op == ADD) code = code.Replace("=", "+=");
@@ -592,16 +593,16 @@ namespace G25.CG.Shared
                         // check if code was already generated, and, if so, reuse it
                         if (generatedCode.ContainsKey(code))
                         {
-                            // ready generated: call that function
+                            // already generated: call that function
                             if ((op == ADD2) || (op == SUB2) || (op == HP) || (op == IHP))
-                                code = "\t" + generatedCode[code] + "(" + srcName1 + ", " + srcName2 + ", " + dstName + ");\n";
+                                code = new string('\t', nbCodeTabs) + generatedCode[code] + "(" + srcName1 + ", " + srcName2 + ", " + dstName + ");\n";
                             else if ((op == COPY_MUL) || (op == COPY_DIV))
-                                code = "\t" + generatedCode[code] + "(" + srcName1 + ", " + dstName + ", " + scaleName + ");\n";
+                                code = new string('\t', nbCodeTabs) + generatedCode[code] + "(" + srcName1 + ", " + dstName + ", " + scaleName + ");\n";
                             else if (op == ZERO)
-                                code = "\treturn " + generatedCode[code] + "(" + srcName1 + ", " + epsilonName + ");\n";
+                                code = new string('\t', nbCodeTabs) + "return " + generatedCode[code] + "(" + srcName1 + ", " + epsilonName + ");\n";
                             else if (op == EQUALS)
-                                code = "\treturn " + generatedCode[code] + "(" + srcName1 + ", " + srcName2 + ", " + epsilonName + ");\n";
-                            else code = "\t" + generatedCode[code] + "(" + srcName1 + ", " + dstName + ");\n";
+                                code = new string('\t', nbCodeTabs) + "return " + generatedCode[code] + "(" + srcName1 + ", " + srcName2 + ", " + epsilonName + ");\n";
+                            else code = new string('\t', nbCodeTabs) + generatedCode[code] + "(" + srcName1 + ", " + dstName + ");\n";
                         }
                         else
                         {
@@ -609,31 +610,42 @@ namespace G25.CG.Shared
                             generatedCode[code] = funcName;
                         }
 
-                        // also store
-                        cgd.m_declSB.AppendLine("/* " + comment + " */");
+                        string ACCESS = "";
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
 
                         string BOOL = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "int" : "bool";
+                        string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
+                        string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
+                        string funcDecl;
 
                         // one or two input args, scale or not?
-                        StringBuilder funcDeclSB = new StringBuilder();
                         if ((op == ADD2) || (op == SUB2) || (op == HP) || (op == IHP))
-                            funcDeclSB.Append("void " + funcName + "(const " + FT.type + " *" + srcName1 + ", const " + FT.type + " *" + srcName2 + ", " + FT.type + " *" + dstName + ")");
+                            funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + CONST + FT.type + ARR + srcName2 + ", " + FT.type + ARR + dstName + ")";
                         else if ((op == COPY_MUL) || (op == COPY_DIV))
-                            funcDeclSB.Append("void " + funcName + "(const " + FT.type + " *" + srcName1 + ", " + FT.type + " *" + dstName + ", " + FT.type + " " + scaleName + ")");
+                            funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + FT.type + ARR + dstName + ", " + FT.type + " " + scaleName + ")";
                         else if (op == ZERO)
-                            funcDeclSB.Append(BOOL + " " + funcName + "(const " + FT.type + " *" + srcName1 + ", " + FT.type + " " + epsilonName + ")");
+                            funcDecl = ACCESS + BOOL + " " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + FT.type + " " + epsilonName + ")";
                         else if (op == EQUALS)
-                            funcDeclSB.Append(BOOL + " " + funcName + "(const " + FT.type + " *" + srcName1 + ", const " + FT.type + " *" + srcName2 + ", " + FT.type + " " + epsilonName + ")");
-                        else funcDeclSB.Append("void " + funcName + "(const " + FT.type + " *" + srcName1 + ", " + FT.type + " *" + dstName + ")");
+                            funcDecl = ACCESS + BOOL + " " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + CONST + FT.type + ARR + srcName2 + ", " + FT.type + " " + epsilonName + ")";
+                        else funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + FT.type + ARR + dstName + ")";
 
-                        // append func decl
-                        cgd.m_declSB.Append(funcDeclSB.ToString()); cgd.m_declSB.AppendLine(";");
-
-                        cgd.m_defSB.Append(funcDeclSB.ToString());
+                        if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                        {
+                            Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
+                            cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");
+                        }
+                        else
+                        {
+                            Util.WriteFunctionComment(cgd.m_defSB, S, nbBaseTabs, comment, null, null);
+                        }
                         
                         // append func body:
+                        cgd.m_defSB.Append('\t', nbBaseTabs);
+                        cgd.m_defSB.Append(funcDecl);
                         cgd.m_defSB.AppendLine(" {");
                         cgd.m_defSB.Append(code);
+                        cgd.m_defSB.Append('\t', nbBaseTabs);
                         cgd.m_defSB.AppendLine("}");
                     }
                 } // end of loop over the grade of 'A'
