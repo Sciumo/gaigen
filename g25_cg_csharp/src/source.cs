@@ -172,7 +172,6 @@ namespace G25.CG.CSharp
 
 #endif
 
-            SB.AppendLine("// def SB:");
             SB.Append(cgd.m_defSB);
 
             // close class

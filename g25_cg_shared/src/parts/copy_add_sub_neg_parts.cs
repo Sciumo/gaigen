@@ -88,7 +88,7 @@ namespace G25.CG.Shared
         /// <returns>name of a partial copy function.</returns>
         public static string GetCopyPartFunctionName(Specification S, G25.FloatType FT, int g)
         {
-            return FT.GetMangledName(S, "copy") + "_" + g;
+            return FT.GetMangledName(S, "copyGroup") + "_" + g;
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace G25.CG.Shared
         /// <returns>name of a partial Hadamard product function.</returns>
         public static String GetZeroPartFunctionName(Specification S, G25.FloatType FT, int g)
         {
-            return FT.GetMangledName(S, "zero") + "_" + g;
+            return FT.GetMangledName(S, "zeroGroup") + "_" + g;
         }
 
         /// <summary>

@@ -64,15 +64,9 @@ namespace G25.CG.Java
                 }
                 catch (G25.UserException E) { cgd.AddError(E); }
 
-                // write set zero, set, copy, copy between float types, extract coordinate, largest coordinate, etc (works in parallel internally)
-          /*      try
-                {
-                    GenerateSetFunctions(S, plugins, cgd);
-                }
-                catch (G25.UserException E) { cgd.AddError(E); }*/
 
                 // write function (works in parallel internally)
-              //  G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
+               G25.CG.Shared.Functions.WriteFunctions(S, cgd, FGI, Functions.GetFunctionGeneratorPlugins(cgd));
             }
 
             List<string> generatedFiles = new List<string>();

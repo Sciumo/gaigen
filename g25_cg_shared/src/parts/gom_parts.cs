@@ -53,6 +53,9 @@ namespace G25.CG.Shared
         {
             if (S.m_GOM == null) return; // nothing to do if GOM not defiend
 
+            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbCodeTabs = nbBaseTabs + 1;
+
             G25.GMV gmv = S.m_GMV;
             G25.GOM gom = S.m_GOM;
 
@@ -108,10 +111,9 @@ namespace G25.CG.Shared
                     for (int dstGroup = 0; dstGroup < gmv.NbGroups; dstGroup++)
                     {
                         bool mustCast = false;
-                        int nbTabs = 1;
                         bool writeZeros = false; // no need to generate "+= 0.0;"
                         int dstBaseIdx = 0;
-                        string code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, nameDstGMV, dstGroup, dstBaseIdx, returnValue, nbTabs, writeZeros);
+                        string code = G25.CG.Shared.CodeUtil.GenerateGMVassignmentCode(S, FT, mustCast, gmv, nameDstGMV, dstGroup, dstBaseIdx, returnValue, nbCodeTabs, writeZeros);
 
                         string funcName = GetGomPartFunctionName(S, FT, srcGroup, dstGroup);
                         cgd.m_gmvGomPartFuncNames[new Tuple<string, string>(FT.type, funcName)] = (code.Length > 0);
@@ -134,19 +136,37 @@ namespace G25.CG.Shared
                         }
 
                         // write comment
-                        cgd.m_declSB.AppendLine("/* Computes the partial application of a general outermorphism to a general multivector */");
+                        string comment = "Computes the partial application of a general outermorphism to a general multivector";
 
-                        string omPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "*" : "&";
-                        string funcDecl = "void " + funcName + "(const " + FT.GetMangledName(S, gom.Name) + " " + omPtr + nameGOM + ", const " + FT.type + " *" + nameSrcGMV + ", " + FT.type + " *" + nameDstGMV + ")";
+                        string OM_PTR = "";
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) OM_PTR = "*";
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) OM_PTR = "&";
 
-                        // emit decl
-                        cgd.m_declSB.Append(funcDecl);
-                        cgd.m_declSB.AppendLine(";");
+                        string ACCESS = "";
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
+                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS = "protected internal static ";
+
+                        string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
+                        string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
+
+                        string funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.GetMangledName(S, gom.Name) + " " + OM_PTR + nameGOM + ", " + CONST + FT.type + ARR + nameSrcGMV + ", " + FT.type + ARR + nameDstGMV + ")";
+
+                        if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                        {
+                            Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
+                            cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");
+                        }
+                        else
+                        {
+                            Util.WriteFunctionComment(cgd.m_defSB, S, nbBaseTabs, comment, null, null);
+                        }
 
                         // emit def
+                        cgd.m_defSB.Append('\t', nbBaseTabs);
                         cgd.m_defSB.Append(funcDecl);
                         cgd.m_defSB.AppendLine(" {");
                         cgd.m_defSB.Append(code);
+                        cgd.m_defSB.Append('\t', nbBaseTabs);
                         cgd.m_defSB.AppendLine("}");
 
 
