@@ -58,7 +58,8 @@ namespace G25.CG.CSharp
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);
 
-            // ....
+            // write member variables
+            G25.CG.CSJ.GOM.WriteMemberVariables(SB, S, cgd, FT, gom);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

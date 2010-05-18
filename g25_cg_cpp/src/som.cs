@@ -91,7 +91,7 @@ namespace G25.CG.CPP
         }
 
         /// <summary>
-        /// Writes members variables of a GOM class to 'SB'.
+        /// Writes members variables of a SOM class to 'SB'.
         /// </summary>
         /// <param name="SB">Where the comment goes.</param>
         /// <param name="S">Used for basis vector names and output language.</param>

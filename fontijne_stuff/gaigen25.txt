@@ -153,18 +153,20 @@ Maybe fix the float type stuff
 				member function shortcuts (for regular functions)
 				converters (SMV->SMV and such)
 			
-			GOM
-			 
-			 
-			SOM
-			
-			regular functions
+			-> regular functions
 		
 				->GMV, together with regular functions
 				    compress, 
 					compress 1: check all groups, if null up to epsilon, shrink
 					old-school compress 2: array of coordinates -> 
 				    expand (needs ptr class?)
+			 
+			GOM
+			 V members vars
+			 
+			SOM
+			 V members vars
+			
 
 			parser 
 			
@@ -177,6 +179,8 @@ Maybe fix the float type stuff
 			constants
 			
 			report usage
+			
+			runtime geometric product
 			
 				
 	

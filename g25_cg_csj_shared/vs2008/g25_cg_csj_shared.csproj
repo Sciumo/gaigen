@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\src\gmv.cs" />
+    <Compile Include="..\src\gom.cs" />
     <Compile Include="..\src\groupbitmap.cs" />
     <Compile Include="..\src\keywords.cs" />
     <Compile Include="..\src\smv.cs" />
+    <Compile Include="..\src\som.cs" />
     <Compile Include="..\src\source.cs" />
     <Compile Include="..\src\util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
