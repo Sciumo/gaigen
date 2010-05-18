@@ -131,16 +131,6 @@ ${CODEBLOCK GMVgetGroupUsageCoords}
 	
 ${ENDCODEBLOCK}
 
-// FT = floatType
-// COORD_TYPE_STRING = string of type which describes coordinates
-${CODEBLOCK SMVgetCoords}
-    /// <summary>
-	/// returns coordinates.
-    /// </summary>
-    /// <param name="coordOrder">pass the value <%COORD_TYPE_STRING%></param>
-	public <%FT.type%>[] c(<%G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM%> coordOrder) { return m_c; }	
-${ENDCODEBLOCK}
-
 // S = Specification of algebra.
 // MAX_N = maximum number of coordinates to set to zero explicitly
 // FT = float type

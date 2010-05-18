@@ -77,5 +77,26 @@ namespace G25.CG.Shared
 
         }
 
+        /// <summary>
+        /// Returns string to access coordinates number 'coordIdx'.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="smv"></param>
+        /// <param name="coordIdx"></param>
+        /// <returns></returns>
+        public static string GetCoordAccessString(Specification S, G25.SMV smv, int coordIdx)
+        {
+            if (S.m_coordStorage == COORD_STORAGE.VARIABLES)
+            {
+                return "m_" + smv.GetCoordLangID(coordIdx, S);
+            }
+            else
+            {
+                return "m_c[" + coordIdx + "]";
+            }
+        }
+
+
+
     } // end of class SmvUtil
 } // end of namepace G25.CG.Shared

@@ -159,8 +159,7 @@ Maybe fix the float type stuff
 			  V largestCoordinate
 			  V toString & friends
 			  
-			  get & set coordinates 
-			  gettings all coordinates in array mode
+			  V get & set coordinates, gettings all coordinates in array mode
 			  
 			GOM
 			 

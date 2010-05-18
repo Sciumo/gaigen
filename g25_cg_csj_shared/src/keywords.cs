@@ -22,6 +22,14 @@ namespace G25.CG.CSJ
 {
     public class Keywords
     {
+
+        public static string PublicAccessModifier(Specification S)
+        {
+            return (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                ? "public final"
+                : "public";
+        }
+
         public static string ProtectedStaticAccessModifier(Specification S)
         {
             return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)

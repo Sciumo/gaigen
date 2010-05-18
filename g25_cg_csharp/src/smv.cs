@@ -76,7 +76,7 @@ namespace G25.CG.CSharp
             G25.CG.CSJ.SMV.WriteCoordinateOrder(SB, S, FT, smv);
 
             // get coordinates
-            G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
+            //G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
 
             // write multivector interface implementation
             G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
@@ -92,6 +92,9 @@ namespace G25.CG.CSharp
 
             // write 'ToString' functions
             G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT, smv);
+
+            // write get/set coords
+            G25.CG.CSJ.SMV.WriteGetSetCoord(SB, S, cgd, FT, smv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

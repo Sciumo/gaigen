@@ -136,7 +136,7 @@ namespace G25.CG.CSJ
 
         }
 
-        /// <summary>
+/*        /// <summary>
         /// Writes the function to get the array of coordinates.
         /// Does nothing when coordinate storage is not array based or when the type has no variable coordinates.
         /// </summary>
@@ -153,7 +153,7 @@ namespace G25.CG.CSJ
             string constantName = G25.CG.Shared.SmvUtil.GetCoordinateOrderConstant(S, smv);
 
             cgd.m_cog.EmitTemplate(SB, "SMVgetCoords", "FT=", FT, "COORD_TYPE_STRING=", constantName);
-        }
+        }*/
 
         /// <summary>
         /// Writes the implementation of the multivector interface.
@@ -590,7 +590,73 @@ namespace G25.CG.CSJ
                 }
             }
         } // end of WriteLargestCoordinateFunctions()
-        
+
+        /// <summary>
+        /// Writes getters and setters for the SMV coordinates..
+        /// </summary>
+        /// <param name="SB">Where the code goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Not used yet.</param>
+        /// <param name="FT">Float point type of 'SMV'.</param>
+        /// <param name="smv">The specialized multivector for which the struct should be written.</param>
+        public static void WriteGetSetCoord(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv)
+        {
+            int nbTabs = 1;
+            string className = FT.GetMangledName(S, smv.Name);
+
+            // for variable coordinates:
+            for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
+            {
+                RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
+                string name = smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames);
+                string accessName = G25.CG.Shared.SmvUtil.GetCoordAccessString(S, smv, i);
+
+                // get
+                string getComment = "Returns the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + name + "() { return " + accessName + ";}");
+
+                // set
+                string setComment = "Sets the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, setComment, null, null);
+                SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " void " + G25.CG.Shared.Main.SETTER_PREFIX + name + "(" + FT.type + " " + name + ") { " + accessName + " = " + name + ";}");
+            }
+
+            // for constant coordinates:
+            for (int i = 0; i < smv.NbConstBasisBlade; i++)
+            {
+                RefGA.BasisBlade B = smv.ConstBasisBlade(i);
+                // get
+                string getComment = "Returns the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + B.ToLangString(S.m_basisVectorNames) + "() { return " + FT.DoubleToString(S, smv.ConstBasisBladeValue(i)) + ";}");
+            }
+
+            // write a getter for the scalar which returns 0 if no scalar coordinate is present
+            if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0)
+            {
+                RefGA.BasisBlade B = RefGA.BasisBlade.ONE;
+                string getComment = "Returns the scalar coordinate (which is always 0).";
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + B.ToLangString(S.m_basisVectorNames) + "() { return " + FT.DoubleToString(S, 0.0) + ";}");
+            }
+
+            // getter for the coordinates (stored in array)
+            if ((S.m_coordStorage == COORD_STORAGE.ARRAY) && (smv.NbNonConstBasisBlade > 0))
+            {
+                string constantName = G25.CG.Shared.SmvUtil.GetCoordinateOrderConstant(S, smv);
+                string COORD_ORDER = "coordOrder";
+
+                string comment = "Returns array of coordinates.";
+                List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
+                    new Tuple<string, string>(COORD_ORDER, "pass the value '" + className + "." + constantName + "'"),
+                };
+                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, comment, paramComments, null);
+                SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + "[] c(" + G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM + " " + COORD_ORDER + ") { return m_c;}");
+            }
+        }
+
+
 #if RIEN
         /// <summary>
         /// Writes the SMV class comment 'SB'.

@@ -4,7 +4,7 @@
 	license="gpl" 
 	language="csharp"
 	namespace="c3ga"
-	coordStorage="array"
+	coordStorage="variables"
 	defaultOperatorBindings="true"
 	dimension="5"
   	reportUsage="true"

@@ -219,25 +219,6 @@ namespace G25.CG.CPP
             }
         }
 
-
-        /// <summary>
-        /// Might need to put this function elsewhere . . .
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="smv"></param>
-        /// <param name="coordIdx"></param>
-        /// <returns></returns>
-        public static string GetCoordAccessString(Specification S, G25.SMV smv, int coordIdx) {
-            if (S.m_coordStorage == COORD_STORAGE.VARIABLES)
-            {
-                return "m_" + smv.GetCoordLangID(coordIdx, S);
-            }
-            else
-            {
-                return "m_c[" + coordIdx + "]";
-            }
-        }
-
         /// <summary>
         /// Writes getters and setters for the SMV coordinates..
         /// </summary>
@@ -252,7 +233,7 @@ namespace G25.CG.CPP
             for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
             {
                 string name = smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames);
-                string accessName = GetCoordAccessString(S, smv, i);
+                string accessName = G25.CG.Shared.SmvUtil.GetCoordAccessString(S, smv, i);
 
                 SB.AppendLine("\t/// Returns the " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + " coordinate.");
                 SB.AppendLine("\tinline " + FT.type + " " + MainGenerator.GETTER_PREFIX + name + "() const { return " + accessName + ";}");
