@@ -100,9 +100,9 @@ namespace G25.CG.Shared
         /// <param name="groupIdx">Specifies for that group index the access strings should be generated.</param>
         /// <param name="baseIdx">Index of first coordinate of group (required for C# and Java)</param>
         /// <returns>Array of strings that can be used to access the coordinates of group <c>groupIdx</c> of the <c>gmv</c>.</returns>
-        public static String[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx, int baseIdx)
+        public static string[] GetAccessStr(Specification S, G25.GMV gmv, String gmvName, int groupIdx, int baseIdx)
         {
-            String[] AL = new String[gmv.Group(groupIdx).Length];
+            string[] AL = new String[gmv.Group(groupIdx).Length];
 
             for (int i = 0; i < gmv.Group(groupIdx).Length; i++)
                 AL[i] = gmvName + "[" + (baseIdx + i) + "]";
@@ -120,7 +120,7 @@ namespace G25.CG.Shared
         /// if you are not sure that the multivector has the same float type as the return type <c>FT</c>.</param>
         /// <param name="value">The symbolic multivector value to be returned.</param>
         /// <returns>Code for returning a scalar value.</returns>
-        public static String GenerateScalarReturnCode(Specification S, FloatType FT, bool mustCast, RefGA.Multivector value)
+        public static string GenerateScalarReturnCode(Specification S, FloatType FT, bool mustCast, RefGA.Multivector value)
         {
             if (value.IsZero())
             {
@@ -152,12 +152,12 @@ namespace G25.CG.Shared
         /// example the caller may know that the destination is already set to zero. If so, set this argument to false and
         /// code for setting coordinates to 0 will not be generated.</param>
         /// <returns>String of code for dstName = value;</returns>
-        public static String GenerateSMVassignmentCode(Specification S, FloatType FT, bool mustCast,
+        public static string GenerateSMVassignmentCode(Specification S, FloatType FT, bool mustCast,
             G25.SMV dstSmv, String dstName, bool dstPtr, RefGA.Multivector value, int nbTabs, bool writeZeros)
         {
             RefGA.BasisBlade[] BL = BasisBlade.GetNonConstBladeList(dstSmv);
-            String[] accessStr = GetAccessStr(S, dstSmv, dstName, dstPtr);
-            String[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
+            string[] accessStr = GetAccessStr(S, dstSmv, dstName, dstPtr);
+            string[] assignedStr = GetAssignmentStrings(S, FT, mustCast, BL, value, writeZeros);
 
             //int nbTabs = 1;
             return GenerateAssignmentCode(S, accessStr, assignedStr, nbTabs, writeZeros);

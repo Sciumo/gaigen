@@ -96,7 +96,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         } // end of WriteGMVgpFunction
@@ -144,7 +145,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         } // end of WriteGMVigpFunction
@@ -204,7 +206,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         } // end of WriteGMVnormFunction
@@ -253,7 +256,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, FT.GetMangledName(S, CF.OutputName), returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, FT.GetMangledName(S, CF.OutputName), returnArgument, FAI, I, comment);
 
             return funcName;
         }

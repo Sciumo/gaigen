@@ -77,10 +77,10 @@ namespace G25.CG.Shared
                     G25.CG.Shared.FuncArgInfo returnArgument =
                         new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, rawDstTypeName, false); // false = compute value
 
+                    bool staticFunc = Functions.OutputStaticFunctions(m_specification);
                     if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
                     {
-
-                        Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet,
+                        Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
                             "void", null, funcName, returnArgument, FAI, FT, mustCast, returnArgument.Type as G25.SMV,
                             returnArgument.Name,
                             returnArgument.Pointer, value);
@@ -88,7 +88,7 @@ namespace G25.CG.Shared
                     else
                     {
                         Functions.WriteReturnFunction(
-                               m_specification, localCGD, m_specification.m_inlineSet,
+                               m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
                                funcName, FAI, FT, mustCast, returnArgument.Type as G25.SMV, value);
                     }
                 }

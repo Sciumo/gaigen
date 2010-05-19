@@ -76,7 +76,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
 
             return CF.OutputName;
         }

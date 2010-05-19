@@ -257,20 +257,21 @@ namespace G25.CG.C
                 {
                     if (smv.NbNonConstBasisBlade == 0) continue;
 
-                    String typeName = FT.GetMangledName(S, smv.Name);
-                    String funcName = typeName + "_setZero";
+                    string typeName = FT.GetMangledName(S, smv.Name);
+                    string funcName = typeName + "_setZero";
                     bool mustCast = false;
 
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", null, null, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+                    G25.fgs F = new G25.fgs(funcName, funcName, "", null, null, new string[] { FT.type }, null, null, null); // null, null = metricName, comment, options
                     F.InitArgumentPtrFromTypeNames(S);
                     bool computeMultivectorValue = false;
                     G25.CG.Shared.FuncArgInfo returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, smv.Name, computeMultivectorValue);
 
                     declSB.AppendLine("/** Sets " + typeName + " to zero */");
 
-                    String returnVarName = null;
+                    string returnVarName = null;
+                    bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                            S.m_inlineSet, "void", returnVarName, funcName, returnArgument, null, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, new RefGA.Multivector(0.0));
+                            S.m_inlineSet, staticFunc, "void", returnVarName, funcName, returnArgument, null, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, new RefGA.Multivector(0.0));
                 }
             }
         } // end of WriteSetZero()
@@ -294,15 +295,15 @@ namespace G25.CG.C
                     // if (smv.NbNonConstBasisBlade == 0) continue;
                     if (smv.GetElementIdx(RefGA.BasisBlade.ONE) < 0) continue; // if no scalar coordinate, continue
 
-                    String typeName = FT.GetMangledName(S, smv.Name);
-                    String funcName = typeName + "_setScalar";
+                    string typeName = FT.GetMangledName(S, smv.Name);
+                    string funcName = typeName + "_setScalar";
                     bool mustCast = false;
 
 
                     System.Collections.ArrayList L = new System.Collections.ArrayList();
                     const int NB_COORDS = 1;
-                    String[] argTypename = new String[NB_COORDS];
-                    String[] argName = new String[NB_COORDS];
+                    string[] argTypename = new string[NB_COORDS];
+                    string[] argName = new string[NB_COORDS];
                     {
                         RefGA.BasisBlade B = RefGA.BasisBlade.ONE;
                         argTypename[0] = FT.type;
@@ -319,8 +320,9 @@ namespace G25.CG.C
 
                     declSB.AppendLine("/** Sets " + typeName + " to a scalar value */");
 
+                    bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
+                        S.m_inlineSet, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
                 }
             }
         }
@@ -343,14 +345,14 @@ namespace G25.CG.C
                 {
                     if (smv.NbNonConstBasisBlade == 0) continue;
 
-                    String typeName = FT.GetMangledName(S, smv.Name);
-                    String funcName = typeName + "_set";
+                    string typeName = FT.GetMangledName(S, smv.Name);
+                    string funcName = typeName + "_set";
                     bool mustCast = false;
 
 
                     System.Collections.ArrayList L = new System.Collections.ArrayList();
-                    String[] argTypename = new String[smv.NbNonConstBasisBlade];
-                    String[] argName = new String[smv.NbNonConstBasisBlade];
+                    string[] argTypename = new String[smv.NbNonConstBasisBlade];
+                    string[] argName = new String[smv.NbNonConstBasisBlade];
                     for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {
                         RefGA.BasisBlade B = smv.NonConstBasisBlade(i);
                         argTypename[i] = FT.type;
@@ -370,8 +372,9 @@ namespace G25.CG.C
 
                     declSB.AppendLine("/** Sets " + typeName + " to specified coordinates */");
 
+                    bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
+                        S.m_inlineSet, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
                 }
             }
         } // end of WriteSet()
@@ -394,12 +397,12 @@ namespace G25.CG.C
                 {
                     if (smv.NbNonConstBasisBlade == 0) continue;
 
-                    String typeName = FT.GetMangledName(S, smv.Name);
-                    String funcName = typeName + "_setArray";
+                    string typeName = FT.GetMangledName(S, smv.Name);
+                    string funcName = typeName + "_setArray";
                     bool mustCast = false;
 
-                    String[] argTypename = new String[1] { FT.type };
-                    String[] argName = new String[1]{"A"};
+                    string[] argTypename = new string[1] { FT.type };
+                    string[] argName = new string[1] { "A" };
 
                     System.Collections.ArrayList L = new System.Collections.ArrayList();
                     for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
@@ -425,8 +428,9 @@ namespace G25.CG.C
 
                     declSB.AppendLine("/** Sets " + typeName + " to specified coordinates */");
 
+                    bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
+                        S.m_inlineSet, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, mvValue);
                 }
             }
         } // end of WriteSetArray()
@@ -465,8 +469,9 @@ namespace G25.CG.C
 
                     RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
 
+                    bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                        S.m_inlineSet, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, value);
+                        S.m_inlineSet, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, value);
                 }
             }
         } // end of WriteCopy()
@@ -509,8 +514,9 @@ namespace G25.CG.C
 
                         RefGA.Multivector value = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smv, FAI[0].Name, FAI[0].Pointer);
 
+                        bool staticFunc = false;
                         G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd, 
-                            S.m_inlineSet, "void", null, funcName, returnArgument, FAI, dstFT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, value);
+                            S.m_inlineSet, staticFunc, "void", null, funcName, returnArgument, FAI, dstFT, mustCast, smv, returnArgument.Name, returnArgument.Pointer, value);
                     }
                 }
             }

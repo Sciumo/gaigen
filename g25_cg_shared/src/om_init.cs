@@ -333,8 +333,9 @@ namespace G25.CG.Shared
                 if (!matrixMode) comment = "/** Sets " + typeName + " from images of the domain vectors */";
                 else comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
                 bool inline = false; // do not inline this potentially huge function
+                bool staticFunc = false;
                 bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
-                G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+                G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
             }
         } // end of WriteSetVectorImages()
 
@@ -521,7 +522,8 @@ namespace G25.CG.Shared
 
                     string comment = "/** Sets " + typeName + " to identity */";
                     bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
+                    bool staticFunc = false;
+                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
 
                 }
             }
@@ -591,7 +593,8 @@ namespace G25.CG.Shared
 
                     string comment = "/** Copies " + typeName + "  */";
                     bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+                    bool staticFunc = false;
+                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
 
                 }
             }
@@ -679,7 +682,8 @@ namespace G25.CG.Shared
 
                     string comment = "/** Sets " + typeName + " from images of the domain vectors */";
                     bool writeDecl = false;
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+                    bool staticFunc = false;
+                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
 
                 }
             }
@@ -778,7 +782,8 @@ namespace G25.CG.Shared
 
                     string comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
                     bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+                    bool staticFunc = false;
+                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
 
                 }
             }

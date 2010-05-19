@@ -171,7 +171,8 @@ namespace G25.CG.Shared.Func
             G25.CG.Shared.FuncArgInfo returnArgument = null;
 
             // write function
-            G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, F, m_specification.m_inlineFunctions, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+            G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, F, m_specification.m_inlineFunctions, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
         } // end of WriteGradeBitmapFunction()
 
 

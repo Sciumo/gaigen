@@ -34,6 +34,13 @@ namespace G25.CG.Shared
     /// </summary>
     public class Functions
     {
+        /// <summary>
+        /// Returns true for C# and Java. This is used to determine whether the
+        /// user functions are all static (because they must be put in class instead of a namespace).
+        /// </summary>
+        public static bool OutputStaticFunctions(Specification S) {
+            return ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA));
+        }
 
         /// <summary>
         /// Writes code for all functions to <c>cgd.m_defSB</c>, <c>cgd.m_inlineDefSB and</c> <c>cgd.m_declSB</c>.
@@ -239,8 +246,9 @@ namespace G25.CG.Shared
                 G25.CG.Shared.FuncArgInfo returnArgument = null;
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, dstSmv.Name, false); // false = compute value
 
+                bool staticFunc = false;
                 G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                    S.m_inlineFunctions, "void", null, funcName, returnArgument, FAI, FT, mustCast, dstSmv, dstName, ptr,
+                    S.m_inlineFunctions, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, dstSmv, dstName, ptr,
                     value);
             }
             else 
@@ -251,8 +259,9 @@ namespace G25.CG.Shared
                 for (int i = 0; i < FAI.Length; i++)
                     mustCast |= returnFT.MustCastIfAssigned(S, FAI[i].FloatType);
 
-                G25.CG.Shared.Functions.WriteReturnFunction(S, cgd, 
-                    S.m_inlineSet, funcName, FAI, FT, mustCast, returnType, value);
+                bool staticFunc = false;
+                G25.CG.Shared.Functions.WriteReturnFunction(S, cgd,
+                    S.m_inlineSet, staticFunc, funcName, FAI, FT, mustCast, returnType, value);
 
             }
         } // end of WriteSpecializedFunction()
@@ -265,23 +274,21 @@ namespace G25.CG.Shared
         /// <param name="S">Used for all kinds of stuff.</param>
         /// <param name="cgd">Results go into cgd.m_defSB, and so on</param>
         /// <param name="inline">Should the function we inline?</param>
+        /// <param name="staticFunc">Static function?</param>
         /// <param name="returnType">String which speficies the return type.</param>
         /// <param name="functionName">The name of the function which is to be generated.</param>
         /// <param name="returnArgument">FuncArgInfo which describes the optional return argument.</param>
         /// <param name="arguments">Array of FuncArgInfo which describes the arguments of the function.</param>
         public static void WriteDeclaration(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd,
-            bool inline, string returnType, string functionName,
+            bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments)
         {
-            // how to know when function is static????
-            // how to know when function is static????
-            // how to know when function is static????
-            // how to know when function is static????
             if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
                 SB.Append("public final ");
             else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
                 SB.Append("public ");
 
+            if (staticFunc) SB.Append("static ");
 
             SB.Append(G25.CG.Shared.Util.GetInlineString(S, inline, " "));
             if (returnArgument != null) returnType = "void";
@@ -342,13 +349,14 @@ namespace G25.CG.Shared
         /// <param name="cgd">Results go into cgd.m_defSB, and so on</param>
         /// <param name="F">Function specification.</param>
         /// <param name="inline">When true, the code is inlined.</param>
+        /// <param name="staticFunc">static function?</param>
         /// <param name="functionName">Name of generated function.</param>
         /// <param name="arguments">Arguments of function (any 'return argument' used for the C language is automatically setup correctly).</param>
         /// <param name="instructions">List of GA-instructions which make up the function.</param>
         /// <param name="comment">Comment to go into generated declration code.</param>
         public static void WriteFunction(
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F,
-            bool inline, string functionName, FuncArgInfo[] arguments,
+            bool inline, bool staticFunc, string functionName, FuncArgInfo[] arguments,
             List<Instruction> instructions, string comment)
         {
             List<G25.VariableType> returnTypes = new List<G25.VariableType>();
@@ -378,18 +386,19 @@ namespace G25.CG.Shared
                 }
             }
 
-            WriteFunction(S, cgd, F, inline, returnType, functionName, returnArgument, arguments, instructions, comment);
+            WriteFunction(S, cgd, F, inline, staticFunc, returnType, functionName, returnArgument, arguments, instructions, comment);
         } // end of WriteFunction()
 
 
         public static void WriteFunction(
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
-            bool inline, string returnType, string functionName,
+            bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
             System.Collections.Generic.List<Instruction> instructions, string comment)
         {
             bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP);
-            WriteFunction(S, cgd, F, inline, returnType, functionName, returnArgument, arguments, instructions, comment, writeDecl);
+            
+            WriteFunction(S, cgd, F, inline, staticFunc, returnType, functionName, returnArgument, arguments, instructions, comment, writeDecl);
         }
 
 
@@ -403,6 +412,7 @@ namespace G25.CG.Shared
         /// <param name="cgd">Results go into cgd.m_defSB, and so on</param>
         /// <param name="F">Function specification.</param>
         /// <param name="inline">When true, the code is inlined.</param>
+        /// <param name="staticFunc">Static function?</param>
         /// <param name="returnType">The type to return (String, can also be e.g. <c>"code"</c>.</param>
         /// <param name="functionName">Name of generated function.</param>
         /// <param name="returnArgument">For use with the 'C' language, an extra argument can be used to return results.</param>
@@ -412,7 +422,7 @@ namespace G25.CG.Shared
         /// <param name="writeDecl">When false, no declaration is written</param>
         public static void WriteFunction(
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
-            bool inline, string returnType, string functionName,
+            bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
             System.Collections.Generic.List<Instruction> instructions, string comment, bool writeDecl)
         {
@@ -423,11 +433,11 @@ namespace G25.CG.Shared
             if (writeDecl)
             {
                 if (comment != null) cgd.m_declSB.AppendLine(comment);
-                WriteDeclaration(cgd.m_declSB, S, cgd, inline, returnType, functionName, returnArgument, arguments);
+                WriteDeclaration(cgd.m_declSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
                 cgd.m_declSB.AppendLine(";");
             }
 
-            WriteDeclaration(defSB, S, cgd, inline, returnType, functionName, returnArgument, arguments);
+            WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
 
 
             // open function
@@ -455,6 +465,7 @@ namespace G25.CG.Shared
         /// <param name="S">Used for all kinds of stuff.</param>
         /// <param name="cgd">Results go into cgd.m_defSB, and so on</param>
         /// <param name="inline">Should the function we inline?</param>
+        /// <param name="staticFunc">Static function?</param>
         /// <param name="returnType">String which speficies the return type.</param>
         /// <param name="returnVarName">The name of the variable which should be returned. Should be one of the argument names.</param>
         /// <param name="functionName">The name of the function which is to be generated.</param>
@@ -468,7 +479,7 @@ namespace G25.CG.Shared
         /// <param name="returnArgument">For use with the 'C' language, an extra argument can be used to return results.</param>
         public static void WriteAssignmentFunction(
             Specification S, G25.CG.Shared.CGdata cgd, 
-            bool inline, string returnType, string returnVarName, string functionName,
+            bool inline, bool staticFunc, string returnType, string returnVarName, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
             FloatType dstFT, bool mustCastDst, G25.SMV dstSmv, string dstName, bool dstPtr, RefGA.Multivector value)
         {
@@ -481,11 +492,11 @@ namespace G25.CG.Shared
                 (S.m_outputLanguage != OUTPUT_LANGUAGE.JAVA); // no declaration in Java
             if (writeDecl) 
             {
-                WriteDeclaration(cgd.m_declSB, S, cgd, inline, returnType, functionName, returnArgument, arguments);
+                WriteDeclaration(cgd.m_declSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
                 cgd.m_declSB.AppendLine(";");
             }
 
-            WriteDeclaration(defSB, S, cgd, inline, returnType, functionName, returnArgument, arguments);
+            WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
 
             defSB.AppendLine("");
             defSB.AppendLine("{");
@@ -506,6 +517,7 @@ namespace G25.CG.Shared
         /// <param name="S">Used for all kinds of stuff.</param>
         /// <param name="cgd">Results go into cgd.m_defSB, and so on</param>
         /// <param name="inline">Should the function we inline?</param>
+        /// <param name="staticFunc">Static function?</param>
         /// <param name="functionName">The name of the function which is to be generated.</param>
         /// <param name="arguments">Array of FuncArg which describes the arguments of the function.</param>
         /// <param name="returnFT">Floating point type of return variable.</param>
@@ -514,7 +526,7 @@ namespace G25.CG.Shared
         /// <param name="value">Value to be written to the returned.</param>
         public static void WriteReturnFunction(
             Specification S, G25.CG.Shared.CGdata cgd, 
-            bool inline, string functionName,
+            bool inline, bool staticFunc, string functionName,
             FuncArgInfo[] arguments,
             FloatType returnFT, bool mustCastDst, G25.VariableType returnType, RefGA.Multivector value)
         {
@@ -528,8 +540,8 @@ namespace G25.CG.Shared
             StringBuilder defSB = (inline) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
             // declaration:
-            WriteDeclaration(cgd.m_declSB, S, cgd, false, returnTypeName, functionName, null, arguments);
-            WriteDeclaration(defSB, S, cgd, inline, returnTypeName, functionName, null, arguments);
+            WriteDeclaration(cgd.m_declSB, S, cgd, false, staticFunc, returnTypeName, functionName, null, arguments);
+            WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnTypeName, functionName, null, arguments);
             
             cgd.m_declSB.AppendLine(";");
 

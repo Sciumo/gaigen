@@ -82,7 +82,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         }
@@ -139,7 +140,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
 
             return CF.OutputName;
         }
@@ -188,12 +190,13 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         }
 
-        protected static StringBuilder AddGradeArg(Specification S, String str, int gradeIdx, String GROUP_BITMAP_NAME)
+        protected static StringBuilder AddGradeArg(Specification S, string str, int gradeIdx, string GROUP_BITMAP_NAME)
         {
             StringBuilder SB = new StringBuilder();
             int idx = str.IndexOf(')');
@@ -255,7 +258,8 @@ namespace G25.CG.Shared
             // write function
             G25.CG.Shared.CGdata tmpCgd = new G25.CG.Shared.CGdata(cgd);
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, tmpCgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, tmpCgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             if (gradeIdx < 0) // hack: if grade is func arg, then add it:
             { // add extra argument (int) to select the grade
@@ -313,7 +317,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, funcName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, funcName, returnArgument, FAI, I, comment);
 
             return funcName;
         }
@@ -352,7 +357,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
         }
 
         /// <summary>
@@ -390,7 +396,8 @@ namespace G25.CG.Shared
 
             // write function
             bool inline = false; // never inline GMV functions
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(S);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
 
             return CF.OutputName;
         }

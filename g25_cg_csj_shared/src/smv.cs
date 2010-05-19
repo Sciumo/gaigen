@@ -223,8 +223,9 @@ namespace G25.CG.CSJ
             string dstName = G25.CG.Shared.SmvUtil.THIS;
             bool dstPtr = false;
 
+            bool staticFunc = false;
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                    S.m_inlineSet, "void", returnVarName, funcName, null, null, FT, mustCast, smv, dstName, dstPtr, new RefGA.Multivector(0.0));
+                    S.m_inlineSet, staticFunc, "void", returnVarName, funcName, null, null, FT, mustCast, smv, dstName, dstPtr, new RefGA.Multivector(0.0));
         } // end of WriteSetZero()
 
         /// <summary>
@@ -262,8 +263,9 @@ namespace G25.CG.CSJ
             string dstName = G25.CG.Shared.SmvUtil.THIS;
             bool dstPtr = false;
 
+            bool staticFunc = false;
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
+                S.m_inlineSet, staticFunc, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
         }
 
         /// <summary>
@@ -306,8 +308,9 @@ namespace G25.CG.CSJ
             string dstName = G25.CG.Shared.SmvUtil.THIS;
             bool dstPtr = false;
 
+            bool staticFunc = false;
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
+                S.m_inlineSet, staticFunc, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
         } // end of WriteSetCoords()
 
         /// <summary>
@@ -348,8 +351,9 @@ namespace G25.CG.CSJ
             string dstName = G25.CG.Shared.SmvUtil.THIS;
             bool dstPtr = false;
 
+            bool staticFunc = false;
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
+                S.m_inlineSet, staticFunc, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, mvValue);
         } // end of WriteSetArray()
 
         /// <summary>
@@ -377,8 +381,9 @@ namespace G25.CG.CSJ
             string dstName = G25.CG.Shared.SmvUtil.THIS;
             bool dstPtr = false;
 
+            bool staticFunc = false;
             G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                S.m_inlineSet, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, value);
+                S.m_inlineSet, staticFunc, "void", null, funcName, null, FAI, FT, mustCast, smv, dstName, dstPtr, value);
         } // end of WriteSetCopy()
 
         /// <summary>
@@ -411,8 +416,9 @@ namespace G25.CG.CSJ
                 string dstName = G25.CG.Shared.SmvUtil.THIS;
                 bool dstPtr = false;
 
+                bool staticFunc = false;
                 G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
-                    S.m_inlineSet, "void", null, funcName, null, FAI, dstFT, mustCast, smv, dstName, dstPtr, value);
+                    S.m_inlineSet, staticFunc, "void", null, funcName, null, FAI, dstFT, mustCast, smv, dstName, dstPtr, value);
             }
         } // end of WriteSetCopyCrossFloat()
 

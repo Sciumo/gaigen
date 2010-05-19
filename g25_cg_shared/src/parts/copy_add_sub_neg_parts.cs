@@ -438,7 +438,7 @@ namespace G25.CG.Shared
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 // map from code fragment to name of function
-                Dictionary<String, String> generatedCode = new Dictionary<String, String>();
+                Dictionary<string, string> generatedCode = new Dictionary<string, string>();
 
                 for (int g1 = 0; g1 < gmv.NbGroups; g1++)
                 {
@@ -611,7 +611,7 @@ namespace G25.CG.Shared
                         }
 
                         string ACCESS = "";
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
+                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected final static ";
                         else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
 
                         string BOOL = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "int" : "bool";

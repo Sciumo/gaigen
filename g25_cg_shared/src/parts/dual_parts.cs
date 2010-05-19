@@ -192,7 +192,7 @@ namespace G25.CG.Shared
                                     string comment = "Computes the partial " + ((d == 0) ? "un" : "") + "dual (w.r.t. full space) of a multivector.";
 
                                     string ACCESS = "";
-                                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
+                                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected final static ";
                                     else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
                                     string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
                                     string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";

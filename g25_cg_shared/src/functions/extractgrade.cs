@@ -152,7 +152,8 @@ namespace G25.CG.Shared.Func
                     G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(m_specification, FT, m_fgs, FAI);
                     m_funcName[FT.type] = CF.OutputName;
 
-                    G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, CF.OutputName, FAI, I, comment);
+                    bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+                    G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, staticFunc, CF.OutputName, FAI, I, comment);
                 }
 
             }

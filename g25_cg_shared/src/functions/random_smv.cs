@@ -359,7 +359,8 @@ namespace G25.CG.Shared.Func
             string comment = "/** " +
                 exFgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)") + " */";
 
-            G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, exFuncName, FAI, I, comment);
+            bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+            G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, staticFunc, exFuncName, FAI, I, comment);
         } // end of WriteExFunction
 
         /// <summary>
@@ -402,7 +403,8 @@ namespace G25.CG.Shared.Func
                     returnArgument = new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, m_SMVname, false); // false = compute value
 
                 string returnTypeName = FT.GetMangledName(m_specification, m_SMVname);
-                G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
+                bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+                G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
             }
         } // end of WriteFunction
 
