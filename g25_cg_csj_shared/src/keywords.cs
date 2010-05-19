@@ -72,13 +72,5 @@ namespace G25.CG.CSJ
             : "static final";
         }
 
-        public static string BoolType(Specification S)
-        {
-            return (S.OutputCSharp())
-            ? "bool"
-            : "boolean";
-        }
-
-
     } // end of class Keywords
 } // end of namespace G25.CG.CSJ

@@ -133,7 +133,7 @@ namespace G25.CG.Shared
             else {
                 if (funcType == G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE.GRADE_BITMAP)
                     returnTypeName = "int";
-                else returnTypeName = "bool";
+                else returnTypeName = CodeUtil.GetBoolType(S);
             }
             
             G25.CG.Shared.FuncArgInfo returnArgument = null;

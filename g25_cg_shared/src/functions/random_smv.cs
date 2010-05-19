@@ -247,7 +247,7 @@ namespace G25.CG.Shared.Func
                     // double n, mul, lc;
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " tmp;"));
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, FT.type + " n, mul, lc;"));
-                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, (m_specification.OutputC() ? "int" : "bool") + " nullBlade;"));
+                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, CodeUtil.GetBoolType(m_specification) + " nullBlade;"));
 
                     // double rCoord = randomValue(), ....;
                     StringBuilder randSB = new StringBuilder();

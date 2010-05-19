@@ -164,23 +164,45 @@ namespace G25.CG.Shared.Func
             StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
 
             string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
-            string refPtrStr = (m_specification.OutputC()) ? "*" : "&";
 
-            string funcDecl = FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(const " + FAI[0].MangledTypeName + " " + refPtrStr + FAI[0].Name + ")";
-            declSB.AppendLine("/** internal conversion function (this is just a pass through) */");
-            declSB.Append(funcDecl);
-            declSB.AppendLine(";");
+            string refPtrStr = "";
+            if (m_specification.OutputC()) refPtrStr = "*";
+            else if (m_specification.OutputCpp()) refPtrStr = "&";
 
-            defSB.Append(inlineStr + funcDecl);
+            string ACCESS = "";
+            if (m_specification.OutputJava()) ACCESS = "public final static ";
+            else if (m_specification.OutputCSharp()) ACCESS = "public static ";
+
+            string VAR_MOD = "";
+            if (m_specification.OutputCppOrC()) VAR_MOD = "const ";
+            if (m_specification.OutputJava()) VAR_MOD = "final ";
+
+            string funcDecl = FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(" + VAR_MOD + FAI[0].MangledTypeName + " " + refPtrStr + FAI[0].Name + ")";
+            string comment = "internal conversion function (this is just a pass through)";
+
+            int nbTabs = 0;
+            if (m_specification.OutputCppOrC())
+            {
+                Util.WriteFunctionComment(declSB, m_specification, nbTabs, comment, null, null);
+                declSB.Append(funcDecl);
+                declSB.AppendLine(";");
+            }
+            else Util.WriteFunctionComment(defSB, m_specification, nbTabs, comment, null, null);
+
+            defSB.Append(inlineStr + ACCESS + funcDecl);
             defSB.AppendLine(" {");
             if (m_specification.OutputC())
             {
                 defSB.AppendLine("\t" + FT.GetMangledName(m_specification, scalarSMV.Name) + " tmp;");
                 defSB.AppendLine("\t" + funcName + "(&tmp, " + FAI[0].Name + ");");
             }
-            else
+            else if (m_specification.OutputCpp())
             {
                 defSB.AppendLine("\t" + FT.GetMangledName(m_specification, scalarSMV.Name) + " tmp(" + funcName + "(" + FAI[0].Name + "));");
+            }
+            else 
+            {
+                defSB.AppendLine("\t" + FT.GetMangledName(m_specification, scalarSMV.Name) + " tmp = " + funcName + "(" + FAI[0].Name + ");");
             }
 
             string[] accessStr;
@@ -200,14 +222,29 @@ namespace G25.CG.Shared.Func
             StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
 
             string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
-            string ptrSymbol = "";
-            if (S.OutputC()) ptrSymbol = "*";
-            else if (S.OutputCpp()) ptrSymbol = "&";
+            string refPtrStr = "";
+            if (m_specification.OutputC()) refPtrStr = "*";
+            else if (m_specification.OutputCpp()) refPtrStr = "&";
 
-            string funcDecl = FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(const " + FAI[0].MangledTypeName + " " + ptrSymbol + FAI[0].Name + ")";
-            declSB.AppendLine("/** internal conversion function */");
-            declSB.Append(funcDecl);
-            declSB.AppendLine(";");
+            string ACCESS = "";
+            if (m_specification.OutputJava()) ACCESS = "public final static ";
+            else if (m_specification.OutputCSharp()) ACCESS = "public static ";
+
+            string VAR_MOD = "";
+            if (m_specification.OutputCppOrC()) VAR_MOD = "const ";
+            if (m_specification.OutputJava()) VAR_MOD = "final ";
+
+            string funcDecl = ACCESS + FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(" + VAR_MOD + FAI[0].MangledTypeName + " " + refPtrStr + FAI[0].Name + ")";
+            string comment = "internal conversion function";
+
+            int nbTabs = 0;
+            if (m_specification.OutputCppOrC())
+            {
+                Util.WriteFunctionComment(declSB, m_specification, nbTabs, comment, null, null);
+                declSB.Append(funcDecl);
+                declSB.AppendLine(";");
+            }
+            else Util.WriteFunctionComment(defSB, m_specification, nbTabs, comment, null, null);
 
             defSB.Append(inlineStr + funcDecl);
             defSB.AppendLine(" {");

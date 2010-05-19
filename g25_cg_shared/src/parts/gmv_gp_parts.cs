@@ -167,7 +167,7 @@ namespace G25.CG.Shared
         /// <returns>name of generated function.</returns>
         public static string WriteGMVnormFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            String comment, bool squared)
+            string comment, bool squared)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -177,8 +177,6 @@ namespace G25.CG.Shared
             G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
 
             string funcName = CF.OutputName;
-            //if (S.OutputC())
-              //  funcName = FT.GetMangledName(S, funcName);
 
             // get return info
             G25.SMV returnType = null;

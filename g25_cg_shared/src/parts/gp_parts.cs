@@ -652,7 +652,14 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            SB.AppendLine(FT.type + " c[1], n2 = " + FT.DoubleToString(S, 0.0) + ";");
+            if (S.OutputCSharpOrJava())
+            {
+                SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
+                SB.AppendLine(FT.type + "[][] ac = a.c();");
+            }
+            else SB.AppendLine(FT.type + " c[1];");
+
+            SB.AppendLine(FT.type + " n2 = " + FT.DoubleToString(S, 0.0) + ";");
             SB.AppendLine("int idx = 0;");
 
             string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
@@ -667,29 +674,36 @@ namespace G25.CG.Shared
                 double m = gmv.Group(g)[0].Reverse().scale / gmv.Group(g)[0].scale;
 
                 SB.AppendLine("");
-                SB.AppendLine("if (" + agu + " & " + (1 << g) + ") { // group " + g + " (grade " + gmv.Group(g)[0].Grade() + ")");
+                if (S.OutputCSharpOrJava())
+                    SB.Append("if (ac[" + g + "] != null) {");
+                else SB.Append("if (" + agu + " & " + (1 << g) + ") {");
+                SB.AppendLine(" // group " + g + " (grade " + gmv.Group(g)[0].Grade() + ")");
 
                 // check if funcName (gp part) exists)
                 Tuple<string, string, string> key = new Tuple<string, string, string>(FT.type, M.m_name, funcName);
                 if (cgd.m_gmvGPpartFuncNames.ContainsKey(key) && cgd.m_gmvGPpartFuncNames[key])
                 {
                     SB.AppendLine("\tc[0] = " + FT.DoubleToString(S, 0.0) + ";");
-                    SB.AppendLine("\t" + funcName + "(" + ac + " + idx, " + ac + " + idx, c);");
+
+                    if (S.OutputCSharpOrJava())
+                        SB.AppendLine("\t" + funcName + "(ac[" + g + "], ac[ " + g + "], c);");
+                    else SB.AppendLine("\t" + funcName + "(" + ac + " + idx, " + ac + " + idx, c);");
+
                     if (m == 1.0) SB.AppendLine("\tn2 += c[0];");
                     else if (m == -1.0) SB.AppendLine("\tn2 -= c[0];");
                     else SB.AppendLine("\tn2 += " + FT.DoubleToString(S, m) + " * c[0];");
                 }
-                if (g < (gmv.NbGroups - 1))
+                if ((g < (gmv.NbGroups - 1)) && S.OutputCppOrC())
                     SB.AppendLine("\tidx += " + gmv.Group(g).Length + ";");
                 SB.AppendLine("}");
             }
 
-            String returnVal;
+            string returnVal;
             { // get return value
                 if (squared) returnVal = "n2";
                 else
                 {
-                    String sqrtFuncName = (FT.type == "float") ? "sqrtf" : "sqrt";
+                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.SQRT);
                     if (M.m_metric.IsPositiveDefinite()) // if PD, then negative values are impossible
                         returnVal = sqrtFuncName + "(n2)";
                     else returnVal = "((n2 < " + FT.DoubleToString(S, 0.0) + ") ? " + sqrtFuncName + "(-n2) : " + sqrtFuncName + "(n2))";
@@ -734,9 +748,16 @@ namespace G25.CG.Shared
              
             SB.AppendLine(FT.type + " n2 = " + FT.DoubleToString(S, 0.0) + ";");
 
-            bool resultIsScalar = true;
-            bool initResultToZero = true;
-            SB.Append(GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+            if (S.OutputCSharpOrJava())
+            {
+                SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
+                SB.AppendLine(FT.type + "[][] ac = a.c();");
+            }
+            else {
+                bool resultIsScalar = true;
+                bool initResultToZero = true;
+                SB.Append(GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+            }
 
             string exaName = "_" + FAI[0].Name;
 
@@ -754,15 +775,25 @@ namespace G25.CG.Shared
                     {
                         if (!funcFound)
                         {
-                            SB.AppendLine("if (" + exaName + "[" + g1 + "] != NULL) { // (part of grade " + gmv.Group(g1)[0].Grade() + ")");
+                            if (S.OutputCSharpOrJava())
+                                SB.Append("if (ac[" + g1 + "] != null) {");
+                            else SB.Append("if (" + exaName + "[" + g1 + "] != NULL) { ");
+                            SB.AppendLine(" // group " + g1 + " (grade " + gmv.Group(g1)[0].Grade() + ")");
                             SB.AppendLine("\tc[0] = " + FT.DoubleToString(S, 0.0) + ";");
                             funcFound = true;
                         }
 
                         if (g1 != g2)
-                            SB.AppendLine("\tif (" + exaName + "[" + g2 + "] != NULL) {");
+                        {
+                            if (S.OutputCSharpOrJava())
+                                SB.Append("\tif (ac[" + g2 + "] != null) {");
+                            else SB.Append("\tif (" + exaName + "[" + g2 + "] != NULL) {");
+                            SB.AppendLine(" // group " + g2 + " (grade " + gmv.Group(g2)[0].Grade() + ")");
+                        }
 
-                        SB.AppendLine("\t\t" + funcName + "(" + exaName + "[" + g1 + "], " + exaName + "[" + g2 + "], c);");
+                        if (S.OutputCSharpOrJava())
+                            SB.AppendLine("\t\t" + funcName + "(ac[" + g1 + "], ac[" + g2 + "], c);");
+                        else SB.AppendLine("\t\t" + funcName + "(" + exaName + "[" + g1 + "], " + exaName + "[" + g2 + "], c);");
 
                         if (g1 != g2)
                             SB.AppendLine("\t}");
@@ -781,12 +812,12 @@ namespace G25.CG.Shared
 
             }
 
-            String returnVal;
+            string returnVal;
             { // get return value
                 if (squared) returnVal = "n2";
                 else
                 {
-                    String sqrtFuncName = (FT.type == "float") ? "sqrtf" : "sqrt";
+                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.SQRT);
                     if (M.m_metric.IsPositiveDefinite()) // if PD, then negative values are impossible
                         returnVal = sqrtFuncName + "(n2)";
                     else returnVal = "((n2 < " + FT.DoubleToString(S, 0.0) + ") ? " + sqrtFuncName + "(-n2) : " + sqrtFuncName + "(n2))";

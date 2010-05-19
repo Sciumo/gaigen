@@ -960,9 +960,9 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK randomNumberGenerator}
     // I found sources on the internet which claim that java.util.Random is thread safe.
     // If it turns out not to be thread-safe, port the C# RNG code to Java.
-    protected final java.util.Random s_randomGenerator = new java.util.Random();
+    protected static final java.util.Random s_randomGenerator = new java.util.Random();
     
-    protected final double NextRandomDouble() {
+    protected static final double NextRandomDouble() {
 		return s_randomGenerator.NextDouble();
     }
 ${ENDCODEBLOCK}

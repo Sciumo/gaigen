@@ -614,7 +614,7 @@ namespace G25.CG.Shared
                         if (S.OutputJava()) ACCESS = "protected final static ";
                         else if (S.OutputCSharp()) ACCESS  = "protected internal static ";
 
-                        string BOOL = (S.OutputC()) ? "int" : "bool";
+                        string BOOL = CodeUtil.GetBoolType(S);
                         string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
                         string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
                         string funcDecl;
@@ -975,8 +975,8 @@ namespace G25.CG.Shared
             string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
             string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
-            string falseStr = (S.OutputC()) ? "0" : "false";
-            string trueStr = (S.OutputC()) ? "1" : "true";
+            string falseStr = CodeUtil.GetFalseValue(S);
+            string trueStr = CodeUtil.GetTrueValue(S);
 
             for (int g = 0; g < nbGroups; g++)
             {

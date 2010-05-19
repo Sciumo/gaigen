@@ -52,7 +52,7 @@ namespace G25.CG.CSJ
             string accessModifier = Keywords.ConstAccessModifier(S);
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
             string stringType = Keywords.StringType(S);
-            string boolType = Keywords.BoolType(S);
+            string boolType = G25.CG.Shared.CodeUtil.GetBoolType(S);
 
             // dimension of space
             SB.AppendLine("\tpublic " + accessModifier + " int SpaceDim = " + S.m_dimension + ";");

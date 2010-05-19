@@ -34,6 +34,25 @@ namespace G25.CG.Shared
             InitOps();
         }
 
+
+        /// <returns>Name of bool type in output language</returns>
+        public static string GetBoolType(Specification S)
+        {
+            return (S.OutputC()) ? "int" : ((S.OutputJava()) ? "boolean" : "bool");
+        }
+
+        /// <returns>Name of false value in output language</returns>
+        public static string GetFalseValue(Specification S)
+        {
+            return (S.OutputC()) ? "0" : "false";
+        }
+
+        /// <returns>Name of false value in output language</returns>
+        public static string GetTrueValue(Specification S)
+        {
+            return (S.OutputC()) ? "1" : "true";
+        }
+
         /// <summary>
         /// Returns an array of 'access strings' which are source code expressions that can be
         /// used to access the coordinates of <c>smv</c>. The entries in the array correspond to

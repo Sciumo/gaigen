@@ -154,7 +154,7 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-				-> random scalar for C# and Java
+				->fix where the comment goes, no decl for CSharpOrJava
 				
 				->GMV, together with regular functions
 				    compress, 

@@ -121,9 +121,9 @@ namespace G25.CG.Shared.Func
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
 
-            string BOOL = (m_specification.OutputC()) ? "int" : "bool";
-            string TRUE = (m_specification.OutputC()) ? "1" : "true";
-            string FALSE = (m_specification.OutputC()) ? "0" : "false";
+            string BOOL = CodeUtil.GetBoolType(m_specification);
+            string TRUE = CodeUtil.GetFalseValue(m_specification);
+            string FALSE = CodeUtil.GetTrueValue(m_specification);
 
             // write the function:
             {
