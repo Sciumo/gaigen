@@ -968,7 +968,7 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK randomNumberGenerator}
     // Simple code for multi-threading-safe random number generation (the Random class is not thread-safe).
     // The worst that can happen is that multiple threads get the same random number.
-    protected internal static Random s_randomGenerator = new Random();
+    protected internal static System.Random s_randomGenerator = new System.Random();
     protected internal const int NB_RANDOM_DOUBLES = 32; // must be power of two
     protected internal static double[] s_randomDoubles = new double[NB_RANDOM_DOUBLES];
     protected internal static int s_randomDoublesIdx = NB_RANDOM_DOUBLES;

@@ -103,6 +103,7 @@ namespace G25.CG.Shared.Func
             G25.FloatType FT = m_specification.GetFloatType(m_functionNameFloatType);
             string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
 
+            // what random number generator is being used (for the comment)
             string generatorType = " unknown method";
             if (m_specification.OutputCSharp())
                 generatorType = "System.Random class";
@@ -113,22 +114,28 @@ namespace G25.CG.Shared.Func
             else if (m_generatorType == PRGtype.LIBC)
                 generatorType = "mersenne twister method";
 
+            // get comment
             string comment = "Generates a random " + m_functionNameFloatType +
                 " in [0.0 1.0) interval using the " + generatorType;
 
+            // emit declaration / comment
             if (m_specification.OutputCppOrC()) {
                 Util.WriteFunctionComment(declSB, m_specification, 0, comment, null, null);
                 declSB.Append(m_functionNameFloatType + " " + funcName + "();\n");
             }
             else Util.WriteFunctionComment(defSB, m_specification, 0, comment, null, null);
 
+            // get access modifier
             string ACCESS = "";
             if (m_specification.OutputCSharp())
                 ACCESS = "public static ";
             else if (m_specification.OutputJava())
                 ACCESS = "public final static ";
+
+            // emit definition {
             defSB.Append(inlineStr + ACCESS + m_functionNameFloatType + " " + funcName + "() {\n");
 
+            // emit actual code
             if (m_specification.OutputCSharpOrJava())
             {
                 defSB.Append("\treturn (" + m_functionNameFloatType + ")NextRandomDouble();\n");
@@ -166,17 +173,38 @@ namespace G25.CG.Shared.Func
                 declSB.AppendLine("void " + funcName + "_timeSeed();");
             }
 
-            // todo: comment for C# and Java
-
+            string SEED_TYPE = (m_specification.OutputCppOrC()) ? "unsigned int" : "int";
             // seeder defs:
-            defSB.AppendLine(inlineStr + "void " + funcName + "_seed(unsigned int seed) {");
-            if (m_generatorType == PRGtype.LIBC)
-                defSB.AppendLine("\tsrand(seed);");
-            else if (m_generatorType == PRGtype.MT)
-                defSB.AppendLine("\tinit_genrand(seed);");
+            if (m_specification.OutputCSharpOrJava())
+            {
+                Util.WriteFunctionComment(declSB, m_specification, 0, seedComment, null, null);
+            }
+            defSB.AppendLine(inlineStr + ACCESS + "void " + funcName + "_seed(" + SEED_TYPE + " seed) {");
+            if (m_specification.OutputCSharp())
+            {
+                defSB.AppendLine("\ts_randomGenerator = new System.Random(seed);");
+            }
+            else if (m_specification.OutputJava())
+            {
+                defSB.AppendLine("\ts_randomGenerator.setSeed(seed);");
+            }
+            else
+            {
+                if (m_generatorType == PRGtype.LIBC)
+                    defSB.AppendLine("\tsrand(seed);");
+                else if (m_generatorType == PRGtype.MT)
+                    defSB.AppendLine("\tinit_genrand(seed);");
+            }
             defSB.AppendLine("}\n");
-            defSB.AppendLine(inlineStr + "void " + funcName + "_timeSeed() {");
-            defSB.AppendLine("\t" + funcName + "_seed((unsigned int)time(NULL));");
+
+
+            defSB.AppendLine(inlineStr + ACCESS + "void " + funcName + "_timeSeed() {");
+            if (m_specification.OutputCSharp())
+                defSB.AppendLine("\t" + funcName + "_seed((int)DateTime.Now.Ticks);");
+            else if (m_specification.OutputJava())
+                defSB.AppendLine("\t" + funcName + "_seed((int)System.currentTimeMillis());");
+            else defSB.AppendLine("\t" + funcName + "_seed((unsigned int)time(NULL));");
+            
             defSB.AppendLine("}\n");
 
 

@@ -154,7 +154,8 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-		
+				-> random scalar for C# and Java
+				
 				->GMV, together with regular functions
 				    compress, 
 					compress 1: check all groups, if null up to epsilon, shrink
@@ -238,15 +239,20 @@ Correcting design mistakes:
 
 ->do not write functions directly to some string builder or whatever, but to an instance of the the 'GeneratedFunction' class
 	 each generated function goes into its own class which describes:
-	-where the function should go
+	-where the function should go (package/namespace, class)
 	-function name
-	-access level
-	-arguments
+	-access modifier, static, inline, etc
+	-arguments (type, array, pointer, const, final, etc)
 	-return type
 	-the code (a string)
 	-comments
 	Am extra level of code then manages the output of the functions to the right place
-	including generation of comments, declarations and definitions.
+	including generation of comments, declarations and definitions, indentation, etc.
+	
+	The functions don't even have to be 'collected', the can be emitted one the go
+	if the defSB, declSB and inlineSB are available. It would simply be a centralization
+	of all the special rules for each output language. Context required for indentation
+	will still be provided by package/namespace, class.
 
 ---------------------------------------------------
  
