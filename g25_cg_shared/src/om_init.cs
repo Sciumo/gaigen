@@ -192,7 +192,7 @@ namespace G25.CG.Shared
         public static Dictionary<double, List<string>> GetGomIdentityInitCode(Specification S, G25.GOM gom, string gomName, string matrixName)
         {
             Dictionary<double, List<string>> nonZero = new Dictionary<double, List<string>>(); // collect a.m[...] = value in here, by value
-            string refStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? gomName + "->" : "";
+            string refStr = (S.OutputC()) ? gomName + "->" : "";
             // figure out which elements need to get something assigned
             // for all blades in the domain, find matching blade in range, and add it to nonZero
             for (int g = 1; g < S.m_GOM.Domain.Length; g++)
@@ -267,7 +267,7 @@ namespace G25.CG.Shared
                     {
                         argTypes[d] = rangeVectorType.Name;
                         argNames[d] = "i" + gom.DomainVectors[d].ToLangString(S.m_basisVectorNames);
-                        bool ptr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                        bool ptr = S.OutputC();
 
                         symbolicBBvalues[gom.DomainVectors[d].bitmap] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, rangeVectorType, argNames[d], ptr);
                     }
@@ -275,11 +275,11 @@ namespace G25.CG.Shared
 
                 string typeName = FT.GetMangledName(S, gom.Name);
                 string funcName = null;
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     funcName = typeName + ((matrixMode) ? "_setMatrix" : "_setVectorImages");
                 }
-                else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+                else if (S.OutputCpp())
                 {
                     funcName = typeName + "::set";
                 }
@@ -291,7 +291,7 @@ namespace G25.CG.Shared
                 bool computeMultivectorValue = false;
 
                 G25.CG.Shared.FuncArgInfo returnArgument = null;
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                     returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, gom.Name, computeMultivectorValue);
 
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
@@ -301,7 +301,7 @@ namespace G25.CG.Shared
                 {
                     bool mustCast = false;
                     int nbTabs = 1;
-                    string dstName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                    string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
                     bool dstPtr = true;
                     bool declareDst = false;
                     for (int g = 1; g < gom.Domain.Length; g++)
@@ -334,7 +334,7 @@ namespace G25.CG.Shared
                 else comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
                 bool inline = false; // do not inline this potentially huge function
                 bool staticFunc = false;
-                bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                bool writeDecl = S.OutputC();
                 G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
             }
         } // end of WriteSetVectorImages()
@@ -345,10 +345,10 @@ namespace G25.CG.Shared
             StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
             string srcTypeName = FT.GetMangledName(S, srcOm.Name);
             string dstTypeName = FT.GetMangledName(S, dstOm.Name);
-            bool writeDecl = S.m_outputLanguage == OUTPUT_LANGUAGE.C;
+            bool writeDecl = S.OutputC();
 
             string funcName = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 funcName = srcTypeName + "_to_" + dstTypeName;
             }
@@ -359,8 +359,8 @@ namespace G25.CG.Shared
 
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
-            string dstArgStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? (dstTypeName + " *dst, ") : "";
-            string refStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "*" : "&"; ;
+            string dstArgStr = (S.OutputC()) ? (dstTypeName + " *dst, ") : "";
+            string refStr = (S.OutputC()) ? "*" : "&"; ;
 
             string funcDecl = inlineStr + "void " + funcName + "(" + dstArgStr + "const " + srcTypeName + " " + refStr + "src)";
 
@@ -385,9 +385,9 @@ namespace G25.CG.Shared
                 StringBuilder copySB = new StringBuilder();
                 List<string> setToZero = new List<string>();
 
-                string matrixStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "m" : "m_m";
-                string dstMatrixStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "dst->" + matrixStr : matrixStr;
-                string ptrStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "->" : ".";
+                string matrixStr = (S.OutputC()) ? "m" : "m_m";
+                string dstMatrixStr = (S.OutputC()) ? "dst->" + matrixStr : matrixStr;
+                string ptrStr = (S.OutputC()) ? "->" : ".";
 
                 // For all grades of som, for all columns, for all rows, check D, get entry, set; otherwise set to null
                 // Do not use foreach() on D because we want to fill in coordinates in their proper order.
@@ -473,7 +473,7 @@ namespace G25.CG.Shared
             StringBuilder declSB = cgd.m_declSB;
             StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 declSB.AppendLine("");
             defSB.AppendLine("");
 
@@ -483,7 +483,7 @@ namespace G25.CG.Shared
                 {
                     string typeName = FT.GetMangledName(S, som.Name);
                     string funcName = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                     {
                         funcName = typeName + "_setIdentity";
                     }
@@ -499,7 +499,7 @@ namespace G25.CG.Shared
                     bool computeMultivectorValue = false;
 
                     G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                         returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
 
                     // setup instructions
@@ -507,7 +507,7 @@ namespace G25.CG.Shared
                     {
                         int nbTabs = 1;
                         mustCast = false;
-                        string valueName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                        string valueName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
                         bool valuePtr = true;
                         bool declareValue = false;
                         for (int g = 1; g < som.Domain.Length; g++)
@@ -521,7 +521,7 @@ namespace G25.CG.Shared
                     }
 
                     string comment = "/** Sets " + typeName + " to identity */";
-                    bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                    bool writeDecl = S.OutputC();
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
 
@@ -539,7 +539,7 @@ namespace G25.CG.Shared
             StringBuilder declSB = cgd.m_declSB;
             StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 declSB.AppendLine("");
             defSB.AppendLine("");
 
@@ -549,7 +549,7 @@ namespace G25.CG.Shared
                 {
                     string typeName = FT.GetMangledName(S, som.Name);
                     string funcName = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                     {
                         funcName = typeName + "_set";
                     }
@@ -562,14 +562,14 @@ namespace G25.CG.Shared
 
                     const int NB_ARGS = 1;
                     string srcName = "src";
-                    bool srcPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                    bool srcPtr = S.OutputC();
                     G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { som.Name }, new String[] { srcName }, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
                     F.InitArgumentPtrFromTypeNames(S);
                     bool computeMultivectorValue = false;
                     G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
 
                     G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                         returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
 
                     // setup instructions
@@ -577,7 +577,7 @@ namespace G25.CG.Shared
                     {
                         int nbTabs = 1;
                         mustCast = false;
-                        string dstName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                        string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
                         bool dstPtr = true;
                         bool declareDst = false;
                         for (int g = 1; g < som.Domain.Length; g++)
@@ -592,7 +592,7 @@ namespace G25.CG.Shared
                     }
 
                     string comment = "/** Copies " + typeName + "  */";
-                    bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                    bool writeDecl = (S.OutputC());
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
 
@@ -624,14 +624,14 @@ namespace G25.CG.Shared
                     {
                         argTypes[d] = rangeVectorType.Name;
                         argNames[d] = "i" + som.DomainVectors[d].ToLangString(S.m_basisVectorNames);
-                        bool ptr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                        bool ptr = (S.OutputC());
                         argValue[d] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, rangeVectorType, argNames[d], ptr);
                     }
 
 
                     string typeName = FT.GetMangledName(S, som.Name);
                     string funcName = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                     {
                         funcName = typeName + "_setVectorImages";
                     }
@@ -647,7 +647,7 @@ namespace G25.CG.Shared
                     G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
 
                     G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                         returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
 
                     // setup instructions
@@ -655,7 +655,7 @@ namespace G25.CG.Shared
                     {
                         bool mustCast = false;
                         int nbTabs = 1;
-                        string dstName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                        string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
                         bool dstPtr = true;
                         bool declareDst = false;
                         for (int g = 1; g < som.Domain.Length; g++)

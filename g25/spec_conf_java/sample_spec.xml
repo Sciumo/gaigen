@@ -317,13 +317,13 @@
   <function name="increment" arg1="vectorE3GA" floatType="double"/>
   <function name="increment" arg1="bivectorE3GA" floatType="double"/>
 
-
+<!--
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="float"/>
   <function name="applyOM" arg1="flatPointOM" arg2="pointPair" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="sphere" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="mv" floatType="double"/>
-
+-->
   <function name="_vectorE3GA" arg1="normalizedPoint"/>
 </g25spec>

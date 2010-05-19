@@ -420,7 +420,7 @@ namespace G25
         /// <returns>name of argument 'argIdx'.</returns>
         public bool GetArgumentPtr(Specification S, int argIdx)
         {
-            if (argIdx < 0) return (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? true : false;
+            if (argIdx < 0) return (S.OutputC()) ? true : false;
             else if (NbArguments == 0) return false;
             else return ArgumentPtr[argIdx];
         }
@@ -528,7 +528,7 @@ namespace G25
                 System.Array.Resize<bool>(ref m_argumentArr, m_argumentTypeNames.Length);
             }
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) {
+            if (S.OutputC()) {
                 // if it is not a float or a double, then it is a pointer
                 for (; i < m_argumentTypeNames.Length; i++)
                 {

@@ -39,7 +39,7 @@ namespace G25.CG.Shared
         /// user functions are all static (because they must be put in class instead of a namespace).
         /// </summary>
         public static bool OutputStaticFunctions(Specification S) {
-            return ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA));
+            return (S.OutputCSharpOrJava());
         }
 
         /// <summary>
@@ -232,13 +232,11 @@ namespace G25.CG.Shared
             //string dstTypeName = (returnType is G25.SMV) ? FT.GetMangledName((returnType as G25.SMV).Name) : (returnType as G25.FloatType).type;
 
             string funcName = F.OutputName;
-            //if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
-              //  funcName = FT.GetMangledName(S, funcName);
 
             // write comment to declaration
             if (comment != null) cgd.m_declSB.AppendLine(comment);
 
-            if ((returnType is G25.SMV) && (S.m_outputLanguage == OUTPUT_LANGUAGE.C))
+            if ((returnType is G25.SMV) && (S.OutputC()))
             {
                 bool mustCast = false;
                 G25.SMV dstSmv = returnType as G25.SMV;
@@ -283,9 +281,9 @@ namespace G25.CG.Shared
             bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments)
         {
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            if (S.OutputJava())
                 SB.Append("public final ");
-            else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            else if (S.OutputCSharp())
                 SB.Append("public ");
 
             if (staticFunc) SB.Append("static ");
@@ -313,25 +311,25 @@ namespace G25.CG.Shared
 
                     if (appendComma) SB.Append(", ");
 
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                    if (S.OutputJava())
                         SB.Append("final ");
 
-                    if (A.Constant && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))) 
+                    if (A.Constant && S.OutputCppOrC()) 
                         SB.Append("const ");
 
                     SB.Append(A.MangledTypeName);
 
-                    if ((A.Array) && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)))
+                    if (A.Array && S.OutputCSharpOrJava())
                         SB.Append("[]");
 
                     SB.Append(" ");
 
                     if (A.Pointer) SB.Append("*");
-                    else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) && (A.IsMVorOM())) // append '&'?
+                    else if (S.OutputCpp() && (A.IsMVorOM())) // append '&'?
                             SB.Append("&");
                     SB.Append(A.Name);
 
-                    if ((A.Array) && ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C)))
+                    if (A.Array && S.OutputCppOrC())
                         SB.Append("[]");
 
                     appendComma = true;
@@ -377,7 +375,7 @@ namespace G25.CG.Shared
 
                 returnType = returnFT.GetMangledName(S, returnTypeName);
 
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     if (!(returnVT is G25.FloatType))
                     {
@@ -396,7 +394,7 @@ namespace G25.CG.Shared
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
             System.Collections.Generic.List<Instruction> instructions, string comment)
         {
-            bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP);
+            bool writeDecl = S.OutputCppOrC();
             
             WriteFunction(S, cgd, F, inline, staticFunc, returnType, functionName, returnArgument, arguments, instructions, comment, writeDecl);
         }
@@ -487,9 +485,8 @@ namespace G25.CG.Shared
             StringBuilder defSB = (inline) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
             // write declaration yes/no?
-            bool writeDecl = (!(dstName.Equals(G25.CG.Shared.SmvUtil.THIS) && (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))) && // no declaration for C++ member functions
-                (S.m_outputLanguage != OUTPUT_LANGUAGE.CSHARP) &&  // no declaration in C#
-                (S.m_outputLanguage != OUTPUT_LANGUAGE.JAVA); // no declaration in Java
+            bool writeDecl = (!(dstName.Equals(G25.CG.Shared.SmvUtil.THIS) && S.OutputCpp())) && // no declarations for C++ member functions
+                (!S.OutputCSharpOrJava());  // no declarations in C# and Java
             if (writeDecl) 
             {
                 WriteDeclaration(cgd.m_declSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
@@ -501,7 +498,7 @@ namespace G25.CG.Shared
             defSB.AppendLine("");
             defSB.AppendLine("{");
 
-            int nbTabs = 1; // (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? 2 : 1;
+            int nbTabs = 1; 
             bool declareVariable = false;
             AssignInstruction AI = new AssignInstruction(nbTabs, dstSmv, dstFT, mustCastDst, value, dstName, dstPtr, declareVariable);
             AI.Write(defSB, S, cgd);

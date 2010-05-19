@@ -422,7 +422,7 @@ namespace G25.CG.Shared
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbBaseTabs = (S.OutputCSharpOrJava()) ? 1 : 0;
             int nbCodeTabs = nbBaseTabs + 1;
             bool writeZeros = false;
 
@@ -615,8 +615,8 @@ namespace G25.CG.Shared
                         else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
 
                         string BOOL = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "int" : "bool";
-                        string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
-                        string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
+                        string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
+                        string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
                         string funcDecl;
 
                         // one or two input args, scale or not?
@@ -630,7 +630,7 @@ namespace G25.CG.Shared
                             funcDecl = ACCESS + BOOL + " " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + CONST + FT.type + ARR + srcName2 + ", " + FT.type + " " + epsilonName + ")";
                         else funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + srcName1 + ", " + FT.type + ARR + dstName + ")";
 
-                        if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                        if (S.OutputCppOrC())
                         {
                             Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
                             cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");
@@ -670,7 +670,7 @@ namespace G25.CG.Shared
             ADD_SUB_HP_TYPE funcType,
             G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
         {
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+            if (S.OutputCppOrC())
                 return GetAddSubtractHpCode_C_CPP(S, cgd, FT, funcType, FAI, resultName);
             else return GetAddSubtractHpCode_CSharp_Java(S, cgd, FT, funcType, FAI, resultName);
         }

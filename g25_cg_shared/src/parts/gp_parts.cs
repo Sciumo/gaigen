@@ -147,7 +147,7 @@ namespace G25.CG.Shared
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbBaseTabs = (S.OutputCSharpOrJava()) ? 1 : 0;
             int nbCodeTabs = 1 + nbBaseTabs;
             bool writeZeros = false;
 
@@ -228,7 +228,7 @@ namespace G25.CG.Shared
                                     string comment = "Computes the partial geometric product of two multivectors (group " + g1 + "  x  group " + g2 + " -> group " + gd + ")";
                                     string funcDecl;
 
-                                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                                    if (S.OutputCppOrC())
                                     {
                                         funcDecl = "void " + funcName + "(const " + FT.type + " *" + name1 + ", const " + FT.type + " *" + name2 + ", " + FT.type + " *" + name3 + ")";
 

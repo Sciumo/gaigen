@@ -91,7 +91,7 @@ namespace G25.CG.Shared
 
 
                 string mangledFuncName = F.OutputName;
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     // add mangled argument types to function name
                     string[] mangledArgumentTypes = new string[argumentTypes.Length];

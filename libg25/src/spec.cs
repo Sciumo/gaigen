@@ -800,19 +800,19 @@ namespace G25
             {
                 throw new G25.UserException("No output language has been set (use XML attribute '" + XML.XML_LANGUAGE + "').");
             }
-            else if (m_outputLanguage == OUTPUT_LANGUAGE.C)
+            else if (OutputC())
             {
                 System.Console.WriteLine("Warning: No operator bindings are possible for output language C");
             }
-            else if (m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+            else if (OutputCpp())
             {
                 SetDefaultOperatorBindingsCpp();
             }
-            else if (m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            else if (OutputJava())
             {
                 System.Console.WriteLine("Warning: No operator bindings are possible for output language Java");
             }
-            else if (m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            else if (OutputCSharp())
             {
                 SetDefaultOperatorBindingsCSharp();
             }
@@ -1132,8 +1132,40 @@ namespace G25
                 m_inlineFunctions = false;
         }
 
+        /// <returns>true when output language is Java.</returns>
+        public bool OutputJava() {
+            return m_outputLanguage == OUTPUT_LANGUAGE.JAVA;
+        }
 
+        /// <returns>true when output language is C#.</returns>
+        public bool OutputCSharp()
+        {
+            return m_outputLanguage == OUTPUT_LANGUAGE.CSHARP;
+        }
 
+        /// <returns>true when output language is C# or Java.</returns>
+        public bool OutputCSharpOrJava()
+        {
+            return OutputCSharp() || OutputJava();
+        }
+
+        /// <returns>true when output language is C.</returns>
+        public bool OutputC()
+        {
+            return m_outputLanguage == OUTPUT_LANGUAGE.C;
+        }
+
+        /// <returns>true when output language is C++.</returns>
+        public bool OutputCpp()
+        {
+            return m_outputLanguage == OUTPUT_LANGUAGE.CPP;
+        }
+
+        /// <returns>true when output language is C++ or C.</returns>
+        public bool OutputCppOrC()
+        {
+            return OutputCpp() || OutputC();
+        }
 
         /// <summary>
         ///  The copyright of the generated code.

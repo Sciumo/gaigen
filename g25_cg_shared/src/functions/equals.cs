@@ -128,9 +128,9 @@ namespace G25.CG.Shared.Func
             string[] assStr1 = G25.CG.Shared.CodeUtil.GetAssignmentStrings(m_specification, FT, mustCast, BL, FAI[0].MultivectorValue[0], writeZeros);
             string[] assStr2 = G25.CG.Shared.CodeUtil.GetAssignmentStrings(m_specification, FT, mustCast, BL, FAI[1].MultivectorValue[0], writeZeros);
 
-            string BOOL = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "int" : "bool";
-            string TRUE = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
-            string FALSE = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
+            string BOOL = (m_specification.OutputC()) ? "int" : "bool";
+            string TRUE = (m_specification.OutputC()) ? "1" : "true";
+            string FALSE = (m_specification.OutputC()) ? "0" : "false";
 
             { // setup instructions
                 // get tmp storage for 'difference'

@@ -86,7 +86,7 @@ namespace G25.CG.Shared.Func
             // in C language, all arguments are pointers
             if (m_fgs.ArgumentPtr.Length == 0)
             {
-                bool ptr = m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C;
+                bool ptr = m_specification.OutputC();
                 m_fgs.m_argumentPtr = new bool[] { ptr, ptr };
                 m_fgs.m_argumentArr = new bool[] { false, false };
             }

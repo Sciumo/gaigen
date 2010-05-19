@@ -167,12 +167,12 @@ namespace G25.CG.Shared.Func
             string exFuncCall = "";
             {
                 StringBuilder exFuncCallSB = new StringBuilder();
-                if (m_specification.m_outputLanguage != OUTPUT_LANGUAGE.C)
+                if (!m_specification.OutputC())
                     exFuncCallSB.Append("return ");
 
                 exFuncCallSB.Append(exFuncName);
                 exFuncCallSB.Append("(");
-                if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (m_specification.OutputC())
                 {
                     exFuncCallSB.Append(fgs.RETURN_ARG_NAME);
                     exFuncCallSB.Append(", ");
@@ -183,7 +183,8 @@ namespace G25.CG.Shared.Func
                     exFuncCallSB.Append(exVariableNames[i]);
                 }
                 exFuncCallSB.AppendLine(");");
-                if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) {
+                if (m_specification.OutputC())
+                {
                     exFuncCallSB.AppendLine("return;");
                 }
                 exFuncCall = exFuncCallSB.ToString();
@@ -246,7 +247,7 @@ namespace G25.CG.Shared.Func
                     // double n, mul, lc;
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " tmp;"));
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, FT.type + " n, mul, lc;"));
-                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C ? "int" : "bool") + " nullBlade;"));
+                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, (m_specification.OutputC() ? "int" : "bool") + " nullBlade;"));
 
                     // double rCoord = randomValue(), ....;
                     StringBuilder randSB = new StringBuilder();
@@ -292,11 +293,11 @@ namespace G25.CG.Shared.Func
                     I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smv, FT, mustCast, randomSMV, "tmp", randomPtr, declareRandom));
 
                     // n = norm_ret_scalar(tmp);
-                    string emp = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "&" : "";
+                    string emp = (m_specification.OutputC()) ? "&" : "";
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "n = " + m_normFunc[FT.type] + "(" + emp + "tmp);"));
 
                     // lc = largestCoordinate(tmp);
-                    if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (m_specification.OutputC())
                     {
                         I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "lc = " + smvTypeName + "_largestCoordinate(&tmp);"));
                     }
@@ -307,7 +308,7 @@ namespace G25.CG.Shared.Func
 
                     // null = (n == 0) && (lc ! 0)
                     if ((m_smvType.MvType == SMV.MULTIVECTOR_TYPE.ROTOR) || (m_smvType.MvType == SMV.MULTIVECTOR_TYPE.VERSOR))
-                        I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "nullBlade = " + (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C ? "0" : "false") + ";" ));
+                        I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "nullBlade = " + (m_specification.OutputC() ? "0" : "false") + ";"));
                     else I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "nullBlade = ((n == " + FT.DoubleToString(m_specification, 0.0) + ") && (lc != " + FT.DoubleToString(m_specification, 0.0) + "));"));
 
 
@@ -389,9 +390,9 @@ namespace G25.CG.Shared.Func
                 I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, FT.type + " " + MINIMUM_NORM + " = " + FT.DoubleToString(m_specification, 0.0001) + ";"));
                 I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, FT.type + " " + LARGEST_COORDINATE + " = " + FT.DoubleToString(m_specification, 4.0) + ";"));
                 I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs,
-                    ((m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "" : "return ") + 
+                    ((m_specification.OutputC()) ? "" : "return ") + 
                     CF.OutputName + "_ex(" +
-                    ((m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? (G25.fgs.RETURN_ARG_NAME + ", ") : "") + 
+                    ((m_specification.OutputC()) ? (G25.fgs.RETURN_ARG_NAME + ", ") : "") + 
                     FAI[0].Name + ", minimumNorm, " + FAI[0].Name + " * largestCoordinate);"));
 
                 // generate comment
@@ -399,7 +400,7 @@ namespace G25.CG.Shared.Func
                     m_fgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)") + " */";
 
                 G25.CG.Shared.FuncArgInfo returnArgument = null;
-                if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+                if (m_specification.OutputC()) 
                     returnArgument = new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, m_SMVname, false); // false = compute value
 
                 string returnTypeName = FT.GetMangledName(m_specification, m_SMVname);

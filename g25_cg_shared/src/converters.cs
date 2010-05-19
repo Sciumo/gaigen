@@ -78,7 +78,7 @@ namespace G25.CG.Shared
                         new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, rawDstTypeName, false); // false = compute value
 
                     bool staticFunc = Functions.OutputStaticFunctions(m_specification);
-                    if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (m_specification.OutputC())
                     {
                         Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
                             "void", null, funcName, returnArgument, FAI, FT, mustCast, returnArgument.Type as G25.SMV,

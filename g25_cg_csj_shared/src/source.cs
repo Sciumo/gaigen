@@ -298,6 +298,11 @@ namespace G25.CG.CSJ
 
         } // end of GenerateTables()
 
+        public static void WriteRandomGenerator(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            cgd.m_cog.EmitTemplate(SB, "randomNumberGenerator");
+        }
+
         public static void WriteSetZeroCopyFloats(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
             // set to zero / copy floats

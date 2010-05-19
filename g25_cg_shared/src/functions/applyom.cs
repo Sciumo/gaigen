@@ -106,7 +106,7 @@ namespace G25.CG.Shared.Func
                         // if a match is found in the domain, add range vector to m_returnValue
                         if (domainBlades[c].bitmap == inputBlade.bitmap)
                         {
-                            bool ptr = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                            bool ptr = m_specification.OutputC();
                             RefGA.Multivector omColumnValue = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(m_specification, m_om.DomainSmvForGrade(inputBlade.Grade())[c], tmpFAI[0].Name, ptr);
                             RefGA.Multivector inputBladeScalarMultiplier = new RefGA.Multivector(new RefGA.BasisBlade(inputBlade, 0));
                             RefGA.Multivector domainBladeScalarMultiplier = new RefGA.Multivector(new RefGA.BasisBlade(domainBlades[c], 0));

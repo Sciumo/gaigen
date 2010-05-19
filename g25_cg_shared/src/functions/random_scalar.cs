@@ -99,19 +99,41 @@ namespace G25.CG.Shared.Func
             StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
             string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
 
-            declSB.AppendLine("/** Generates a random " + m_functionNameFloatType +
-                " in [0.0 1.0) interval using the " + ((m_generatorType == PRGtype.LIBC) ? "c library rand() function" : "mersenne twister method") + " */");
 
             G25.FloatType FT = m_specification.GetFloatType(m_functionNameFloatType);
             string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
 
-            declSB.Append(m_functionNameFloatType + " " + funcName + "();\n");
+            string generatorType = " unknown method";
+            if (m_specification.OutputCSharp())
+                generatorType = "System.Random class";
+            else if (m_specification.OutputJava())
+                generatorType = "java.util.Random";
+            else if (m_generatorType == PRGtype.LIBC)
+                generatorType = "c library rand() function";
+            else if (m_generatorType == PRGtype.LIBC)
+                generatorType = "mersenne twister method";
 
-            defSB.Append(
-                G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ") +
-                m_functionNameFloatType + " " + funcName + "() {\n");
+            string comment = "Generates a random " + m_functionNameFloatType +
+                " in [0.0 1.0) interval using the " + generatorType;
 
-            if (m_generatorType == PRGtype.LIBC)
+            if (m_specification.OutputCppOrC()) {
+                Util.WriteFunctionComment(declSB, m_specification, 0, comment, null, null);
+                declSB.Append(m_functionNameFloatType + " " + funcName + "();\n");
+            }
+            else Util.WriteFunctionComment(defSB, m_specification, 0, comment, null, null);
+
+            string ACCESS = "";
+            if (m_specification.OutputCSharp())
+                ACCESS = "public static ";
+            else if (m_specification.OutputJava())
+                ACCESS = "public final static ";
+            defSB.Append(inlineStr + ACCESS + m_functionNameFloatType + " " + funcName + "() {\n");
+
+            if (m_specification.OutputCSharpOrJava())
+            {
+                defSB.Append("\treturn (" + m_functionNameFloatType + ")NextRandomDouble();\n");
+            }
+            else if (m_generatorType == PRGtype.LIBC)
             {
                 // write template to file?
                 if (m_functionNameFloatType == "float")
@@ -134,10 +156,17 @@ namespace G25.CG.Shared.Func
             defSB.Append("}\n");
 
             // seeder decls:
-            declSB.AppendLine("/** Seeds the random number generator for  " + m_functionNameFloatType + " */");
-            declSB.AppendLine("void " + funcName + "_seed(unsigned int seed);");
-            declSB.AppendLine("/** Seeds the random number generator for  " + m_functionNameFloatType + " with the current time*/");
-            declSB.AppendLine("void " + funcName + "_timeSeed();");
+            string seedComment = "Seeds the random number generator for  " + m_functionNameFloatType;
+            string timeSeedComment = "Seeds the random number generator for  " + m_functionNameFloatType + " with the current time";
+            if (m_specification.OutputCppOrC())
+            {
+                Util.WriteFunctionComment(declSB, m_specification, 0, seedComment, null, null);
+                declSB.AppendLine("void " + funcName + "_seed(unsigned int seed);");
+                Util.WriteFunctionComment(declSB, m_specification, 0, timeSeedComment, null, null);
+                declSB.AppendLine("void " + funcName + "_timeSeed();");
+            }
+
+            // todo: comment for C# and Java
 
             // seeder defs:
             defSB.AppendLine(inlineStr + "void " + funcName + "_seed(unsigned int seed) {");

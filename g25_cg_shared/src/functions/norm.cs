@@ -164,7 +164,7 @@ namespace G25.CG.Shared.Func
             StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
 
             string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
-            string refPtrStr = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "*" : "&";
+            string refPtrStr = (m_specification.OutputC()) ? "*" : "&";
 
             string funcDecl = FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(const " + FAI[0].MangledTypeName + " " + refPtrStr + FAI[0].Name + ")";
             declSB.AppendLine("/** internal conversion function (this is just a pass through) */");
@@ -173,7 +173,7 @@ namespace G25.CG.Shared.Func
 
             defSB.Append(inlineStr + funcDecl);
             defSB.AppendLine(" {");
-            if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (m_specification.OutputC())
             {
                 defSB.AppendLine("\t" + FT.GetMangledName(m_specification, scalarSMV.Name) + " tmp;");
                 defSB.AppendLine("\t" + funcName + "(&tmp, " + FAI[0].Name + ");");
@@ -201,8 +201,8 @@ namespace G25.CG.Shared.Func
 
             string inlineStr = G25.CG.Shared.Util.GetInlineString(m_specification, m_specification.m_inlineFunctions, " ");
             string ptrSymbol = "";
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ptrSymbol = "*";
-            else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) ptrSymbol = "&";
+            if (S.OutputC()) ptrSymbol = "*";
+            else if (S.OutputCpp()) ptrSymbol = "&";
 
             string funcDecl = FT.type + " " + funcName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(const " + FAI[0].MangledTypeName + " " + ptrSymbol + FAI[0].Name + ")";
             declSB.AppendLine("/** internal conversion function */");

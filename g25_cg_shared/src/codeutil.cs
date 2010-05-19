@@ -58,7 +58,7 @@ namespace G25.CG.Shared
 
 
             // C++: override "this->" to ""
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+            if (S.OutputCpp())
             {
                 memberPrefix = "m_";
                 if ((smvName == SmvUtil.THIS) && (ptr == true))
@@ -69,8 +69,7 @@ namespace G25.CG.Shared
             }
 
             // C#, Java: override "this." to ""
-            else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ||
-                (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA))
+            else if (S.OutputCSharpOrJava())
             {
                 memberPrefix = "m_";
                 if ((smvName == SmvUtil.THIS) && (ptr == false))
@@ -192,11 +191,11 @@ namespace G25.CG.Shared
             StringBuilder SB = new StringBuilder();
             string smvName = FT.GetMangledName(S, smv.Name);
 
-            string STATIC_MEMBER_ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) ? "::" : ".";
+            string STATIC_MEMBER_ACCESS = (S.OutputCpp()) ? "::" : ".";
 
             SB.Append('\t', nbTabs);
             SB.Append("return ");
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) || (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA))
+            if (S.OutputCSharpOrJava())
                 SB.Append("new ");
             SB.Append(smvName);
             SB.Append("(");

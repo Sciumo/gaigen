@@ -221,7 +221,7 @@ namespace G25.CG.Shared.Func
                     StringBuilder defSB = (m_specification.m_inlineFunctions) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
 
                     string funcName = m_fgs.OutputName;
-                    if (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (m_specification.OutputC())
                         funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
 
                     System.Collections.Hashtable argTable = new System.Collections.Hashtable();

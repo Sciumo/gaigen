@@ -490,7 +490,7 @@ namespace G25
                 }
             }
 
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) && 
+            if ((S.OutputC()) && 
                 (MemoryAllocationMethod == MEM_ALLOC_METHOD.DYNAMIC))
                 throw new G25.UserException("Dynamic memory allocation of general multivector type " + Name + " is not supported for the 'C' language.");
 
@@ -867,7 +867,6 @@ namespace G25
             // todo: make adjustment for SMVOM here (or make this function virtual)
             if (CS == COORD_STORAGE.ARRAY)
             {
-                //string coordArrayName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C)  ? "c" : "m_c";
                 string coordArrayName = "c";
                 return coordArrayName + "[" + nonConstCoordIdx + "]";
             }

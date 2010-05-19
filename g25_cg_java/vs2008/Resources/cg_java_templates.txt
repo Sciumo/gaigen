@@ -956,3 +956,9 @@ ${CODEBLOCK igp_float_GMV_body}
 <%FT.type%> _N2_ = <%norm2FuncName%>(<%arg2name%>);
 return <%mulFuncName%>(<%reverseFuncName%>(<%arg2name%>), <%arg1name%> / _N2_);
 ${ENDCODEBLOCK}
+
+${CODEBLOCK randomNumberGenerator}
+    // I found sources on the internet which claim that java.util.Random is thread safe.
+    // If it turns out not to be thread-safe, port the C# RNG code to Java.
+    protected final java.util.Random s_randomGenerator = new java.util.Random();
+${ENDCODEBLOCK}

@@ -53,7 +53,7 @@ namespace G25.CG.Shared
         {
             if (S.m_GOM == null) return; // nothing to do if GOM not defiend
 
-            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbBaseTabs = (S.OutputCSharpOrJava()) ? 1 : 0;
             int nbCodeTabs = nbBaseTabs + 1;
 
             G25.GMV gmv = S.m_GMV;
@@ -146,12 +146,12 @@ namespace G25.CG.Shared
                         if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
                         else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS = "protected internal static ";
 
-                        string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
-                        string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
+                        string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
+                        string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
 
                         string funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.GetMangledName(S, gom.Name) + " " + OM_PTR + nameGOM + ", " + CONST + FT.type + ARR + nameSrcGMV + ", " + FT.type + ARR + nameDstGMV + ")";
 
-                        if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                        if (S.OutputCppOrC())
                         {
                             Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
                             cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");

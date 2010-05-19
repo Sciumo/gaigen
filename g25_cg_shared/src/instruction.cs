@@ -468,7 +468,7 @@ namespace G25.CG.Shared
             }
             else if (m_type is G25.SMV)
             {
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     bool ptr = true;
                     bool declareVariable = false;

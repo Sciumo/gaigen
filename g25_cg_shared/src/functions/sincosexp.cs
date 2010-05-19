@@ -476,7 +476,7 @@ namespace G25.CG.Shared.Func
             // how to access the scalar coordinate of the return type:
             if (m_gmv.GetName() == m_returnType.GetName())
             {
-                string emp = (m_specification.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "&" : "";
+                string emp = (m_specification.OutputC()) ? "&" : "";
                 args["scalarTmp1"] = FT.GetMangledName(m_specification, m_returnTypeName) + "_scalar(" + emp + "tmp1)";
             }
             else

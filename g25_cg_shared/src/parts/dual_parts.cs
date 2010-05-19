@@ -108,7 +108,7 @@ namespace G25.CG.Shared
             bool ptr = true;
             int allGroups = -1;
             bool mustCast = false;
-            int nbBaseTabs = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? 1 : 0;
+            int nbBaseTabs = (S.OutputCSharpOrJava()) ? 1 : 0;
             int nbCodeTabs = nbBaseTabs + 1;
             bool writeZeros = false;
 
@@ -194,12 +194,12 @@ namespace G25.CG.Shared
                                     string ACCESS = "";
                                     if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected final static ";
                                     else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
-                                    string ARR = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "[] " : " *";
-                                    string CONST = ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)) ? "" : "const ";
+                                    string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
+                                    string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
 
                                     string funcDecl = ACCESS + "void " + funcName + "(" + CONST + FT.type + ARR + name1 + ", " + FT.type + ARR + name3 + ")";
 
-                                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.C) || (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+                                    if (S.OutputCppOrC())
                                     {
                                         Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
                                         cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");

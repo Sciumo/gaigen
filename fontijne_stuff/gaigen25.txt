@@ -151,7 +151,7 @@ Maybe fix the float type stuff
 			  
 			SMV:
 				member function shortcuts (for regular functions)
-				converters (SMV->SMV and such)
+				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
 		
@@ -161,11 +161,15 @@ Maybe fix the float type stuff
 					old-school compress 2: array of coordinates -> 
 				    expand (needs ptr class?)
 			 
+			 
+			 
 			GOM
 			 V members vars
+			 all other stuff
 			 
 			SOM
 			 V members vars
+			 all other stuff
 			
 
 			parser 
@@ -231,6 +235,18 @@ Correcting design mistakes:
 -> rename NonConstBasisBlade & such to 'VariableBasisBlade'
 	
 -be able to get dependency right for the template code (to simplify the test stuff)
+
+->do not write functions directly to some string builder or whatever, but to an instance of the the 'GeneratedFunction' class
+	 each generated function goes into its own class which describes:
+	-where the function should go
+	-function name
+	-access level
+	-arguments
+	-return type
+	-the code (a string)
+	-comments
+	Am extra level of code then manages the output of the functions to the right place
+	including generation of comments, declarations and definitions.
 
 ---------------------------------------------------
  
