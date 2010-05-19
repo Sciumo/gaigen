@@ -176,8 +176,8 @@ namespace G25.CG.Shared
 
         public static string GetNamespaceName(G25.Specification S)
         {
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) return S.m_namespace + "_pkg";
-            else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) return S.m_namespace + "_ns";
+            if (S.OutputJava()) return S.m_namespace + "_pkg";
+            else if (S.OutputCSharp()) return S.m_namespace + "_ns";
             else return S.m_namespace;
         }
 
@@ -452,7 +452,7 @@ namespace G25.CG.Shared
 
         private static string GetZeroFuncName(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Zero" : "zero";
+            return (S.OutputCSharp()) ? "Zero" : "zero";
         }
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace G25.CG.Shared
 
         private static string GetCopyFuncName(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "Copy" : "copy";
+            return (S.OutputCSharp()) ? "Copy" : "copy";
         }
 
         /// <summary>
@@ -531,7 +531,7 @@ namespace G25.CG.Shared
         /// <returns>A unique name for the testing function of 'funcName'.</returns>
         public static string GetTestingFunctionName(Specification S, CGdata cgd, string funcName)
         {
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 return "test_" + funcName;
             else return "test_" + funcName + cgd.GetDontMangleUniqueId();
         }
@@ -549,9 +549,9 @@ namespace G25.CG.Shared
         {
             if (inline)
             {
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                     return "";
-                else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP)
+                else if (S.OutputCpp())
                     return "inline" + postFixStr;
                 else return "inline_str_to_do" + postFixStr;
             }
@@ -601,12 +601,12 @@ namespace G25.CG.Shared
                 {
                     if (!extendsOpened)
                     {
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                        if (S.OutputCSharp())
                         {
                             SB.Append(" : ");
                             extendsOpened = implementsOpened = true;
                         }
-                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                        else if (S.OutputJava())
                         {
                             SB.Append(" extends ");
                             extendsOpened = true;
@@ -619,7 +619,7 @@ namespace G25.CG.Shared
                 }
             }
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            if (S.OutputJava())
                 commaRequired = false;
 
             if (implements != null)
@@ -628,12 +628,12 @@ namespace G25.CG.Shared
                 {
                     if (!implementsOpened)
                     {
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                        if (S.OutputCSharp())
                         {
                             SB.Append(" : ");
                             extendsOpened = implementsOpened = true;
                         }
-                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+                        else if (S.OutputJava())
                         {
                             SB.Append(" implements ");
                             extendsOpened = true;
@@ -653,7 +653,7 @@ namespace G25.CG.Shared
         private static void WriteMultilineComment(StringBuilder SB, Specification S, int nbTabs, string str)
         {
             string lineOpen = new string('\t', nbTabs);
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))
+            if ((S.OutputJava()) || (S.OutputC()))
                 lineOpen = lineOpen + " * ";
             else lineOpen = lineOpen + "/// ";
 
@@ -702,7 +702,7 @@ namespace G25.CG.Shared
 
             WriteMultilineComment(SB, S, nbTabs, mainComment);
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            if (S.OutputCSharp())
             {
                 SB.Append('\t', nbTabs);
                 SB.AppendLine("/// </summary>");
@@ -732,7 +732,7 @@ namespace G25.CG.Shared
                     }
                     WriteMultilineComment(SB, S, nbTabs, P.Value2);
 
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                    if (S.OutputCSharp())
                     {
                         SB.Append('\t', nbTabs);
                         SB.AppendLine("/// </param>");
@@ -761,7 +761,7 @@ namespace G25.CG.Shared
                         break;
                 }
                 WriteMultilineComment(SB, S, nbTabs, returnComment);
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+                if (S.OutputCSharp())
                 {
                     SB.Append('\t', nbTabs);
                     SB.AppendLine("/// </returns>");
@@ -769,7 +769,7 @@ namespace G25.CG.Shared
             }
 
             // end of comment
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) || (S.m_outputLanguage == OUTPUT_LANGUAGE.C))
+            if ((S.OutputJava()) || (S.OutputC()))
             {
                 SB.Append('\t', nbTabs);
                 SB.AppendLine(" */");

@@ -82,7 +82,7 @@ namespace G25.CG.CPP
                 SB.Append(" &");
                 SB.Append(FGS.ArgumentVariableNames[1]);
             }
-            else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) && op.IsPostfixUnary())
+            else if ((S.OutputCpp()) && op.IsPostfixUnary())
             { // add a dummy int argument so C++ knows this is a unary postfix op
                 SB.Append(", int");
             }
@@ -96,7 +96,7 @@ namespace G25.CG.CPP
         {
             StringBuilder SB = new StringBuilder();
 
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) && op.IsUnaryInPlace())
+            if ((S.OutputCpp()) && op.IsUnaryInPlace())
             {
                 if (op.IsPrefix)
                 {
@@ -126,7 +126,7 @@ namespace G25.CG.CPP
         private static void WriteOperatorBody(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.fgs FGS, G25.Operator op, string funcName)
         {
             bool returnTypeEqualsFirstArgument = FGS.ReturnTypeName == FGS.ArgumentTypeNames[0];
-            if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) && op.IsUnaryInPlace() && returnTypeEqualsFirstArgument) // special unary case for C++
+            if ((S.OutputCpp()) && op.IsUnaryInPlace() && returnTypeEqualsFirstArgument) // special unary case for C++
             {
                 if (op.IsPrefix)
                 {

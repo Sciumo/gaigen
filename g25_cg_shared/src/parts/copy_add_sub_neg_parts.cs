@@ -314,8 +314,8 @@ namespace G25.CG.Shared
         {
             StringBuilder SB = new StringBuilder();
 
-            string TRUE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
-            string FALSE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
+            string TRUE = (S.OutputC()) ? "1" : "true";
+            string FALSE = (S.OutputC()) ? "0" : "false";
 
 
             SB.Append("\tint i;\n");
@@ -341,8 +341,8 @@ namespace G25.CG.Shared
         {
             StringBuilder SB = new StringBuilder();
 
-            string TRUE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
-            string FALSE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
+            string TRUE = (S.OutputC()) ? "1" : "true";
+            string FALSE = (S.OutputC()) ? "0" : "false";
 
             for (int i = 0; i < S.m_GMV.Group(groupIdx).Length; i++)
                 SB.Append("\t\tif (((" + src1 + "[" + i + "] - " + src2 + "[" + i + "]) < -" + epsilon + ") || ((" + src1 + "[" + i + "] - " + src2 + "[" + i + "]) > " + epsilon + ")) return " + FALSE + ";\n");
@@ -364,8 +364,8 @@ namespace G25.CG.Shared
         {
             StringBuilder SB = new StringBuilder();
 
-            string TRUE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
-            string FALSE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
+            string TRUE = (S.OutputC()) ? "1" : "true";
+            string FALSE = (S.OutputC()) ? "0" : "false";
 
             SB.Append("\tint i;\n");
             SB.Append("\tfor (i = 0; i < " + (S.m_GMV.Group(groupIdx).Length).ToString() + "; i++)\n");
@@ -388,8 +388,8 @@ namespace G25.CG.Shared
         {
             StringBuilder SB = new StringBuilder();
 
-            string TRUE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
-            string FALSE = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
+            string TRUE = (S.OutputC()) ? "1" : "true";
+            string FALSE = (S.OutputC()) ? "0" : "false";
 
             for (int i = 0; i < S.m_GMV.Group(groupIdx).Length; i++)
                 SB.Append("\t\tif ((" + src + "[" + i + "] < -" + epsilon + ") || (" + src + "[" + i + "] > " + epsilon + ")) return " + FALSE + ";\n");
@@ -611,10 +611,10 @@ namespace G25.CG.Shared
                         }
 
                         string ACCESS = "";
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected final static ";
-                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
+                        if (S.OutputJava()) ACCESS = "protected final static ";
+                        else if (S.OutputCSharp()) ACCESS  = "protected internal static ";
 
-                        string BOOL = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "int" : "bool";
+                        string BOOL = (S.OutputC()) ? "int" : "bool";
                         string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
                         string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
                         string funcDecl;
@@ -686,14 +686,14 @@ namespace G25.CG.Shared
 
             SB.AppendLine("int aidx = 0, bidx = 0, cidx = 0;");
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
-            string bgu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
-            string bc = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
-            string resultCoordPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? resultName + "->c" : "c";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string bc = (S.OutputC()) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
+            string resultCoordPtr = (S.OutputC()) ? resultName + "->c" : "c";
 
             string guSymbol = (NOT_HP) ? "|" : "&";
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 SB.AppendLine(resultName + "->gu = " + agu + " " + guSymbol + " " + bgu + ";");
             }
@@ -883,13 +883,13 @@ namespace G25.CG.Shared
 
             StringBuilder SB=  new StringBuilder();
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
-            string resultCoordPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? resultName + "->c" : "c";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string resultCoordPtr = (S.OutputC()) ? resultName + "->c" : "c";
 
             SB.AppendLine("int idx = 0;");
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 SB.AppendLine(resultName + "->gu = " + agu + ";");
             }
@@ -972,11 +972,11 @@ namespace G25.CG.Shared
             // for each group
             // test if present, then code / negate, etc
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
-            string falseStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
-            string trueStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
+            string falseStr = (S.OutputC()) ? "0" : "false";
+            string trueStr = (S.OutputC()) ? "1" : "true";
 
             for (int g = 0; g < nbGroups; g++)
             {
@@ -1014,8 +1014,8 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
             SB.AppendLine("int idx = 0;");
             SB.AppendLine("int bitmap = 0;");
@@ -1065,16 +1065,16 @@ namespace G25.CG.Shared
 
             SB.AppendLine("int aidx = 0, bidx = 0;");
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
-            string bgu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
-            string bc = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string bc = (S.OutputC()) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
 
             // get number of groups, and possible assurances that a group is always present:
             int nbGroups = gmv.NbGroups;
 
-            string falseStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "0" : "false";
-            string trueStr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? "1" : "true";
+            string falseStr = (S.OutputC()) ? "0" : "false";
+            string trueStr = (S.OutputC()) ? "1" : "true";
 
             // for each group
             // test if present in both-> then add both, etc
@@ -1141,7 +1141,7 @@ namespace G25.CG.Shared
                     if (gmv.Group(g)[0].Grade() == gradeIdx)
                         groupBitmap |= (1 << g);
 
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     return gradeFuncName + "(" + resultName + ", " + FAI[0].Name + ", " + groupBitmap + ");";
                 }
@@ -1157,10 +1157,10 @@ namespace G25.CG.Shared
                 // get indices into coordinates for input and output
                 SB.AppendLine("int aidx = 0, cidx = 0;");
 
-                string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-                string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+                string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+                string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     SB.AppendLine(resultName + "->gu = " + agu +" & " + groupBitmapName + ";");
                 }
@@ -1171,7 +1171,7 @@ namespace G25.CG.Shared
                 }
 
 
-                string resultCoordPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? resultName + "->c" : "c";
+                string resultCoordPtr = (S.OutputC()) ? resultName + "->c" : "c";
 
                 // for each group, test if present
                 int nbGroups = gmv.NbGroups;
@@ -1236,9 +1236,9 @@ namespace G25.CG.Shared
             string normFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, (funcType == DIVCODETYPE.UNIT) ? "norm" : "norm2", new String[] { gmv.Name }, FT, M.m_name);
             string normVarName = (funcType == DIVCODETYPE.UNIT) ? "n" : "n2";
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
-            string resultCoordPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? resultName + "->c" : "c";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string resultCoordPtr = (S.OutputC()) ? resultName + "->c" : "c";
 
             SB.AppendLine("int idx = 0;");
             if ((funcType == DIVCODETYPE.UNIT) || (funcType == DIVCODETYPE.VERSOR_INVERSE))
@@ -1248,7 +1248,7 @@ namespace G25.CG.Shared
             }
 
             // copy group usage
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 SB.AppendLine(resultName + "->gu = " + agu + ";");
             }
@@ -1315,12 +1315,12 @@ namespace G25.CG.Shared
 
             SB.AppendLine("int idxa = 0, idxc = 0;");
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
-            string resultCoordPtr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? resultName + "->c" : "C";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string resultCoordPtr = (S.OutputC()) ? resultName + "->c" : "C";
 
             // copy group usage / allocate memory for result
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 SB.AppendLine(resultName + "->gu = " + agu + " | ((" + FAI[2].Name + " != 0.0) ? GRADE_0 : 0); // '| GRADE_0' to make sure the scalar part is included");
             }
@@ -1393,7 +1393,7 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 SB.AppendLine(FT.type + " val" + " = " +
                     FAI[0].MangledTypeName + "_" + gmv.Group(0)[0].ToLangString(S.m_basisVectorNames) + "(" + FAI[0].Name + ")" +

@@ -27,7 +27,7 @@ namespace G25.CG.CSJ
         /// </summary>
         public static string GetFunctionName(Specification S, string name)
         {
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            if (S.OutputJava())
                 return name.Substring(0, 1).ToLower() + name.Substring(1);
             else return name.Substring(0, 1).ToUpper() + name.Substring(1);
         }

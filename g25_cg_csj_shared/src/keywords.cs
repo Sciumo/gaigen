@@ -25,56 +25,56 @@ namespace G25.CG.CSJ
 
         public static string PublicAccessModifier(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA)
+            return (S.OutputJava())
                 ? "public final"
                 : "public";
         }
 
         public static string ProtectedStaticAccessModifier(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
                 ? "static protected internal"
                 : "static protected final";
         }
 
         public static string PackageProtectedAccessModifier(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
                 ? "protected internal"
                 : "protected";
         }
 
         public static string StringType(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
                 ? "string"
                 : "String";
         }
 
         public static string GroupBitmapType(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
                 ? "GroupBitmap"
                 : "int";
         }
 
         public static string ConstAccessModifier(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
             ? "const"
             : "static final";
         }
 
         public static string ConstArrayAccessModifier(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
             ? "static readonly"
             : "static final";
         }
 
         public static string BoolType(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
             ? "bool"
             : "boolean";
         }

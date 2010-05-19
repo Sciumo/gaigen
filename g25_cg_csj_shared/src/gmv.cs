@@ -33,26 +33,26 @@ namespace G25.CG.CSJ
 
         public static string GetGroupBitmapType(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? GROUP_BITMAP : "int";
+            return (S.OutputCSharp()) ? GROUP_BITMAP : "int";
         }
 
         public static string GetAllocateGroupsString(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return (S.OutputCSharp())
                 ? ALLOCATE_GROUPS_CSHARP
                 : ALLOCATE_GROUPS_JAVA;
         }
 
         public static string GetReserveGroupString(Specification S, int groupIdx)
         {
-            return ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP)
+            return ((S.OutputCSharp())
                 ? SET_RESERVE_GROUP_CSHARP
                 : SET_RESERVE_GROUP_JAVA) + groupIdx;
         }
 
         public static string GetSetFuncName(Specification S)
         {
-            return (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? SET_CSHARP : SET_JAVA;
+            return (S.OutputCSharp()) ? SET_CSHARP : SET_JAVA;
         }
 
         /// <summary>

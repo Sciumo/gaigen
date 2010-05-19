@@ -66,7 +66,7 @@ namespace G25.CG.Shared
             // get symbolic multivector value
             RefGA.Multivector[] M1 = null;
             {
-                bool ptr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                bool ptr = (S.OutputC());
                 int allGroups = -1;
                 M1 = G25.CG.Shared.Symbolic.GMVtoSymbolicMultivector(S, gmv, nameSrcGMV, ptr, allGroups);
             }
@@ -94,7 +94,7 @@ namespace G25.CG.Shared
                             // if a match is found in the domain, add range vector to m_returnValue
                             if (domainBlades[c].bitmap == inputBlade.bitmap)
                             {
-                                bool ptr = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                                bool ptr = (S.OutputC());
                                 RefGA.Multivector omColumnValue = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, gom.DomainSmvForGrade(inputBlade.Grade())[c], nameGOM, ptr);
                                 RefGA.Multivector inputBladeScalarMultiplier = new RefGA.Multivector(new RefGA.BasisBlade(inputBlade, 0));
                                 RefGA.Multivector domainBladeScalarMultiplier = new RefGA.Multivector(new RefGA.BasisBlade(domainBlades[c], 0));
@@ -139,12 +139,12 @@ namespace G25.CG.Shared
                         string comment = "Computes the partial application of a general outermorphism to a general multivector";
 
                         string OM_PTR = "";
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) OM_PTR = "*";
-                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP) OM_PTR = "&";
+                        if (S.OutputC()) OM_PTR = "*";
+                        else if (S.OutputCpp()) OM_PTR = "&";
 
                         string ACCESS = "";
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected static ";
-                        else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS = "protected internal static ";
+                        if (S.OutputJava()) ACCESS = "protected static ";
+                        else if (S.OutputCSharp()) ACCESS = "protected internal static ";
 
                         string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
                         string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
@@ -202,8 +202,8 @@ namespace G25.CG.Shared
             bool initResultToZero = !groupedByGrade;
             SB.Append(GPparts.GetExpandCode(S, cgd, FT, null, resultIsScalar, initResultToZero));
 
-            string bgu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
-            string bc = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
+            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string bc = (S.OutputC()) ? FAI[1].Name + "->c" : FAI[1].Name + ".getC()";
 
             // get number of groups:
             int nbGroups = gmv.NbGroups;

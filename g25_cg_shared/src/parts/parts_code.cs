@@ -61,7 +61,7 @@ namespace G25.CG.Shared
             // merge declarations and definitions go into cgd.m_declSB or cgd.m_defSB, depending on the language
             for (int i = 0; i < NB_PARTS_CODE; i++)
             {
-//                        StringBuilder SB = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? cgd.m_defSB : cgd.m_declSB;
+//                        StringBuilder SB = (S.OutputC()) ? cgd.m_defSB : cgd.m_declSB;
                 StringBuilder SB = cgd.m_defSB;
                 SB.Append(tmpCgd[i].m_declSB);
             }

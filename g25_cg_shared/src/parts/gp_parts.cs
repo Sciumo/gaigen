@@ -110,7 +110,7 @@ namespace G25.CG.Shared
         public static string GetRuntimeComputeGpFuncName(G25.Specification S, G25.FloatType FT, bool fromOutsideRuntimeNamespace)
         {
             string prefix = "";
-            if (fromOutsideRuntimeNamespace && (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+            if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
                 prefix = Main.RUNTIME_NAMESPACE + "::";
             return prefix + S.m_namespace + "_runtimeComputeGp_" + FT.type;
         }
@@ -125,7 +125,7 @@ namespace G25.CG.Shared
         public static string GetRuntimeGpTableName(G25.Specification S, G25.Metric M, int g1, int g2, int gd, bool fromOutsideRuntimeNamespace)
         {
             string prefix = "";
-            if (fromOutsideRuntimeNamespace && (S.m_outputLanguage == OUTPUT_LANGUAGE.CPP))
+            if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
                 prefix = Main.RUNTIME_NAMESPACE + "::";
             return prefix + S.m_namespace + "_runtimeGpProductTable_" + M.m_name + "_" + g1 + "_" + g2 + "_" + gd;
         }
@@ -241,7 +241,7 @@ namespace G25.CG.Shared
                                     }
                                     else
                                     {
-                                        string ACCESS = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "protected final static " : "protected internal static ";
+                                        string ACCESS = (S.OutputJava()) ? "protected final static " : "protected internal static ";
                                         funcDecl = ACCESS + "void " + funcName + "(" + FT.type + "[] " + name1 + ", " + FT.type + "[] " + name2 + ", " + FT.type + "[] " + name3 + ")";
 
                                         // write comment
@@ -312,7 +312,7 @@ namespace G25.CG.Shared
                 {
                     if (!FAI[i].IsScalar())
                     {
-                        if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                        if (S.OutputC())
                             SB.AppendLine(FT.GetMangledName(S, "expand") + "(_" + FAI[i].Name + ", " + FAI[i].Name + ");");
                         else SB.AppendLine(FAI[i].Name + ".expand(_" + FAI[i].Name + ");");
                     }
@@ -344,7 +344,7 @@ namespace G25.CG.Shared
             }
             else
             {
-                string funcName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                string funcName = (S.OutputC())
                     ? FT.GetMangledName(S, "compress")
                     : FT.GetMangledName(S, S.m_GMV.Name) + "_compress";
 
@@ -352,7 +352,7 @@ namespace G25.CG.Shared
                     SB.Append("return ");
 
                 SB.Append(funcName + "(c, ");
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                     SB.Append(resultName + "->c, &(" + resultName + "->gu), ");
                 SB.AppendLine(FT.DoubleToString(S, 0.0) + ", " + GUstr + ");");
             }
@@ -479,8 +479,8 @@ namespace G25.CG.Shared
             if (FAI[0].IsScalar()) GroupAlwaysPresent1[0] = true;
             if (FAI[1].IsScalar()) GroupAlwaysPresent2[0] = true;
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string bgu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
 
             int g1Cond = -1; // grade 1 conditional which is open (-1 = none)
             int g2Cond = -1; // grade 2 conditional which is open (-1 = none)
@@ -577,7 +577,7 @@ namespace G25.CG.Shared
             argTable["arg2name"] = FAI[1].Name;
             argTable["divFuncName"] = divFuncName;
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 argTable["dstName"] = resultName;
 
             bool arg1isGmv = FAI[0].Type is G25.GMV;
@@ -655,8 +655,8 @@ namespace G25.CG.Shared
             SB.AppendLine(FT.type + " c[1], n2 = " + FT.DoubleToString(S, 0.0) + ";");
             SB.AppendLine("int idx = 0;");
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
             for (int g = 0; g < gmv.NbGroups; g++)
             {
@@ -702,7 +702,7 @@ namespace G25.CG.Shared
             }
             else 
             {
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     // get assign code, assign it 
                     bool mustCast = false;
@@ -800,7 +800,7 @@ namespace G25.CG.Shared
             }
             else 
             {
-                if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                if (S.OutputC())
                 {
                     // get assign code, assign it 
                     bool mustCast = false;
@@ -872,7 +872,7 @@ namespace G25.CG.Shared
 
             // get string to be used for grade extraction
             string gradeUsageString;
-            string bgu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {
                 SB.AppendLine("int gradeUsageBitmap;");
@@ -881,7 +881,7 @@ namespace G25.CG.Shared
             else
             {
                 gradeUsageString = bgu;
-                /*if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                /*if (S.OutputC())
                     gradeUsageString = FAI[1].Name + "->gu";
                 else gradeUsageString = FAI[1].Name + ".gu()";*/
             }
@@ -901,7 +901,7 @@ namespace G25.CG.Shared
 
 
 
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
             {
                 // get name of inverse, decl tmp variable for inverse if required
                 string inverseInputName;

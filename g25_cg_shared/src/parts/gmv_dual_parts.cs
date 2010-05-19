@@ -71,7 +71,7 @@ namespace G25.CG.Shared
             string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
 
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+            if (S.OutputC()) 
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             // write function

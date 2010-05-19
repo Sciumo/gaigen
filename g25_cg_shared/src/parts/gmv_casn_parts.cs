@@ -73,11 +73,11 @@ namespace G25.CG.Shared
             // setup return type and argument:
             string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+            if (S.OutputC()) 
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             string funcName = CF.OutputName;
-            //if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            //if (S.OutputC())
               //  funcName = FT.GetMangledName(S, funcName);
 
             // write function
@@ -126,7 +126,7 @@ namespace G25.CG.Shared
 
             // setup return type and argument:
             string returnTypeName = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+            if (S.OutputC()) 
             {
                 returnTypeName = "int";
             }
@@ -181,11 +181,11 @@ namespace G25.CG.Shared
 
 
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C) 
+            if (S.OutputC()) 
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             string funcName = CF.OutputName;
-            //if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            //if (S.OutputC())
               //  funcName = FT.GetMangledName(S, funcName);
 
             // write function
@@ -243,14 +243,14 @@ namespace G25.CG.Shared
             G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
 
             string funcName = CF.OutputName;
-            //if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            //if (S.OutputC())
               //  funcName = FT.GetMangledName(S, funcName);
 
             // setup return type and argument:
             string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
 
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             //StringBuilder tmpSB = new StringBuilder(); // G25.CG.Shared.Functions.WriteFunction() writes to this SB first so we can add the grade index if required
@@ -308,11 +308,11 @@ namespace G25.CG.Shared
             string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
 
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             string funcName = CF.OutputName;
-            //if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            //if (S.OutputC())
               //  funcName = FT.GetMangledName(S, funcName);
 
             // write function
@@ -352,7 +352,7 @@ namespace G25.CG.Shared
             // setup return type and argument:
             string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             // write function
@@ -391,7 +391,7 @@ namespace G25.CG.Shared
             // setup return type and argument:
             String returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
             // write function

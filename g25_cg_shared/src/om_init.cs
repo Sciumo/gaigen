@@ -729,7 +729,7 @@ namespace G25.CG.Shared
 
                     string typeName = FT.GetMangledName(S, som.Name);
                     string funcName = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                     {
                         funcName = typeName + "_setMatrix";
                     }
@@ -747,7 +747,7 @@ namespace G25.CG.Shared
                     G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
 
                     G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+                    if (S.OutputC())
                         returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
 
                     // setup instructions
@@ -755,7 +755,7 @@ namespace G25.CG.Shared
                     {
                         bool mustCast = false;
                         int nbTabs = 1;
-                        string dstName = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                        string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
                         bool dstPtr = true;
                         bool declareDst = false;
                         for (int g = 1; g < som.Domain.Length; g++)
@@ -781,7 +781,7 @@ namespace G25.CG.Shared
                     }
 
                     string comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
-                    bool writeDecl = (S.m_outputLanguage == OUTPUT_LANGUAGE.C);
+                    bool writeDecl = (S.OutputC());
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
 

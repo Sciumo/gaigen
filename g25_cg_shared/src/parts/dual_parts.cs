@@ -192,8 +192,8 @@ namespace G25.CG.Shared
                                     string comment = "Computes the partial " + ((d == 0) ? "un" : "") + "dual (w.r.t. full space) of a multivector.";
 
                                     string ACCESS = "";
-                                    if (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ACCESS = "protected final static ";
-                                    else if (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ACCESS  = "protected internal static ";
+                                    if (S.OutputJava()) ACCESS = "protected final static ";
+                                    else if (S.OutputCSharp()) ACCESS  = "protected internal static ";
                                     string ARR = (S.OutputCSharpOrJava()) ? "[] " : " *";
                                     string CONST = (S.OutputCSharpOrJava()) ? "" : "const ";
 
@@ -250,8 +250,8 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            string agu = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
-            string ac = (S.m_outputLanguage == OUTPUT_LANGUAGE.C) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
+            string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
+            string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";
 
             // allocate memory to store result:
             SB.AppendLine("int idx = 0;");

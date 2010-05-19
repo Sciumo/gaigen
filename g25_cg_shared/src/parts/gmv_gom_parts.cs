@@ -68,7 +68,7 @@ namespace G25.CG.Shared
             // setup return type and argument:
             String returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
             G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.m_outputLanguage == OUTPUT_LANGUAGE.C)
+            if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value
 
 //                    string funcName = FT.GetMangledName(S, CF.OutputName);

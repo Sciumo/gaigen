@@ -126,7 +126,7 @@ namespace G25.CG.CSJ
             int nbTabs = 1;
             G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "The order of coordinates (this is the type of the first argument of coordinate-handling functions.", null, null);
 
-            string enumAccessModifier = (S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) ? "public" : "private";
+            string enumAccessModifier = (S.OutputCSharp()) ? "public" : "private";
 
             SB.AppendLine("\t" + enumAccessModifier + " enum " + typeName + " {");
             SB.AppendLine("\t\t" + constantName);
@@ -441,7 +441,7 @@ namespace G25.CG.CSJ
 
             string funcName = GMV.GetSetFuncName(S);
 
-            string FINAL = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "final " : "";
+            string FINAL = (S.OutputJava()) ? "final " : "";
             string funcDecl = "\tpublic " + FINAL + "void " + funcName + "(" + FINAL + srcClassName + " src)";
 
             defSB.Append(funcDecl);
@@ -541,11 +541,11 @@ namespace G25.CG.CSJ
                 string funcName = Util.GetFunctionName(S, ((returnBitmap) ? "largestBasisBlade" : "largestCoordinate"));
 
                 string funcDecl;
-                if ((S.m_outputLanguage == OUTPUT_LANGUAGE.CSHARP) && returnBitmap)
+                if ((S.OutputCSharp()) && returnBitmap)
                 {
                     funcDecl = FT.type + " " + funcName + "(int bm) ";
                 }
-                else if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                else if ((S.OutputJava()) && returnBitmap)
                 {
                     funcDecl = FT.type + "[] " + funcName + "() ";
                 }
@@ -554,12 +554,12 @@ namespace G25.CG.CSJ
                     funcDecl = FT.type + " " + funcName + "()";
                 }
 
-                string FINAL = (S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) ? "final " : "";
+                string FINAL = (S.OutputJava()) ? "final " : "";
                 defSB.Append("\tpublic " + FINAL + funcDecl);
                 {
                     defSB.AppendLine(" {");
 
-                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                    if ((S.OutputJava()) && returnBitmap)
                         defSB.AppendLine("\t\tint bm;");
 
                     int startIdx = 0;
@@ -584,7 +584,7 @@ namespace G25.CG.CSJ
                         defSB.AppendLine("}");
                     }
 
-                    if ((S.m_outputLanguage == OUTPUT_LANGUAGE.JAVA) && returnBitmap)
+                    if ((S.OutputJava()) && returnBitmap)
                     {
                         defSB.AppendLine("\t\treturn new " + FT.type + "[]{maxValue, (" + FT.type + ")bm};");
                     }
