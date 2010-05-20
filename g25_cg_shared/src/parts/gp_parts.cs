@@ -676,7 +676,9 @@ namespace G25.CG.Shared
             }
 
 
-            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+            if (resultIsScalar)
+                SB.AppendLine("return cc[0][0];");
+            else SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
             
             return SB.ToString();
 
@@ -790,7 +792,7 @@ namespace G25.CG.Shared
             if (S.OutputCSharpOrJava())
             {
                 SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
-                SB.AppendLine(FT.type + "[][] ac = a.c();");
+                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
             }
             else SB.AppendLine(FT.type + " c[1];");
 
@@ -886,7 +888,7 @@ namespace G25.CG.Shared
             if (S.OutputCSharpOrJava())
             {
                 SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
-                SB.AppendLine(FT.type + "[][] ac = a.c();");
+                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
             }
             else {
                 bool resultIsScalar = true;

@@ -249,7 +249,7 @@ namespace G25.CG.Shared
                 G25.CG.Shared.FuncArgInfo returnArgument = null;
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, dstSmv.Name, false); // false = compute value
 
-                bool staticFunc = false;
+                bool staticFunc = S.OutputCSharpOrJava();
                 G25.CG.Shared.Functions.WriteAssignmentFunction(S, cgd,
                     S.m_inlineFunctions, staticFunc, "void", null, funcName, returnArgument, FAI, FT, mustCast, dstSmv, dstName, ptr,
                     value);
@@ -262,7 +262,7 @@ namespace G25.CG.Shared
                 for (int i = 0; i < FAI.Length; i++)
                     mustCast |= returnFT.MustCastIfAssigned(S, FAI[i].FloatType);
 
-                bool staticFunc = false;
+                bool staticFunc = S.OutputCSharpOrJava();
                 G25.CG.Shared.Functions.WriteReturnFunction(S, cgd,
                     S.m_inlineSet, staticFunc, funcName, FAI, FT, mustCast, returnType, value);
 

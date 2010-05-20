@@ -153,6 +153,7 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
+			gradeBitmap, div, sas, zero, equals
 				
 			 
 			 

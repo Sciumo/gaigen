@@ -790,8 +790,8 @@ namespace G25.CG.Shared
             // get number of groups, and possible assurances that a group is always present:
             int nbGroups = gmv.NbGroups;
 
-            SB.AppendLine(FT.type + "[][] ac = a.c();");
-            SB.AppendLine(FT.type + "[][] bc = b.c();");
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
             SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
 
             // for each group
@@ -964,7 +964,7 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            SB.AppendLine(FT.type + "[][] ac = a.c();");
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
             SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + (S.m_dimension + 1) + "][];");
 
             // get number of groups:
@@ -1274,8 +1274,8 @@ namespace G25.CG.Shared
                 StringBuilder SB = new StringBuilder();
 
                 string GroupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
-                SB.AppendLine(GroupBitmapType + " gu = a.gu() " + " & " + groupBitmapName + ";");
-                SB.AppendLine(FT.type + "[][] ac = a.c();");
+                SB.AppendLine(GroupBitmapType + " gu = " + FAI[0].Name + ".gu() " + " & " + groupBitmapName + ";");
+                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
                 SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + (S.m_dimension + 1) + "][];");
 
                 // for each group, test if present
@@ -1325,7 +1325,14 @@ namespace G25.CG.Shared
         /// <param name="funcType">What type of function (UNIT, VERSOR_INVERSE or DIV)</param>
         /// <returns>code for the requested product type.</returns>
         public static string GetDivCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
-            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, String resultName, DIVCODETYPE funcType)
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, DIVCODETYPE funcType)
+        {
+            if (S.OutputCppOrC()) return GetDivCodeCppOrC(S, cgd, FT, M, FAI, resultName, funcType);
+            else return GetDivCodeCSharpOrJava(S, cgd, FT, M, FAI, resultName, funcType);
+        }
+
+        private static string GetDivCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, DIVCODETYPE funcType)
         {
             G25.GMV gmv = S.m_GMV;
 
@@ -1388,7 +1395,56 @@ namespace G25.CG.Shared
             }
 
             return SB.ToString();
-        } // GetDivCode()
+        } // GetDivCodeCppOrC()
+
+        private static string GetDivCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, DIVCODETYPE funcType)
+        {
+            G25.GMV gmv = S.m_GMV;
+            int nbGroups = gmv.NbGroups;
+
+            StringBuilder SB = new StringBuilder();
+
+            string normFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, (funcType == DIVCODETYPE.UNIT) ? "norm" : "norm2", new String[] { gmv.Name }, FT, M.m_name);
+            string normVarName = (funcType == DIVCODETYPE.UNIT) ? "n" : "n2";
+
+            if ((funcType == DIVCODETYPE.UNIT) || (funcType == DIVCODETYPE.VERSOR_INVERSE))
+            {
+                // compute norm
+                SB.AppendLine(FT.type + " " + normVarName + " = " + normFuncName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(" + FAI[0].Name + ");");
+            }
+
+
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+
+            // for each group present, copy and scale (for versor inverse, modulate with reverse)
+            // for each group, test if present
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                // get func name
+                string funcName = GetCopyDivPartFunctionName(S, FT, g);
+
+                // get multiplier, normVarName string (depends on whether this is unit or versor inverse)
+                string normString;
+                if ((funcType == DIVCODETYPE.UNIT) || (funcType == DIVCODETYPE.VERSOR_INVERSE))
+                {
+                    double m = (funcType == DIVCODETYPE.UNIT) ? 1 : gmv.Group(g)[0].Reverse().scale / gmv.Group(g)[0].scale;
+                    normString = ((m < 0) ? "-" : "") + normVarName;
+                }
+                else normString = FAI[1].Name;
+                //string allocCcode = "cc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];";
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\t" + funcName + "(ac[" + g + "], cc[" + g + "], " + normString + ");");
+                SB.AppendLine("}");
+            }
+
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+
+            return SB.ToString();
+        } // GetDivCodeCSharpOrJava()
 
         /// <summary>
         /// Returns the code for <c>scalar * gmv + scalar</c> (Scale and Add Scalar = SAS).
