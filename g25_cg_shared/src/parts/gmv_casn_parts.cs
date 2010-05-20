@@ -103,7 +103,7 @@ namespace G25.CG.Shared
         /// <returns>full (mangled) name of generated function</returns>
         public static string WriteEqualsOrZeroOrGradeBitmapFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            String comment, G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE funcType)
+            string comment, G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE funcType)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -392,7 +392,7 @@ namespace G25.CG.Shared
             G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
 
             // setup return type and argument:
-            String returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
+            string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
             G25.CG.Shared.FuncArgInfo returnArgument = null;
             if (S.OutputC())
                 returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, S.m_GMV.Name, false); // false = compute value

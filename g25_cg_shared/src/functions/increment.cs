@@ -103,7 +103,7 @@ namespace G25.CG.Shared.Func
         /// </summary>
         public override void WriteFunction()
         {
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 
@@ -111,7 +111,7 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_gmv.Name, computeMultivectorValue);
 
                 // comment
-                string comment = "/** " + m_fgs.AddUserComment("Returns (" + FAI[0].Name + " " + (IsIncrement(m_fgs) ? "+" : "-") + "1).") + " */";
+                string comment = "/** " + m_fgs.AddUserComment("Returns (" + FAI[0].Name + " " + (IsIncrement(m_fgs) ? "+" : "-") + " 1).") + " */";
 
 
                 // if scalar or specialized: generate specialized function

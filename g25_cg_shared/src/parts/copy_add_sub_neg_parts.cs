@@ -966,8 +966,10 @@ namespace G25.CG.Shared
             // get number of groups:
             int nbGroups = gmv.NbGroups;
 
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+//            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+  //          SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+            bool resultIsScalar = false , initResultToZero = false;
+            GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero);
 
 
             // for each group
@@ -1101,6 +1103,13 @@ namespace G25.CG.Shared
         /// <returns>code for the requested product type.</returns>
         public static string GetGradeBitmapCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI)
         {
+            if (S.OutputCppOrC())
+                return GetGradeBitmapCodeCppOrC(S, cgd, FT, FAI);
+            else return GetGradeBitmapCodeCSharpOrJava(S, cgd, FT, FAI);
+        }
+
+        private static string GetGradeBitmapCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI)
+        {
             G25.GMV gmv = S.m_GMV;
 
             StringBuilder SB = new StringBuilder();
@@ -1134,7 +1143,39 @@ namespace G25.CG.Shared
             SB.AppendLine("return bitmap;");
 
             return SB.ToString();
-        } // end of GetGradeBitmapCode()
+        } // end of GetGradeBitmapCodeCppOrC()
+
+        private static string GetGradeBitmapCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+
+
+            SB.AppendLine("int bitmap = 0;");
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+
+            // get number of groups:
+            int nbGroups = gmv.NbGroups;
+
+            // for each group
+            // test if present, then code / negate, etc
+
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                string funcName = GetZeroPartFunctionName(S, FT, g);
+
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\tif (!" + funcName + "(ac[" + g + "], " + FAI[1].Name + ")) bitmap |= " + (1 << gmv.Group(g)[0].Grade()) + ";");
+
+                SB.AppendLine("}");
+            }
+            SB.AppendLine("return bitmap;");
+
+            return SB.ToString();
+        } // end of GetGradeBitmapCodeCSharpOrJava()
 
         /// <summary>
         /// Returns the code for 'equals'.
@@ -1373,8 +1414,6 @@ namespace G25.CG.Shared
 
                 string GroupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
                 SB.AppendLine(GroupBitmapType + " gu = " + FAI[0].Name + ".gu() " + " & " + groupBitmapName + ";");
-//                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-  //              SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
                 bool resultIsScalar = false, initResultToZero = false;
                 SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
@@ -1514,8 +1553,6 @@ namespace G25.CG.Shared
             }
 
 
-//            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-  //          SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
             bool resultIsScalar = false, initResultToZero = false;
             SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
@@ -1659,7 +1696,9 @@ namespace G25.CG.Shared
             }
             else
             {
-                SB.AppendLine(FAI[0].MangledTypeName + " " + resultName + "(" + FAI[0].Name + ");");
+                if (S.OutputCpp())
+                    SB.AppendLine(FAI[0].MangledTypeName + " " + resultName + "(" + FAI[0].Name + ");");
+                else SB.AppendLine(FAI[0].MangledTypeName + " " + resultName + " = new " + FAI[0].MangledTypeName + "(" + FAI[0].Name + ");");
                 SB.AppendLine(FT.type + " val" + " = " + resultName + ".get_" + gmv.Group(0)[0].ToLangString(S.m_basisVectorNames) + "()" +
                     ((increment) ? " + " : " - ") + FT.DoubleToString(S, 1.0) + ";");
                 SB.AppendLine(resultName + ".set_" + gmv.Group(0)[0].ToLangString(S.m_basisVectorNames) + "(val);");
