@@ -147,7 +147,6 @@ Maybe fix the float type stuff
 			
 			GMV:
 			  to string variations (_f, _e, _20)
-			  expand and compress, once regular functions are up
 			  
 			SMV:
 				member function shortcuts (for regular functions)

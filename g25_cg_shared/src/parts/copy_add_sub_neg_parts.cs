@@ -854,13 +854,10 @@ namespace G25.CG.Shared
             }
 
             // return result
-            if (S.m_outputLanguage != OUTPUT_LANGUAGE.C)
-            {
-                SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
-            }
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
 
             return SB.ToString();
-        } // end of GetAddSubtractHpCode()
+        } // end of GetAddSubtractHpCode_CSharp_Java()
 
         /// <returns>Whether to negate group 'groupIdx' for sign toggle operation 'T'.</returns>
         private static bool NeedToNegate(G25.GMV gmv, int groupIdx, UnaryToggleSignType T)

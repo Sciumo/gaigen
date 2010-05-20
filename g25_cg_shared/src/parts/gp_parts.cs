@@ -282,7 +282,15 @@ namespace G25.CG.Shared
         /// coordinates should be allocated.</param>
         /// <param name="initResultToZero">Whether to set the result coordinates 'c' to 0.</param>
         /// <returns></returns>
-        public static String GetExpandCode(Specification S, G25.CG.Shared.CGdata cgd, 
+        public static string GetExpandCode(Specification S, G25.CG.Shared.CGdata cgd, 
+            G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, bool resultIsScalar, bool initResultToZero)
+        {
+            if (S.OutputCppOrC())
+                return GetExpandCodeCppOrC(S, cgd, FT, FAI, resultIsScalar, initResultToZero);
+            else return GetExpandCodeCSharpOrJava(S, cgd, FT, FAI, resultIsScalar, initResultToZero);
+        }
+
+        private static string GetExpandCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, 
             G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, bool resultIsScalar, bool initResultToZero)
         {
             StringBuilder SB = new StringBuilder();
@@ -326,7 +334,39 @@ namespace G25.CG.Shared
             }
 
             return SB.ToString();
-        } // end of GetExpandCode()
+        } // end of GetExpandCodeCppOrC()
+
+        private static string GetExpandCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd,
+            G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, bool resultIsScalar, bool initResultToZero)
+        {
+            StringBuilder SB = new StringBuilder();
+
+            // result coordinates code:
+            int nbGroups = S.m_GMV.NbGroups;
+            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+
+            // expand code
+            if (FAI != null)
+            {
+                for (int i = 0; i < FAI.Length; i++)
+                {
+                    if (FAI[i].IsScalar())
+                    {
+                        // 'expand' scalar
+                        //int nb = 1; // nbGroups
+                        //SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = new " + FT.type + "[1][]{new " + FT.type + "[" + nb + "]{" + FAI[i].Name + "}};");
+                        SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = new " + FT.type + "[][]{new " + FT.type + "[]{" + FAI[i].Name + "}};");
+                    }
+                    else
+                    {
+                        // expand general multivector
+                        SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = " + FAI[i].Name + ".c();");
+                    }
+                }
+            }
+
+            return SB.ToString();
+        } // end of GetExpandCodeCSharpOrJava()
 
 
         public static string GetCompressCode(Specification S, G25.FloatType FT,
@@ -460,7 +500,16 @@ namespace G25.CG.Shared
         /// <param name="FAI">Info about function arguments. Used to know whether arguments are general multivectors or scalars.</param>
         /// <param name="resultName">Name of variable where the result goes (in the generated code).</param>
         /// <returns>code for the requested product type.</returns>
-        public static String GetGPcode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.Metric M, 
+        public static string GetGPcode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.Metric M,
+            ProductTypes T,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
+        {
+            if (S.OutputCppOrC()) 
+                return GetGPcodeCppOrC(S, cgd, FT, M, T, FAI, resultName);
+            else return GetGPcodeCSharpOrJava(S, cgd, FT, M, T, FAI, resultName);
+        }
+
+        private static string GetGPcodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.Metric M, 
             ProductTypes T,
             G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
         {
@@ -545,7 +594,93 @@ namespace G25.CG.Shared
 
             return SB.ToString();
 
-        } // end of GetGPcode()
+        } // end of GetGPcodeCppOrC()
+
+
+        private static string GetGPcodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.Metric M,
+            ProductTypes T,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+            bool resultIsScalar = (T == ProductTypes.SCALAR_PRODUCT);
+            bool initResultToZero = true;
+            SB.Append(GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+
+            // get number of groups
+            int nbGroups1 = (FAI[0].IsScalar()) ? 1 : gmv.NbGroups;
+            int nbGroups2 = (FAI[1].IsScalar()) ? 1 : gmv.NbGroups;
+            bool[] GroupAlwaysPresent1 = new bool[nbGroups1];
+            bool[] GroupAlwaysPresent2 = new bool[nbGroups2];
+            if (FAI[0].IsScalar()) GroupAlwaysPresent1[0] = true;
+            if (FAI[1].IsScalar()) GroupAlwaysPresent2[0] = true;
+
+            int g1Cond = -1; // grade 1 conditional which is open (-1 = none)
+            int g2Cond = -1; // grade 2 conditional which is open (-1 = none)
+
+            for (int g1 = 0; g1 < nbGroups1; g1++)
+            {
+                for (int g2 = 0; g2 < nbGroups2; g2++)
+                {
+                    for (int g3 = 0; g3 < gmv.NbGroups; g3++)
+                    {
+                        if (!zero(S, cgd, FT, M, g1, g2, g3, T))
+                        {
+                            // close conditionals if required
+                            if ((((g1Cond != g1) && (g1Cond >= 0)) || (g2Cond != g2)) && (g2Cond >= 0))
+                            {
+                                SB.AppendLine("\t}");
+                                g2Cond = -1;
+                            }
+                            if ((g1Cond != g1) && (g1Cond >= 0))
+                            {
+                                SB.AppendLine("}");
+                                g1Cond = -1;
+                            }
+
+                            // open conditionals if required (group not currently open, and not guaranteed to be present)
+                            if ((!GroupAlwaysPresent1[g1]) && (g1Cond != g1))
+                            {
+                                SB.AppendLine("if (" + FAI[0].Name + "c[" + g1 + "] != null) {");
+                                g1Cond = g1;
+                            }
+                            if ((!GroupAlwaysPresent2[g2]) && (g2Cond != g2))
+                            {
+                                SB.AppendLine("\tif (" + FAI[1].Name + "c[" + g2+ "] != null) {");
+                                g2Cond = g2;
+                            }
+
+                            SB.AppendLine("\t\tif (cc[" + g3+ "] == null) cc[" + g3+ "] = new " + FT.type + "[" + gmv.Group(g3).Length + "];");
+
+                            // get function name
+                            string funcName = GetGPpartFunctionName(S, FT, M, g1, g2, g3);
+
+                            SB.AppendLine("\t\t" + funcName + "(" + FAI[0].Name + "c[" + g1 + "], " + FAI[1].Name + "c[" + g2 + "], cc[" + g3 + "]);");
+                        }
+                    }
+                }
+            }
+
+
+            // close any open conditionals
+            if (g2Cond >= 0)
+            {
+                SB.AppendLine("\t}");
+                g2Cond = -1;
+            }
+            if (g1Cond >= 0)
+            {
+                SB.AppendLine("}");
+                g1Cond = -1;
+            }
+
+
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+            
+            return SB.ToString();
+
+        } // end of GetGPcodeCSharpOrJava()
 
         /// <summary>
         /// Returns the code for a inverse geometric product. 

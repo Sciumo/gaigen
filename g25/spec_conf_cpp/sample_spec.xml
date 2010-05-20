@@ -116,7 +116,7 @@
 </som>
 
   <function name="add" arg1="mv" arg2="mv"/>
-  <function name="add" arg1="vectorE3GA" arg2="vectorE3GA"/>
+  <function name="add" arg1="vectorE3GA" arg2="vectorE3GA" />
   <function name="add" outputName="myAdd" arg1="vectorE3GA" arg2="float" floatType="float"/>
   <function name="add" arg1="pointPair" arg2="pointPair" floatType="float"/>
   <function name="subtract" arg1="mv" arg2="mv"/>
