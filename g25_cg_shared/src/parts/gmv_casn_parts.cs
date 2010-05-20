@@ -161,14 +161,14 @@ namespace G25.CG.Shared
         /// <returns>name of generated function</returns>
         public static string WriteUnarySignFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            String comment, G25.CG.Shared.CANSparts.UnaryToggleSignType T)
+            string comment, G25.CG.Shared.CANSparts.UnaryToggleSignType T)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
             int nbTabs = 1;
 
             // write this function:
-            String code = G25.CG.Shared.CANSparts.GetUnaryToggleSignCode(S, cgd, FT, T, FAI, fgs.RETURN_ARG_NAME);
+            string code = G25.CG.Shared.CANSparts.GetUnaryToggleSignCode(S, cgd, FT, T, FAI, fgs.RETURN_ARG_NAME);
 
             // add one instruction (verbatim code)
             I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));
@@ -177,7 +177,7 @@ namespace G25.CG.Shared
             G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
 
             // setup return type and argument:
-            String returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
+            string returnTypeName = FT.GetMangledName(S, S.m_GMV.Name);
 
 
             G25.CG.Shared.FuncArgInfo returnArgument = null;
@@ -206,16 +206,18 @@ namespace G25.CG.Shared
             }
             else
             {
+                string groupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
+                string FINAL = (S.OutputJava()) ? "final " : "";
+
                 SB.Append(str.Substring(0, idx));
-                SB.Append(", int " + GROUP_BITMAP_NAME);
+                SB.Append(", " + FINAL + groupBitmapType + " " + GROUP_BITMAP_NAME);
                 SB.Append(str.Substring(idx));
             }
             return SB;
         }
 
         /// <summary>
-        /// Writes any negation, reversion, conjugation or involution function for general multivectors,
-        /// based on CASN parts code.
+        /// Writes any code to extract a grade part.
         /// </summary>
         /// <param name="S"></param>
         /// <param name="cgd"></param>
@@ -233,8 +235,8 @@ namespace G25.CG.Shared
             int nbTabs = 1;
 
             // write this function:
-            const String GROUP_BITMAP_NAME = "groupBitmap";
-            String code = G25.CG.Shared.CANSparts.GetGradeCode(S, cgd, FT, gradeIdx, FAI, fgs.RETURN_ARG_NAME, GROUP_BITMAP_NAME);
+            const string GROUP_BITMAP_NAME = "groupBitmap";
+            string code = G25.CG.Shared.CANSparts.GetGradeCode(S, cgd, FT, gradeIdx, FAI, fgs.RETURN_ARG_NAME, GROUP_BITMAP_NAME);
 
             // add one instruction (verbatim code)
             I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));
@@ -263,7 +265,8 @@ namespace G25.CG.Shared
 
             if (gradeIdx < 0) // hack: if grade is func arg, then add it:
             { // add extra argument (int) to select the grade
-                tmpCgd.m_declSB = AddGradeArg(S, tmpCgd.m_declSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
+                if (S.OutputCppOrC())
+                    tmpCgd.m_declSB = AddGradeArg(S, tmpCgd.m_declSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
                 tmpCgd.m_defSB = AddGradeArg(S, tmpCgd.m_defSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
                 tmpCgd.m_inlineDefSB = AddGradeArg(S, tmpCgd.m_inlineDefSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
             }

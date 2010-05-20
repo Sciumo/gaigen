@@ -234,7 +234,12 @@ namespace G25.CG.Shared
             string funcName = F.OutputName;
 
             // write comment to declaration
-            if (comment != null) cgd.m_declSB.AppendLine(comment);
+            if (comment != null)
+            {
+                if (S.OutputCppOrC())
+                    cgd.m_declSB.AppendLine(comment);
+                else cgd.m_defSB.AppendLine(comment);
+            }
 
             if ((returnType is G25.SMV) && (S.OutputC()))
             {
@@ -435,6 +440,9 @@ namespace G25.CG.Shared
                 cgd.m_declSB.AppendLine(";");
             }
 
+            if (S.OutputCSharpOrJava())
+                defSB.AppendLine(comment);
+
             WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
 
 
@@ -537,10 +545,14 @@ namespace G25.CG.Shared
             StringBuilder defSB = (inline) ? cgd.m_inlineDefSB : cgd.m_defSB;
 
             // declaration:
-            WriteDeclaration(cgd.m_declSB, S, cgd, false, staticFunc, returnTypeName, functionName, null, arguments);
+            if (S.OutputCppOrC())
+            {
+                WriteDeclaration(cgd.m_declSB, S, cgd, false, staticFunc, returnTypeName, functionName, null, arguments);
+                cgd.m_declSB.AppendLine(";");
+            }
+
             WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnTypeName, functionName, null, arguments);
             
-            cgd.m_declSB.AppendLine(";");
 
             defSB.AppendLine("");
             defSB.AppendLine("{");

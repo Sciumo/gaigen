@@ -352,7 +352,7 @@ namespace G25
         }
 
         /// <returns>true when this multivector has only even basis blades</returns>
-        public Boolean IsEven()
+        public bool IsEven()
         {
             return TestParity(false);
         }
@@ -404,6 +404,17 @@ namespace G25
             }
 
             return sum;
+        }
+
+        /// <param name="gradeIdx">The grade, in range [0 dimension]</param>
+        /// <returns>The group bitmap which represents the grade.</returns>
+        public int GradeToGroupBitmap(int gradeIdx)
+        {
+            int groupBitmap = 0;
+            for (int g = 0; g < NbGroups; g++)
+                if (Group(g)[0].Grade() == gradeIdx)
+                    groupBitmap |= (1 << g);
+            return groupBitmap;
         }
 
 

@@ -154,14 +154,7 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-				->fix where the comment goes, no decl for CSharpOrJava
 				
-				->GMV, together with regular functions
-				    compress, 
-					compress 1: check all groups, if null up to epsilon, shrink
-					old-school compress 2: array of coordinates -> 
-				    expand (needs ptr class?)
-			 
 			 
 			 
 			GOM
@@ -235,7 +228,7 @@ Correcting design mistakes:
 -> FGS final output name goes into separate field, not into m_outputName
 -> rename NonConstBasisBlade & such to 'VariableBasisBlade'
 	
--be able to get dependency right for the template code (to simplify the test stuff)
+-?be able to get dependency right for the template code (to simplify the test stuff)
 
 ->do not write functions directly to some string builder or whatever, but to an instance of the the 'GeneratedFunction' class
 	 each generated function goes into its own class which describes:
@@ -253,6 +246,15 @@ Correcting design mistakes:
 	if the defSB, declSB and inlineSB are available. It would simply be a centralization
 	of all the special rules for each output language. Context required for indentation
 	will still be provided by package/namespace, class.
+	
+	There should be one base class, which is sub-classed for all output languages to
+	provide the custom behaviour for that language.
+	
+	There should also be a way to emit entire verbatim functions (i.e., without
+	splitting it all up into comment, arg types, body, etc)
+	
+-> find a way to subclass the GMV parts code so output-language dependent functions can be overriden
+	But then you'd need an instance (right now, all static)
 
 ---------------------------------------------------
  
