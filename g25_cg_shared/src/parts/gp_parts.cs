@@ -343,27 +343,29 @@ namespace G25.CG.Shared
 
             // result coordinates code:
             int nbGroups = S.m_GMV.NbGroups;
-            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
 
             // expand code
             if (FAI != null)
             {
-                for (int i = 0; i < FAI.Length; i++)
+                for (int i = 0; i < Math.Min(FAI.Length, 2); i++) // max 2 arguments
                 {
+                    char name = (char)((int)'a' + i); // always name vars 'a', 'b' 
                     if (FAI[i].IsScalar())
                     {
                         // 'expand' scalar
                         //int nb = 1; // nbGroups
                         //SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = new " + FT.type + "[1][]{new " + FT.type + "[" + nb + "]{" + FAI[i].Name + "}};");
-                        SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = new " + FT.type + "[][]{new " + FT.type + "[]{" + FAI[i].Name + "}};");
+                        SB.AppendLine(FT.type + "[][] " + name + "c = new " + FT.type + "[][]{new " + FT.type + "[]{" + FAI[i].Name + "}};");
                     }
                     else
                     {
                         // expand general multivector
-                        SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = " + FAI[i].Name + ".c();");
+                        SB.AppendLine(FT.type + "[][] " + name + "c = " + FAI[i].Name + ".c();");
                     }
                 }
             }
+            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+
 
             return SB.ToString();
         } // end of GetExpandCodeCSharpOrJava()
@@ -642,12 +644,12 @@ namespace G25.CG.Shared
                             // open conditionals if required (group not currently open, and not guaranteed to be present)
                             if ((!GroupAlwaysPresent1[g1]) && (g1Cond != g1))
                             {
-                                SB.AppendLine("if (" + FAI[0].Name + "c[" + g1 + "] != null) {");
+                                SB.AppendLine("if (ac[" + g1 + "] != null) {");
                                 g1Cond = g1;
                             }
                             if ((!GroupAlwaysPresent2[g2]) && (g2Cond != g2))
                             {
-                                SB.AppendLine("\tif (" + FAI[1].Name + "c[" + g2+ "] != null) {");
+                                SB.AppendLine("\tif (bc[" + g2+ "] != null) {");
                                 g2Cond = g2;
                             }
 
@@ -656,7 +658,7 @@ namespace G25.CG.Shared
                             // get function name
                             string funcName = GetGPpartFunctionName(S, FT, M, g1, g2, g3);
 
-                            SB.AppendLine("\t\t" + funcName + "(" + FAI[0].Name + "c[" + g1 + "], " + FAI[1].Name + "c[" + g2 + "], cc[" + g3 + "]);");
+                            SB.AppendLine("\t\t" + funcName + "(ac[" + g1 + "], bc[" + g2 + "], cc[" + g3 + "]);");
                         }
                     }
                 }

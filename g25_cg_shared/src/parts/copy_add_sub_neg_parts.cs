@@ -341,8 +341,8 @@ namespace G25.CG.Shared
         {
             StringBuilder SB = new StringBuilder();
 
-            string TRUE = (S.OutputC()) ? "1" : "true";
-            string FALSE = (S.OutputC()) ? "0" : "false";
+            string TRUE = CodeUtil.GetTrueValue(S);
+            string FALSE = CodeUtil.GetFalseValue(S);
 
             for (int i = 0; i < S.m_GMV.Group(groupIdx).Length; i++)
                 SB.Append("\t\tif (((" + src1 + "[" + i + "] - " + src2 + "[" + i + "]) < -" + epsilon + ") || ((" + src1 + "[" + i + "] - " + src2 + "[" + i + "]) > " + epsilon + ")) return " + FALSE + ";\n");
@@ -790,9 +790,8 @@ namespace G25.CG.Shared
             // get number of groups, and possible assurances that a group is always present:
             int nbGroups = gmv.NbGroups;
 
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+            bool resultIsScalar = false, initResultToZero = false;
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
             // for each group
             // test if present in both-> then add both, etc
@@ -964,11 +963,12 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + (S.m_dimension + 1) + "][];");
-
             // get number of groups:
             int nbGroups = gmv.NbGroups;
+
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+
 
             // for each group
             // test if present, then code / negate, etc
@@ -1004,9 +1004,18 @@ namespace G25.CG.Shared
         /// <param name="FT">Floating point type.</param>
         /// <param name="FAI">Info about function arguments</param>
         /// <returns>code for the requested product type.</returns>
-        public static String GetZeroCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+        public static string GetZeroCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI)
         {
+            if (S.OutputCppOrC())
+                return GetZeroCodeCppOrC(S, cgd, FT, FAI);
+            else return GetZeroCodeCSharpOrJava(S, cgd, FT, FAI);
+
+
+        }
+
+        private static string GetZeroCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI) {
             G25.GMV gmv = S.m_GMV;
 
             StringBuilder SB = new StringBuilder();
@@ -1042,7 +1051,42 @@ namespace G25.CG.Shared
             SB.AppendLine("return " + trueStr + ";");
 
             return SB.ToString();
-        } // end of GetZeroCode()
+            } // end of GetZeroCodeCppOrC()
+
+        private static string GetZeroCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+
+            // get number of groups:
+            int nbGroups = gmv.NbGroups;
+
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+
+            string falseStr = CodeUtil.GetFalseValue(S);
+            string trueStr = CodeUtil.GetTrueValue(S);
+
+            // for each group
+            // test if present, then code / negate, etc
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                string funcName = GetZeroPartFunctionName(S, FT, g);
+
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\tif (!" + funcName + "(ac[" + g + "], " + FAI[1].Name + ")) return " + falseStr + ";");
+
+                SB.AppendLine("}");
+
+            }
+            SB.AppendLine("return " + trueStr + ";");
+
+            return SB.ToString();
+        } // end of GetZeroCodeCSharpOrJava()
+
 
         /// <summary>
         /// Returns the code getting a bitmap of non-zero grades of a general multivector.
@@ -1055,7 +1099,7 @@ namespace G25.CG.Shared
         /// <param name="FT">Floating point type.</param>
         /// <param name="FAI">Info about function arguments</param>
         /// <returns>code for the requested product type.</returns>
-        public static String GetGradeBitmapCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI)
+        public static string GetGradeBitmapCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI)
         {
             G25.GMV gmv = S.m_GMV;
 
@@ -1077,7 +1121,7 @@ namespace G25.CG.Shared
             {
                 SB.AppendLine("");
 
-                String funcName = GetZeroPartFunctionName(S, FT, g);
+                string funcName = GetZeroPartFunctionName(S, FT, g);
 
                 SB.AppendLine("if (" + agu + " & " + (1 << g) + ") {");
                 SB.AppendLine("\tif (!" + funcName + "(" + ac + " + idx, " + FAI[1].Name + ")) bitmap |= " + (1 << gmv.Group(g)[0].Grade()) + ";");
@@ -1103,7 +1147,14 @@ namespace G25.CG.Shared
         /// <param name="FT">Floating point type.</param>
         /// <param name="FAI">Info about function arguments.</param>
         /// <returns>code for the requested product type.</returns>
-        public static String GetEqualsCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+        public static string GetEqualsCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+            if (S.OutputCppOrC()) return GetEqualsCodeCppOrC(S, cgd, FT, FAI);
+            else return GetEqualsCodeCSharpOrJava(S, cgd, FT, FAI);
+        }
+
+        private static string GetEqualsCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI)
         {
             G25.GMV gmv = S.m_GMV;
@@ -1120,8 +1171,8 @@ namespace G25.CG.Shared
             // get number of groups, and possible assurances that a group is always present:
             int nbGroups = gmv.NbGroups;
 
-            string falseStr = (S.OutputC()) ? "0" : "false";
-            string trueStr = (S.OutputC()) ? "1" : "true";
+            string falseStr = CodeUtil.GetFalseValue(S);
+            string trueStr = CodeUtil.GetTrueValue(S);
 
             // for each group
             // test if present in both-> then add both, etc
@@ -1154,8 +1205,53 @@ namespace G25.CG.Shared
             SB.AppendLine("return " + trueStr + ";");
 
             return SB.ToString();
-        } // end of GetEqualsCode()
+        } // end of GetEqualsCodeCppOrC()
 
+        private static string GetEqualsCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+
+            // get number of groups, and possible assurances that a group is always present:
+            int nbGroups = gmv.NbGroups;
+
+            string falseStr = CodeUtil.GetFalseValue(S);
+            string trueStr = CodeUtil.GetTrueValue(S);
+
+            // TODO: share this code everywhere
+            bool resultIsScalar = false, initResultToZero = false;
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+
+            // for each group
+            // test if present in both-> then add both, etc
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                string equalsFuncName = GetEqualsPartFunctionName(S, FT, g);
+                string zeroFuncName = GetZeroPartFunctionName(S, FT, g);
+
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\tif (bc[" + g + "] != null) {");
+
+                SB.AppendLine("\t\tif (!" + equalsFuncName + "(ac[" + g + "], bc[" + g + "], " + FAI[2].Name + ")) return " + falseStr + ";");
+                SB.AppendLine("\t}");
+                SB.AppendLine("\telse if (!" + zeroFuncName + "(ac[" + g + "], " + FAI[2].Name + ")) return " + falseStr + ";");
+
+                SB.AppendLine("}");
+                SB.AppendLine("\telse if (bc[" + g + "] != null) {");
+
+                SB.AppendLine("\tif (!" + zeroFuncName + "(bc[" + g + "], " + FAI[2].Name + ")) return " + falseStr + ";");
+
+                SB.AppendLine("}");
+
+            }
+            SB.AppendLine("return " + trueStr + ";");
+            
+            return SB.ToString();
+        } // end of GetEqualsCodeCppOrC()
 
         /// <summary>
         /// Returns the code for grade selection for general multivectors.
@@ -1273,13 +1369,16 @@ namespace G25.CG.Shared
             {
                 StringBuilder SB = new StringBuilder();
 
+                int nbGroups = gmv.NbGroups;
+
                 string GroupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
                 SB.AppendLine(GroupBitmapType + " gu = " + FAI[0].Name + ".gu() " + " & " + groupBitmapName + ";");
-                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-                SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + (S.m_dimension + 1) + "][];");
+//                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+  //              SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+                bool resultIsScalar = false, initResultToZero = false;
+                SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
                 // for each group, test if present
-                int nbGroups = gmv.NbGroups;
                 for (int g = 0; g < nbGroups; g++)
                 {
                     SB.AppendLine("");
@@ -1415,8 +1514,10 @@ namespace G25.CG.Shared
             }
 
 
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+//            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+  //          SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
+            bool resultIsScalar = false, initResultToZero = false;
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
             // for each group present, copy and scale (for versor inverse, modulate with reverse)
             // for each group, test if present

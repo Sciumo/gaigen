@@ -255,6 +255,8 @@ Correcting design mistakes:
 	
 -> find a way to subclass the GMV parts code so output-language dependent functions can be overriden
 	But then you'd need an instance (right now, all static)
+   OR: find a way to merge back both code bases into one again by using functions to generate 
+   differing code.
 
 ---------------------------------------------------
  
