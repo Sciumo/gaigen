@@ -153,7 +153,8 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-			dual, sas, exp & friends
+				problem with norm (problem is also present in C++ version)
+				sas, exp & friends, random_X?
 				
 			 
 			 

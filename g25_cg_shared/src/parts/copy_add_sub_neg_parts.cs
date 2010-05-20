@@ -1599,7 +1599,15 @@ namespace G25.CG.Shared
         /// <param name="resultName">Name of variable where the result goes (in the generated code).</param>
         /// <returns>code for the requested function.</returns>
         public static string GetSAScode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
-            G25.CG.Shared.FuncArgInfo[] FAI, String resultName)
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
+        {
+            if (S.OutputCppOrC())
+                return GetSAScodeCppOrC(S, cgd, FT, FAI, resultName);
+            else return GetSAScodeCSharpOrJava(S, cgd, FT, FAI, resultName);
+        }
+
+        private static string GetSAScodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
         {
             G25.GMV gmv = S.m_GMV;
 
@@ -1622,9 +1630,6 @@ namespace G25.CG.Shared
                 SB.AppendLine(FT.type + " C[" + (1 << S.m_dimension) + "];");
             }
 
-
-            // for each group present, copy and scale (for versor inverse, modulate with reverse)
-            // for each group, test if present
             int nbGroups = gmv.NbGroups;
             for (int g = 0; g < nbGroups; g++)
             {
@@ -1662,7 +1667,54 @@ namespace G25.CG.Shared
             }
 
             return SB.ToString();
-        } // end of GetSAScode()
+        } // end of GetSAScodeCppOrC()
+
+        private static string GetSAScodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI, String resultName)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+
+            bool resultIsScalar = false, initResultToZero = false;
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, new FuncArgInfo[] { FAI[0] }, resultIsScalar, initResultToZero));
+
+            //SB.AppendLine("cc[0] = new " + FT.type + "[" + gmv
+            // string allocCcode = "cc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];";
+
+            int nbGroups = gmv.NbGroups;
+            for (int g = 0; g < nbGroups; g++)
+            {
+                SB.AppendLine("");
+
+                // get func name
+                string funcName = GetCopyMulPartFunctionName(S, FT, g);
+
+                SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\tcc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];");
+                SB.AppendLine("\t" + funcName + "(ac[" + g + "], cc[" + g + "], " + FAI[1].Name + ");");
+                if (g == 0)
+                { // also add scalar
+                    SB.AppendLine("\tcc[" + g + "][0] += " + FAI[2].Name + ";");
+                }
+                SB.AppendLine("}");
+
+                if (g == 0)
+                { // always add the scalar:
+                    SB.AppendLine("else if (" + FAI[2].Name + " != 0.0) {");
+                    SB.AppendLine("\tcc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];");
+                    SB.AppendLine("cc[" + g + "][0] = " + FAI[2].Name + ";");
+                    SB.AppendLine("}");
+                }
+            }
+
+            // return result
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+
+
+            return SB.ToString();
+        } // end of GetSAScodeCSharpOrJava()
+
 
         /// <summary>
         /// Returns the code for <c>gmv + scalar</c>

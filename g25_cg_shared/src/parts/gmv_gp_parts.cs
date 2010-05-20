@@ -180,7 +180,7 @@ namespace G25.CG.Shared
 
             // get return info
             G25.SMV returnType = null;
-            String returnTypeName = null;
+            string returnTypeName = null;
             G25.CG.Shared.FuncArgInfo returnArgument = null;
             { // try to get scalar type 
                 returnType = S.GetScalarSMV();
@@ -192,7 +192,7 @@ namespace G25.CG.Shared
                 {
                     if (S.OutputC())
                         returnArgument = new G25.CG.Shared.FuncArgInfo(S, CF, -1, FT, returnType.Name, false); // false = compute value
-                    returnTypeName = returnType.GetName();
+                    returnTypeName = FT.GetMangledName(S, returnType.GetName());
                 }
             }
 

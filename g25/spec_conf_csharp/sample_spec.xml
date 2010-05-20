@@ -45,7 +45,7 @@
 
   <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
   
-<!--  <smv name="scalar" type="blade">scalar</smv> -->
+  <smv name="scalar" type="blade">scalar</smv>
 
   <smv name="vectorE3GA" type="blade">e1 e2 e3<comment>Use this type to store 3-D vectors</comment></smv>
 

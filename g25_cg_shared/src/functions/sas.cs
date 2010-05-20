@@ -100,7 +100,7 @@ namespace G25.CG.Shared.Func
         /// </summary>
         public override void WriteFunction()
         {
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 
@@ -108,7 +108,7 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_gmv.Name, computeMultivectorValue);
 
                 // comment
-                String comment = "/** " +
+                string comment = "/** " +
                     m_fgs.AddUserComment("Returns " + FAI[1].TypeName + " " + FAI[1].Name + " * " +
                     FAI[0].TypeName + " " + FAI[0].Name + " + " +
                     FAI[2].TypeName + " " + FAI[2].Name + ".") + " */";
