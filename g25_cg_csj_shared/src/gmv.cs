@@ -358,7 +358,7 @@ namespace G25.CG.CSJ
 
             string funcName = G25.CG.Shared.Main.GETTER_PREFIX + bladeName;
 
-            string funcDecl = "\t" + FT.type + " " + funcName + "() ";
+            string funcDecl = "\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + funcName + "() ";
 
             int nbTabs = 1;
             G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "Returns the " + bladeName + " coordinate of this " + gmvTypeName, null, null);
@@ -426,7 +426,7 @@ namespace G25.CG.CSJ
 
             string coordName = "val";
 
-            string funcDecl = "\t" + "void " + funcName + "(" + FT.type + " " + coordName + ") ";
+            string funcDecl = "\t" + Keywords.PublicAccessModifier(S) + " void " + funcName + "(" + FT.type + " " + coordName + ") ";
 
             SB.AppendLine("\t/// Sets the " + bladeName + " coordinate of this " + gmvTypeName + ".");
             SB.Append(funcDecl);

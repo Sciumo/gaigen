@@ -482,10 +482,10 @@ namespace G25.CG.Shared.Func
             else
             {
                 // return type is SMV: get access strings for all coordinates, and use the one for the scalar
-                String varName = "tmp1";
+                string varName = "tmp1";
                 bool ptr = false;
                 G25.SMV smv = m_returnType as G25.SMV;
-                String[] accessStr = G25.CG.Shared.CodeUtil.GetAccessStr(m_specification, smv, varName, ptr);
+                string[] accessStr = G25.CG.Shared.CodeUtil.GetAccessStr(m_specification, smv, varName, ptr);
                 args["scalarTmp1"] = accessStr[smv.GetElementIdx(RefGA.BasisBlade.ONE)];
             }
 
@@ -493,7 +493,8 @@ namespace G25.CG.Shared.Func
 
             m_cgd.m_cog.EmitTemplate(m_cgd.m_defSB, templateName, args);
 
-            m_cgd.m_cog.EmitTemplate(m_cgd.m_declSB, "seriesDecl", args);
+            if (m_specification.OutputCppOrC())
+                m_cgd.m_cog.EmitTemplate(m_cgd.m_declSB, "seriesDecl", args);
 
             m_funcName[FT.type] = CF.OutputName;
         }

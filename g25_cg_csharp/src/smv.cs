@@ -75,9 +75,6 @@ namespace G25.CG.CSharp
             // special type to safeguard coordinates order in functions
             G25.CG.CSJ.SMV.WriteCoordinateOrder(SB, S, FT, smv);
 
-            // get coordinates
-            //G25.CG.CSJ.SMV.WriteGetCoordinates(SB, S, cgd, FT, smv);
-
             // write multivector interface implementation
             G25.CG.CSJ.SMV.WriteMultivectorInterface(SB, S, cgd, FT, smv);
 

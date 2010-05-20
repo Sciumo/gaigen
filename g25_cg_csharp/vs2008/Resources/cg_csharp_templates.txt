@@ -542,13 +542,6 @@ ${CODEBLOCK randomCgaPoint}
 }
 ${ENDCODEBLOCK}
 
-${CODEBLOCK seriesDecl}
-/** Computes <%mathFuncName%> of <%inputType%>.
-<%userComment%> */
-<%returnType%> <%funcName%>(const <%inputType%> &x, int order = 12);
-${ENDCODEBLOCK}
-
-
 // S = Specification of algebra. (G25.spec)
 // FT = floating point type (G25.FloatType)
 // inputType = mangled name of input type
@@ -567,14 +560,23 @@ ${ENDCODEBLOCK}
 // sinFunc
 // coshFunc
 // sinhFunc
+// userComment
 ${CODEBLOCK seriesExp}
+/// <summary>Computes exponential of <%inputType%> up to 12th term.
+/// <%userComment%>
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
 
-<%returnType%> <%funcName%>(const <%inputType%> &x, int order /*  = 12 */) {
-	unsigned long maxC, scale = 1;
+/// <summary>Computes exponential of <%inputType%>.
+/// <%userComment%>
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x, int order) {
+	long maxC, scale = 1;
 	<%inputType%> xScaled;
 	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
 	<%returnType%> xPow1, xPow2;
-	<%returnType%> *result1 = &tmp1, *result2 = &tmp2;
 	<%FT.type%> s_x2, a;
 	int i;
    

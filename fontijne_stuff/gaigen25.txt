@@ -140,6 +140,8 @@ Maybe fix the float type stuff
 	
 --
 
+-make sure scalar coord never has a flipped orientation (would cause bugs everywhere)
+
 -add include/import element in XML
 
 	Write C# and Java output.
@@ -153,8 +155,11 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-				problem with norm (problem is also present in C++ version)
-				sas, exp & friends, random_X?
+				Working on exp & friends
+					-> need a way to always get scalar part of GMV / SMV
+						->introduce _double() and _float() functions in source class? 
+				
+				, random_X?
 				
 			 
 			 
