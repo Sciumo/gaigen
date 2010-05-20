@@ -59,7 +59,7 @@ namespace G25.CG.Shared
             int nbTabs = 1;
 
             // write this function:
-            String code = G25.CG.Shared.DualParts.GetDualCode(S, cgd, FT, M, FAI, fgs.RETURN_ARG_NAME, dual);
+            string code = G25.CG.Shared.DualParts.GetDualCode(S, cgd, FT, M, FAI, fgs.RETURN_ARG_NAME, dual);
 
             // add one instruction (verbatim code)
             I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));

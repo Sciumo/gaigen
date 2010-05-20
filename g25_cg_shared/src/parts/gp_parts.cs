@@ -799,7 +799,8 @@ namespace G25.CG.Shared
             else SB.AppendLine(FT.type + " c[1];");
 
             SB.AppendLine(FT.type + " n2 = " + FT.DoubleToString(S, 0.0) + ";");
-            SB.AppendLine("int idx = 0;");
+            if (S.OutputCppOrC())
+                SB.AppendLine("int idx = 0;");
 
             string agu = (S.OutputC()) ? FAI[0].Name + "->gu" : FAI[0].Name + ".gu()";
             string ac = (S.OutputC()) ? FAI[0].Name + "->c" : FAI[0].Name + ".getC()";

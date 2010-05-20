@@ -969,7 +969,7 @@ namespace G25.CG.Shared
 //            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
   //          SB.AppendLine(FT.type + "[][] cc = new " + FT.type + "[" + nbGroups + "][];");
             bool resultIsScalar = false , initResultToZero = false;
-            GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero);
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
 
             // for each group

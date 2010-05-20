@@ -110,7 +110,7 @@ namespace G25.CG.Shared.Func
         public override void WriteFunction()
         {
             const int nbArgs = 1;
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 

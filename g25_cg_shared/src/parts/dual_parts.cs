@@ -244,7 +244,15 @@ namespace G25.CG.Shared
         /// <param name="dual">When true, 'dual' is generated, otherwise, 'undual' is generated.</param>
         /// <returns>code for the requested product type.</returns>
         public static string GetDualCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
-            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, String resultName, bool dual)
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, bool dual)
+        {
+            if (S.OutputCppOrC())
+                return GetDualCodeCppOrC(S, cgd, FT, M, FAI, resultName, dual);
+            else return GetDualCodeCSharpOrJava(S, cgd, FT, M, FAI, resultName, dual);
+        }
+
+        private static string GetDualCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, 
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, bool dual)
         {
             G25.GMV gmv = S.m_GMV;
 
@@ -284,8 +292,46 @@ namespace G25.CG.Shared
             SB.Append(GPparts.GetCompressCode(S, FT, FAI, resultName, resultIsScalar));
 
             return SB.ToString();
-        }
+        } // end of GetDualCodeCppOrC()
 
+        private static string GetDualCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.Metric M, G25.CG.Shared.FuncArgInfo[] FAI, string resultName, bool dual)
+        {
+            G25.GMV gmv = S.m_GMV;
+
+            StringBuilder SB = new StringBuilder();
+
+            bool resultIsScalar = false;
+            bool initResultToZero = true; // must init to zero because of compression
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+
+            // get number of groups:
+            int nbGroups = gmv.NbGroups;
+
+            // for each combination of groups, check if the dual goes from one to the other
+            for (int gi = 0; gi < nbGroups; gi++)
+            {
+                SB.AppendLine("if (ac[" + gi + "] != null) {");
+                for (int go = 0; go < nbGroups; go++)
+                {
+                    string funcName = (dual) ? GetDualPartFunctionName(S, FT, M, gi, go) : GetUndualPartFunctionName(S, FT, M, gi, go);
+                    Tuple<string, string, string> key = new Tuple<string, string, string>(FT.type, M.m_name, funcName);
+                    if (cgd.m_gmvDualPartFuncNames.ContainsKey(key) &&
+                        cgd.m_gmvDualPartFuncNames[key])
+                    {
+                        SB.AppendLine("\tif (cc[" + go + "] == null) cc[" + go + "] = new " + FT.type + "[" + gmv.Group(go).Length + "];");
+                        
+                        SB.AppendLine("\t" + funcName + "(ac[" + gi + "], cc[" + go + "]);");
+                    }
+                }
+                SB.AppendLine("}");
+                SB.AppendLine("");
+            }
+
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+
+            return SB.ToString();
+        } // end of GetDualCodeCppOrC()
 
     } // end of class DualParts
 } // end of namepace G25.CG.Shared

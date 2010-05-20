@@ -164,13 +164,12 @@ Maybe fix the float type stuff
 			SOM
 			 V members vars
 			 all other stuff
+			 
+			applyOM
 			
 
 			parser 
 			
-			testing
-			
-			makefile for all platforms
 			
 			operators
 			
@@ -180,6 +179,9 @@ Maybe fix the float type stuff
 			
 			runtime geometric product
 			
+			testing
+			
+			makefile for all platforms
 				
 	
 	
