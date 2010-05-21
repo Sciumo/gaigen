@@ -667,6 +667,18 @@ namespace G25.CG.Shared
             }
         }
 
+        public static string GetFunctionComment(Specification S,
+            int nbTabs,
+            string mainComment,
+            List<Tuple<string, string>> paramComments,
+            string returnComment)
+        {
+            StringBuilder SB = new StringBuilder();
+            WriteFunctionComment(SB, S, nbTabs, mainComment, paramComments, returnComment);
+            return SB.ToString();
+        }
+
+
         /// <summary>
         /// Writes a function comment according to the output language.
         /// </summary>

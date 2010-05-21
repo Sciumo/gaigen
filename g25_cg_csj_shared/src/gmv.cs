@@ -134,6 +134,20 @@ namespace G25.CG.CSJ
             };
             G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this coordinates in 'arr'.", paramComments, null);
 
+            /*G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"This version of " + "HARR" + "() has extra arguments which help to avoid\n" + 
+	"near-singular blades / versors.\n" + 
+	"\n" + 
+	"Near-singular blades / versors are avoid by testing the norm and largest coordinate\n" + 
+	"of the random blade / versor. If the test does not pass, the function recursively\n" + 
+	"tries to generate another random blade / versor.\n",
+	new System.Collections.Generic.List<G25.Tuple<string, string>> 
+				{
+                new G25.Tuple<string, string>("minimumNorm", "the minimum allowed norm of the blade/versor before scaling. Must be > 0.0 for versors\n."),
+                new G25.Tuple<string, string>("largestCoordinate", "the largest coordinate allowed after scaling.")
+                }, 
+	null);*/
+
             G25.GMV gmv = S.m_GMV;
 
             string className = FT.GetMangledName(S, gmv.Name);

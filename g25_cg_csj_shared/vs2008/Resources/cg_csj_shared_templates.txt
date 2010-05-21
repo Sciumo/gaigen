@@ -526,3 +526,88 @@ public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%
 	return result;
 } // end of <%funcName%>()
 ${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// functionName = name of generated function
+// FT = floating point type
+// mvType = multivector type name (with prefix/suffix)
+// randomScalarFuncName = name of function which generates random scalar values
+// gpopFuncName = name of geometric product or outer product function for two multivectors
+// normFuncName = norm of multivector function (must return scalar)
+// gpScalarFuncName = geometric product of multivector and scalar
+// generatorVersor = bool (use geometric product or outer product)
+${CODEBLOCK randomBladeVersor}
+
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Generates a random " + ((generatorVersor) ? "versor" : "blade") + ".\n"+
+	"The scale is uniformly distributed over the interval [0 1).\n" + 
+	"The maximum non-zero grade-part is 'grade'.\n" + 
+	"\n" + 
+	"Only the basis vectors marked in 'basisVectorBitmap' will be used to generate the versor/blade.\n" + 
+	"Use 'basisVectorBitmap = -1' (the default) to use all basisvectors.", 
+	null, functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)")%>
+public static <%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basisVectorBitmap) {
+	<%FT.type%> minimumNorm = <%FT.DoubleToString(S, 0.01)%>;
+	<%FT.type%> largestCoordinate = <%FT.DoubleToString(S, 4.0)%>;
+	return <%functionName%>_ex(scale, grade, basisVectorBitmap, minimumNorm, scale * largestCoordinate);
+}
+
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"This version of " + functionName + "() has extra arguments which help to avoid\n" + 
+	"near-singular blades / versors.\n" + 
+	"\n" + 
+	"Near-singular blades / versors are avoid by testing the norm and largest coordinate\n" + 
+	"of the random blade / versor. If the test does not pass, the function recursively\n" + 
+	"tries to generate another random blade / versor.\n" + 
+	"\n" + 
+	"'minimumNorm' is the minimum allowed norm of the blade/versor before scaling. \n" + 
+	"'minimumNorm' must be > 0.0 for versors.\n" + 
+	"\n" + 
+	"'largestCoordinate' is the largest coordinate allowed after scaling.\n"
+	, 
+	null, functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)")%>
+public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int basisVectorBitmap, 
+		<%FT.type%> minimumNorm, <%FT.type%> largestCoordinate) 
+{
+	<%mvType%> randomVector = new <%mvType%>();
+	//, tmp1, tmp2;
+	<%FT.type%>[] randomValues = new <%FT.type%>[<%S.m_dimension%>];
+	//<%FT.type%> n2, mul;
+	int grade = _grade;
+	
+	// set IR (intermediate result) to 1
+	<%mvType%> IR = new <%mvType%> (<%FT.DoubleToString(S, 1.0)%>);
+
+	while (grade > 0) {	// loop until grade == 0
+		// fill array with random values
+		for (int i = 0; i < <%S.m_dimension%>; i++) 
+			randomValues[i] = ((basisVectorBitmap & (1 << i)) == 0)
+				? (<%FT.DoubleToString(S, -1.0)%> + <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>())
+				: <%FT.DoubleToString(S, 0.0)%>;
+		
+		// make it a multivector:
+		randomVector.<%G25.CG.CSJ.Util.GetFunctionName(S, "set")%>(GroupBitmap.GRADE_1, randomValues);
+		
+		// multiply 
+		IR = <%gpopFuncName%>(IR, randomVector);
+		
+		// lower grade
+		grade--;
+	}
+	
+	// compute norm/multiplier, apply it, or recurse if we happened to create a near-null versor
+	<%FT.type%> n2 = <%normFuncName%>(IR);
+	if ((<%FT.type%>)<%G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS)%>(n2) > minimumNorm * minimumNorm) {
+		if (n2 != <%FT.DoubleToString(S, 0.0)%>) {
+			<%FT.type%> mul = scale * <%randomScalarFuncName%>() / n2;
+			if (IR.<%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() * mul < largestCoordinate)
+				return <%gpScalarFuncName%>(IR, mul);
+		}
+		else if (IR.<%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() < largestCoordinate)
+			return IR;
+	}
+	
+	// try again:
+	return <%functionName%>_ex(scale, _grade, basisVectorBitmap, minimumNorm, largestCoordinate); 
+}
+${ENDCODEBLOCK}

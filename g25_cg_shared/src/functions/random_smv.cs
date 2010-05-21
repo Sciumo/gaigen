@@ -245,7 +245,9 @@ namespace G25.CG.Shared.Func
 
                     // SMV tmp;
                     // double n, mul, lc;
-                    I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " tmp;"));
+                    if (m_specification.OutputCppOrC())
+                        I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " tmp;"));
+                    else I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " tmp = new " + smvTypeName  + "();"));
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, FT.type + " n, mul, lc;"));
                     I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, CodeUtil.GetBoolType(m_specification) + " nullBlade;"));
 
@@ -303,7 +305,9 @@ namespace G25.CG.Shared.Func
                     }
                     else
                     {
-                        I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "lc = tmp.largestCoordinate();"));
+                        string lcStr = "largestCoordinate";
+                        if (m_specification.OutputCSharp()) lcStr = "LargestCoordinate";
+                        I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, "lc = tmp." + lcStr + "();"));
                     }
 
                     // null = (n == 0) && (lc ! 0)
