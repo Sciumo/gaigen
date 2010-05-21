@@ -85,30 +85,18 @@ ${ENDCODEBLOCK}
 // sinhFunc
 // userComment
 ${CODEBLOCK seriesExp}
-<%if (S.OutputCSharp()) {%>
-/// <summary>Computes exponential of <%inputType%> up to 12th term.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes exponential of <%inputType%> up to 12th term.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes exponential of " + inputType + " up to 12th term.\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%if (S.OutputCSharp()) {%>
-/// <summary>Computes exponential of <%inputType%>.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes exponential of <%inputType%>.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes exponential of " + inputType + ".\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -190,30 +178,18 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSinh}
-<%if (S.OutputCSharp()) {%>
-/// Computes hyperbolic sine of <%inputType%> up to 12th term.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes hyperbolic sine of <%inputType%> up to 12th term.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes hyperbolic sine of " + inputType + " up to 12th term.\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%if (S.OutputCSharp()) {%>
-/// Computes hyperbolic sine of <%inputType%>.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes hyperbolic sine of <%inputType%>.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes hyperbolic sine of " + inputType + ".\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -279,30 +255,18 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCosh}
-<%if (S.OutputCSharp()) {%>
-/// Computes hyperbolic cosine of <%inputType%> up to 12th term.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes hyperbolic cosine of <%inputType%> up to 12th term.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes hyperbolic cosine of " + inputType + " up to 12th term.\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%if (S.OutputCSharp()) {%>
-/// Computes hyperbolic cosine of <%inputType%>.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes hyperbolic cosine of <%inputType%>.
- * <%userComment%> 
- */
- <%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes hyperbolic cosine of " + inputType + ".\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -363,30 +327,18 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSin}
-<%if (S.OutputCSharp()) {%>
-/// Computes sine of <%inputType%> up to 12th term.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes sine of <%inputType%> up to 12th term.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes sine of " + inputType + " up to 12th term.\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%if (S.OutputCSharp()) {%>
-/// Computes sine of <%inputType%>.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes sine of <%inputType%>.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes sine of " + inputType + ".\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -459,30 +411,18 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCos}
-<%if (S.OutputCSharp()) {%>
-/// Computes cosine of <%inputType%> up to 12th term.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes cosine of <%inputType%> up to 12th term.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes cosine of " + inputType + " up to 12th term.\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%if (S.OutputCSharp()) {%>
-/// Computes cosine of <%inputType%>.
-/// <%userComment%> 
-/// </summary>
-<%} else {%>
-/** 
- * Computes cosine of <%inputType%>.
- * <%userComment%> 
- */
-<%}%>
+<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
+	"Computes cosine of " + inputType + ".\n" +
+	userComment,
+	null, null)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
 	{ // First try special cases: check if (x * x) is scalar
 		<%returnType%> xSquared = <%gpFuncII%>(x, x);

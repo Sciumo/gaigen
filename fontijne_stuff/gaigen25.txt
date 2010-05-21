@@ -155,8 +155,7 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-				Fix random_X
-				
+				->? fix all the comments which are all /** */ now.
 			 
 			 
 			GOM
