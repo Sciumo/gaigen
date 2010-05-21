@@ -195,7 +195,8 @@ Maybe fix the float type stuff
 			
 			makefile for all platforms
 				
-	
+
+	SourceForge website	
 	
 Java:
 	Each multivector class can also call its functions

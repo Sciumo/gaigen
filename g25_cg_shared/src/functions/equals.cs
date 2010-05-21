@@ -87,7 +87,7 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_gmv.Name, computeMultivectorValue);
 
                 // comment
-                String comment = "/** " + m_fgs.AddUserComment("Returns whether input multivectors are equal up to an epsilon " + FAI[2].Name + ".") + " */";
+                string comment = "/** " + m_fgs.AddUserComment("Returns whether input multivectors are equal up to an epsilon " + FAI[2].Name + ".") + " */";
 
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
@@ -129,8 +129,8 @@ namespace G25.CG.Shared.Func
             string[] assStr2 = G25.CG.Shared.CodeUtil.GetAssignmentStrings(m_specification, FT, mustCast, BL, FAI[1].MultivectorValue[0], writeZeros);
 
             string BOOL = CodeUtil.GetBoolType(m_specification);
-            string TRUE = CodeUtil.GetFalseValue(m_specification);
-            string FALSE = CodeUtil.GetTrueValue(m_specification);
+            string TRUE = CodeUtil.GetTrueValue(m_specification);
+            string FALSE = CodeUtil.GetFalseValue(m_specification);
 
             { // setup instructions
                 // get tmp storage for 'difference'
