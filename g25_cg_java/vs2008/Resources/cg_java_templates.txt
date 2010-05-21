@@ -581,6 +581,6 @@ ${CODEBLOCK randomNumberGenerator}
     protected static final java.util.Random s_randomGenerator = new java.util.Random();
     
     protected static final double NextRandomDouble() {
-		return s_randomGenerator.NextDouble();
+		return s_randomGenerator.nextDouble();
     }
 ${ENDCODEBLOCK}

@@ -1262,8 +1262,8 @@ namespace G25.CG.Shared
             string trueStr = CodeUtil.GetTrueValue(S);
 
             // TODO: share this code everywhere
-            bool resultIsScalar = false, initResultToZero = false;
-            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
 
             // for each group
             // test if present in both-> then add both, etc
@@ -1554,7 +1554,7 @@ namespace G25.CG.Shared
 
 
             bool resultIsScalar = false, initResultToZero = false;
-            SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, new FuncArgInfo[]{FAI[0]}, resultIsScalar, initResultToZero));
 
             // for each group present, copy and scale (for versor inverse, modulate with reverse)
             // for each group, test if present

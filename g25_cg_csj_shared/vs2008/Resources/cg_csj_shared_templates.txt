@@ -190,16 +190,30 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSinh}
-/// <summary>Computes hyperbolic sine of <%inputType%> up to 12th term.
+<%if (S.OutputCSharp()) {%>
+/// Computes hyperbolic sine of <%inputType%> up to 12th term.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes hyperbolic sine of <%inputType%> up to 12th term.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-/// <summary>Computes hyperbolic sine of <%inputType%>.
+<%if (S.OutputCSharp()) {%>
+/// Computes hyperbolic sine of <%inputType%>.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes hyperbolic sine of <%inputType%>.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -265,16 +279,30 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCosh}
-/// <summary>Computes hyperbolic cosine of <%inputType%> up to 12th term.
+<%if (S.OutputCSharp()) {%>
+/// Computes hyperbolic cosine of <%inputType%> up to 12th term.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes hyperbolic cosine of <%inputType%> up to 12th term.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-/// <summary>Computes hyperbolic cosine of <%inputType%>.
+<%if (S.OutputCSharp()) {%>
+/// Computes hyperbolic cosine of <%inputType%>.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes hyperbolic cosine of <%inputType%>.
+ * <%userComment%> 
+ */
+ <%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -335,16 +363,30 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSin}
-/// <summary>Computes sine of <%inputType%> up to 12th term.
+<%if (S.OutputCSharp()) {%>
+/// Computes sine of <%inputType%> up to 12th term.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes sine of <%inputType%> up to 12th term.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-/// <summary>Computes sine of <%inputType%>.
+<%if (S.OutputCSharp()) {%>
+/// Computes sine of <%inputType%>.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes sine of <%inputType%>.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -417,16 +459,30 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCos}
-/// <summary>Computes cosine of <%inputType%> up to 12th term.
+<%if (S.OutputCSharp()) {%>
+/// Computes cosine of <%inputType%> up to 12th term.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes cosine of <%inputType%> up to 12th term.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-/// <summary>Computes cosine of <%inputType%>.
+<%if (S.OutputCSharp()) {%>
+/// Computes cosine of <%inputType%>.
 /// <%userComment%> 
 /// </summary>
+<%} else {%>
+/** 
+ * Computes cosine of <%inputType%>.
+ * <%userComment%> 
+ */
+<%}%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
 	{ // First try special cases: check if (x * x) is scalar
 		<%returnType%> xSquared = <%gpFuncII%>(x, x);
