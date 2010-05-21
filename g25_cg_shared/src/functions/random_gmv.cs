@@ -147,8 +147,12 @@ namespace G25.CG.Shared.Func
                 argTable["gpScalarFuncName"] = m_scalarGpFunc[floatName];
                 argTable["generatorVersor"] = (IsVersor(m_fgs) ? true : false);
 
-                // header
-                m_cgd.m_cog.EmitTemplate(declSB, "randomBladeVersorHeader", argTable);
+                if (m_specification.OutputCppOrC())
+                {
+                    // header
+                    m_cgd.m_cog.EmitTemplate(declSB, "randomBladeVersorHeader", argTable);
+                }
+
                 // source
                 m_cgd.m_cog.EmitTemplate(defSB, "randomBladeVersor", argTable);
             }

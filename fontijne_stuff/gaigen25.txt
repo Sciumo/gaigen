@@ -155,17 +155,7 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-			
-				->equals is broken, fix tomorrow
-				->equals is broken, fix tomorrow
-				->equals is broken, fix tomorrow
-				->equals is broken, fix tomorrow
-				
-				Working on exp & friends
-					-> need a way to always get scalar part of GMV / SMV
-						->introduce _double() and _float() functions in source class? 
-				
-				random_X?
+				Fix random_X
 				
 			 
 			 
@@ -177,8 +167,7 @@ Maybe fix the float type stuff
 			 V members vars
 			 all other stuff
 			 
-			applyOM
-			
+			applyOM functions
 
 			parser 
 			

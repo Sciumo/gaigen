@@ -423,8 +423,17 @@ ${CODEBLOCK SMVconstructors}
 <%}%>
 ${ENDCODEBLOCK}
 
-// same arguments as randomBladeVersor
-${CODEBLOCK randomBladeVersorHeader}
+// S = Specification of algebra.
+// functionName = name of generated function
+// FT = floating point type
+// mvType = multivector type name (with prefix/suffix)
+// randomScalarFuncName = name of function which generates random scalar values
+// gpopFuncName = name of geometric product or outer product function for two multivectors
+// normFuncName = norm of multivector function (must return scalar)
+// gpScalarFuncName = geometric product of multivector and scalar
+// generatorVersor = bool (use geometric product or outer product)
+${CODEBLOCK randomBladeVersor}
+
 /**
 Generates a random <%if (generatorVersor) {%>versor<%}else{%>blade<%}%>.
 The scale is uniformly distributed over the interval [0 1).
@@ -434,7 +443,11 @@ versor/blade. Use 'basisVectorBitmap = -1' (the default) to use all basisvectors
 
 Returns <%functionName%>_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0);
 */
-<%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basisVectorBitmap = -1);
+public static <%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basisVectorBitmap) {
+	<%FT.type%> minimumNorm = <%FT.DoubleToString(S, 0.01)%>;
+	<%FT.type%> largestCoordinate = <%FT.DoubleToString(S, 4.0)%>;
+	return <%functionName%>_ex(scale, grade, basisVectorBitmap, minimumNorm, scale * largestCoordinate);
+}
 
 /**
 This version of <%functionName%>() has extra arguments which help to avoid 
@@ -449,70 +462,45 @@ tries to generate another random blade / versor.
 
 'largestCoordinate' is the largest coordinate allowed after scaling.
 */
-<%mvType%> <%functionName%>_ex(<%FT.type%> scale, int grade, int basisVectorBitmap, <%FT.type%> minimumNorm, <%FT.type%> largestCoordinate);
-
-${ENDCODEBLOCK}
-
-// S = Specification of algebra.
-// functionName = name of generated function
-// FT = floating point type
-// mvType = multivector type name (with prefix/suffix)
-// randomScalarFuncName = name of function which generates random scalar values
-// gpopFuncName = name of geometric product or outer product function for two multivectors
-// normFuncName = norm of multivector function (must return scalar)
-// gpScalarFuncName = geometric product of multivector and scalar
-// generatorVersor = bool (use geometric product or outer product)
-${CODEBLOCK randomBladeVersor}
-
-<%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basisVectorBitmap) {
-	<%FT.type%> minimumNorm = <%FT.DoubleToString(S, 0.01)%>;
-	<%FT.type%> largestCoordinate = <%FT.DoubleToString(S, 4.0)%>;
-	return <%functionName%>_ex(scale, grade, basisVectorBitmap, minimumNorm, scale * largestCoordinate);
-}
-
-<%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int basisVectorBitmap, 
+public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int basisVectorBitmap, 
 		<%FT.type%> minimumNorm, <%FT.type%> largestCoordinate) 
 {
-	<%mvType%> randomVector, tmp1, tmp2;
-	<%mvType%> *IR1 = &tmp1, *IR2 = &tmp2; // IR = intermediate result
-	<%FT.type%> randomValues[<%S.m_dimension%>];
-	<%FT.type%> n2, mul;
-	int i;
+	<%mvType%> randomVector = new <%mvType%>();
+	//, tmp1, tmp2;
+	<%FT.type%>[] randomValues = new <%FT.type%>[<%S.m_dimension%>];
+	//<%FT.type%> n2, mul;
 	int grade = _grade;
 	
-	// set IR1 (intermediate result) to 1
-	IR1->set(<%FT.DoubleToString(S, 1.0)%>);
+	// set IR (intermediate result) to 1
+	<%mvType%> IR = new <%mvType%> (<%FT.DoubleToString(S, 1.0)%>);
 
 	while (grade > 0) {	// loop until grade == 0
 		// fill array with random values
-		for (i = 0; i < <%S.m_dimension%>; i++) 
-			randomValues[i] = (basisVectorBitmap & (1 << i))
+		for (int i = 0; i < <%S.m_dimension%>; i++) 
+			randomValues[i] = ((basisVectorBitmap & (1 << i)) == 0)
 				? (<%FT.DoubleToString(S, -1.0)%> + <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>())
 				: <%FT.DoubleToString(S, 0.0)%>;
 		
 		// make it a multivector:
-		randomVector.set(GRADE_1, randomValues);
+		randomVector.Set(GroupBitmap.GRADE_1, randomValues);
 		
 		// multiply 
-		(*IR2) = <%gpopFuncName%>(*IR1, randomVector);
-		
-		// swap IR pointers: 
-		std::swap(IR1, IR2);
+		IR = <%gpopFuncName%>(IR, randomVector);
 		
 		// lower grade
 		grade--;
 	}
 	
 	// compute norm/multiplier, apply it, or recurse if we happened to create a near-null versor
-	n2 = <%normFuncName%>(*IR1);
-	if ((<%FT.type%>)fabs(n2) > minimumNorm * minimumNorm) {
+	<%FT.type%> n2 = <%normFuncName%>(IR);
+	if ((<%FT.type%>)<%G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS)%>(n2) > minimumNorm * minimumNorm) {
 		if (n2 != <%FT.DoubleToString(S, 0.0)%>) {
-			mul = scale * <%randomScalarFuncName%>() / n2;
-			if (IR1->largestCoordinate() * mul < largestCoordinate)
-				return <%gpScalarFuncName%>(*IR1, mul);
+			<%FT.type%> mul = scale * <%randomScalarFuncName%>() / n2;
+			if (IR.LargestCoordinate() * mul < largestCoordinate)
+				return <%gpScalarFuncName%>(IR, mul);
 		}
-		else if (IR1->largestCoordinate() < largestCoordinate)
-			return *IR1;
+		else if (IR.LargestCoordinate() < largestCoordinate)
+			return IR;
 	}
 	
 	// try again:
