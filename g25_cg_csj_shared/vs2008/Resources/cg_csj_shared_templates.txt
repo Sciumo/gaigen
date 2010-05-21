@@ -63,3 +63,410 @@ ${CODEBLOCK GMVlargestCoordinate}
 	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "largestBasisBlade")%>()
 	
 ${ENDCODEBLOCK}
+
+
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// inputType = mangled name of input type
+// returnType = mangled name of return type
+// gpFuncII = mangled name of geometric product of (inputType, inputType)
+// gpFuncRI = mangled name of geometric product of (returnType, inputType)
+// gpFuncRR = mangled name of geometric product of (returnType, returnType)
+// gpFuncIdouble = mangled name of geometric product of (inputType, double)
+// gpFuncRdouble = mangled name of geometric product of (returnType, double)
+// subFuncRR = mangled name of subtraction of (returnType, returnType)
+// addFuncRR = mangled name of addition of (returnType, returnType)
+// normE2funcR = mangled name of norm2 of (returnType)
+// SASfuncI = Scale and add scalar (input type)
+// sqrtFunc
+// cosFunc
+// sinFunc
+// coshFunc
+// sinhFunc
+// userComment
+${CODEBLOCK seriesExp}
+<%if (S.OutputCSharp()) {%>
+/// <summary>Computes exponential of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+<%} else {%>
+/** 
+ * Computes exponential of <%inputType%> up to 12th term.
+ * <%userComment%> 
+ */
+<%}%>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+<%if (S.OutputCSharp()) {%>
+/// <summary>Computes exponential of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+<%} else {%>
+/** 
+ * Computes exponential of <%inputType%>.
+ * <%userComment%> 
+ */
+<%}%>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
+   
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(-s_xSquared);
+				return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%cosFunc%>(a));
+			}
+			else if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(s_xSquared);
+				return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%coshFunc%>(a));
+			}
+			else {
+				return <%SASfuncI%>(x, <%FT.DoubleToString(S, 1.0)%>, <%FT.DoubleToString(S, 1.0)%>);
+			}
+		}
+	}
+
+	// else do general series eval . . .
+
+	// result = 1 + ....	
+	<%returnType%> result = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	if (order == 0) return result;
+
+	// find scale (power of 2) such that its norm is < 1
+	<%if (S.OutputCSharp()) {%>u<%}%>long maxC = (<%if (S.OutputCSharp()) {%>u<%}%>long)x.<%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>();
+	int scale = 1;
+	if (maxC > 1) scale <<= 1;
+	while (maxC != 0)
+	{
+		maxC >>= 1;
+		scale <<= 1;
+	}
+
+	// scale
+	<%inputType%> xScaled = <%gpFuncIdouble%>(x, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)scale); 
+
+	// taylor series approximation
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>); 
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, xScaled);
+		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i);
+		
+		result = <%addFuncRR%>(result, xPow1); // result2 = result1 + xPow1
+    }
+
+	// undo scaling
+	while (scale > 1)
+	{
+		result = <%gpFuncRR%>(result, result);
+		scale >>= 1;
+	}
+    
+    return result;
+} // end of <%funcName%>()
+
+${ENDCODEBLOCK}
+
+
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// inputType = mangled name of input type
+// returnType = mangled name of return type
+// gpFuncII = mangled name of geometric product of (inputType, inputType)
+// gpFuncRI = mangled name of geometric product of (returnType, inputType)
+// gpFuncRR = mangled name of geometric product of (returnType, returnType)
+// gpFuncIdouble = mangled name of geometric product of (inputType, double)
+// gpFuncRdouble = mangled name of geometric product of (returnType, double)
+// subFuncRR = mangled name of subtraction of (returnType, returnType)
+// addFuncRR = mangled name of addition of (returnType, returnType)
+// normE2funcR = mangled name of norm2 of (returnType)
+// SASfuncI = Scale and add scalar (input type)
+// sqrtFunc
+// cosFunc
+// sinFunc
+// coshFunc
+// sinhFunc
+${CODEBLOCK seriesSinh}
+/// <summary>Computes hyperbolic sine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+/// <summary>Computes hyperbolic sine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
+   
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(-s_xSquared);
+				return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(s_xSquared);
+				return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else {
+<%if ((returnType != inputType) && (returnType != FT.GetMangledName(S, S.m_GMV.Name))) {%>
+				return <%copyInputToReturnFunc%>(x);
+<%} else {%>
+				return x;
+<%}%>
+			}
+		}
+	}
+
+	// else do general series eval . . .
+
+	// result = A +  A^3/3! + A^5/5!
+	<%returnType%> result = new <%returnType%>(); // result = 0
+    if (order == 0) return result;
+    	
+	// taylor series approximation
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, x); // xPow2 = xPow1 * x
+		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
+		
+		if ((i % 2) == 1) {
+			result = <%addFuncRR%>(result, xPow1); 
+		}
+	}
+
+    return result;
+} // end of <%funcName%>()
+${ENDCODEBLOCK}
+
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// inputType = mangled name of input type
+// returnType = mangled name of return type
+// gpFuncII = mangled name of geometric product of (inputType, inputType)
+// gpFuncRI = mangled name of geometric product of (returnType, inputType)
+// gpFuncRR = mangled name of geometric product of (returnType, returnType)
+// gpFuncIdouble = mangled name of geometric product of (inputType, double)
+// gpFuncRdouble = mangled name of geometric product of (returnType, double)
+// subFuncRR = mangled name of subtraction of (returnType, returnType)
+// addFuncRR = mangled name of addition of (returnType, returnType)
+// normE2funcR = mangled name of norm2 of (returnType)
+// SASfuncI = Scale and add scalar (input type)
+// sqrtFunc
+// cosFunc
+// sinFunc
+// coshFunc
+// sinhFunc
+${CODEBLOCK seriesCosh}
+/// <summary>Computes hyperbolic cosine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+/// <summary>Computes hyperbolic cosine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
+   
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				return new <%returnType%>(<%coshFunc%>(<%sqrtFunc%>(s_xSquared)));
+			}
+			else if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				return new <%returnType%>(<%cosFunc%>(<%sqrtFunc%>(-s_xSquared)));
+			}
+			else {
+				return new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+			}
+		}
+	}
+
+	// else do general series eval . . .
+
+
+	<%returnType%> result = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	if (order == 0) return result;
+
+	// taylor series approximation
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, x);
+		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
+		
+		if ((i % 2) == 0) {
+			result = <%addFuncRR%>(result, xPow1); 
+		}
+    }
+
+    return result;
+} // end of <%funcName%>()
+${ENDCODEBLOCK}
+
+
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// inputType = mangled name of input type
+// returnType = mangled name of return type
+// gpFuncII = mangled name of geometric product of (inputType, inputType)
+// gpFuncRI = mangled name of geometric product of (returnType, inputType)
+// gpFuncRR = mangled name of geometric product of (returnType, returnType)
+// gpFuncIdouble = mangled name of geometric product of (inputType, double)
+// gpFuncRdouble = mangled name of geometric product of (returnType, double)
+// subFuncRR = mangled name of subtraction of (returnType, returnType)
+// addFuncRR = mangled name of addition of (returnType, returnType)
+// normE2funcR = mangled name of norm2 of (returnType)
+// SASfuncI = Scale and add scalar (input type)
+// sqrtFunc
+// cosFunc
+// sinFunc
+// coshFunc
+// sinhFunc
+${CODEBLOCK seriesSin}
+/// <summary>Computes sine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+/// <summary>Computes sine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
+   
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(-s_xSquared);
+				return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(s_xSquared);
+				return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else {
+<%if ((returnType != inputType) && (returnType != FT.GetMangledName(S, S.m_GMV.Name))) {%>
+				return <%copyInputToReturnFunc%>(x);
+<%} else {%>
+				return x;
+<%}%>
+			}
+		}
+	}
+
+	// else do general series eval . . .
+
+	// result = A -  ....	+ ... - ...
+	<%returnType%> result = new <%returnType%>(); // result = 0;
+    if (order == 0) return result;
+    	
+	// taylor series approximation
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>); // xPow1 = 1.0
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, x); // xPow2 = xPow1 * x
+		
+		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
+		
+		if ((i % 4) == 3)
+		{
+			result = <%subFuncRR%>(result, xPow1); // result = result - xPow1
+		}
+		else if ((i % 4) == 1) 
+		{
+			result = <%addFuncRR%>(result, xPow1); // result = result + xPow1
+		}
+	}
+
+	return result;
+} // end of <%funcName%>()
+
+${ENDCODEBLOCK}
+
+// S = Specification of algebra. (G25.spec)
+// FT = floating point type (G25.FloatType)
+// inputType = mangled name of input type
+// returnType = mangled name of return type
+// gpFuncII = mangled name of geometric product of (inputType, inputType)
+// gpFuncRI = mangled name of geometric product of (returnType, inputType)
+// gpFuncRR = mangled name of geometric product of (returnType, returnType)
+// gpFuncIdouble = mangled name of geometric product of (inputType, double)
+// gpFuncRdouble = mangled name of geometric product of (returnType, double)
+// subFuncRR = mangled name of subtraction of (returnType, returnType)
+// addFuncRR = mangled name of addition of (returnType, returnType)
+// normE2funcR = mangled name of norm2 of (returnType)
+// SASfuncI = Scale and add scalar (input type)
+// sqrtFunc
+// cosFunc
+// sinFunc
+// coshFunc
+// sinhFunc
+${CODEBLOCK seriesCos}
+/// <summary>Computes cosine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+/// <summary>Computes cosine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				return new <%returnType%>(<%cosFunc%>(<%sqrtFunc%>(s_xSquared)));
+			}
+			else if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				return new <%returnType%>(<%coshFunc%>(<%sqrtFunc%>(-s_xSquared)));
+			}
+			else {
+				return new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+			}
+		}
+	}
+
+	// else do general series eval . . .
+
+
+	<%returnType%> result = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	if (order == 0) return result;
+
+	// taylor series approximation
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>); // xPow1 = 1.0
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, x); // xPow2 = xPow1 * x
+		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
+		
+		if ((i % 4) == 2)
+		{
+			result = <%subFuncRR%>(result, xPow1); // result2 = result1 - xPow1
+		}
+		else if ((i % 4) == 0) 
+		{
+			result = <%addFuncRR%>(result, xPow1); // result2 = result1 + xPow1
+		}		
+    }
+
+	return result;
+} // end of <%funcName%>()
+${ENDCODEBLOCK}
