@@ -563,79 +563,72 @@ ${ENDCODEBLOCK}
 // userComment
 ${CODEBLOCK seriesExp}
 /// <summary>Computes exponential of <%inputType%> up to 12th term.
-/// <%userComment%>
+/// <%userComment%> 
 /// </summary>
 public static <%returnType%> <%funcName%>(<%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
 /// <summary>Computes exponential of <%inputType%>.
-/// <%userComment%>
+/// <%userComment%> 
 /// </summary>
 public static <%returnType%> <%funcName%>(<%inputType%> x, int order) {
-	long maxC, scale = 1;
-	<%inputType%> xScaled;
-	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
-	<%returnType%> xPow1, xPow2;
-	<%FT.type%> s_x2, a;
-	int i;
    
-	// First try special cases: check if (x * x) is scalar
-	tmp1 = <%gpFuncII%>(x, x);
-	s_x2 = _<%FT.type%>(tmp1);
-	if ((<%normE2funcR%>(tmp1) - s_x2 * s_x2) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
-		// OK (x * x == ~scalar), so use special cases:
-		if (s_x2 < <%FT.DoubleToString(S, 0.0)%>) {
-			a = <%sqrtFunc%>(-s_x2);
-			return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%cosFunc%>(a));
-		}
-		else if (s_x2 > <%FT.DoubleToString(S, 0.0)%>) {
-			a = <%sqrtFunc%>(s_x2);
-			return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%coshFunc%>(a));
-		}
-		else {
-			return <%SASfuncI%>(x, <%FT.DoubleToString(S, 1.0)%>, <%FT.DoubleToString(S, 1.0)%>);
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(-s_xSquared);
+				return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%cosFunc%>(a));
+			}
+			else if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(s_xSquared);
+				return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%coshFunc%>(a));
+			}
+			else {
+				return <%SASfuncI%>(x, <%FT.DoubleToString(S, 1.0)%>, <%FT.DoubleToString(S, 1.0)%>);
+			}
 		}
 	}
 
 	// else do general series eval . . .
 
 	// result = 1 + ....	
-	*result1 = <%FT.DoubleToString(S, 1.0)%>;
-	if (order == 0) return *result1;
+	<%returnType%> result = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	if (order == 0) return result;
 
 	// find scale (power of 2) such that its norm is < 1
-	maxC = (unsigned long)x.largestCoordinate();
-	scale = 1;
+	ulong maxC = (ulong)x.LargestCoordinate();
+	int scale = 1;
 	if (maxC > 1) scale <<= 1;
-	while (maxC)
+	while (maxC != 0)
 	{
 		maxC >>= 1;
 		scale <<= 1;
 	}
 
 	// scale
-	xScaled = <%gpFuncIdouble%>(x, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)scale); 
+	<%inputType%> xScaled = <%gpFuncIdouble%>(x, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)scale); 
 
 	// taylor series approximation
-	xPow1 = <%FT.DoubleToString(S, 1.0)%>; 
-	for (i = 1; i <= order; i++) {
-		xPow2 = <%gpFuncRI%>(xPow1, xScaled);
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>); 
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, xScaled);
 		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i);
 		
-		*result2 = <%addFuncRR%>(*result1, xPow1); // result2 = result1 + xPow1
-		std::swap(result1, result2); // result is always in 'result1' at end of loop
+		result = <%addFuncRR%>(result, xPow1); // result2 = result1 + xPow1
     }
 
 	// undo scaling
 	while (scale > 1)
 	{
-		*result2 = <%gpFuncRR%>(*result1, *result1);
-		std::swap(result1, result2); // result is always in 'result1' at end of loop
+		result = <%gpFuncRR%>(result, result);
 		scale >>= 1;
 	}
     
-    return *result1;
+    return result;
 } // end of <%funcName%>()
 
 ${ENDCODEBLOCK}
@@ -660,54 +653,64 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSinh}
-<%returnType%> <%funcName%>(const <%inputType%> &x, int order /*  = 12 */) {
-	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
+/// <summary>Computes hyperbolic sine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
+
+/// <summary>Computes hyperbolic sine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x, int order) {
+	/*<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
 	<%returnType%> xPow1, xPow2; // xScaled^... goes here
 	<%returnType%> *result1 = &tmp1, *result2 = &tmp2;
 	<%FT.type%> s_x2, a;
-	int i;
+	int i;*/
    
-	// First try special cases: check if (x * x) is scalar
-	tmp1 = <%gpFuncII%>(x, x);
-	s_x2 = _<%FT.type%>(tmp1);
-	if ((<%normE2funcR%>(tmp1) - s_x2 * s_x2) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
-		// OK (x * x == ~scalar), so use special cases:
-		if (s_x2 < <%FT.DoubleToString(S, 0.0)%>) {
-			a = <%sqrtFunc%>(-s_x2);
-			return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
-		}
-		else if (s_x2 > <%FT.DoubleToString(S, 0.0)%>) {
-			a = <%sqrtFunc%>(s_x2);
-			return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
-		}
-		else {
+	{ // First try special cases: check if (x * x) is scalar
+		<%returnType%> xSquared = <%gpFuncII%>(x, x);
+		<%FT.type%> s_xSquared = xSquared.get_scalar();
+		if ((<%normE2funcR%>(xSquared) - s_xSquared * s_xSquared) < <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			// OK (x * x == ~scalar), so use special cases:
+			if (s_xSquared < <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(-s_xSquared);
+				return <%SASfuncI%>(x, <%sinFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else if (s_xSquared > <%FT.DoubleToString(S, 0.0)%>) {
+				<%FT.type%> a = <%sqrtFunc%>(s_xSquared);
+				return <%SASfuncI%>(x, <%sinhFunc%>(a) / a, <%FT.DoubleToString(S, 0.0)%>);
+			}
+			else {
 <%if ((returnType != inputType) && (returnType != FT.GetMangledName(S, S.m_GMV.Name))) {%>
-			return <%copyInputToReturnFunc%>(x);
+				return <%copyInputToReturnFunc%>(x);
 <%} else {%>
-			return x;
+				return x;
 <%}%>
+			}
 		}
 	}
 
 	// else do general series eval . . .
 
 	// result = A +  A^3/3! + A^5/5!
-	result1->set(); // result = 0
-    if (order == 0) return *result1;
+	<%returnType%> result = new <%returnType%>(); // result = 0
+    if (order == 0) return result;
     	
 	// taylor series approximation
-	xPow1 = <%FT.DoubleToString(S, 1.0)%>;
-	for (i = 1; i <= order; i++) {
-		xPow2 = <%gpFuncRI%>(xPow1, x); // xPow2 = xPow1 * x
+	<%returnType%> xPow1 = new <%returnType%>(<%FT.DoubleToString(S, 1.0)%>);
+	for (int i = 1; i <= order; i++) {
+		<%returnType%> xPow2 = <%gpFuncRI%>(xPow1, x); // xPow2 = xPow1 * x
 		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
 		
 		if ((i % 2) == 1) {
-			*result2 = <%addFuncRR%>(*result1, xPow1); 
-			std::swap(result1, result2); 
+			result = <%addFuncRR%>(result, xPow1); 
 		}
 	}
 
-    return *result1;
+    return result;
 } // end of <%funcName%>()
 ${ENDCODEBLOCK}
 
@@ -730,13 +733,22 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCosh}
+/// <summary>Computes hyperbolic cosine of <%inputType%> up to 12th term.
+/// <%userComment%> 
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x) {
+	return <%funcName%>(x, 12);
+}
 
-<%returnType%> <%funcName%>(const <%inputType%> &x, int order) {
-	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
+/// <summary>Computes hyperbolic cosine of <%inputType%>.
+/// <%userComment%> 
+/// </summary>
+public static <%returnType%> <%funcName%>(<%inputType%> x, int order) {
+/*	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
 	<%returnType%> xPow1, xPow2; // xScaled^... goes here
 	<%returnType%> *result1 = &tmp1, *result2 = &tmp2;
 	<%FT.type%> s_x2;
-	int i;
+	int i;*/
    
 	// First try special cases: check if (x * x) is scalar
 	tmp1 = <%gpFuncII%>(x, x);
@@ -762,7 +774,7 @@ ${CODEBLOCK seriesCosh}
 
 	// taylor series approximation
 	xPow1 = <%FT.DoubleToString(S, 1.0)%>;
-	for (i = 1; i <= order; i++) {
+	for (int i = 1; i <= order; i++) {
 		xPow2 = <%gpFuncRI%>(xPow1, x);
 		xPow1 = <%gpFuncRdouble%>(xPow2, <%FT.DoubleToString(S, 1.0)%> / (<%FT.type%>)i); // xPow1 = xScaled^i / i! 
 		

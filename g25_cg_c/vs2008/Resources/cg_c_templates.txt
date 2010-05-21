@@ -534,7 +534,8 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK seriesExp}
 
 void <%funcName%>(<%returnType%> *R, const <%inputType%> *x, int order) {
-	unsigned long maxC, scale = 1;
+	unsigned long maxC;
+	int scale = 1;
 	<%inputType%> xScaled;
 	<%returnType%> tmp1, tmp2, tmp3; // temp <%returnType%> used for various purposes
 	<%returnType%> *xPow1 = &tmp1, *xPow2 = &tmp2; // xScaled^... goes here

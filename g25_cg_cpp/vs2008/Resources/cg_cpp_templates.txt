@@ -1241,7 +1241,8 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK seriesExp}
 
 <%returnType%> <%funcName%>(const <%inputType%> &x, int order /*  = 12 */) {
-	unsigned long maxC, scale = 1;
+	unsigned long maxC;
+	int scale = 1;
 	<%inputType%> xScaled;
 	<%returnType%> tmp1, tmp2; // temp <%returnType%> used for various purposes
 	<%returnType%> xPow1, xPow2;
@@ -1274,7 +1275,7 @@ ${CODEBLOCK seriesExp}
 	if (order == 0) return *result1;
 
 	// find scale (power of 2) such that its norm is < 1
-	maxC = (unsigned long)x.largestCoordinate();
+	maxC = (unsigned long)x.largestCoordinate(); // unsigned type is fine, because largest coordinate is absolute
 	scale = 1;
 	if (maxC > 1) scale <<= 1;
 	while (maxC)
