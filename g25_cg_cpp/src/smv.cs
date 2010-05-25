@@ -148,39 +148,7 @@ namespace G25.CG.CPP
         /// <param name="emitCoordIndices">Whether to emit constants for array indices to coordinates.</param>
         public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv, bool emitCoordIndices)
         {
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a specialized multivector of type " + FT.GetMangledName(S, smv.Name) + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type  " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            if (smv.NbNonConstBasisBlade > 0)
-            {
-                SB.AppendLine(" * The variable non-zero coordinates are:");
-                for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                {
-                    SB.AppendLine(" *   - coordinate " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + "  (array index: " + GetCoordIndexDefine(S, FT, smv, i) + " = " + i + ")");
-                }
-            }
-            else SB.AppendLine(" * The type is constant.");
-            SB.AppendLine(" * ");
-
-            if (smv.NbConstBasisBlade > 0)
-            {
-                SB.AppendLine(" * The constant non-zero coordinates are:");
-                for (int i = 0; i < smv.NbConstBasisBlade; i++)
-                    SB.AppendLine(" *   - " + smv.ConstBasisBlade(i).ToString(S.m_basisVectorNames) + " = " + smv.ConstBasisBladeValue(i).ToString());
-            }
-            else SB.AppendLine(" * The type has no constant coordinates.");
-            SB.AppendLine(" * ");
-
-            if ((smv.Comment != null) && (smv.Comment.Length > 0))
-            {
-                SB.AppendLine(" * ");
-                SB.AppendLine(" * " + smv.Comment);
-            }
-            SB.AppendLine(" */");
+            G25.CG.Shared.ClassComments.GetSmvComment(S, cgd, FT, smv, emitCoordIndices).Write(SB, S, 0);
         }
 
         /// <summary>

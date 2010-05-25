@@ -115,21 +115,7 @@ namespace G25.CG.Java
         protected CG.Shared.CGdata m_cgd;
 
 
-        /// <summary>
-        /// Returns a symbolic name for the coordinate 'idx' of 'smv' which can be used in the
-        /// output code.
-        /// </summary>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="smv">The specialized multivector for which the coordinate indices should be written.</param>
-        /// <param name="idx">The specialized multivector for which the coordinate indices should be written.</param>
-        /// <param name="FT"></param>
-        /// <returns>The symbol for the define for coordinate index 'idx' of 'smv'.</returns>
-        public static string GetCoordIndexDefine(Specification S, FloatType FT, G25.SMV smv, int idx)
-        {
-            return smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
-//                    return FT.GetMangledName(smv.Name) + "::" + smv.GetCoordLangID(idx, S, COORD_STORAGE.VARIABLES).ToUpper();
-        }
-
+        
         /// <summary>
         /// Writes the <c>defines</c> for indices of the smv struct to 'SB'. For example,  <c>define VECTOR_E1 0</c>.
         /// </summary>

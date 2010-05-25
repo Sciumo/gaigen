@@ -56,6 +56,19 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
+        /// Writes comments of a GMV class to 'SB'.
+        /// </summary>
+        /// <param name="SB">Where the comment goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float point type of 'GMV'.</param>
+        /// <param name="gmv">The general multivector for which the class should be written.</param>
+        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
+        {
+            G25.CG.Shared.ClassComments.GetGmvComment(S, cgd, FT, gmv).Write(SB, S, 0);
+        }
+
+        /// <summary>
         /// Writes functions to set the GMV types to zero.
         /// </summary>
         /// <param name="SB">Where the output goes.</param>

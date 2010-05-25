@@ -27,56 +27,6 @@ namespace G25.CG.CSharp
     {
 
         /// <summary>
-        /// Writes comments of a GMV class to 'SB'.
-        /// </summary>
-        /// <param name="SB">Where the comment goes.</param>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
-        /// <param name="FT">Float point type of 'GMV'.</param>
-        /// <param name="gmv">The general multivector for which the class should be written.</param>
-        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
-        {
-
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a general multivector.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * There are " + gmv.NbGroups + " coordinate groups:");
-            for (int g = 0; g < gmv.NbGroups; g++)
-            {
-                SB.Append(" * group " + g + ":");
-                for (int i = 0; i < gmv.Group(g).Length; i++)
-                {
-                    if (i > 0) SB.Append(", ");
-                    SB.Append(gmv.Group(g)[i].ToString(S.m_basisVectorNames));
-
-                }
-                if (gmv.Group(g).Length > 0)
-                    SB.Append("  (grade " + gmv.Group(g)[0].Grade() + ")");
-
-                SB.AppendLine(".");
-            }
-            SB.AppendLine(" * ");
-
-            switch (S.m_GMV.MemoryAllocationMethod)
-            {
-                case G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE:
-                    SB.AppendLine(" * " + (gmv.NbCoordinates / 2) + " " + FT.type + "s are allocated inside the struct ('parity pure').");
-                    SB.AppendLine(" * Hence creating a multivector which needs more than that number of coordinates ");
-                    SB.AppendLine(" * will result in unpredictable behaviour (buffer overflow).");
-                    break;
-                case G25.GMV.MEM_ALLOC_METHOD.FULL:
-                    SB.AppendLine(" * " + gmv.NbCoordinates + " " + FT.type + "s are allocated inside the struct.");
-                    break;
-            }
-
-            SB.AppendLine(" */");
-        }
-
-        /// <summary>
         /// Writes member variables of a GMV class to 'SB'.
         /// </summary>
         /// <param name="SB">Where the comment goes.</param>
@@ -147,7 +97,7 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
             // write class comment
-            WriteComment(SB, S, cgd, FT, gmv);
+            G25.CG.CSJ.GMV.WriteComment(SB, S, cgd, FT, gmv);
 
             // open class
             string[] implements = new string[] { MvInterface.GetMvInterfaceName(S, FT) };

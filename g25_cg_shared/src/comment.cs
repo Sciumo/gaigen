@@ -122,16 +122,20 @@ namespace G25.CG.Shared
         /// <param name="comment">The comment</param>
         public static void WriteMultilineComment(StringBuilder SB, Specification S, int nbTabs, string comment)
         {
-            string lineOpen = new string('\t', nbTabs);
+            // how to start each line:
+            string lineStart = new string('\t', nbTabs);
             if ((S.OutputJava()) || (S.OutputC()))
-                lineOpen = lineOpen + " * ";
-            else lineOpen = lineOpen + "/// ";
+                lineStart = lineStart + " * ";
+            else lineStart = lineStart + "/// ";
 
-            string[] splitStr = comment.Split('\n');
+            // split comment on carriage returns, and get rid of '\r'
+            string[] splitStr = comment.Replace("\r", "").Split('\n');
+
+            // output each line of comment:
             bool firstLine = true;
             foreach (string lineStr in splitStr)
             {
-                if (!firstLine) SB.Append(lineOpen);
+                if (!firstLine) SB.Append(lineStart);
                 firstLine = false;
                 SB.AppendLine(lineStr);
             }

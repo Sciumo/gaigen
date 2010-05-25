@@ -43,52 +43,11 @@ namespace G25.CG.CPP
         /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
         /// <param name="FT">Float point type of 'GOM'.</param>
         /// <param name="gom">The general outermorphism for which the class should be written.</param>
-        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GOM gom) {
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a general outermorphism.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * There are " + gom.Domain.Length + " matrices, one for each grade.");
-            SB.AppendLine(" * The columns of these matrices are the range of the outermorphism.");
-            SB.AppendLine(" * Matrices are stored in row-major order. So the coordinates of rows are stored contiguously.");
-            for (int g = 1; g < gom.Domain.Length; g++) // start at '1' in order to skip scalar grade
-            {
-                SB.Append(" * Domain grade " + g + ": ");
-                for (int i = 0; i < gom.DomainForGrade(g).Length; i++)
-                {
-                    if (i > 0) SB.Append(", ");
-                    SB.Append(gom.DomainForGrade(g)[i].ToString(S.m_basisVectorNames));
-
-                }
-
-                SB.AppendLine(".");
-            }
-            SB.AppendLine(" * ");
-            if (!gom.DomainAndRangeAreEqual())
-            {
-                for (int g = 1; g < gom.Range.Length; g++) // start at '1' in order to skip scalar grade
-                {
-                    SB.Append(" * Range grade " + g + ": ");
-                    for (int i = 0; i < gom.RangeForGrade(g).Length; i++)
-                    {
-                        if (i > 0) SB.Append(", ");
-                        SB.Append(gom.RangeForGrade(g)[i].ToString(S.m_basisVectorNames));
-
-                    }
-
-                    SB.AppendLine(".");
-                }
-            }
-            else SB.AppendLine(" * The range and domain are equal.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" */");
+        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GOM gom)
+        {
+            G25.CG.Shared.ClassComments.GetGomComment(S, cgd, FT, gom).Write(SB, S, 0);
         }
-
-
+        
         /// <summary>
         /// Writes members variables of a GOM class to 'SB'.
         /// </summary>

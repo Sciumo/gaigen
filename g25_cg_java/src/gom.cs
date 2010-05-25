@@ -53,7 +53,8 @@ namespace G25.CG.Java
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
-            // todo: write class comment
+            // write class comment
+            G25.CG.CSJ.GOM.WriteComment(SB, S, cgd, FT, gom);
 
             // open class
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, className, null, null);

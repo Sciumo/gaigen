@@ -46,43 +46,7 @@ namespace G25.CG.CPP
         /// <param name="gmv">The general multivector for which the class should be written.</param>
         public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GMV gmv)
         {
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a general multivector.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * There are " + gmv.NbGroups + " coordinate groups:");
-            for (int g = 0; g < gmv.NbGroups; g++)
-            {
-                SB.Append(" * group " + g + ":");
-                for (int i = 0; i < gmv.Group(g).Length; i++)
-                {
-                    if (i > 0) SB.Append(", ");
-                    SB.Append(gmv.Group(g)[i].ToString(S.m_basisVectorNames));
-
-                }
-                if (gmv.Group(g).Length > 0)
-                    SB.Append("  (grade " + gmv.Group(g)[0].Grade() + ")");
-
-                SB.AppendLine(".");
-            }
-            SB.AppendLine(" * ");
-
-            switch (S.m_GMV.MemoryAllocationMethod)
-            {
-                case G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE:
-                    SB.AppendLine(" * " + (gmv.NbCoordinates / 2) + " " + FT.type + "s are allocated inside the struct ('parity pure').");
-                    SB.AppendLine(" * Hence creating a multivector which needs more than that number of coordinates ");
-                    SB.AppendLine(" * will result in unpredictable behaviour (buffer overflow).");
-                    break;
-                case G25.GMV.MEM_ALLOC_METHOD.FULL:
-                    SB.AppendLine(" * " + gmv.NbCoordinates + " " + FT.type + "s are allocated inside the struct.");
-                    break;
-            }
-
-            SB.AppendLine(" */");
+            G25.CG.Shared.ClassComments.GetGmvComment(S, cgd, FT, gmv).Write(SB, S, 0);
         }
 
         /// <summary>

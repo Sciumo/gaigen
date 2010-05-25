@@ -45,49 +45,7 @@ namespace G25.CG.CPP
         /// <param name="som">The general outermorphism for which the class should be written.</param>
         public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SOM som)
         {
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a specialized outermorphism.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * There are " + som.Domain.Length + " matrices, one for each grade.");
-            SB.AppendLine(" * The columns of these matrices are the range of the outermorphism.");
-            SB.AppendLine(" * Matrices are stored in row-major order. So the coordinates of rows are stored contiguously.");
-            for (int g = 1; g < som.Domain.Length; g++) // start at '1' in order to skip scalar grade
-            {
-                SB.Append(" * Domain grade " + g + ": ");
-                for (int i = 0; i < som.DomainForGrade(g).Length; i++)
-                {
-                    if (i > 0) SB.Append(", ");
-                    SB.Append(som.DomainForGrade(g)[i].ToString(S.m_basisVectorNames));
-
-                }
-
-                SB.AppendLine(".");
-            }
-            SB.AppendLine(" * ");
-            if (!som.DomainAndRangeAreEqual())
-            {
-                for (int g = 1; g < som.Range.Length; g++) // start at '1' in order to skip scalar grade
-                {
-                    SB.Append(" * Range grade " + g + ": ");
-                    for (int i = 0; i < som.RangeForGrade(g).Length; i++)
-                    {
-                        if (i > 0) SB.Append(", ");
-                        SB.Append(som.RangeForGrade(g)[i].ToString(S.m_basisVectorNames));
-
-                    }
-
-                    SB.AppendLine(".");
-                }
-            }
-            else SB.AppendLine(" * The range and domain are equal.");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" */");
-
+            G25.CG.Shared.ClassComments.GetSomComment(S, cgd, FT, som).Write(SB, S, 0);
         }
 
         /// <summary>
