@@ -741,8 +741,8 @@ ${ENDCODEBLOCK}
 // rangeVectorSMVname = name of range vector type
 // FT = floatType
 ${CODEBLOCK GOMconstructors}
-	/// Constructs a new <%className%>, set to idenitity
-	inline <%className%>() { setIdentity(); }
+	/// Constructs a new <%className%>, set to identity
+	inline <%className%>() { setidentity(); }
 
 	/// Copy constructor.
 	inline <%className%>(const <%className%>&M) { set(M); }
@@ -786,8 +786,8 @@ ${ENDCODEBLOCK}
 // rangeVectorSMVname = name of range vector type
 // FT = floatType
 ${CODEBLOCK GOMsetDecl}
-	/// Sets this <%className%> to idenitity.
-	void setIdentity();
+	/// Sets this <%className%> to identity.
+	void setidentity();
 
 	/// Sets this to 'M'.
 	void set(const <%className%> &M);
@@ -825,8 +825,8 @@ ${ENDCODEBLOCK}
 // rangeVectorSMVname = name of range vector type
 // FT = floatType
 ${CODEBLOCK SOMconstructors}
-	/// Constructs a new <%className%>, set to idenitity
-	inline <%className%>() { setIdentity(); }
+	/// Constructs a new <%className%>, set to identity
+	inline <%className%>() { setidentity(); }
 
 	/// Copy constructor.
 	inline <%className%>(const <%className%>&M) { set(M); }
@@ -870,8 +870,8 @@ ${ENDCODEBLOCK}
 // rangeVectorSMVname = name of range vector type
 // FT = floatType
 ${CODEBLOCK SOMsetDecl}
-	/// Sets this <%className%> to idenitity.
-	void setIdentity();
+	/// Sets this <%className%> to identity.
+	void setidentity();
 
 	/// Sets this to 'M'.
 	void set(const <%className%> &M);

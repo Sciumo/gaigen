@@ -38,6 +38,10 @@ namespace G25.CG.Java
             G25.GOM gom = S.m_GOM;
             string className = FT.GetMangledName(S, gom.Name);
 
+            // get range vector type
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, gom);
+            string rangeVectorSMVname = FT.GetMangledName(S, rangeVectorType.Name);
+
             // get filename, list of generated filenames
             List<string> generatedFiles = new List<string>();
             string sourceFilename = MainGenerator.GetClassOutputPath(S, className);
@@ -61,6 +65,9 @@ namespace G25.CG.Java
 
             // write member variables
             G25.CG.CSJ.GOM.WriteMemberVariables(SB, S, cgd, FT, gom);
+
+            // write constructors
+            G25.CG.CSJ.GOM.WriteConstructors(SB, S, cgd, FT, gom, className, rangeVectorSMVname);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

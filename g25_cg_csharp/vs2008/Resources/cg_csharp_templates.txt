@@ -509,3 +509,31 @@ ${CODEBLOCK randomNumberGenerator}
         return s_randomDoubles[idx];
 	}
 ${ENDCODEBLOCK}
+
+// S = specification
+// className = mangled class name
+// rangeVectorSMVname = name of range vector type
+// FT = floatType
+${CODEBLOCK GOMconstructors}
+	/// <summary>Constructs a new <%className%>, set to identity.</summary>
+	public <%className%>() { SetIdentity(); }
+
+	/// <summary>Copy constructor.</summary>
+	public <%className%>(<%className%> M) { Set(M); }
+
+	/// <summary>Constructor from matrix.</summary>
+	public <%className%>(<%FT.type%>[] M) { Set(M); }
+
+	/// <summary>Constructor from images of basis vectors.</summary>
+	public <%className%>(<%for (int i = 0; i < S.m_dimension; i++) {%><%if (i > 0) {%>, <%}%> <%rangeVectorSMVname%> i<%S.m_basisVectorNames[i]%><%}%>)
+		{ Set(<%for (int i = 0; i < S.m_dimension; i++) {%><%if (i > 0) {%>, <%}%>i<%S.m_basisVectorNames[i]%><%}%>); }
+
+<%foreach(G25.SOM som in S.m_SOM) {
+string somClassName = FT.GetMangledName(S, som.Name);%>
+	/// <summary>Converts a <%somClassName%> to a <%className%>.
+	/// Warning 1: coordinates which cannot be represented are silenty lost.
+	/// Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.</summary>
+	public <%className%>(<%somClassName%> M) { Set(M); }
+	
+<%}%>
+${ENDCODEBLOCK}

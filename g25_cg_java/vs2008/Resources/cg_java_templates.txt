@@ -488,3 +488,33 @@ ${CODEBLOCK randomNumberGenerator}
 		return s_randomGenerator.nextDouble();
     }
 ${ENDCODEBLOCK}
+
+// S = specification
+// className = mangled class name
+// rangeVectorSMVname = name of range vector type
+// FT = floatType
+${CODEBLOCK GOMconstructors}
+	/** Constructs a new <%className%>, set to identity. */
+	public <%className%>() { setIdentity(); }
+
+	/** Copy constructor. */
+	public <%className%>(final <%className%> M) { set(M); }
+
+	/** Constructor from matrix. */
+	public <%className%>(final <%FT.type%>[] M) { set(M); }
+
+	/** Constructor from images of basis vectors. */
+	public <%className%>(final <%for (int i = 0; i < S.m_dimension; i++) {%><%if (i > 0) {%>, <%}%> <%rangeVectorSMVname%> i<%S.m_basisVectorNames[i]%><%}%>)
+		{ set(<%for (int i = 0; i < S.m_dimension; i++) {%><%if (i > 0) {%>, <%}%>i<%S.m_basisVectorNames[i]%><%}%>); }
+
+<%foreach(G25.SOM som in S.m_SOM) {
+string somClassName = FT.GetMangledName(S, som.Name);%>
+	/** 
+	 * Converts a <%somClassName%> to a <%className%>.
+	 * Warning 1: coordinates which cannot be represented are silenty lost.
+	 * Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.
+	 */
+	public <%className%>(final <%somClassName%> M) { set(M); }
+	
+<%}%>
+${ENDCODEBLOCK}
