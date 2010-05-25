@@ -67,7 +67,7 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
 
             int nbTabs = 1;
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to 0.", null, null);
+            new G25.CG.Shared.Comment("sets this to 0.").Write(SB, S, nbTabs);
 
             string className = FT.GetMangledName(S, gmv.Name);
             string funcName = GetSetFuncName(S); 
@@ -97,7 +97,7 @@ namespace G25.CG.CSJ
         public static void WriteSetScalar(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             int nbTabs = 1;
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to scalar value.", null, null);
+            new G25.CG.Shared.Comment("sets this to scalar value.").Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
             string className = FT.GetMangledName(S, gmv.Name);
@@ -132,21 +132,7 @@ namespace G25.CG.CSJ
                 new Tuple<string, string>("gu", "bitwise or of the GROUPs and GRADEs which are present in 'arr'."),
                 new Tuple<string, string>("arr", "compressed coordinates.")
             };
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this coordinates in 'arr'.", paramComments, null);
-
-            /*G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"This version of " + "HARR" + "() has extra arguments which help to avoid\n" + 
-	"near-singular blades / versors.\n" + 
-	"\n" + 
-	"Near-singular blades / versors are avoid by testing the norm and largest coordinate\n" + 
-	"of the random blade / versor. If the test does not pass, the function recursively\n" + 
-	"tries to generate another random blade / versor.\n",
-	new System.Collections.Generic.List<G25.Tuple<string, string>> 
-				{
-                new G25.Tuple<string, string>("minimumNorm", "the minimum allowed norm of the blade/versor before scaling. Must be > 0.0 for versors\n."),
-                new G25.Tuple<string, string>("largestCoordinate", "the largest coordinate allowed after scaling.")
-                }, 
-	null);*/
+            new G25.CG.Shared.Comment("sets this coordinates in 'arr'.").Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
 
@@ -194,7 +180,7 @@ namespace G25.CG.CSJ
             List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
                 new Tuple<string, string>("arr", "coordinates.")
             };
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this coordinates in 'arr'. \n'arr' is kept, so changes to 'arr' will be reflected in the value of this multivector. Make sure 'arr' has length " + S.m_GMV.NbGroups + " and each subarray has the length of the respective group/grade", paramComments, null);
+            new G25.CG.Shared.Comment("sets this coordinates in 'arr'. \n'arr' is kept, so changes to 'arr' will be reflected in the value of this multivector. Make sure 'arr' has length " + S.m_GMV.NbGroups + " and each subarray has the length of the respective group/grade").Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
 
@@ -237,7 +223,7 @@ namespace G25.CG.CSJ
                 string funcDecl = "\tpublic void " + funcName + "(" + srcClassName + " src)";
 
                 int nbTabs = 1;
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to multivector value.", null, null);
+                new G25.CG.Shared.Comment("sets this to multivector value.").Write(SB, S, nbTabs);
 
                 SB.Append(funcDecl);
                 SB.AppendLine(" {");
@@ -296,7 +282,7 @@ namespace G25.CG.CSJ
                 SB.AppendLine();
 
                 nbTabs = 1;
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "sets this to " + srcClassName + " value.", null, null);
+                new G25.CG.Shared.Comment("sets this to " + srcClassName + " value.").Write(SB, S, nbTabs);
 
                 string funcName = GetSetFuncName(S);
 
@@ -375,7 +361,7 @@ namespace G25.CG.CSJ
             string funcDecl = "\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + funcName + "() ";
 
             int nbTabs = 1;
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "Returns the " + bladeName + " coordinate of this " + gmvTypeName, null, null);
+            new G25.CG.Shared.Comment("Returns the " + bladeName + " coordinate of this " + gmvTypeName).Write(SB, S, nbTabs);
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");

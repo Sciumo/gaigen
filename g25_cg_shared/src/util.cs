@@ -649,23 +649,7 @@ namespace G25.CG.Shared
             return SB.ToString();
         } // end of GetClassExtendsImplements()
 
-
-        private static void WriteMultilineComment(StringBuilder SB, Specification S, int nbTabs, string str)
-        {
-            string lineOpen = new string('\t', nbTabs);
-            if ((S.OutputJava()) || (S.OutputC()))
-                lineOpen = lineOpen + " * ";
-            else lineOpen = lineOpen + "/// ";
-
-            string[] splitStr = str.Split('\n');
-            bool firstLine = true;
-            foreach (string lineStr in splitStr) 
-            {
-                if (!firstLine) SB.Append(lineOpen);
-                firstLine = false;
-                SB.AppendLine(lineStr);
-            }
-        }
+#if RIEN
 
         public static string GetFunctionComment(Specification S,
             int nbTabs,
@@ -787,6 +771,8 @@ namespace G25.CG.Shared
                 SB.AppendLine(" */");
             }
         }
+#endif
+
             
     } // end of class Util
 } // end of namepace G25.CG.Shared

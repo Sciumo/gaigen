@@ -120,10 +120,10 @@ namespace G25.CG.Shared.Func
 
             // emit declaration / comment
             if (m_specification.OutputCppOrC()) {
-                Util.WriteFunctionComment(declSB, m_specification, 0, comment, null, null);
+                new Comment(comment).Write(declSB, m_specification, 0);
                 declSB.Append(m_functionNameFloatType + " " + funcName + "();\n");
             }
-            else Util.WriteFunctionComment(defSB, m_specification, 0, comment, null, null);
+            else new Comment(comment).Write(defSB, m_specification, 0);
 
             // get access modifier
             string ACCESS = "";
@@ -167,9 +167,9 @@ namespace G25.CG.Shared.Func
             string timeSeedComment = "Seeds the random number generator for  " + m_functionNameFloatType + " with the current time";
             if (m_specification.OutputCppOrC())
             {
-                Util.WriteFunctionComment(declSB, m_specification, 0, seedComment, null, null);
+                new Comment(seedComment).Write(declSB, m_specification, 0);
                 declSB.AppendLine("void " + funcName + "_seed(unsigned int seed);");
-                Util.WriteFunctionComment(declSB, m_specification, 0, timeSeedComment, null, null);
+                new Comment(timeSeedComment).Write(declSB, m_specification, 0);
                 declSB.AppendLine("void " + funcName + "_timeSeed();");
             }
 
@@ -177,7 +177,7 @@ namespace G25.CG.Shared.Func
             // seeder defs:
             if (m_specification.OutputCSharpOrJava())
             {
-                Util.WriteFunctionComment(declSB, m_specification, 0, seedComment, null, null);
+                new Comment(seedComment).Write(declSB, m_specification, 0);
             }
             defSB.AppendLine(inlineStr + ACCESS + "void " + funcName + "_seed(" + SEED_TYPE + " seed) {");
             if (m_specification.OutputCSharp())
@@ -198,6 +198,10 @@ namespace G25.CG.Shared.Func
             defSB.AppendLine("}\n");
 
 
+            if (m_specification.OutputCSharpOrJava())
+            {
+                new Comment(timeSeedComment).Write(declSB, m_specification, 0);
+            }
             defSB.AppendLine(inlineStr + ACCESS + "void " + funcName + "_timeSeed() {");
             if (m_specification.OutputCSharp())
                 defSB.AppendLine("\t" + funcName + "_seed((int)DateTime.Now.Ticks);");

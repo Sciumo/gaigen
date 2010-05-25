@@ -619,7 +619,7 @@ namespace G25
         /// <param name="mvType">Type of multivector (</param>
         /// <param name="comment">A comment on the multivector type that may appear in the generated documentation. May be null.</param>
         public SMV(string name, RefGA.BasisBlade[] basisBlades, MULTIVECTOR_TYPE mvType, 
-            bool[] isConstant, double[] constantValues, String comment)
+            bool[] isConstant, double[] constantValues, string comment)
             :
             base(true, name, ToDoubleArray(basisBlades))  // true means 'specialized'
         {

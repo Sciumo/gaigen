@@ -183,11 +183,11 @@ namespace G25.CG.Shared.Func
             int nbTabs = 0;
             if (m_specification.OutputCppOrC())
             {
-                Util.WriteFunctionComment(declSB, m_specification, nbTabs, comment, null, null);
+                new Comment(comment).Write(declSB, m_specification, nbTabs);
                 declSB.Append(funcDecl);
                 declSB.AppendLine(";");
             }
-            else Util.WriteFunctionComment(defSB, m_specification, nbTabs, comment, null, null);
+            else new Comment(comment).Write(defSB, m_specification, nbTabs);
 
             defSB.Append(inlineStr + ACCESS + funcDecl);
             defSB.AppendLine(" {");
@@ -240,11 +240,11 @@ namespace G25.CG.Shared.Func
             int nbTabs = 0;
             if (m_specification.OutputCppOrC())
             {
-                Util.WriteFunctionComment(declSB, m_specification, nbTabs, comment, null, null);
+                new Comment(comment).Write(declSB, m_specification, nbTabs);
                 declSB.Append(funcDecl);
                 declSB.AppendLine(";");
             }
-            else Util.WriteFunctionComment(defSB, m_specification, nbTabs, comment, null, null);
+            else new Comment(comment).Write(defSB, m_specification, nbTabs);
 
             defSB.Append(inlineStr + funcDecl);
             defSB.AppendLine(" {");

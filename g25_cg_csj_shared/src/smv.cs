@@ -42,7 +42,7 @@ namespace G25.CG.CSJ
                 for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
                 {
                     string comment = "The " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + " coordinate.";
-                    G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, comment, null, null);
+                    new G25.CG.Shared.Comment(comment).Write(SB, S, nbTabs);
                     SB.AppendLine("\t" + accessModifier + " " + FT.type + " m_" + smv.GetCoordLangID(i, S) + ";");
                 }
             }
@@ -52,7 +52,7 @@ namespace G25.CG.CSJ
                 {
                     // emit: float c[3]; // e1, e2, e3
                     string comment = " The coordinates (stored in an array).";
-                    G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, comment, null, null);
+                    new G25.CG.Shared.Comment(comment).Write(SB, S, nbTabs);
 
                     SB.Append("\t" + accessModifier + " " + FT.type + "[] m_c = new " +  FT.type + "[" + smv.NbNonConstBasisBlade + "]; // ");
                     for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
@@ -92,7 +92,7 @@ namespace G25.CG.CSJ
             string className = FT.GetMangledName(S, smv.Name);
 
             int nbTabs = 1;
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "Array indices of " + className + " coordinates.", null, null);
+            new G25.CG.Shared.Comment("Array indices of " + className + " coordinates.").Write(SB, S, nbTabs);
 
 
             string AccessModifier = Keywords.ConstAccessModifier(S);
@@ -100,7 +100,7 @@ namespace G25.CG.CSJ
             for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
             {
                 SB.AppendLine();
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "index of coordinate for " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + " in " + className, null, null);
+                new G25.CG.Shared.Comment("index of coordinate for " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + " in " + className).Write(SB, S, nbTabs);
                 SB.AppendLine("\tpublic " + AccessModifier + " int " + GetCoordIndexDefine(S, FT, smv, i) + " = " + i + ";");
             }
 
@@ -124,7 +124,7 @@ namespace G25.CG.CSJ
             SB.AppendLine();
 
             int nbTabs = 1;
-            G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, "The order of coordinates (this is the type of the first argument of coordinate-handling functions.", null, null);
+            new G25.CG.Shared.Comment("The order of coordinates (this is the type of the first argument of coordinate-handling functions.").Write(SB, S, nbTabs);
 
             string enumAccessModifier = (S.OutputCSharp()) ? "public" : "private";
 
@@ -535,8 +535,8 @@ namespace G25.CG.CSJ
                 // write comment
                 int nbTabs = 1;
                 if (returnBitmap)
-                    G25.CG.Shared.Util.WriteFunctionComment(defSB, S, nbTabs, "Returns the absolute largest coordinate,\nand the corresponding basis blade bitmap.", null, null);
-                else G25.CG.Shared.Util.WriteFunctionComment(defSB, S, nbTabs, "Returns the absolute largest coordinate.", null, null);
+                    new G25.CG.Shared.Comment("Returns the absolute largest coordinate,\nand the corresponding basis blade bitmap.").Write(defSB, S, nbTabs);
+                else new G25.CG.Shared.Comment("Returns the absolute largest coordinate.").Write(defSB, S, nbTabs);
 
                 string funcName = Util.GetFunctionName(S, ((returnBitmap) ? "largestBasisBlade" : "largestCoordinate"));
 
@@ -619,12 +619,12 @@ namespace G25.CG.CSJ
 
                 // get
                 string getComment = "Returns the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                new G25.CG.Shared.Comment(getComment).Write(SB, S, nbTabs);
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + name + "() { return " + accessName + ";}");
 
                 // set
                 string setComment = "Sets the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, setComment, null, null);
+                new G25.CG.Shared.Comment(setComment).Write(SB, S, nbTabs);
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " void " + G25.CG.Shared.Main.SETTER_PREFIX + name + "(" + FT.type + " " + name + ") { " + accessName + " = " + name + ";}");
             }
 
@@ -634,7 +634,7 @@ namespace G25.CG.CSJ
                 RefGA.BasisBlade B = smv.ConstBasisBlade(i);
                 // get
                 string getComment = "Returns the " + B.ToString(S.m_basisVectorNames) + " coordinate.";
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                new G25.CG.Shared.Comment(getComment).Write(SB, S, nbTabs);
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + B.ToLangString(S.m_basisVectorNames) + "() { return " + FT.DoubleToString(S, smv.ConstBasisBladeValue(i)) + ";}");
             }
 
@@ -643,7 +643,7 @@ namespace G25.CG.CSJ
             {
                 RefGA.BasisBlade B = RefGA.BasisBlade.ONE;
                 string getComment = "Returns the scalar coordinate (which is always 0).";
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, getComment, null, null);
+                new G25.CG.Shared.Comment(getComment).Write(SB, S, nbTabs);
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + " " + G25.CG.Shared.Main.GETTER_PREFIX + B.ToLangString(S.m_basisVectorNames) + "() { return " + FT.DoubleToString(S, 0.0) + ";}");
             }
 
@@ -653,11 +653,9 @@ namespace G25.CG.CSJ
                 string constantName = G25.CG.Shared.SmvUtil.GetCoordinateOrderConstant(S, smv);
                 string COORD_ORDER = "coordOrder";
 
-                string comment = "Returns array of coordinates.";
-                List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
-                    new Tuple<string, string>(COORD_ORDER, "pass the value '" + className + "." + constantName + "'"),
-                };
-                G25.CG.Shared.Util.WriteFunctionComment(SB, S, nbTabs, comment, paramComments, null);
+                new G25.CG.Shared.Comment("Returns array of coordinates.").
+                    SetParamComment(COORD_ORDER, "pass the value '" + className + "." + constantName + "'").
+                    Write(SB, S, nbTabs);
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + "[] c(" + G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM + " " + COORD_ORDER + ") { return m_c;}");
             }
         }

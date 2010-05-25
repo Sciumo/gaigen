@@ -155,7 +155,9 @@ Maybe fix the float type stuff
 				converters as constructors (SMV->SMV and such)
 			
 			-> regular functions
-				->? fix all the comments which are all /** */ now.
+				V -> first create class to hold comments
+				V -> use this class to describe comment on functions and types too
+				-> ? then fix all the comments which are all /** */ now.
 			 
 			 
 			GOM

@@ -153,12 +153,12 @@ namespace G25.CG.Shared
 
                         if (S.OutputCppOrC())
                         {
-                            Util.WriteFunctionComment(cgd.m_declSB, S, nbBaseTabs, comment, null, null);
+                            new Comment(comment).Write(cgd.m_declSB, S, nbBaseTabs);
                             cgd.m_declSB.Append(funcDecl); cgd.m_declSB.AppendLine(";");
                         }
                         else
                         {
-                            Util.WriteFunctionComment(cgd.m_defSB, S, nbBaseTabs, comment, null, null);
+                            new Comment(comment).Write(cgd.m_defSB, S, nbBaseTabs);
                         }
 
                         // emit def

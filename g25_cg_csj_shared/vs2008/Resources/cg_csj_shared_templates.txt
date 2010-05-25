@@ -85,18 +85,12 @@ ${ENDCODEBLOCK}
 // sinhFunc
 // userComment
 ${CODEBLOCK seriesExp}
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes exponential of " + inputType + " up to 12th term.\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes exponential of " + inputType + " up to 12th term.\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes exponential of " + inputType + ".\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes exponential of " + inputType + ".\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -178,18 +172,12 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSinh}
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes hyperbolic sine of " + inputType + " up to 12th term.\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes hyperbolic sine of " + inputType + " up to 12th term.\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes hyperbolic sine of " + inputType + ".\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes hyperbolic sine of " + inputType + ".\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -255,18 +243,12 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCosh}
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes hyperbolic cosine of " + inputType + " up to 12th term.\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes hyperbolic cosine of " + inputType + " up to 12th term.\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes hyperbolic cosine of " + inputType + ".\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes hyperbolic cosine of " + inputType + ".\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -327,18 +309,12 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesSin}
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes sine of " + inputType + " up to 12th term.\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes sine of " + inputType + " up to 12th term.\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes sine of " + inputType + ".\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes sine of " + inputType + ".\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
    
 	{ // First try special cases: check if (x * x) is scalar
@@ -411,18 +387,12 @@ ${ENDCODEBLOCK}
 // coshFunc
 // sinhFunc
 ${CODEBLOCK seriesCos}
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes cosine of " + inputType + " up to 12th term.\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes cosine of " + inputType + " up to 12th term.\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x) {
 	return <%funcName%>(x, 12);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Computes cosine of " + inputType + ".\n" +
-	userComment,
-	null, null)%>
+<%new G25.CG.Shared.Comment("Computes cosine of " + inputType + ".\n" + userComment).ToString(S, 0)%>
 public <%if (S.OutputJava()) {%>final <%}%>static <%returnType%> <%funcName%>(<%if (S.OutputJava()) {%>final <%}%><%inputType%> x, <%if (S.OutputJava()) {%>final <%}%>int order) {
 	{ // First try special cases: check if (x * x) is scalar
 		<%returnType%> xSquared = <%gpFuncII%>(x, x);
@@ -478,22 +448,21 @@ ${ENDCODEBLOCK}
 // generatorVersor = bool (use geometric product or outer product)
 ${CODEBLOCK randomBladeVersor}
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"Generates a random " + ((generatorVersor) ? "versor" : "blade") + ".\n"+
+<%new G25.CG.Shared.Comment("Generates a random " + ((generatorVersor) ? "versor" : "blade") + ".\n"+
 	"The scale is uniformly distributed over the interval [0 1).\n" + 
 	"The maximum non-zero grade-part is 'grade'.\n" + 
 	"\n" + 
 	"Only the basis vectors marked in 'basisVectorBitmap' will be used to generate the versor/blade.\n" + 
-	"Use 'basisVectorBitmap = -1' (the default) to use all basisvectors.", 
-	null, functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)")%>
+	"Use 'basisVectorBitmap = -1' (the default) to use all basisvectors.").
+	SetReturnComment(functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)").
+	ToString(S, 0)%>
 public static <%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basisVectorBitmap) {
 	<%FT.type%> minimumNorm = <%FT.DoubleToString(S, 0.01)%>;
 	<%FT.type%> largestCoordinate = <%FT.DoubleToString(S, 4.0)%>;
 	return <%functionName%>_ex(scale, grade, basisVectorBitmap, minimumNorm, scale * largestCoordinate);
 }
 
-<%G25.CG.Shared.Util.GetFunctionComment(S, 0, 
-	"This version of " + functionName + "() has extra arguments which help to avoid\n" + 
+<%new G25.CG.Shared.Comment("This version of " + functionName + "() has extra arguments which help to avoid\n" + 
 	"near-singular blades / versors.\n" + 
 	"\n" + 
 	"Near-singular blades / versors are avoid by testing the norm and largest coordinate\n" + 
@@ -503,9 +472,9 @@ public static <%mvType%> <%functionName%>(<%FT.type%> scale, int grade, int basi
 	"'minimumNorm' is the minimum allowed norm of the blade/versor before scaling. \n" + 
 	"'minimumNorm' must be > 0.0 for versors.\n" + 
 	"\n" + 
-	"'largestCoordinate' is the largest coordinate allowed after scaling.\n"
-	, 
-	null, functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)")%>
+	"'largestCoordinate' is the largest coordinate allowed after scaling.\n").
+	SetReturnComment(functionName + "_ex(arg1, scale, grade, basisVectorBitmap, 0.01, scale * 4.0)").
+	ToString(S, 0)%>
 public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int basisVectorBitmap, 
 		<%FT.type%> minimumNorm, <%FT.type%> largestCoordinate) 
 {

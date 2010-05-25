@@ -49,6 +49,7 @@
     <Compile Include="..\src\basefunctiongenerator.cs" />
     <Compile Include="..\src\main.cs" />
     <Compile Include="..\src\basisblade.cs" />
+    <Compile Include="..\src\comment.cs" />
     <Compile Include="..\src\codeutil.cs" />
     <Compile Include="..\src\funcarginfo.cs" />
     <Compile Include="..\src\functions.cs" />

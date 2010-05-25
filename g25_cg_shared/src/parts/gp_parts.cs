@@ -234,7 +234,7 @@ namespace G25.CG.Shared
 
                                         // write comment
                                         int nbCommentTabs = nbBaseTabs;
-                                        Util.WriteFunctionComment(cgd.m_declSB, S, nbCommentTabs, comment, null, null);
+                                        new Comment(comment).Write(cgd.m_declSB, S, nbCommentTabs);
                                         // emit decl
                                         cgd.m_declSB.Append(funcDecl);
                                         cgd.m_declSB.AppendLine(";");
@@ -246,7 +246,7 @@ namespace G25.CG.Shared
 
                                         // write comment
                                         int nbCommentTabs = nbBaseTabs;
-                                        Util.WriteFunctionComment(cgd.m_defSB, S, nbCommentTabs, comment, null, null);
+                                        new Comment(comment).Write(cgd.m_defSB, S, nbCommentTabs);
                                     }
 
                                     // emit def
