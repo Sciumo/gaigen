@@ -91,7 +91,7 @@ namespace G25.CG.Shared
             SB.AppendLine("This class can hold a specialized multivector of type " + FT.GetMangledName(S, smv.Name) + ".");
             SB.AppendLine("");
 
-            SB.AppendLine("The coordinates are stored in type  " + FT.type + ".");
+            SB.AppendLine("The coordinates are stored in type " + FT.type + ".");
             SB.AppendLine("");
 
             if (smv.NbNonConstBasisBlade > 0)

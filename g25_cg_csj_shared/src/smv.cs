@@ -22,6 +22,19 @@ namespace G25.CG.CSJ
 {
     public class SMV
     {
+        /// <summary>
+        /// Writes comments of a GMV class to 'SB'.
+        /// </summary>
+        /// <param name="SB">Where the comment goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float point type of 'GMV'.</param>
+        /// <param name="smv">The specialized multivector for which the comment should be written.</param>
+        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv)
+        {
+            bool emitCoordIndices = true;
+            G25.CG.Shared.ClassComments.GetSmvComment(S, cgd, FT, smv, emitCoordIndices).Write(SB, S, 0);
+        }
 
         /// <summary>
         /// Writes the SMV class to 'SB' (including comments).
@@ -659,56 +672,6 @@ namespace G25.CG.CSJ
                 SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " " + FT.type + "[] c(" + G25.CG.Shared.SmvUtil.COORDINATE_ORDER_ENUM + " " + COORD_ORDER + ") { return m_c;}");
             }
         }
-
-
-#if RIEN
-        /// <summary>
-        /// Writes the SMV class comment 'SB'.
-        /// </summary>
-        /// <param name="SB">Where the code goes.</param>
-        /// <param name="S">Used for basis vector names and output language.</param>
-        /// <param name="cgd">Not used yet.</param>
-        /// <param name="FT">Float point type of 'SMV'.</param>
-        /// <param name="smv">The specialized multivector for which the struct should be written.</param>
-        /// <param name="emitCoordIndices">Whether to emit constants for array indices to coordinates.</param>
-        public static void WriteComment(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SMV smv, bool emitCoordIndices)
-        {
-            SB.AppendLine("/**");
-            SB.AppendLine(" * This class can hold a specialized multivector of type " + FT.GetMangledName(S, smv.Name) + ".");
-            SB.AppendLine(" * ");
-
-            SB.AppendLine(" * The coordinates are stored in type  " + FT.type + ".");
-            SB.AppendLine(" * ");
-
-            if (smv.NbNonConstBasisBlade > 0)
-            {
-                SB.AppendLine(" * The variable non-zero coordinates are:");
-                for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
-                {
-                    SB.AppendLine(" *   - coordinate " + smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames) + "  (array index: " + GetCoordIndexDefine(S, FT, smv, i) + " = " + i + ")");
-                }
-            }
-            else SB.AppendLine(" * The type is constant.");
-            SB.AppendLine(" * ");
-
-            if (smv.NbConstBasisBlade > 0)
-            {
-                SB.AppendLine(" * The constant non-zero coordinates are:");
-                for (int i = 0; i < smv.NbConstBasisBlade; i++)
-                    SB.AppendLine(" *   - " + smv.ConstBasisBlade(i).ToString(S.m_basisVectorNames) + " = " + smv.ConstBasisBladeValue(i).ToString());
-            }
-            else SB.AppendLine(" * The type has no constant coordinates.");
-            SB.AppendLine(" * ");
-
-            if ((smv.Comment != null) && (smv.Comment.Length > 0))
-            {
-                SB.AppendLine(" * ");
-                SB.AppendLine(" * " + smv.Comment);
-            }
-            SB.AppendLine(" */");
-        }
-#endif
-
 
     } // end of class SMV
 } // end of namespace G25.CG.CSJ

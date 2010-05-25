@@ -60,7 +60,8 @@ namespace G25.CG.CSharp
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
-            // todo: write class comment
+            // write class comment
+            G25.CG.CSJ.SMV.WriteComment(SB, S, cgd, FT, smv);
 
             // open class
             string[] implements = new string[] { MvInterface.GetMvInterfaceName(S, FT) };
