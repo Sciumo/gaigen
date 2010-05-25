@@ -217,8 +217,8 @@ namespace G25.CG.Shared.Func
 
                 // generate comment
                 string warningComment = (isUnit) ? " Only gives the correct result when the versor has a positive squared norm.\n" : "";
-                string comment = "/** " +
-                    m_fgs.AddUserComment("Returns " + FAI[0].Name + " * " + FAI[1].Name + " * " + ((isUnit) ? "reverse" : "inverse") + "(" + FAI[0].Name + ") using " + m_G25M.m_name + " metric." + warningComment) + " */";
+                Comment comment = new Comment(
+                    m_fgs.AddUserComment("Returns " + FAI[0].Name + " * " + FAI[1].Name + " * " + ((isUnit) ? "reverse" : "inverse") + "(" + FAI[0].Name + ") using " + m_G25M.m_name + " metric." + warningComment));
 
                 if (m_gmvFunc)
                 { // generate function over GMVs

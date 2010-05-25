@@ -254,7 +254,7 @@ namespace G25.CG.Shared.Func
                     m_funcName[FT.type] = CF.OutputName;
 
                     // generate comment
-                    String comment = "/** " + m_fgs.AddUserComment("Returns conformal point.") + " */";
+                    Comment comment = new Comment(m_fgs.AddUserComment("Returns conformal point."));
 
                     // write out the function:
                     G25.CG.Shared.Functions.WriteSpecializedFunction(m_specification, m_cgd, CF, FT, FAI, m_returnValue, comment);

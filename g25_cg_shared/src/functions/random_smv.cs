@@ -361,8 +361,7 @@ namespace G25.CG.Shared.Func
             //G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(m_specification, FT, exFgs, FAI);
 
             // generate comment
-            string comment = "/** " +
-                exFgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)") + " */";
+            Comment comment = new Comment(exFgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)"));
 
             bool staticFunc = Functions.OutputStaticFunctions(m_specification);
             G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, staticFunc, exFuncName, FAI, I, comment);
@@ -400,8 +399,7 @@ namespace G25.CG.Shared.Func
                     FAI[0].Name + ", minimumNorm, " + FAI[0].Name + " * largestCoordinate);"));
 
                 // generate comment
-                string comment = "/** " +
-                    m_fgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)") + " */";
+                Comment comment = new Comment(m_fgs.AddUserComment("Returns random " + m_SMVname + " with a scale in the interval [0, scale)"));
 
                 G25.CG.Shared.FuncArgInfo returnArgument = null;
                 if (m_specification.OutputC()) 

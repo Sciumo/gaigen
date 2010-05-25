@@ -29,6 +29,15 @@ namespace G25.CG.Shared
     public class Comment
     {
         /// <summary>
+        /// Constructs a new empty comment.
+        /// </summary>
+        public Comment()
+        {
+            SummaryComment = "";
+            ReturnComment = "";
+        }
+
+        /// <summary>
         /// Constructs a new comment with only the summary comment specified.
         /// Use the member functions to add return and param comments.
         /// </summary>

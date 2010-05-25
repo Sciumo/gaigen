@@ -123,8 +123,8 @@ namespace G25.CG.Shared.Func
                 //G25.CG.Shared.FuncArgInfo returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, FAI[0].TypeName, false); // false = compute value
 
                 // generate comment
-                string comment = "/** " +
-                    m_fgs.AddUserComment("Returns versor inverse of " + FAI[0].Name + " using " + m_G25M.m_name + " metric.") + " */";
+                Comment comment = new Comment(
+                    m_fgs.AddUserComment("Returns versor inverse of " + FAI[0].Name + " using " + m_G25M.m_name + " metric."));
 
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)

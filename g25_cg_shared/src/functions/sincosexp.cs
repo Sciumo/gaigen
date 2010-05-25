@@ -339,7 +339,7 @@ namespace G25.CG.Shared.Func
                         I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_returnType, FT, mustCast, m_returnValue));
                     }
 
-                    string comment = "/** returns " + m_fgs.Name + " of " + FAI[0].TypeName + " (uses fast special case) */";
+                    Comment comment = new Comment(m_fgs.Name + " of " + FAI[0].TypeName + " (uses fast special case)");
 
                     m_funcName[FT.type] = CF.OutputName;
 

@@ -310,11 +310,11 @@ namespace G25
         /// Converts options to array of strings. Used for comparing, hashcode, etc.
         /// </summary>
         /// <returns></returns>
-        public String[] OptionsToStringArray() 
+        public string[] OptionsToStringArray() 
         {
-            String[] str = new String[m_options.Count];
+            string[] str = new string[m_options.Count];
             int idx = 0;
-            foreach (KeyValuePair<String, String> KVP in m_options) str[idx++] = "__" + KVP.Key + "__" + KVP.Value + "__";
+            foreach (KeyValuePair<string, string> KVP in m_options) str[idx++] = "__" + KVP.Key + "__" + KVP.Value + "__";
             return str;
         }
 
@@ -324,7 +324,7 @@ namespace G25
         /// </summary>
         /// <param name="defaultComment">Default comment of function.</param>
         /// <returns>Default comment plus optional user comment.</returns>
-        public String AddUserComment(String defaultComment)
+        public string AddUserComment(string defaultComment)
         {
             if (Comment.Length == 0) return defaultComment;
             else return defaultComment + "\n" + Comment;
@@ -332,19 +332,19 @@ namespace G25
 
 
         /// <summary>The name of the requested function (for example "gp").</summary>
-        public String Name { get { return m_name; } }
+        public string Name { get { return m_name; } }
         /// <summary>The name of the generated function (may be different from FunctionName, for example, "geometricProduct" instead of "gp"). 
         /// Always has a valid value, never null.
         /// Is not used in hash code computation and CompareTo.</summary>
-        public String OutputName { get { return m_outputName; } }
+        public string OutputName { get { return m_outputName; } }
         /// <summary>Override for the return type; to use the default (as determined by the code generator) set to "".</summary>
-        public String ReturnTypeName { get { return m_returnTypeName; } set { m_returnTypeName = value; } }
+        public string ReturnTypeName { get { return m_returnTypeName; } set { m_returnTypeName = value; } }
         /// <summary>The number of arguments listed.</summary>
         public int NbArguments { get { return m_argumentTypeNames.Length; } }
         /// <summary>Typenames of arguments (may be multivector or outermorphism, or regular floating point type). Has the same length as ArgumentVariableNames.</summary>
-        public String[] ArgumentTypeNames { get { return m_argumentTypeNames; } }
+        public string[] ArgumentTypeNames { get { return m_argumentTypeNames; } }
         /// <summary>The names of the arguments inside the function ("a", "b", "c", etc by default).. Has the same length as ArgumentTypeNames.</summary>
-        public String[] ArgumentVariableNames { get { return m_argumentVariableNames; } }
+        public string[] ArgumentVariableNames { get { return m_argumentVariableNames; } }
         /// <summary>Whether arguments are pointers or not. After fill-in always has the same length as ArgumentTypeNames.</summary>
         public bool[] ArgumentPtr { get { return m_argumentPtr; } }
         /// <summary>Whether arguments are arrays or not. After fill-in always has the same length as ArgumentTypeNames.</summary>
@@ -352,24 +352,24 @@ namespace G25
         /// <summary>The number of floating point typenames listed.</summary>
         public int NbFloatNames { get { return this.m_floatNames.Length; } }
         /// <summary>Name(s) of floating point type(s) for which the function should be generated.</summary>
-        public String[] FloatNames { get { return m_floatNames; } }
+        public string[] FloatNames { get { return m_floatNames; } }
         /// <summary>Name of metric for metric products.</summary>
-        public String MetricName { get { return m_metricName; } }
+        public string MetricName { get { return m_metricName; } }
         /// <summary>Returns optional user comments. These should be appended to the the standard by the code generation plugin.
         /// </summary>
-        public String Comment { get { return m_comment; } }
+        public string Comment { get { return m_comment; } }
 
         /// <summary>
         /// Returns all options in the form of a dictionary.
         /// </summary>
-        public Dictionary<String, String> Options { get { return m_options; } }
+        public Dictionary<string, string> Options { get { return m_options; } }
 
         /// <summary>
         /// Gets an options for a specific name.
         /// </summary>
         /// <param name="name">The options you want.</param>
         /// <returns>The value of the option, or null if none set.</returns>
-        public String GetOption(String name)
+        public string GetOption(string name)
         {
             if (m_options.ContainsKey(name.ToLower())) return m_options[name.ToLower()];
             else return null;
@@ -392,7 +392,8 @@ namespace G25
         /// <param name="argIdx">Index of argument.</param>
         /// <param name="defaultTypeName">Default typename, used when user has not specified any argument.</param>
         /// <returns>typename of argument 'argIdx'.</returns>
-        public String GetArgumentTypeName(int argIdx, String defaultTypeName) {
+        public string GetArgumentTypeName(int argIdx, String defaultTypeName)
+        {
             if ((argIdx < 0) || (NbArguments == 0)) return defaultTypeName;
             else if (argIdx < NbArguments) return ArgumentTypeNames[argIdx];
             else throw new Exception("G25.fgs.GetArgumentTypeName(): index out of range");
@@ -404,7 +405,7 @@ namespace G25
         /// </summary>
         /// <param name="argIdx">Index of argument.</param>
         /// <returns>name of argument 'argIdx'.</returns>
-        public String GetArgumentName(int argIdx)
+        public string GetArgumentName(int argIdx)
         {
             if (argIdx < 0) return RETURN_ARG_NAME;
             if (NbArguments == 0) return DefaultArgumentName(argIdx);
@@ -611,12 +612,12 @@ namespace G25
         /// <summary>
         /// Optional extra comments. Does not influence hashcode or comparison with other fgs.
         /// </summary>
-        protected readonly String m_comment;
+        protected readonly string m_comment;
 
         /// <summary>
         /// Options as specified by <c>optionXXX=""</c> attributes.
         /// </summary>
-        protected readonly Dictionary<String, String> m_options;
+        protected readonly Dictionary<string, string> m_options;
 
         protected readonly int m_hashCode;
 

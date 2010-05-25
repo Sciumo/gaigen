@@ -329,9 +329,9 @@ namespace G25.CG.Shared
                     }
                 }
 
-                string comment;
-                if (!matrixMode) comment = "/** Sets " + typeName + " from images of the domain vectors */";
-                else comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
+                Comment comment;
+                if (!matrixMode) comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
+                else comment = new Comment("Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix");
                 bool inline = false; // do not inline this potentially huge function
                 bool staticFunc = false;
                 bool writeDecl = S.OutputC();
@@ -520,7 +520,7 @@ namespace G25.CG.Shared
                         }
                     }
 
-                    string comment = "/** Sets " + typeName + " to identity */";
+                    Comment comment = new Comment("Sets " + typeName + " to identity.");
                     bool writeDecl = S.OutputC();
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
@@ -591,7 +591,7 @@ namespace G25.CG.Shared
                         }
                     }
 
-                    string comment = "/** Copies " + typeName + "  */";
+                    Comment comment = new Comment("Copies " + typeName + "."); ;
                     bool writeDecl = (S.OutputC());
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
@@ -680,7 +680,7 @@ namespace G25.CG.Shared
 
                     }
 
-                    string comment = "/** Sets " + typeName + " from images of the domain vectors */";
+                    Comment comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
                     bool writeDecl = false;
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
@@ -780,7 +780,7 @@ namespace G25.CG.Shared
 
                     }
 
-                    string comment = "/** Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix */";
+                    Comment comment = new Comment("Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix.");
                     bool writeDecl = (S.OutputC());
                     bool staticFunc = false;
                     G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);

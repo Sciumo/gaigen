@@ -87,7 +87,7 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_gmv.Name, computeMultivectorValue);
 
                 // comment
-                string comment = "/** " + m_fgs.AddUserComment("Returns whether input multivectors are equal up to an epsilon " + FAI[2].Name + ".") + " */";
+                Comment comment = new Comment(m_fgs.AddUserComment("Returns whether input multivectors are equal up to an epsilon " + FAI[2].Name + "."));
 
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
@@ -112,7 +112,7 @@ namespace G25.CG.Shared.Func
         /// <param name="FAI"></param>
         /// <param name="F"></param>
         /// <param name="comment"></param>
-        protected void WriteEqualsFunction(FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, String comment)
+        protected void WriteEqualsFunction(FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment)
         {
             // setup instructions
             List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();

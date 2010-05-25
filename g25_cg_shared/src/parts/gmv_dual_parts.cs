@@ -52,7 +52,7 @@ namespace G25.CG.Shared
         /// <param name="dual">When true, 'dual' is generated, otherwise, 'undual' is generated.</param>
         /// <returns>name of generated function.</returns>
         public static string WriteDualFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M, 
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, String comment, bool dual)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment, bool dual)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();

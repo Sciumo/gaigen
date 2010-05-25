@@ -55,7 +55,7 @@ namespace G25.CG.Shared
         /// <returns>Full name of generated function.</returns>
         public static string WriteAddSubHpFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            string comment, G25.CG.Shared.CANSparts.ADD_SUB_HP_TYPE funcType)
+            Comment comment, G25.CG.Shared.CANSparts.ADD_SUB_HP_TYPE funcType)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -103,7 +103,7 @@ namespace G25.CG.Shared
         /// <returns>full (mangled) name of generated function</returns>
         public static string WriteEqualsOrZeroOrGradeBitmapFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            string comment, G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE funcType)
+            Comment comment, G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE funcType)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -161,7 +161,7 @@ namespace G25.CG.Shared
         /// <returns>name of generated function</returns>
         public static string WriteUnarySignFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            string comment, G25.CG.Shared.CANSparts.UnaryToggleSignType T)
+            Comment comment, G25.CG.Shared.CANSparts.UnaryToggleSignType T)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -228,7 +228,7 @@ namespace G25.CG.Shared
         /// <param name="gradeIdx">Grade to be selected (use -1 for user-specified).</param>
         public static string WriteGradeFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            String comment, int gradeIdx)
+            Comment comment, int gradeIdx)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -292,7 +292,7 @@ namespace G25.CG.Shared
         /// <param name="comment"></param>
         /// <param name="funcType"> UNIT, VERSOR_INVERSE or DIV</param>
         public static string WriteDivFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M,
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, string comment, G25.CG.Shared.CANSparts.DIVCODETYPE funcType)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment, G25.CG.Shared.CANSparts.DIVCODETYPE funcType)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -337,7 +337,7 @@ namespace G25.CG.Shared
         /// <param name="F"></param>
         /// <param name="comment"></param>
         public static void WriteSASfunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, string comment)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -376,7 +376,7 @@ namespace G25.CG.Shared
         /// <param name="comment"></param>
         /// <param name="increment"></param>
         public static string WriteIncrementFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT,
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, string comment, bool increment)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment, bool increment)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();

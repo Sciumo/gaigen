@@ -108,10 +108,10 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_gmv.Name, computeMultivectorValue);
 
                 // comment
-                string comment = "/** " +
+                Comment comment = new Comment(
                     m_fgs.AddUserComment("Returns " + FAI[1].TypeName + " " + FAI[1].Name + " * " +
                     FAI[0].TypeName + " " + FAI[0].Name + " + " +
-                    FAI[2].TypeName + " " + FAI[2].Name + ".") + " */";
+                    FAI[2].TypeName + " " + FAI[2].Name + "."));
 
 
                 // if scalar or specialized: generate specialized function

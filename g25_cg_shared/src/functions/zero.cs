@@ -88,8 +88,8 @@ namespace G25.CG.Shared.Func
                 G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_specification.m_GMV.Name, computeMultivectorValue);
 
                 // comment
-                string comment = "/** " +
-                    m_fgs.AddUserComment("Returns true if all coordinates of " + FAI[0].Name + " are abs <= " + FAI[1].Name) + " */";
+                Comment comment = new Comment(
+                    m_fgs.AddUserComment("Returns true if all coordinates of " + FAI[0].Name + " are abs <= " + FAI[1].Name));
 
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
@@ -116,7 +116,7 @@ namespace G25.CG.Shared.Func
         /// <param name="FAI"></param>
         /// <param name="F"></param>
         /// <param name="comment"></param>
-        protected void WriteZeroFunction(FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, String comment)
+        protected void WriteZeroFunction(FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();

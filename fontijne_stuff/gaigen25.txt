@@ -148,7 +148,7 @@ Maybe fix the float type stuff
 			
 			
 			GMV:
-			  to string variations (_f, _e, _20)
+				done?
 			  
 			SMV:
 				member function shortcuts (for regular functions)
@@ -157,7 +157,7 @@ Maybe fix the float type stuff
 			-> regular functions
 				V -> first create class to hold comments
 				V -> use this class to describe comment on functions and types too
-				-> ? then fix all the comments which are all /** */ now.
+				V then fix all the comments which are all /** */ now.
 			 
 			 
 			GOM
@@ -263,6 +263,7 @@ Correcting design mistakes:
    OR: find a way to merge back both code bases into one again by using functions to generate 
    differing code.
 
+->split all function code generators into GMV and SMV parts, with a common superclass
 ---------------------------------------------------
  
 

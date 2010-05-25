@@ -217,7 +217,7 @@ namespace G25.CG.Shared
         /// <param name="value">The value to assign.</param>
         /// <param name="comment">Optional comment for function (can be null).</param>
         public static void WriteSpecializedFunction(Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F,
-            FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, RefGA.Multivector value, string comment)
+            FloatType FT, G25.CG.Shared.FuncArgInfo[] FAI, RefGA.Multivector value, Comment comment)
         {
             // get return type (may be a G25.SMV or a G25.FloatType)
             G25.VariableType returnType = G25.CG.Shared.SpecializedReturnType.GetReturnType(S, cgd, F, FT, value);
@@ -237,8 +237,8 @@ namespace G25.CG.Shared
             if (comment != null)
             {
                 if (S.OutputCppOrC())
-                    cgd.m_declSB.AppendLine(comment);
-                else cgd.m_defSB.AppendLine(comment);
+                    comment.Write(cgd.m_declSB, S, 0);
+                else comment.Write(cgd.m_defSB, S, 0);
             }
 
             if ((returnType is G25.SMV) && (S.OutputC()))
@@ -360,7 +360,7 @@ namespace G25.CG.Shared
         public static void WriteFunction(
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F,
             bool inline, bool staticFunc, string functionName, FuncArgInfo[] arguments,
-            List<Instruction> instructions, string comment)
+            List<Instruction> instructions, Comment comment)
         {
             List<G25.VariableType> returnTypes = new List<G25.VariableType>();
             List<G25.FloatType> returnTypeFT = new List<G25.FloatType>(); // floating point types of return types
@@ -397,7 +397,7 @@ namespace G25.CG.Shared
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
             bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
-            System.Collections.Generic.List<Instruction> instructions, string comment)
+            System.Collections.Generic.List<Instruction> instructions, Comment comment)
         {
             bool writeDecl = S.OutputCppOrC();
             
@@ -427,7 +427,7 @@ namespace G25.CG.Shared
             Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
             bool inline, bool staticFunc, string returnType, string functionName,
             FuncArgInfo returnArgument, FuncArgInfo[] arguments,
-            System.Collections.Generic.List<Instruction> instructions, string comment, bool writeDecl)
+            System.Collections.Generic.List<Instruction> instructions, Comment comment, bool writeDecl)
         {
             // where the definition goes:
             StringBuilder defSB = (inline) ? cgd.m_inlineDefSB : cgd.m_defSB;
@@ -435,13 +435,12 @@ namespace G25.CG.Shared
             // declaration:
             if (writeDecl)
             {
-                if (comment != null) cgd.m_declSB.AppendLine(comment);
+                if (comment != null) comment.Write(cgd.m_declSB, S, 0);
                 WriteDeclaration(cgd.m_declSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
                 cgd.m_declSB.AppendLine(";");
             }
 
-            if (S.OutputCSharpOrJava())
-                defSB.AppendLine(comment);
+            if (S.OutputCSharpOrJava()) comment.Write(defSB, S, 0);
 
             WriteDeclaration(defSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
 

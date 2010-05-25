@@ -50,7 +50,7 @@ namespace G25.CG.Shared
         /// <param name="comment"></param>
         /// <returns>Name of generated function.</returns>
         public static String WriteApplyOmFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, 
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, string comment)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();

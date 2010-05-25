@@ -57,7 +57,7 @@ namespace G25.CG.Shared
         /// <returns>name of generated function</returns>
         public static string WriteGMVgpFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M, 
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, 
-            String comment, G25.CG.Shared.GPparts.ProductTypes productType)
+            Comment comment, G25.CG.Shared.GPparts.ProductTypes productType)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -116,7 +116,7 @@ namespace G25.CG.Shared
         /// <param name="declOnly"></param>
         /// <returns>name of generated function</returns>
         public static string WriteGMVigpFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M,
-            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, string comment)
+            G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F, Comment comment)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -167,7 +167,7 @@ namespace G25.CG.Shared
         /// <returns>name of generated function.</returns>
         public static string WriteGMVnormFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            string comment, bool squared)
+            Comment comment, bool squared)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
@@ -228,7 +228,7 @@ namespace G25.CG.Shared
         /// <returns>name of generated function.</returns>
         public static string WriteGMVapplyVersorFunction(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.Metric M,
             G25.CG.Shared.FuncArgInfo[] FAI, G25.fgs F,
-            String comment, G25.CG.Shared.GPparts.ApplyVersorTypes AVtype)
+            Comment comment, G25.CG.Shared.GPparts.ApplyVersorTypes AVtype)
         {
             // setup instructions
             System.Collections.Generic.List<G25.CG.Shared.Instruction> I = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
