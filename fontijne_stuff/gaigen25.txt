@@ -151,27 +151,24 @@ Maybe fix the float type stuff
 				done?
 			  
 			SMV:
+				class comment
 				member function shortcuts (for regular functions)
 				converters as constructors (SMV->SMV and such)
 			
-			-> regular functions
-				V -> first create class to hold comments
-				V -> use this class to describe comment on functions and types too
-				V then fix all the comments which are all /** */ now.
-			 
 			 
 			GOM
 			 V members vars
+			 V class comment
 			 all other stuff
 			 
 			SOM
 			 V members vars
+			 V class comment
 			 all other stuff
 			 
 			applyOM functions
 
 			parser 
-			
 			
 			operators
 			
@@ -186,20 +183,8 @@ Maybe fix the float type stuff
 			makefile for all platforms
 				
 
-	SourceForge website	
+	SourceForge website HTML pages
 	
-Java:
-	Each multivector class can also call its functions
-		-> handle this via plugin
-	
-C#: 	
-	Each multivector class can also call its functions
-		-> handle this via plugin
-	
-
-
-
-
 	
 	Announce on GA net
 	
@@ -217,6 +202,8 @@ C#:
 		very simple: if odd versor, apply grade involution to subject
 			-GMV: use gradebitmap and gradeinvolution functions (remember to check dependencies)
 			-SMV: ask refga for grade of versor, then use refga grade involution
+	-log of 3D Euclidean rotor, conformal translation-rotation rotor
+	
 
 --
 
