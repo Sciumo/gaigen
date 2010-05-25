@@ -69,6 +69,10 @@ namespace G25.CG.CSharp
             // write constructors
             G25.CG.CSJ.GOM.WriteConstructors(SB, S, cgd, FT, gom, className, rangeVectorSMVname);
 
+            // write set functions
+            G25.CG.CSJ.GOM.WriteSetIdentity(SB, S, cgd, FT);
+            // ....
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 
