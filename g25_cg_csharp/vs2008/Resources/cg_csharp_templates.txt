@@ -537,3 +537,33 @@ string somClassName = FT.GetMangledName(S, som.Name);%>
 	
 <%}%>
 ${ENDCODEBLOCK}
+
+// S = specification
+// som = G25.SOM
+// className = mangled class name
+// gomClassName = mangled name of GOM class (can be "")
+// rangeVectorSMVname = name of range vector type
+// FT = floatType
+${CODEBLOCK SOMconstructors}
+	/// <summary>Constructs a new <%className%>, set to identity.</summary>
+	public <%className%>() { SetIdentity(); }
+
+	/// <summary>Copy constructor.</summary>
+	public <%className%>(<%className%> M) { Set(M); }
+
+	/// <summary>Constructor from matrix.</summary>
+	public <%className%>(<%FT.type%>[] M) { Set(M); }
+
+	/// <summary>Constructor from matrix.</summary>
+	public <%className%>(<%FT.type%>[] M, bool transposed) { if (transposed) { SetTranspose(M); } else { Set(M); } }
+	
+	/// <summary>Constructor from images of basis vectors.</summary>
+	public <%className%>(<%for (int i = 0; i < som.DomainVectors.Length; i++) {%><%if (i > 0) {%>, <%}%><%rangeVectorSMVname%> i<%som.DomainVectors[i].ToLangString(S.m_basisVectorNames)%><%}%>)
+		{ Set(<%for (int i = 0; i < som.DomainVectors.Length; i++) {%><%if (i > 0) {%>, <%}%>i<%som.DomainVectors[i].ToLangString(S.m_basisVectorNames)%><%}%>); }
+
+<%if (gomClassName.Length > 0) {%>
+	/// <summary>Converts a <%gomClassName%> to a <%className%>.
+	/// Warning: coordinates which cannot be represented are silenty lost.</summary>
+	public <%className%>(<%gomClassName%> M) { Set(M); }
+<%}%>
+${ENDCODEBLOCK}

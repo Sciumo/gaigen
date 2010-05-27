@@ -134,7 +134,7 @@ namespace G25.CG.C
         public void WriteSetFunctions()
         {
             G25.CG.Shared.OMinit.WriteSetIdentity(m_specification, m_cgd);
-            G25.CG.Shared.OMinit.WriteCopy(m_specification, m_cgd);
+            G25.CG.Shared.OMinit.WriteSetCopy(m_specification, m_cgd);
             G25.CG.Shared.OMinit.WriteSetVectorImages(m_specification, m_cgd);
             G25.CG.Shared.OMinit.WriteSetMatrix(m_specification, m_cgd, false); // false = !transpose
             G25.CG.Shared.OMinit.WriteSetMatrix(m_specification, m_cgd, true); // true = transpose 

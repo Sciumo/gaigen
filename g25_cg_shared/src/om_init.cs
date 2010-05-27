@@ -28,6 +28,24 @@ namespace G25.CG.Shared
     public class OMinit
     {
 
+        private static string GetFunctionName(Specification S, string typeName, string funcName, string funcNameC)
+        {
+            switch (S.m_outputLanguage)
+            {
+                case OUTPUT_LANGUAGE.C:
+                    return typeName + funcNameC;
+                case OUTPUT_LANGUAGE.CPP:
+                    return typeName + "::" + funcName;
+                case OUTPUT_LANGUAGE.CSHARP:
+                    return funcName.Substring(0, 1).ToUpper() + funcName.Substring(1);
+                case OUTPUT_LANGUAGE.JAVA:
+                    return funcName.Substring(0, 1).ToLower() + funcName.Substring(1);
+                default:
+                    return "GetFunctionName(): not implemented yet";
+            }
+
+        }
+
         /// <summary>
         /// 'Plans' how to initialize an outermorphism from vector images.
         /// 
@@ -287,23 +305,7 @@ namespace G25.CG.Shared
             }
 
             string typeName = FT.GetMangledName(S, gom.Name);
-            string funcName = null;
-            if (S.OutputC())
-            {
-                funcName = typeName + ((matrixMode) ? "_setMatrix" : "_setVectorImages");
-            }
-            else if (S.OutputCpp())
-            {
-                funcName = typeName + "::set";
-            }
-            else if (S.OutputCSharp())
-            {
-                funcName = "Set";
-            }
-            else if (S.OutputJava())
-            {
-                funcName = "set";
-            }
+            string funcName = GetFunctionName(S, typeName, "set", (matrixMode) ? "_setMatrix" : "_setVectorImages");
 
             G25.fgs F = new G25.fgs(funcName, funcName, "", argTypes, argNames, new string[] { FT.type }, null, null, null); // null, null = metricName, comment, options
             F.InitArgumentPtrFromTypeNames(S);
@@ -371,23 +373,7 @@ namespace G25.CG.Shared
             string dstTypeName = FT.GetMangledName(S, dstOm.Name);
             bool writeDecl = S.OutputC();
 
-            string funcName = null;
-            if (S.OutputC())
-            {
-                funcName = srcTypeName + "_to_" + dstTypeName;
-            }
-            else if (S.OutputCpp())
-            {
-                funcName = dstTypeName + "::set";
-            }
-            else if (S.OutputCSharp())
-            {
-                funcName = "Set";
-            }
-            else if (S.OutputJava())
-            {
-                funcName = "set";
-            }
+            string funcName = GetFunctionName(S, dstTypeName, "set", srcTypeName + "_to_" + dstTypeName);
 
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
@@ -541,69 +527,73 @@ namespace G25.CG.Shared
         }
 
         /// <summary>
-        /// Writes a function to set an SOM struct to identity, for all floating point types.
+        /// Writes a function to set an SOM struct/class to identity, for all SOMs and floating point types.
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         public static void WriteSetIdentity(Specification S, G25.CG.Shared.CGdata cgd)
         {
-            StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            if (S.OutputC())
-                declSB.AppendLine("");
-            defSB.AppendLine("");
-
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 foreach (G25.SOM som in S.m_SOM)
                 {
-                    string typeName = FT.GetMangledName(S, som.Name);
-                    string funcName = null;
-                    if (S.OutputC())
-                    {
-                        funcName = typeName + "_setIdentity";
-                    }
-                    else
-                    {
-                        funcName = typeName + "::setIdentity";
-                    }
-                    
-                    bool mustCast = false;
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", null, null, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-
-                    G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.OutputC())
-                        returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
-
-                    // setup instructions
-                    List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
-                    {
-                        int nbTabs = 1;
-                        mustCast = false;
-                        string valueName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
-                        bool valuePtr = true;
-                        bool declareValue = false;
-                        for (int g = 1; g < som.Domain.Length; g++)
-                        {
-                            for (int c = 0; c < som.DomainForGrade(g).Length; c++)
-                            {
-                                G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
-                                I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, new RefGA.Multivector(som.DomainForGrade(g)[c]), valueName, valuePtr, declareValue));
-                            }
-                        }
-                    }
-
-                    Comment comment = new Comment("Sets " + typeName + " to identity.");
-                    bool writeDecl = S.OutputC();
-                    bool staticFunc = false;
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
-
+                    WriteSetIdentity(S, cgd, FT, som);
                 }
             }
+        }
+
+        /// <summary>
+        /// Writes a function to set an SOM struct/class to identity
+        /// </summary>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        /// <param name="som"></param>
+        public static void WriteSetIdentity(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SOM som)
+        {
+            StringBuilder declSB = cgd.m_declSB;
+            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
+
+            if (S.OutputC())
+                declSB.AppendLine();
+            defSB.AppendLine();
+
+            string typeName = FT.GetMangledName(S, som.Name);
+            string funcName = GetFunctionName(S, typeName, "setIdentity", "_setIdentity");
+
+            bool mustCast = false;
+
+            G25.fgs F = new G25.fgs(funcName, funcName, "", null, null, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+
+            G25.CG.Shared.FuncArgInfo returnArgument = null;
+            if (S.OutputC())
+                returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
+
+            // setup instructions
+            List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
+            {
+                int nbTabs = 1;
+                mustCast = false;
+                string valueName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                bool valuePtr = S.OutputCppOrC();
+                bool declareValue = false;
+                for (int g = 1; g < som.Domain.Length; g++)
+                {
+                    for (int c = 0; c < som.DomainForGrade(g).Length; c++)
+                    {
+                        G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, new RefGA.Multivector(som.DomainForGrade(g)[c]), valueName, valuePtr, declareValue));
+                    }
+                }
+            }
+
+            Comment comment = new Comment("Sets " + typeName + " to identity.");
+            bool writeDecl = S.OutputC();
+            bool staticFunc = false;
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, new G25.CG.Shared.FuncArgInfo[0], I, comment, writeDecl);
+
         }
 
         /// <summary>
@@ -611,70 +601,67 @@ namespace G25.CG.Shared
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteCopy(Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteSetCopy(Specification S, G25.CG.Shared.CGdata cgd)
         {
-            StringBuilder declSB = cgd.m_declSB;
-            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
-
-            if (S.OutputC())
-                declSB.AppendLine("");
-            defSB.AppendLine("");
 
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 foreach (G25.SOM som in S.m_SOM)
                 {
-                    string typeName = FT.GetMangledName(S, som.Name);
-                    string funcName = null;
-                    if (S.OutputC())
-                    {
-                        funcName = typeName + "_set";
-                    }
-                    else
-                    {
-                        funcName = typeName + "::set";
-                    }
-
-                    bool mustCast = false;
-
-                    const int NB_ARGS = 1;
-                    string srcName = "src";
-                    bool srcPtr = S.OutputC();
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { som.Name }, new String[] { srcName }, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
-
-                    G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.OutputC())
-                        returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
-
-                    // setup instructions
-                    List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
-                    {
-                        int nbTabs = 1;
-                        mustCast = false;
-                        string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
-                        bool dstPtr = true;
-                        bool declareDst = false;
-                        for (int g = 1; g < som.Domain.Length; g++)
-                        {
-                            for (int c = 0; c < som.DomainForGrade(g).Length; c++)
-                            {
-                                G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
-                                RefGA.Multivector srcValue = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smvOM, srcName, srcPtr);
-                                I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, srcValue, dstName, dstPtr, declareDst));
-                            }
-                        }
-                    }
-
-                    Comment comment = new Comment("Copies " + typeName + "."); ;
-                    bool writeDecl = (S.OutputC());
-                    bool staticFunc = false;
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
-
+                    WriteSetCopy(S, cgd, FT, som);
                 }
             }
+        }
+
+        public static void WriteSetCopy(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SOM som)
+        {
+            StringBuilder declSB = cgd.m_declSB;
+            StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
+
+            if (S.OutputC())
+                declSB.AppendLine();
+            defSB.AppendLine();
+
+            string typeName = FT.GetMangledName(S, som.Name);
+            string funcName = GetFunctionName(S, typeName, "set", "_set");
+
+            bool mustCast = false;
+
+            const int NB_ARGS = 1;
+            string srcName = "src";
+            bool srcPtr = S.OutputC();
+            G25.fgs F = new G25.fgs(funcName, funcName, "", new String[] { som.Name }, new String[] { srcName }, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
+
+            G25.CG.Shared.FuncArgInfo returnArgument = null;
+            if (S.OutputC())
+                returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
+
+            // setup instructions
+            List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
+            {
+                int nbTabs = 1;
+                mustCast = false;
+                string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                bool dstPtr = (S.OutputCppOrC());
+                bool declareDst = false;
+                for (int g = 1; g < som.Domain.Length; g++)
+                {
+                    for (int c = 0; c < som.DomainForGrade(g).Length; c++)
+                    {
+                        G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
+                        RefGA.Multivector srcValue = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smvOM, srcName, srcPtr);
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, srcValue, dstName, dstPtr, declareDst));
+                    }
+                }
+            }
+
+            Comment comment = new Comment("Copies " + typeName + "."); ;
+            bool writeDecl = (S.OutputC());
+            bool staticFunc = false;
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
         }
 
         /// <summary>
@@ -805,15 +792,7 @@ namespace G25.CG.Shared
 
 
                     string typeName = FT.GetMangledName(S, som.Name);
-                    string funcName = null;
-                    if (S.OutputC())
-                    {
-                        funcName = typeName + "_setMatrix";
-                    }
-                    else
-                    {
-                        funcName = typeName + "::set";
-                    }
+                    string funcName = GetFunctionName(S, typeName, "set", "_setMatrix");
                     if (transpose) funcName = funcName + "Transpose";
 
                     //argNames[0] = "*" + argNames[0]; // quick hack: add pointer to name instead of type!
