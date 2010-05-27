@@ -164,8 +164,8 @@ Maybe fix the float type stuff
 			SOM
 				 V members vars
 				 V class comment
-				 constructors
-				 set functions
+				 V constructors
+				 -> set functions
 			 
 			applyOM functions
 

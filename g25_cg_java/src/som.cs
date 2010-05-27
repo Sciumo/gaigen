@@ -75,7 +75,7 @@ namespace G25.CG.Java
             // write set functions
             G25.CG.Shared.OMinit.WriteSetIdentity(S, cgd, FT, som);
             G25.CG.Shared.OMinit.WriteSetCopy(S, cgd, FT, som);
-
+            G25.CG.Shared.OMinit.WriteSetVectorImages(S, cgd, FT, som);
             // ...
 
             // close class

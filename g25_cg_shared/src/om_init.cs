@@ -373,7 +373,7 @@ namespace G25.CG.Shared
             string dstTypeName = FT.GetMangledName(S, dstOm.Name);
             bool writeDecl = S.OutputC();
 
-            string funcName = GetFunctionName(S, dstTypeName, "set", srcTypeName + "_to_" + dstTypeName);
+            string funcName = GetFunctionName(S, (S.OutputC() ? "" : dstTypeName), "set", srcTypeName + "_to_" + dstTypeName);
 
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
@@ -385,8 +385,8 @@ namespace G25.CG.Shared
 
             // write comment, function declaration
             Comment comment = new Comment("Copies a " + srcTypeName + " to a " + dstTypeName + "\n" + 
-                "Warning 1: coordinates which cannot be represented are silenty lost" + 
-                "Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.");
+                "Warning 1: coordinates which cannot be represented are silenty lost.\n" +
+                "Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.\n");
             if (writeDecl)
             {
                 comment.Write(declSB, S, 0);
@@ -675,83 +675,81 @@ namespace G25.CG.Shared
             {
                 foreach (G25.SOM som in S.m_SOM)
                 {
-                    G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, som);
-
-
-                    // loop over som.DomainVectors
-                    // setup array of arguments, function specification, etc
-                    int NB_ARGS = som.DomainVectors.Length;
-                    string[] argTypes = new string[NB_ARGS];
-                    string[] argNames = new string[NB_ARGS];
-                    RefGA.Multivector[] argValue = new RefGA.Multivector[NB_ARGS];
-                    for (int d = 0; d < NB_ARGS; d++)
-                    {
-                        argTypes[d] = rangeVectorType.Name;
-                        argNames[d] = "i" + som.DomainVectors[d].ToLangString(S.m_basisVectorNames);
-                        bool ptr = (S.OutputC());
-                        argValue[d] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, rangeVectorType, argNames[d], ptr);
-                    }
-
-
-                    string typeName = FT.GetMangledName(S, som.Name);
-                    string funcName = null;
-                    if (S.OutputC())
-                    {
-                        funcName = typeName + "_setVectorImages";
-                    }
-                    else
-                    {
-                        funcName = typeName + "::set";
-                    }
-
-
-                    G25.fgs F = new G25.fgs(funcName, funcName, "", argTypes, argNames, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
-                    F.InitArgumentPtrFromTypeNames(S);
-                    bool computeMultivectorValue = false;
-                    G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
-
-                    G25.CG.Shared.FuncArgInfo returnArgument = null;
-                    if (S.OutputC())
-                        returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
-
-                    // setup instructions
-                    List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
-                    {
-                        bool mustCast = false;
-                        int nbTabs = 1;
-                        string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
-                        bool dstPtr = true;
-                        bool declareDst = false;
-                        for (int g = 1; g < som.Domain.Length; g++)
-                        {
-                            for (int c = 0; c < som.DomainForGrade(g).Length; c++)
-                            {
-                                G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
-                                RefGA.BasisBlade domainBlade = som.DomainForGrade(g)[c];
-                                RefGA.Multivector value = new RefGA.Multivector(new RefGA.BasisBlade(domainBlade, 0)); // copy the scalar part, ditch the basis blade
-                                for (uint v = 0; v < som.DomainVectors.Length; v++)
-                                {
-                                    if ((domainBlade.bitmap & som.DomainVectors[v].bitmap) != 0)
-                                    {
-                                        value = RefGA.Multivector.op(value, argValue[v]);
-                                    }
-                                }
-
-                                I.Add(new G25.CG.Shared.CommentInstruction(nbTabs, "Set image of " + domainBlade.ToString(S.m_basisVectorNames)));
-                                I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, value, dstName, dstPtr, declareDst));
-                            }
-                        }
-
-                    }
-
-                    Comment comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
-                    bool writeDecl = false;
-                    bool staticFunc = false;
-                    G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
-
+                    WriteSetVectorImages(S, cgd, FT, som);
                 }
             }
         }
+
+        public static void WriteSetVectorImages(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SOM som)
+        {
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, som);
+
+            // loop over som.DomainVectors
+            // setup array of arguments, function specification, etc
+            int NB_ARGS = som.DomainVectors.Length;
+            string[] argTypes = new string[NB_ARGS];
+            string[] argNames = new string[NB_ARGS];
+            RefGA.Multivector[] argValue = new RefGA.Multivector[NB_ARGS];
+            for (int d = 0; d < NB_ARGS; d++)
+            {
+                argTypes[d] = rangeVectorType.Name;
+                argNames[d] = "i" + som.DomainVectors[d].ToLangString(S.m_basisVectorNames);
+                bool ptr = (S.OutputC());
+                argValue[d] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, rangeVectorType, argNames[d], ptr);
+            }
+
+
+            string typeName = FT.GetMangledName(S, som.Name);
+            string funcName = GetFunctionName(S, typeName, "set", "_setVectorImages");
+
+
+            G25.fgs F = new G25.fgs(funcName, funcName, "", argTypes, argNames, new String[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+            F.InitArgumentPtrFromTypeNames(S);
+            bool computeMultivectorValue = false;
+            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
+
+            G25.CG.Shared.FuncArgInfo returnArgument = null;
+            if (S.OutputC())
+                returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, som.Name, computeMultivectorValue);
+
+            // setup instructions
+            List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
+            {
+                bool mustCast = false;
+                int nbTabs = 1;
+                string dstName = (S.OutputC()) ? G25.fgs.RETURN_ARG_NAME : SmvUtil.THIS;
+                bool dstPtr = S.OutputCppOrC();
+                bool declareDst = false;
+                for (int g = 1; g < som.Domain.Length; g++)
+                {
+                    for (int c = 0; c < som.DomainForGrade(g).Length; c++)
+                    {
+                        G25.SMVOM smvOM = som.DomainSmvForGrade(g)[c];
+                        RefGA.BasisBlade domainBlade = som.DomainForGrade(g)[c];
+                        RefGA.Multivector value = new RefGA.Multivector(new RefGA.BasisBlade(domainBlade, 0)); // copy the scalar part, ditch the basis blade
+                        for (uint v = 0; v < som.DomainVectors.Length; v++)
+                        {
+                            if ((domainBlade.bitmap & som.DomainVectors[v].bitmap) != 0)
+                            {
+                                value = RefGA.Multivector.op(value, argValue[v]);
+                            }
+                        }
+
+                        I.Add(new G25.CG.Shared.CommentInstruction(nbTabs, "Set image of " + domainBlade.ToString(S.m_basisVectorNames)));
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, value, dstName, dstPtr, declareDst));
+                    }
+                }
+
+            }
+
+            Comment comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
+            bool writeDecl = false;
+            bool staticFunc = false;
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, S.m_inlineSet, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+        }
+        
+        
+
 
         /// <summary>
         /// Writes a function to set a SOM struct according to a matrix. The columns (or rows, in transposed mode)
