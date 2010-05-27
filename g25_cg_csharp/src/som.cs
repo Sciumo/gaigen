@@ -76,7 +76,9 @@ namespace G25.CG.CSharp
             G25.CG.Shared.OMinit.WriteSetIdentity(S, cgd, FT, som);
             G25.CG.Shared.OMinit.WriteSetCopy(S, cgd, FT, som);
             G25.CG.Shared.OMinit.WriteSetVectorImages(S, cgd, FT, som);
-            // ...
+            G25.CG.Shared.OMinit.WriteSetMatrix(S, cgd, FT, som, false); // false = !transpose
+            G25.CG.Shared.OMinit.WriteSetMatrix(S, cgd, FT, som, true); // true = transpose 
+            G25.CG.CSJ.SOM.WriteGOMtoSOMcopy(S, cgd, FT, som);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
