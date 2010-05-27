@@ -50,12 +50,16 @@ namespace G25.CG.Java
             // get StringBuilder where all generated code goes
             StringBuilder SB = new StringBuilder();
 
+            // get a new 'cgd' where all ouput goes to the one StringBuilder SB 
+            cgd = new G25.CG.Shared.CGdata(cgd, SB, SB, SB);
+
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
 
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
+
 
             // write class comment
             G25.CG.CSJ.GOM.WriteComment(SB, S, cgd, FT, gom);
@@ -71,6 +75,9 @@ namespace G25.CG.Java
 
             // write set functions
             G25.CG.CSJ.GOM.WriteSetIdentity(SB, S, cgd, FT);
+            G25.CG.CSJ.GOM.WriteSetCopy(SB, S, cgd, FT);
+            G25.CG.CSJ.GOM.WriteSetVectorImages(S, cgd, FT, false, false); // false, false = matrixMode, transpose
+            G25.CG.CSJ.GOM.WriteSetVectorImages(S, cgd, FT, true, false); // true, false = matrixMode, transpose
             // ....
 
             // close class

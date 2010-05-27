@@ -46,6 +46,9 @@ namespace G25.CG.Java
             // get StringBuilder where all generated code goes
             StringBuilder SB = new StringBuilder();
 
+            // get a new 'cgd' where all ouput goes to the one StringBuilder SB 
+            cgd = new G25.CG.Shared.CGdata(cgd, SB, SB, SB);
+
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
