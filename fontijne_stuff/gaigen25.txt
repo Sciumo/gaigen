@@ -147,24 +147,25 @@ Maybe fix the float type stuff
 	Write C# and Java output.
 			
 			
-			GMV:
-				done?
+			GMV:    done?
 			  
 			SMV:
-				class comment
+				V class comment
 				member function shortcuts (for regular functions)
 				converters as constructors (SMV->SMV and such)
 			
 			 
-			GOM
-			 V members vars
-			 V class comment
-			 all other stuff
+			GOM:     done?
+				 V members vars
+				 V class comment
+				 V constructors
+				 V set functions
 			 
 			SOM
-			 V members vars
-			 V class comment
-			 all other stuff
+				 V members vars
+				 V class comment
+				 constructors
+				 set functions
 			 
 			applyOM functions
 
@@ -231,6 +232,7 @@ Correcting design mistakes:
 	-return type
 	-the code (a string)
 	-comments
+	-whether to capitalize the name of the function (C#)
 	Am extra level of code then manages the output of the functions to the right place
 	including generation of comments, declarations and definitions, indentation, etc.
 	

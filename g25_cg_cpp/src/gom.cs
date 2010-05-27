@@ -385,6 +385,7 @@ namespace G25.CG.CPP
         public static void WriteGOMtoSOMcopy(Specification S, G25.CG.Shared.CGdata cgd)
         {
             G25.CG.Shared.OMinit.WriteGOMtoSOMcopy(S, cgd);
+            G25.CG.Shared.OMinit.WriteSOMtoGOMcopy(S, cgd);
         } // end of WriteGOMtoSOMcopy()
 
 

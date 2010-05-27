@@ -363,7 +363,7 @@ namespace G25.CG.Shared
             G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
         } // end of WriteSetVectorImages()
 
-        private static void WriteOMtoOMcopy(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, OM srcOm, OM dstOm)
+        public static void WriteOMtoOMcopy(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, OM srcOm, OM dstOm)
         {
             StringBuilder declSB = cgd.m_declSB;
             StringBuilder defSB = (S.m_inlineSet) ? cgd.m_inlineDefSB : cgd.m_defSB;
@@ -376,28 +376,40 @@ namespace G25.CG.Shared
             {
                 funcName = srcTypeName + "_to_" + dstTypeName;
             }
-            else
+            else if (S.OutputCpp())
             {
                 funcName = dstTypeName + "::set";
+            }
+            else if (S.OutputCSharp())
+            {
+                funcName = "Set";
+            }
+            else if (S.OutputJava())
+            {
+                funcName = "set";
             }
 
             // do we inline this func?
             string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
             string dstArgStr = (S.OutputC()) ? (dstTypeName + " *dst, ") : "";
-            string refStr = (S.OutputC()) ? "*" : "&"; ;
+            string refStr = (S.OutputC()) ? "*" : ((S.OutputCpp()) ? "&" : "");
+            string CONST = (S.OutputCppOrC()) ? "const " : "";
 
-            string funcDecl = inlineStr + "void " + funcName + "(" + dstArgStr + "const " + srcTypeName + " " + refStr + "src)";
+            string funcDecl = inlineStr + "void " + funcName + "(" + dstArgStr + CONST + srcTypeName + " " + refStr + "src)";
 
             // write comment, function declaration
+            Comment comment = new Comment("Copies a " + srcTypeName + " to a " + dstTypeName + "\n" + 
+                "Warning 1: coordinates which cannot be represented are silenty lost" + 
+                "Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.");
             if (writeDecl)
             {
-                declSB.AppendLine("/** Copies a " + srcTypeName + " to a " + dstTypeName);
-                declSB.AppendLine(" * Warning 1: coordinates which cannot be represented are silenty lost");
-                declSB.AppendLine(" * Warning 2: coordinates which are not present in 'src' are set to zero in 'dst'.");
-                declSB.AppendLine(" */");
+                comment.Write(declSB, S, 0);
                 declSB.Append(funcDecl);
                 declSB.AppendLine(";");
             }
+
+            if (S.OutputCSharpOrJava())
+                comment.Write(defSB, S, 0);
 
 
             defSB.Append(funcDecl);
@@ -468,24 +480,65 @@ namespace G25.CG.Shared
             }
         }
 
-        /// Writes functions to copy GOM to SOMs and back again.
+        /// <summary>
+        /// Writes functions to copy GOM to SOMs.
         /// </summary>
         /// <param name="S"></param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
         public static void WriteGOMtoSOMcopy(Specification S, G25.CG.Shared.CGdata cgd)
         {
-            G25.GOM gom = S.m_GOM;
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
-                for (int s = 0; s < S.m_SOM.Count; s++)
-                {
-                    G25.SOM som = S.m_SOM[s];
-
-                    WriteOMtoOMcopy(S, cgd, FT, gom, som);
-                    WriteOMtoOMcopy(S, cgd, FT, som, gom);
-                } // end of loop over all SMVs
+                WriteGOMtoSOMcopy(S, cgd, FT);
             } // end of loop over all float types
         } // end of WriteGOMtoSOMcopy()
+
+        /// <summary>
+        /// Writes functions to copy SOM to GOMs.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        public static void WriteSOMtoGOMcopy(Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            foreach (G25.FloatType FT in S.m_floatTypes)
+            {
+                WriteSOMtoGOMcopy(S, cgd, FT);
+            } // end of loop over all float types
+        } // end of WriteGOMtoSOMcopy()
+
+        /// <summary>
+        /// Writes functions to copy GOM to SOMs.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteGOMtoSOMcopy(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GOM gom = S.m_GOM;
+            for (int s = 0; s < S.m_SOM.Count; s++)
+            {
+                G25.SOM som = S.m_SOM[s];
+
+                WriteOMtoOMcopy(S, cgd, FT, gom, som);
+            } // end of loop over all SMVs
+        }
+
+        /// <summary>
+        /// Writes functions to copy SOM to GOMs.
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteSOMtoGOMcopy(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
+        {
+            G25.GOM gom = S.m_GOM;
+            for (int s = 0; s < S.m_SOM.Count; s++)
+            {
+                G25.SOM som = S.m_SOM[s];
+
+                WriteOMtoOMcopy(S, cgd, FT, som, gom);
+            } // end of loop over all SMVs
+        }
 
         /// <summary>
         /// Writes a function to set an SOM struct to identity, for all floating point types.

@@ -742,7 +742,7 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GOMconstructors}
 	/// Constructs a new <%className%>, set to identity
-	inline <%className%>() { setidentity(); }
+	inline <%className%>() { setIdentity(); }
 
 	/// Copy constructor.
 	inline <%className%>(const <%className%>&M) { set(M); }
@@ -787,7 +787,7 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK GOMsetDecl}
 	/// Sets this <%className%> to identity.
-	void setidentity();
+	void setIdentity();
 
 	/// Sets this to 'M'.
 	void set(const <%className%> &M);
@@ -826,7 +826,7 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK SOMconstructors}
 	/// Constructs a new <%className%>, set to identity
-	inline <%className%>() { setidentity(); }
+	inline <%className%>() { setIdentity(); }
 
 	/// Copy constructor.
 	inline <%className%>(const <%className%>&M) { set(M); }
@@ -871,7 +871,7 @@ ${ENDCODEBLOCK}
 // FT = floatType
 ${CODEBLOCK SOMsetDecl}
 	/// Sets this <%className%> to identity.
-	void setidentity();
+	void setIdentity();
 
 	/// Sets this to 'M'.
 	void set(const <%className%> &M);
