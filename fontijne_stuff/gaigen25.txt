@@ -156,18 +156,10 @@ Maybe fix the float type stuff
 			
 			 
 			GOM:     done?
-				 V members vars
-				 V class comment
-				 V constructors
-				 V set functions
 			 
-			SOM
-				 V members vars
-				 V class comment
-				 V constructors
-				 -> set functions
+			SOM	done?
 			 
-			applyOM functions
+			-> applyOM functions
 
 			parser 
 			
@@ -178,6 +170,10 @@ Maybe fix the float type stuff
 			report usage
 			
 			runtime geometric product
+			
+			SMV member function shortcuts (for regular functions)
+				
+			SMV converters as constructors (SMV->SMV and such)
 			
 			testing
 			
@@ -208,11 +204,24 @@ Maybe fix the float type stuff
 
 --
 
+Valkenburg comments on version 2.5.1
+
+
+It was all self explanatory.  Some very minor suggestions
+
+- maybe move the section "Sample Algebras" to
+   be section 4.1 and rename to  "Sample Algebra Specifications"
+
+  I was left a little hanging wondering how to create a specfile (until i skipped forward a few pages).
+
+- maybe say the the test passed or something (it gives the new user confidence) 
+
+--
 Todo: find common (numerical or also symbolic) factors in code. Such as the 0.5 in cgaPointC and the 2.0 in applyUnitVersor_normalizedTranslator_f_normalizedPoint_f.
 
 
 ---------------------------------------------------
-Correcting design mistakes:
+Correcting design mistakes / reducing amount of code.
 ->get rid of type = type + floattype
 	Each type has its own float type, mangled name, etc
 	Each coordinate can (in theory) have its own float type
@@ -253,6 +262,10 @@ Correcting design mistakes:
    differing code.
 
 ->split all function code generators into GMV and SMV parts, with a common superclass
+
+->find a way to merge all GMV code generation into one format. Specify what to test/do for each combination
+of groups (perhaps tag some of these ops / tests them with the programming language?), and special code 
+generator handles constructing the full function.
 ---------------------------------------------------
  
 

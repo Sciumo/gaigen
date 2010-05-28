@@ -191,6 +191,13 @@ namespace G25.CG.Shared
         public static string GetApplyGomCode(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
             G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
         {
+            if (S.OutputCppOrC()) return GetApplyGomCodeCppOrC(S, cgd, FT, FAI, resultName);
+            else return GetApplyGomCodeCSharpOrJava(S, cgd, FT, FAI, resultName);
+        }
+
+        private static string GetApplyGomCodeCppOrC(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName) 
+        {
             G25.GMV gmv = S.m_GMV;
             bool groupedByGrade = gmv.IsGroupedByGrade(S.m_dimension);
 
@@ -261,8 +268,49 @@ namespace G25.CG.Shared
             SB.Append(GPparts.GetCompressCode(S, FT, FAI, resultName, resultIsScalar, cgu)); // todo: bgu should be 63 when not grouped by grade
 
             return SB.ToString();
-        }
+        } // end of GetApplyGomCodeCppOrC
+
+        private static string GetApplyGomCodeCSharpOrJava(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT,
+            G25.CG.Shared.FuncArgInfo[] FAI, string resultName)
+        {
+            G25.GMV gmv = S.m_GMV;
+            bool groupedByGrade = gmv.IsGroupedByGrade(S.m_dimension);
+
+            StringBuilder SB = new StringBuilder();
+
+            // allocate memory to store result:
+            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
+            bool resultIsScalar = false;
+            bool initResultToZero = !groupedByGrade;
+            SB.Append(GPparts.GetExpandCode(S, cgd, FT, null, resultIsScalar, initResultToZero));
+
+            // get number of groups:
+            int nbGroups = gmv.NbGroups;
+
+            // for each combination of groups, check if the OM goes from one to the other
+            for (int srcGroup = 0; srcGroup < nbGroups; srcGroup++)
+            {
+
+                SB.AppendLine("if (bc[" + srcGroup + "] != null) {");
+                for (int dstGroup = 0; dstGroup < nbGroups; dstGroup++)
+                {
+                    string funcName = GetGomPartFunctionName(S, FT, srcGroup, dstGroup);
+                    Tuple<string, string> key = new Tuple<string, string>(FT.type, funcName);
+                    if (cgd.m_gmvGomPartFuncNames.ContainsKey(key) &&
+                        cgd.m_gmvGomPartFuncNames[key])
+                    {
+                        SB.AppendLine("\t" + funcName + "(" + FAI[0].Name + ", bc[" + srcGroup + "], cc[" + dstGroup + "]);");
+                    }
+                }
+                SB.AppendLine("}");
+                SB.AppendLine("");
+            }
+
+            SB.AppendLine("return new " + FT.GetMangledName(S, gmv.Name) + "(cc);");
+
+            return SB.ToString();
+        } // end of GetApplyGomCodeCSharpOrJava()
 
 
-    } // end of class DualParts
+    } // end of class GomParts
 } // end of namepace G25.CG.Shared
