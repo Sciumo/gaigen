@@ -159,7 +159,7 @@ Maybe fix the float type stuff
 			 
 			SOM	done?
 			 
-			-> applyOM functions
+			V applyOM functions
 
 			parser 
 			

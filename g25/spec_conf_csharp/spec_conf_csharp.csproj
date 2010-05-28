@@ -94,6 +94,7 @@
     <Compile Include="no_t_f.cs" />
     <Compile Include="om.cs" />
     <Compile Include="om_f.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="pointPair.cs" />
     <Compile Include="pointPair_f.cs" />
     <Compile Include="Program.cs" />

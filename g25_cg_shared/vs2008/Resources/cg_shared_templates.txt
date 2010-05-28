@@ -445,7 +445,7 @@ int <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(const char *b
 			}
 
 			// if there is an 'e', there must be some digit
-			if (!isdigit((unsigned char)buf[(*endIdx)])) return -10; // bad number
+			if (!isdigit((unsigned char)buf[(*endIdx)])) return T_BAD_NUMBER; // bad number
 
 			// eat up all digits
 			while (isdigit((unsigned char)buf[(*endIdx)])) {
@@ -459,10 +459,6 @@ int <%S.m_namespace%><%FT.GetMangledName(S, "ParseGetNextToken")%>(const char *b
 	else if (isalpha((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '_')) { // parse identifier?
 		// find end of chain of numbers, letters and '_'
 		*endIdx = (*startIdx) + 1;
-
-//		if ((*startIdx) == 396) {
-//			printf("AT!\n");
-//		}
 
 		while (isalnum((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '_')) (*endIdx)++;
 		(*endIdx)--;  // end index is inclusive
