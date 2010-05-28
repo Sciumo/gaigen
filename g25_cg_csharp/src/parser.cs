@@ -99,14 +99,8 @@ namespace G25.CG.CSharp
             }
             else if (S.m_parserType == PARSER.ANTLR)
             {
-            /*    // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
-                // So once again we have to apply a hack to get around this.
-                // All this thank to Jim Lazy^H^H^H^HIdle who's too lazy to write a true C++ target for ANTLR. Thanks Jim.
-                FloatType realFT = S.m_floatTypes[0];
-                FloatType FT = GetANTLRfloatType(S);
-
-                cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);*/
+                    //cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
+                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp", "S=", S, "FT=", S.m_floatTypes[0]);
             }
 
 
