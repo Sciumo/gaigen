@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace G25.CG.CPP
+namespace G25.CG.Java
 {
     /// <summary>
     /// Handles code generation of lex/yacc lexer parser.
@@ -27,52 +27,38 @@ namespace G25.CG.CPP
     {
         public static string GetRawParserSourceFilename(Specification S)
         {
-            return S.m_namespace + "_parse_" + S.m_GMV.Name + ".cpp";
+            return MainGenerator.GetClassOutputPath(S, "Parser");
+        }
+
+        public static string GetRawParseExceptionSourceFilename(Specification S)
+        {
+            return MainGenerator.GetClassOutputPath(S, "ParseException");
         }
 
         public static string GetRawANTLRgrammarFilename(Specification S)
         {
-            return S.m_namespace + ".g";
+            return S.GetOutputPath(S.m_namespace + ".g");
         }
 
         /// <summary>
-        /// This is determine only by the namespace and ANTLR (it appends Parser.c)
+        /// This is determined only by the namespace and ANTLR (it appends Parser.cs)
         /// </summary>
         /// <param name="S"></param>
         /// <returns></returns>
         public static string GetANTLRparserSourceFilename(Specification S)
         {
-            return S.m_namespace + "Parser.c";
+            return S.m_namespace + "Parser.java";
         }
 
-        /// <summary>
-        /// This is determine only by the namespace and ANTLR (it appends Parser.h)
-        /// </summary>
-        /// <param name="S"></param>
-        /// <returns></returns>
-        public static string GetANTLRparserHeaderFilename(Specification S)
-        {
-            return S.m_namespace + "Parser.h";
-        }
 
         /// <summary>
-        /// This is determine only by the namespace and ANTLR (it appends Lexer.c)
+        /// This is determined only by the namespace and ANTLR (it appends Lexer.cs)
         /// </summary>
         /// <param name="S"></param>
         /// <returns></returns>
         public static string GetANTLRlexerSourceFilename(Specification S)
         {
-            return S.m_namespace + "Lexer.c";
-        }
-
-        /// <summary>
-        /// This is determine only by the namespace and ANTLR (it appends Lexer.h)
-        /// </summary>
-        /// <param name="S"></param>
-        /// <returns></returns>
-        public static string GetANTLRlexerHeaderFilename(Specification S)
-        {
-            return S.m_namespace + "Lexer.h";
+            return S.m_namespace + "Lexer.java";
         }
 
         public static G25.FloatType GetANTLRfloatType(Specification S)
@@ -84,54 +70,59 @@ namespace G25.CG.CPP
             else return S.m_floatTypes[0];
         }
 
-
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
             // get list of generated filenames
             List<string> generatedFiles = new List<string>();
             if (S.m_parserType == PARSER.NONE) return generatedFiles; // nothing to do
-            
-            // get header filename
-            string headerFilename = S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S));
 
-            // get parser c source output path
-            string parserSourceFilename = S.GetOutputPath(G25.CG.CPP.Parser.GetRawParserSourceFilename(S));
+            // get parser source output path
+            string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
             generatedFiles.Add(parserSourceFilename);
 
+            // get parser source output path
+            string parseExceptionSourceFilename = S.GetOutputPath(GetRawParseExceptionSourceFilename(S));
+            generatedFiles.Add(parseExceptionSourceFilename);
+
             // get grammar output path
-            string rawGrammarFilename = G25.CG.CPP.Parser.GetRawANTLRgrammarFilename(S);
+            string rawGrammarFilename = GetRawANTLRgrammarFilename(S);
             string grammarFilename = S.GetOutputPath(rawGrammarFilename);
             if (S.m_parserType == PARSER.ANTLR) // only really generated when parser is ANTLR
                 generatedFiles.Add(grammarFilename);
 
             // get StringBuilder where all generated code goes
             StringBuilder sourceSB = new StringBuilder(); // parser source (if any) goes here
+            StringBuilder exceptionSB = new StringBuilder(); // ParseException source goes here
             StringBuilder grammarSB = new StringBuilder(); // grammar (if any) goes here
 
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
             G25.CG.Shared.Util.WriteLicense(sourceSB, S);
 
+            // parser exception
+            cgd.m_cog.EmitTemplate(exceptionSB, "ParseExceptionSource_Java", "S=", S);
+
             // parser declarations:
             if (S.m_parserType == PARSER.BUILTIN)
             {
-                cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_C_CPP", "S=", S, "FT=", S.m_floatTypes[0], "headerFilename=", headerFilename);
+                cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
             }
             else if (S.m_parserType == PARSER.ANTLR)
             {
-                // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
-                // So once again we have to apply a hack to get around this.
-                // All this thank to Jim Lazy^H^H^H^HIdle who's too lazy to write a true C++ target for ANTLR. Thanks Jim.
-                FloatType realFT = S.m_floatTypes[0];
-                FloatType FT = GetANTLRfloatType(S);
+                /*    // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
+                    // So once again we have to apply a hack to get around this.
+                    // All this thank to Jim Lazy^H^H^H^HIdle who's too lazy to write a true C++ target for ANTLR. Thanks Jim.
+                    FloatType realFT = S.m_floatTypes[0];
+                    FloatType FT = GetANTLRfloatType(S);
 
-                cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);
+                    cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
+                    cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);*/
             }
 
 
             // write all to file
             G25.CG.Shared.Util.WriteFile(parserSourceFilename, sourceSB.ToString());
+            G25.CG.Shared.Util.WriteFile(parseExceptionSourceFilename, exceptionSB.ToString());
             if (S.m_parserType == PARSER.ANTLR)
                 G25.CG.Shared.Util.WriteFile(grammarFilename, grammarSB.ToString());
 
@@ -139,5 +130,5 @@ namespace G25.CG.CPP
         }
 
     } // end of class Parser
-} // end of namespace G25.CG.CPP
+} // end of namespace G25.CG.Java
 

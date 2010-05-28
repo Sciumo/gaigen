@@ -522,362 +522,387 @@ public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int 
 ${ENDCODEBLOCK}
 
 
+
+
 // S = Specification of algebra.
+${CODEBLOCK ParseExceptionSource_Java}
+package <%S.m_namespace%>_pkg;
+
+public class ParseException extends Exception {
+	private static final long serialVersionUID = 1L;
+
+	public ParseException(String message)
+    {
+    	super(message);
+    }
+}
+${ENDCODEBLOCK}
+
+
+
+// S = Specification of algebra.
+// FT = float type to be used
 ${CODEBLOCK BuiltinParserSource_CSharp_Java}
 <%{
-	string BOOL_TYPE = (S.OutputJava()) ? "boolean" : "bool;
-<%}%>
+	string BOOL_TYPE = (S.OutputJava()) ? "boolean" : "bool";
+	string FINAL = (S.OutputJava()) ? "final " : "";
+%>
 
 
 <%if (S.OutputJava()) {%>
 package <%S.m_namespace%>_pkg;
 <%} else {%>
-using System;
-
 namespace <%S.m_namespace%>_ns {
+
+	/// <summary>This exception is throws by parse() when there is an error in the input.</summary>
+    public class ParseException : Exception
+    {
+        public ParseException(String message)
+            : base(message)
+        {
+        }
+    }
 <%}%>
 
-class Parser {
-    class BasisBlade
-    {
-        private int bitmap = 0;
-        private double scale = 1.0;
+	class Parser {
+		class BasisBlade
+		{
+			private int bitmap = 0;
+			private <%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
 
-        public int getBitmap() { return bitmap;  }
-        public double getScale() { return scale;  }
+			public int getBitmap() { return bitmap;  }
+			public <%FT.type%> getScale() { return scale;  }
 
-        public void wedgeBasisVector(int bvIdx)
-        {
-            int b;
+			public void wedgeBasisVector(int bvIdx)
+			{
+				int b;
 
-            b = 1 << bvIdx;
-            if ((bitmap & b) != 0)
-            { // bv ^ bv = 0
-                scale = 0.0;
-                return;
-            }
-            else
-            {
-                // add basis vector to bitmap	
-                bitmap |= b;
+				b = 1 << bvIdx;
+				if ((bitmap & b) != 0)
+				{ // bv ^ bv = 0
+					scale = <%FT.DoubleToString(S, 0.0)%>;
+					return;
+				}
+				else
+				{
+					// add basis vector to bitmap	
+					bitmap |= b;
 
-                bvIdx++;
-                for (; bvIdx <= <%S.m_dimension%>; bvIdx++) // compute sign flips due to anti commuting basis vectors
-                    if ((bitmap & (1 << bvIdx)) != 0) scale = -scale;
-            }
-        }
+					bvIdx++;
+					for (; bvIdx <= <%S.m_dimension%>; bvIdx++) // compute sign flips due to anti commuting basis vectors
+						if ((bitmap & (1 << bvIdx)) != 0) scale = -scale;
+				}
+			}
 
-        public void multiply(double scalar)
-        {
-            scale *= scalar;
-        }
-    }
+			public void multiply(<%FT.type%> scalar)
+			{
+				scale *= scalar;
+			}
+		}
 
-    private String inputString;
-    private String sourceString;
-    private int startIdx = 0;
-    private int endIdx = 0;
-    private int lineIdx = 0;
-    private int currentLineStart = 0;
-    private double[] coord = new double[<%1 << S.m_dimension%>];
+		private String inputString;
+		private String sourceString;
+		private int startIdx = 0;
+		private int endIdx = 0;
+		private int lineIdx = 0;
+		private int currentLineStart = 0;
+		private <%FT.type%>[] coord = new <%FT.type%>[<%1 << S.m_dimension%>];
 
-    // TOKEN IDs: (for internal use only)
-    private final int T_BAD_IDENTIFIER = -100;
-    private final int T_BAD_NUMBER = -10;
-    private final int T_BAD_CHARACTER = -1;
-    private final int T_END_OF_STRING = 0;
-    private final int T_WEDGE = 1;
-    private final int T_MUL = 2;
-    private final int T_PLUS = 3;
-    private final int T_MINUS = 4;
-    private final int T_NUMBER = 10;
-    private final int T_FIRST_BASIS_VECTOR = 100;
-    private final int T_LAST_BASIS_VECTOR = 104;
+		// TOKEN IDs: (for internal use only)
+		private <%FINAL%>int T_BAD_IDENTIFIER = -100;
+		private <%FINAL%>int T_BAD_NUMBER = -10;
+		private <%FINAL%>int T_BAD_CHARACTER = -1;
+		private <%FINAL%>int T_END_OF_STRING = 0;
+		private <%FINAL%>int T_WEDGE = 1;
+		private <%FINAL%>int T_MUL = 2;
+		private <%FINAL%>int T_PLUS = 3;
+		private <%FINAL%>int T_MINUS = 4;
+		private <%FINAL%>int T_NUMBER = 10;
+		private <%FINAL%>int T_FIRST_BASIS_VECTOR = 100;
+		private <%FINAL%>int T_LAST_BASIS_VECTOR = 104;
 
-    private ParseException GetException(String reason)
-    {
-        return new ParseException(reason + " at " + sourceString + ", line " + (lineIdx+1) + ", column " + (startIdx - currentLineStart +1));
-    }
+		private <%FINAL%>ParseException GetException(<%FINAL%>String reason)
+		{
+			return new ParseException(reason + " at " + sourceString + ", line " + (lineIdx+1) + ", column " + (startIdx - currentLineStart +1));
+		}
 
-    private Parser(String input, String source) {
-        inputString = input;
-        sourceString = source;
-        if ((sourceString == null) || (length(sourceString) == 0))
-            sourceString = "string";
-    }
+		private Parser(<%FINAL%>String input, <%FINAL%>String source) {
+			inputString = input;
+			sourceString = source;
+			if ((sourceString == null) || (length(sourceString) == 0))
+				sourceString = "string";
+		}
 
-    private final void sum(BasisBlade bb) {
-        int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
-        coord[idx] += bb.getScale() / (double)<%S.m_namespace%>.BasisElementSignByIndex[idx];
-    }
+		private <%FINAL%>void sum(<%FINAL%>BasisBlade bb) {
+			int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
+			coord[idx] += bb.getScale() / (<%FT.type%>)<%S.m_namespace%>.BasisElementSignByIndex[idx];
+		}
 
-<%if (S.OutputJava()) {%>
-    private final static boolean isLetter(char x) {
-    	return Character.isLetter(x);
-    }
-    private final static boolean isDigit(char x) {
-    	return Character.isDigit(x);
-    }
-    private final static boolean isLetterOrDigit(char x) {
-    	return Character.isLetterOrDigit(x);
-    }
-    private final String substring(int startIdx, int endIdx) {
-    	return inputString.substring(startIdx, endIdx);
-    }
-    private final static int length(String str) {
-    	return str.length();
-    }
-    private final static char charAt(String str, int idx) {
-    	return str.charAt(idx);
-    }
-<%} else {%>
-    private static bool isLetter(char x) {
-    	return Char.isLetter(x);
-    }
-    private static bool isDigit(char x) {
-    	return Char.isDigit(x);
-    }
-    private static bool isLetterOrDigit(char x) {
-    	return Char.isLetterOrDigit(x);
-    }
-    private String substring(int startIdx, int endIdx) {
-    	return inputString.substring(startIdx, endIdx);
-    }
-    private static int length(String str) {
-    	return str.Length;
-    }
-    private static char charAt(String str, int idx) {
-    	return str[idx];
-    }    
-<%}%>
-   
+	<%if (S.OutputJava()) {%>
+		private final static boolean isLetter(final char x) {
+    		return Character.isLetter(x);
+		}
+		private final static boolean isDigit(final char x) {
+    		return Character.isDigit(x);
+		}
+		private final static boolean isLetterOrDigit(final char x) {
+    		return Character.isLetterOrDigit(x);
+		}
+		private final String substring(final int startIdx, final int endIdx) {
+    		return inputString.substring(startIdx, endIdx);
+		}
+		private final static int length(final String str) {
+    		return str.length();
+		}
+		private final static char charAt(final String str, final int idx) {
+    		return str.charAt(idx);
+		}
+	<%} else {%>
+		private static bool isLetter(char x) {
+    		return Char.IsLetter(x);
+		}
+		private static bool isDigit(char x) {
+    		return Char.IsDigit(x);
+		}
+		private static bool isLetterOrDigit(char x) {
+    		return Char.IsLetterOrDigit(x);
+		}
+		private String substring(int startIdx, int endIdx) {
+    		return inputString.Substring(startIdx, endIdx - startIdx + 1);
+		}
+		private static int length(String str) {
+    		return str.Length;
+		}
+		private static char charAt(String str, int idx) {
+    		return str[idx];
+		}    
+	<%}%>
+	   
 
-    /// <summary>
-    /// Returns the next token for the multivector parser.
-    /// Skips whitespace.
-    /// 
-    /// If the next token is a number, anything that Double.Parse() accepts, should be accepted.
-    /// </summary>
-    /// <param name="buf">The input string.</param>
-    /// <param name="startIdx">Where to start searching for the next token. On return: where the string starts.</param>
-    /// <param name="endIdx">On return: where the string ends (inclusive).</param>
-    /// <param name="lineIdx">Current line index, incremented when new lines (0x0A) is found.</param>
-    /// <param name="currentLineStart">The index where the current line started.</param>
-    /// <returns>Token ID (T_X).</returns>
-    private final int getNextToken() {
+		/// <summary>
+		/// Returns the next token for the multivector parser.
+		/// Skips whitespace.
+		/// 
+		/// If the next token is a number, anything that Double.Parse() accepts, should be accepted.
+		/// </summary>
+		/// <param name="buf">The input string.</param>
+		/// <param name="startIdx">Where to start searching for the next token. On return: where the string starts.</param>
+		/// <param name="endIdx">On return: where the string ends (inclusive).</param>
+		/// <param name="lineIdx">Current line index, incremented when new lines (0x0A) is found.</param>
+		/// <param name="currentLineStart">The index where the current line started.</param>
+		/// <returns>Token ID (T_X).</returns>
+		private <%FINAL%>int getNextToken() {
 
-        // skip all whitespace and other empty stuff, keep track of line index
-        while (startIdx < length(inputString) && (charAt(inputString, startIdx) >= 0) && (charAt(inputString, startIdx) <= ' ')) {
-	        if (charAt(inputString, startIdx) == 0x0A) { // start of new line
-		        lineIdx++;
-		        currentLineStart = startIdx+1;
-	        }
-	        startIdx++;
-        }
+			// skip all whitespace and other empty stuff, keep track of line index
+			while (startIdx < length(inputString) && (charAt(inputString, startIdx) >= 0) && (charAt(inputString, startIdx) <= ' ')) {
+				if (charAt(inputString, startIdx) == 0x0A) { // start of new line
+					lineIdx++;
+					currentLineStart = startIdx+1;
+				}
+				startIdx++;
+			}
 
-        // detect end of string
-        if (startIdx == inputString.length()) {
-	        startIdx = endIdx;
-	        return T_END_OF_STRING; // EOS
-        }
+			// detect end of string
+			if (startIdx == length(inputString)) {
+				startIdx = endIdx;
+				return T_END_OF_STRING; // EOS
+			}
 
-        // operators
-        if (charAt(inputString, startIdx) == '^') {endIdx = startIdx; return T_WEDGE;} // ^
-        else if (charAt(inputString, startIdx) == '*') {endIdx = startIdx; return T_MUL;} // *
-        else if (charAt(inputString, startIdx) == '+') {endIdx = startIdx; return T_PLUS;} // +
-        else if (charAt(inputString, startIdx) == '-') {endIdx = startIdx; return T_MINUS;} // -
+			// operators
+			if (charAt(inputString, startIdx) == '^') {endIdx = startIdx; return T_WEDGE;} // ^
+			else if (charAt(inputString, startIdx) == '*') {endIdx = startIdx; return T_MUL;} // *
+			else if (charAt(inputString, startIdx) == '+') {endIdx = startIdx; return T_PLUS;} // +
+			else if (charAt(inputString, startIdx) == '-') {endIdx = startIdx; return T_MINUS;} // -
 
-        else if (isDigit(charAt(inputString, startIdx)) || (charAt(inputString, startIdx) == '.')) { // parse number?
-	        endIdx = startIdx;
+			else if (isDigit(charAt(inputString, startIdx)) || (charAt(inputString, startIdx) == '.')) { // parse number?
+				endIdx = startIdx;
 
-	        // eat up all digits and at most one point
-            boolean pointFound = false;
-	        while (isDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '.')) {
-		        endIdx++;
-		        if (charAt(inputString, endIdx) == '.') {
-			        endIdx++;
-			        pointFound = true;
-			        break;
-		        }
-	        }
-    		
-	        if (pointFound) { // if point found, eat up all digits
-		        while (isDigit(charAt(inputString, endIdx))) {
-			        endIdx++;
-		        }
-	        }
+				// eat up all digits and at most one point
+				<%BOOL_TYPE%> pointFound = false;
+				while (isDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '.')) {
+					endIdx++;
+					if (charAt(inputString, endIdx) == '.') {
+						endIdx++;
+						pointFound = true;
+						break;
+					}
+				}
+	    		
+				if (pointFound) { // if point found, eat up all digits
+					while (isDigit(charAt(inputString, endIdx))) {
+						endIdx++;
+					}
+				}
 
-	        // see if there is a 'e' or 'E'
-	        if  ((charAt(inputString, endIdx) == 'e') || (charAt(inputString, endIdx) == 'E')) {
-		        endIdx++;
-		        // accept at most one +-
-		        if  ((charAt(inputString, endIdx) == '-') || (charAt(inputString, endIdx) == '+')) {
-			        endIdx++;
-		        }
+				// see if there is a 'e' or 'E'
+				if  ((charAt(inputString, endIdx) == 'e') || (charAt(inputString, endIdx) == 'E')) {
+					endIdx++;
+					// accept at most one +-
+					if  ((charAt(inputString, endIdx) == '-') || (charAt(inputString, endIdx) == '+')) {
+						endIdx++;
+					}
 
-		        // if there is an 'e', there must be some digit
-		        if (!isDigit(charAt(inputString, endIdx))) return T_BAD_NUMBER; // bad number
+					// if there is an 'e', there must be some digit
+					if (!isDigit(charAt(inputString, endIdx))) return T_BAD_NUMBER; // bad number
 
-		        // eat up all digits
-		        while (isDigit(charAt(inputString, endIdx))) {
-			        endIdx++;
-		        }
-	        }
-	        endIdx--; // end index is inclusive
-	        return T_NUMBER;
-        }
+					// eat up all digits
+					while (isDigit(charAt(inputString, endIdx))) {
+						endIdx++;
+					}
+				}
+				endIdx--; // end index is inclusive
+				return T_NUMBER;
+			}
 
-        else if (isLetter(charAt(inputString, startIdx)) || (charAt(inputString, startIdx) == '_')) { // parse identifier?
-	        // find end of chain of numbers, letters and '_'
-	        endIdx = startIdx + 1;
+			else if (isLetter(charAt(inputString, startIdx)) || (charAt(inputString, startIdx) == '_')) { // parse identifier?
+				// find end of chain of numbers, letters and '_'
+				endIdx = startIdx + 1;
 
-	        while (isLetterOrDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '_')) endIdx++;
-	        endIdx--;  // end index is inclusive
+				while (isLetterOrDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '_')) endIdx++;
+				endIdx--;  // end index is inclusive
 
-	        // see which basis vector it is
-	        for (int i = 0; i < <%S.m_dimension%>; i++)
-		        if (<%S.m_namespace%>.BasisVectorNames[i].equals(substring(startIdx, endIdx))) return T_FIRST_BASIS_VECTOR + i; // basis vector
-	        return T_BAD_IDENTIFIER; // bad identifier
-        }
+				// see which basis vector it is
+				for (int i = 0; i < <%S.m_dimension%>; i++)
+					if (<%S.m_namespace%>.BasisVectorNames[i].<%G25.CG.CSJ.Util.GetFunctionName(S, "equals")%>(substring(startIdx, endIdx))) return T_FIRST_BASIS_VECTOR + i; // basis vector
+				return T_BAD_IDENTIFIER; // bad identifier
+			}
 
-        else return T_BAD_CHARACTER;
-    } // end of getNextToken()
+			else return T_BAD_CHARACTER;
+		} // end of getNextToken()
 
-    /// <summary>
-    /// Parses a multivector string (e.g., as created by mv.ToString())
-    /// Throws exception when cannot parse
-    /// </summary>
-    /// <param name="str">The multivector string.</param>
-    /// <param name="strSourceName"></param>
-    /// <returns></returns>
-    public final static mv parse(String str, String strSourceName) throws ParseException
-    {
-        return new Parser(str, strSourceName).parse();
-    }
-    
-    private final mv parse() throws ParseException {
-        int token;
-        boolean firstLoop = true;
+		/// <summary>
+		/// Parses a multivector string (e.g., as created by <%FT.GetMangledName(S, S.m_GMV.Name)%>.ToString())
+		/// Throws a ParseException when the input cannot be parse.
+		/// </summary>
+		/// <param name="str">The multivector string.</param>
+		/// <param name="strSourceName"></param>
+		/// <returns></returns>
+		public <%FINAL%>static <%FT.GetMangledName(S, S.m_GMV.Name)%> <%G25.CG.CSJ.Util.GetFunctionName(S, "parse")%>(<%FINAL%>String str, <%FINAL%>String strSourceName) <%if (S.OutputJava()) {%>throws ParseException<%}%> 
+		{
+			return new Parser(str, strSourceName).<%G25.CG.CSJ.Util.GetFunctionName(S, "parse")%>();
+		}
+	    
+		private <%FINAL%><%FT.GetMangledName(S, S.m_GMV.Name)%> <%G25.CG.CSJ.Util.GetFunctionName(S, "parse")%>() <%if (S.OutputJava()) {%>throws ParseException <%}%>{
+			int token;
+			<%BOOL_TYPE%> firstLoop = true;
 
-        // get the first token
-        token = getNextToken();
+			// get the first token
+			token = getNextToken();
 
-        while (true) {
-	        // reset for next basis blade
-            BasisBlade bb = new BasisBlade();
-	        boolean beDone = false; // basis element done
+			while (true) {
+				// reset for next basis blade
+				BasisBlade bb = new BasisBlade();
+				<%BOOL_TYPE%> beDone = false; // basis element done
 
-	        if (token == T_END_OF_STRING) break;
+				if (token == T_END_OF_STRING) break;
 
-	        int cnt = 0;
-	        while ((token == T_PLUS) || (token == T_MINUS)) { // accept all +- 
-		        cnt++;
-		        startIdx = endIdx+1;
-		        if (token == T_MINUS) bb.multiply(-1.0); // -
-		        token = getNextToken();
-	        }
-    		
-	        // require at least one +- if this is not the first term:
-	        if ((!firstLoop) && (cnt == 0)) {
-                throw GetException("Expected '+' or '-'");
-	        }
+				int cnt = 0;
+				while ((token == T_PLUS) || (token == T_MINUS)) { // accept all +- 
+					cnt++;
+					startIdx = endIdx+1;
+					if (token == T_MINUS) bb.multiply(<%FT.DoubleToString(S, -1.0)%>); // -
+					token = getNextToken();
+				}
+	    		
+				// require at least one +- if this is not the first term:
+				if ((!firstLoop) && (cnt == 0)) {
+					throw GetException("Expected '+' or '-'");
+				}
 
-	        if ((token == T_NUMBER) || 
-                ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR))) // must be number or basis vector
-            { 
-		        if (token == T_NUMBER) {
-			        { // multiply scale with value of number
-                        try {
-				            bb.multiply(Double.parseDouble(substring(startIdx, endIdx)));
-                        } catch (Exception ex) {
-                            throw GetException("Cannot parse number"); 
-                        }
-			        }
-			        startIdx = endIdx+1;
+				if ((token == T_NUMBER) || 
+					((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR))) // must be number or basis vector
+				{ 
+					if (token == T_NUMBER) {
+						{ // multiply scale with value of number
+							try {
+								bb.multiply((<%FT.type%>)Double.<%if (S.OutputJava()) {%>parseDouble<%} else {%>Parse<%}%>(substring(startIdx, endIdx)));
+							} catch (Exception <%if (S.OutputJava()) {%>ex<%}%>) {
+								throw GetException("Cannot parse number"); 
+							}
+						}
+						startIdx = endIdx+1;
 
-			        // * or ^ ?
-			        token = getNextToken();
-			        if ((token == T_WEDGE) || (token == T_MUL)) {
-				        startIdx = endIdx+1;
+						// * or ^ ?
+						token = getNextToken();
+						if ((token == T_WEDGE) || (token == T_MUL)) {
+							startIdx = endIdx+1;
 
-				        // must find basis vector
-				        token = getNextToken();
-			        }
-			        else { // just a single scalar is OK
-				        startIdx = endIdx+1;
-				        beDone = true;
-			        }
+							// must find basis vector
+							token = getNextToken();
+						}
+						else { // just a single scalar is OK
+							startIdx = endIdx+1;
+							beDone = true;
+						}
 
-		        }
+					}
 
-		        if (!beDone) {
-			        if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
-                        int bvIdx = token - T_FIRST_BASIS_VECTOR;
-				        bb.wedgeBasisVector(bvIdx);
-				        startIdx = endIdx+1;
-			        }
-			        else {
-                        throw GetException("Expected basis vector");
-			        }
-		        }
+					if (!beDone) {
+						if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
+							int bvIdx = token - T_FIRST_BASIS_VECTOR;
+							bb.wedgeBasisVector(bvIdx);
+							startIdx = endIdx+1;
+						}
+						else {
+							throw GetException("Expected basis vector");
+						}
+					}
 
-		        if (!beDone) {
-			        // accept ^ basis vector as many times as it takes
-			        while (true) {
-				        // ^
-				        token = getNextToken();
-				        if (token != T_WEDGE) break;
-				        startIdx = endIdx+1;
+					if (!beDone) {
+						// accept ^ basis vector as many times as it takes
+						while (true) {
+							// ^
+							token = getNextToken();
+							if (token != T_WEDGE) break;
+							startIdx = endIdx+1;
 
-				        // basis vector
-				        token = getNextToken();
-				        if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
-                            int bvIdx = token - T_FIRST_BASIS_VECTOR;
-					        bb.wedgeBasisVector(bvIdx);
-					        startIdx = endIdx+1;
-				        }
-				        else {
-                            throw GetException("Expected basis vector");
-				        }
-
-
-			        }
-
-		        }
-	        } // end of 'if number or bv'
-	        else if (token == T_BAD_CHARACTER) {
-                throw GetException("Bad character");
-	        }
-	        else if (token == T_BAD_NUMBER) {
-                throw GetException("Bad number");
-	        }
-	        else if (token == T_BAD_IDENTIFIER) {
-                throw GetException("Bad identifier");
-	        }
-	        else {
-                throw GetException("Unexpected token");
-	        }
-
-	        // add
-	        Sum(bb);
-    		
-	        // remeber that the first loop is done
-	        firstLoop = false;
-        }
-
-        // compress
-        return new mv(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0,  coord);
-    } // end of Parse()
+							// basis vector
+							token = getNextToken();
+							if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
+								int bvIdx = token - T_FIRST_BASIS_VECTOR;
+								bb.wedgeBasisVector(bvIdx);
+								startIdx = endIdx+1;
+							}
+							else {
+								throw GetException("Expected basis vector");
+							}
 
 
-} // end of class Parser
+						}
+
+					}
+				} // end of 'if number or bv'
+				else if (token == T_BAD_CHARACTER) {
+					throw GetException("Bad character");
+				}
+				else if (token == T_BAD_NUMBER) {
+					throw GetException("Bad number");
+				}
+				else if (token == T_BAD_IDENTIFIER) {
+					throw GetException("Bad identifier");
+				}
+				else {
+					throw GetException("Unexpected token");
+				}
+
+				// add
+				sum(bb);
+	    		
+				// remeber that the first loop is done
+				firstLoop = false;
+			}
+
+			// compress
+			return new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0,  coord);
+		} // end of Parse()
+
+
+	} // end of class Parser
 
 <%if (S.OutputCSharp()) {%>
 }
 <%}%>
 
-<%
-}
 <%}%>
 
 ${ENDCODEBLOCK}

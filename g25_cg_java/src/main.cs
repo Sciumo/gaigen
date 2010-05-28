@@ -83,6 +83,8 @@ namespace G25.CG.Java
             generatedFiles.AddRange(GroupBitmap.GenerateCode(S, cgd));
             // generate multivector interfaces
             generatedFiles.AddRange(MvInterface.GenerateCode(S, cgd));
+            // generate multivector interfaces
+            generatedFiles.AddRange(Parser.GenerateCode(S, cgd));
 
             // report errors and missing deps to user
             cgd.PrintErrors(S);

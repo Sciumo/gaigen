@@ -65,22 +65,18 @@ namespace G25.CG.CSharp
             else return S.m_floatTypes[0];
         }
 
-        // TODO: heir was ie (remember to pass antlr float type)
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
             // get list of generated filenames
             List<string> generatedFiles = new List<string>();
             if (S.m_parserType == PARSER.NONE) return generatedFiles; // nothing to do
             
-            // get header filename
-            string headerFilename = S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S));
-
             // get parser c source output path
-            string parserSourceFilename = S.GetOutputPath(G25.CG.CPP.Parser.GetRawParserSourceFilename(S));
+            string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
             generatedFiles.Add(parserSourceFilename);
 
             // get grammar output path
-            string rawGrammarFilename = G25.CG.CPP.Parser.GetRawANTLRgrammarFilename(S);
+            string rawGrammarFilename = GetRawANTLRgrammarFilename(S);
             string grammarFilename = S.GetOutputPath(rawGrammarFilename);
             if (S.m_parserType == PARSER.ANTLR) // only really generated when parser is ANTLR
                 generatedFiles.Add(grammarFilename);
@@ -93,21 +89,24 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
             G25.CG.Shared.Util.WriteLicense(sourceSB, S);
 
+            // using ...
+            Util.WriteGenericUsing(sourceSB, S);
+
             // parser declarations:
             if (S.m_parserType == PARSER.BUILTIN)
             {
-                cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_C_CPP", "S=", S, "FT=", S.m_floatTypes[0], "headerFilename=", headerFilename);
+                cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
             }
             else if (S.m_parserType == PARSER.ANTLR)
             {
-                // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
+            /*    // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
                 // So once again we have to apply a hack to get around this.
                 // All this thank to Jim Lazy^H^H^H^HIdle who's too lazy to write a true C++ target for ANTLR. Thanks Jim.
                 FloatType realFT = S.m_floatTypes[0];
                 FloatType FT = GetANTLRfloatType(S);
 
                 cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);
+                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);*/
             }
 
 
