@@ -179,6 +179,7 @@ namespace G25.CG.Shared
             // parameter comments
             foreach (KeyValuePair<string, string> kvp in m_paramComments)
             {
+                SB.Append('\t', nbTabs);
                 string paramName = kvp.Key;
                 string comment = kvp.Value;
                 switch (S.m_outputLanguage)

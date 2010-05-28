@@ -564,8 +564,8 @@ namespace <%S.m_namespace%>_ns {
     }
 <%}%>
 
-	class Parser {
-		class BasisBlade
+	public class Parser {
+		private class BasisBlade
 		{
 			private int bitmap = 0;
 			private <%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
@@ -679,18 +679,6 @@ namespace <%S.m_namespace%>_ns {
 	<%}%>
 	   
 
-		/// <summary>
-		/// Returns the next token for the multivector parser.
-		/// Skips whitespace.
-		/// 
-		/// If the next token is a number, anything that Double.Parse() accepts, should be accepted.
-		/// </summary>
-		/// <param name="buf">The input string.</param>
-		/// <param name="startIdx">Where to start searching for the next token. On return: where the string starts.</param>
-		/// <param name="endIdx">On return: where the string ends (inclusive).</param>
-		/// <param name="lineIdx">Current line index, incremented when new lines (0x0A) is found.</param>
-		/// <param name="currentLineStart">The index where the current line started.</param>
-		/// <returns>Token ID (T_X).</returns>
 		private <%FINAL%>int getNextToken() {
 
 			// skip all whitespace and other empty stuff, keep track of line index
@@ -770,13 +758,10 @@ namespace <%S.m_namespace%>_ns {
 			else return T_BAD_CHARACTER;
 		} // end of getNextToken()
 
-		/// <summary>
-		/// Parses a multivector string (e.g., as created by <%FT.GetMangledName(S, S.m_GMV.Name)%>.ToString())
-		/// Throws a ParseException when the input cannot be parse.
-		/// </summary>
-		/// <param name="str">The multivector string.</param>
-		/// <param name="strSourceName"></param>
-		/// <returns></returns>
+<%new G25.CG.Shared.Comment("Parses a multivector string (e.g., as created by " + FT.GetMangledName(S, S.m_GMV.Name) + ".ToString())\nThrows a ParseException when the input cannot be parsed.\n").
+			SetParamComment("str", "The multivector string.").
+			SetParamComment("strSourceName", "Description of where the string came from (may be null). This string is used in exception messages.").
+			ToString(S, 2)%>
 		public <%FINAL%>static <%FT.GetMangledName(S, S.m_GMV.Name)%> <%G25.CG.CSJ.Util.GetFunctionName(S, "parse")%>(<%FINAL%>String str, <%FINAL%>String strSourceName) <%if (S.OutputJava()) {%>throws ParseException<%}%> 
 		{
 			return new Parser(str, strSourceName).<%G25.CG.CSJ.Util.GetFunctionName(S, "parse")%>();
