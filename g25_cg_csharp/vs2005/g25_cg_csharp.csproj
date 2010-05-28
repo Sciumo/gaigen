@@ -37,6 +37,7 @@
     <Compile Include="..\src\gmv.cs" />
     <Compile Include="..\src\gom.cs" />
     <Compile Include="..\src\main.cs" />
+    <Compile Include="..\src\parser.cs" />
     <Compile Include="..\src\mvinterface.cs" />
     <Compile Include="..\src\operators.cs" />
     <Compile Include="..\src\smv.cs" />
