@@ -37,7 +37,7 @@ namespace G25.CG.Java
 
         public static string GetRawANTLRgrammarFilename(Specification S)
         {
-            return S.GetOutputPath(S.m_namespace + ".g");
+            return MainGenerator.GetClassOutputPath(S, S.m_namespace, "g");
         }
 
         /// <summary>
@@ -117,6 +117,7 @@ namespace G25.CG.Java
 
                     cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
                     cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);*/
+                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
             }
 
 

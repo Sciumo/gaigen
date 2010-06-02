@@ -599,11 +599,11 @@ tokens
 
 @members
 {
-    private void sum(double[] coord, BasisBlade bb)
-    {
-        /// ...
-    }
-
+	private void sum(double[] coord, BasisBlade bb) {
+		int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
+		coord[idx] += bb.getScale() / (<%FT.type%>)<%S.m_namespace%>.BasisElementSignByIndex[idx];
+	}
+	
 	public class BasisBlade
 	{
 		private int bitmap = 0;

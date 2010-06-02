@@ -100,7 +100,8 @@ namespace G25.CG.CSharp
             else if (S.m_parserType == PARSER.ANTLR)
             {
                     //cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp", "S=", S, "FT=", S.m_floatTypes[0]);
+//                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp", "S=", S, "FT=", S.m_floatTypes[0]);
+                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
             }
 
 

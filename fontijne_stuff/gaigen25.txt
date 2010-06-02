@@ -161,9 +161,9 @@ Maybe fix the float type stuff
 			 
 			V applyOM functions
 
-			parser 
-				V builtin
-				-> ANTLR
+			V parser 
+			
+			compress function for multivectors
 			
 			operators
 			

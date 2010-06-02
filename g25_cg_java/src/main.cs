@@ -170,15 +170,29 @@ namespace G25.CG.Java
             return generatedFiles;
         }
 
-        /// <returns>Output path for a class named 'className'.</returns>
+        /// <returns>GetClassOutputPath(S, className, "java")</returns>
         internal static string GetClassOutputPath(Specification S, string className)
+        {
+            return GetClassOutputPath(S, className, "java");
+        }
+
+        
+        /// <summary>
+        /// Path for output of source file  'name' with 'extension'
+        /// </summary>
+        /// <param name="S"></param>
+        /// <param name="name">Name of class / source file.</param>
+        /// <param name="extension">Do not include the dot.</param>
+        /// <returns>Output path for name.extension</returns>
+        internal static string GetClassOutputPath(Specification S, string name, string extension)
         {
             string packageName = G25.CG.Shared.Util.GetNamespaceName(S);
             string path =
                 packageName.Replace('.', System.IO.Path.DirectorySeparatorChar) +  // package dir
                 System.IO.Path.DirectorySeparatorChar +  // slash
-                className +  // class
-                ".java"; // extension
+                name +  // class
+                "." +
+                extension; // extension
 
             return S.GetOutputPath(path);
         }

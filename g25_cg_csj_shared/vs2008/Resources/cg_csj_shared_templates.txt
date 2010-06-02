@@ -891,3 +891,156 @@ namespace <%S.m_namespace%>_ns {
 <%}%>
 
 ${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// FT = floatType
+${CODEBLOCK ANTLRgrammar_CSharp_Java}
+<%{
+	string BOOL_TYPE = (S.OutputJava()) ? "boolean" : "bool";
+	string FINAL = (S.OutputJava()) ? "final " : "";
+	string TEXT =  (S.OutputJava()) ? "getText()" : "Text";
+	string PARSE_DOUBLE =  (S.OutputJava()) ? "parseDouble" : "Parse";
+%>
+grammar <%S.m_namespace%>;
+
+options
+{
+    language=<%if (S.OutputJava()) {%>Java<%} else {%>CSharp2<%}%>;
+}
+
+
+tokens
+{
+	PLUS 	= '+' ;
+	MINUS	= '-' ;
+	GP	= '*' ;
+	OP	= '^' ;
+}
+
+@lexer::namespace {
+<%if (S.OutputJava()) {%>
+    <%S.m_namespace%>_pkg
+<%} else {%>
+    <%S.m_namespace%>_ns
+<%}%>
+}
+
+@parser::namespace {
+<%if (S.OutputJava()) {%>
+    <%S.m_namespace%>_pkg
+<%} else {%>
+    <%S.m_namespace%>_ns
+<%}%>
+}
+
+
+@members
+{
+	private <%FINAL%>void sum(<%FINAL%>double[] coord, <%FINAL%>BasisBlade bb) {
+		int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
+		coord[idx] += bb.getScale() / (<%FT.type%>)<%S.m_namespace%>.BasisElementSignByIndex[idx];
+	}
+	
+	public class BasisBlade
+	{
+		private int bitmap = 0;
+		private <%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
+
+		public <%FINAL%>int getBitmap() { return bitmap;  }
+		public <%FINAL%><%FT.type%> getScale() { return scale;  }
+
+		public <%FINAL%>void wedgeBasisVector(<%FINAL%>int bvIdx)
+		{
+			int b;
+
+			b = 1 << bvIdx;
+			if ((bitmap & b) != 0)
+			{ // bv ^ bv = 0
+				scale = <%FT.DoubleToString(S, 0.0)%>;
+				return;
+			}
+			else
+			{
+				// add basis vector to bitmap	
+				bitmap |= b;
+
+				bvIdx++;
+				for (; bvIdx <= <%S.m_dimension%>; bvIdx++) // compute sign flips due to anti commuting basis vectors
+					if ((bitmap & (1 << bvIdx)) != 0) scale = -scale;
+			}
+		}
+
+		public <%FINAL%>void wedgeBasisVector(<%FINAL%>String bvName)
+		{
+			// see which basis vector it is
+			for (int i = 0; i < <%S.m_dimension%>; i++)
+				if (<%S.m_namespace%>.BasisVectorNames[i].<%G25.CG.CSJ.Util.GetFunctionName(S, "equals")%>(bvName)) 
+				{
+					wedgeBasisVector(i);
+					return;
+				}
+		}
+		
+		public <%FINAL%>void multiply(<%FINAL%><%FT.type%> scalar)
+		{
+			scale *= scalar;
+		}
+	}
+
+}
+
+
+/*------------------------------------------------------------------
+ * PARSER RULES
+ *------------------------------------------------------------------*/
+
+antlr_multivector returns [<%FT.GetMangledName(S, S.m_GMV.Name)%> result]
+@init{
+	<%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
+	<%FT.type%>[] coord = new <%FT.type%>[<%1<<S.m_dimension%>];
+}
+@after{
+	// compress result into multivector
+	result.Set(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0, coord);
+}
+:
+(sg=antlr_sign {scale = sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);}
+(sg=antlr_sign {scale = sg;} (sg=antlr_sign {scale *= sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);})*
+;
+
+antlr_basis_element returns [BasisBlade bb]
+@init{
+	bb = new BasisBlade();
+}
+:
+	t1=NUMBER {bb.multiply((<%FT.type%>)Double.<%PARSE_DOUBLE%>(t1.<%TEXT%>));}  
+((GP | OP)?
+	(t2=BASIS_VECTOR {bb.wedgeBasisVector(t2.<%TEXT%>);} ) 
+(OP t3=BASIS_VECTOR {bb.wedgeBasisVector(t3.<%TEXT%>);})*)? |
+((t5=BASIS_VECTOR {bb.wedgeBasisVector(t5.<%TEXT%>);}) 
+(OP t6=BASIS_VECTOR {bb.wedgeBasisVector(t6.<%TEXT%>);})*)
+;
+
+antlr_sign returns [<%FT.type%> sg]
+@init{sg = <%FT.DoubleToString(S, 1.0)%>;}
+:
+	(PLUS | MINUS {sg = -sg;})
+;
+
+/*------------------------------------------------------------------
+ * LEXER RULES
+ *------------------------------------------------------------------*/
+
+WHITESPACE  	: ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ {$channel = HIDDEN;};
+
+BASIS_VECTOR	: ('<%S.m_basisVectorNames[0]%>'<%for (int i = 1; i < S.m_dimension; i++) {%> | '<%S.m_basisVectorNames[i]%>'<%}%>);
+
+NUMBER		: (INT ('.' INT)? | '.' INT) (('e' | 'E') ('+' | '-')? INT)?;
+
+
+fragment
+INT : ('0'..'9')+ ;
+
+<%}%>
+${ENDCODEBLOCK}
+
