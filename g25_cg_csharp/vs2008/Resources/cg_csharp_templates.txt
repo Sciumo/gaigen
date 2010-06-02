@@ -569,138 +569,36 @@ ${CODEBLOCK SOMconstructors}
 ${ENDCODEBLOCK}
 
 
-// S = Specification of algebra.
-// FT = floatType
-${CODEBLOCK ANTLRgrammar_CSharp}
-grammar <%S.m_namespace%>;
-
-options
-{
-    language=CSharp2;
-}
-
-
-tokens
-{
-	PLUS 	= '+' ;
-	MINUS	= '-' ;
-	GP	= '*' ;
-	OP	= '^' ;
-}
-
-@lexer::namespace {
-    <%S.m_namespace%>_ns
-}
-
-@parser::namespace {
-    <%S.m_namespace%>_ns
-}
-
-
-@members
-{
-	private void sum(double[] coord, BasisBlade bb) {
-		int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
-		coord[idx] += bb.getScale() / (<%FT.type%>)<%S.m_namespace%>.BasisElementSignByIndex[idx];
-	}
-	
-	public class BasisBlade
-	{
-		private int bitmap = 0;
-		private <%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
-
-		public int getBitmap() { return bitmap;  }
-		public <%FT.type%> getScale() { return scale;  }
-
-		public void wedgeBasisVector(int bvIdx)
-		{
-			int b;
-
-			b = 1 << bvIdx;
-			if ((bitmap & b) != 0)
-			{ // bv ^ bv = 0
-				scale = <%FT.DoubleToString(S, 0.0)%>;
-				return;
-			}
-			else
-			{
-				// add basis vector to bitmap	
-				bitmap |= b;
-
-				bvIdx++;
-				for (; bvIdx <= <%S.m_dimension%>; bvIdx++) // compute sign flips due to anti commuting basis vectors
-					if ((bitmap & (1 << bvIdx)) != 0) scale = -scale;
-			}
-		}
-
-		public void wedgeBasisVector(String bvName)
-		{
-			// see which basis vector it is
-			for (int i = 0; i < <%S.m_dimension%>; i++)
-				if (<%S.m_namespace%>.BasisVectorNames[i].<%G25.CG.CSJ.Util.GetFunctionName(S, "equals")%>(bvName)) 
-				{
-					wedgeBasisVector(i);
-					return;
-				}
-		}
-		
-		public void multiply(<%FT.type%> scalar)
-		{
-			scale *= scalar;
-		}
-	}
-
-}
-
-
-/*------------------------------------------------------------------
- * PARSER RULES
- *------------------------------------------------------------------*/
-
-antlr_multivector returns [<%FT.GetMangledName(S, S.m_GMV.Name)%> result]
-@init{
-	<%FT.type%> scale = <%FT.DoubleToString(S, 1.0)%>;
-	<%FT.type%>[] coord = new <%FT.type%>[<%1<<S.m_dimension%>];
-}
-@after{
-	// compress result into multivector
-	result.Set(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0, coord);
-}
-:
-(sg=antlr_sign {scale = sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);}
-(sg=antlr_sign {scale = sg;} (sg=antlr_sign {scale *= sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);})*
-;
-
-antlr_basis_element returns [BasisBlade bb]
-@init{
-	bb = new BasisBlade();
-}
-:
-	t1=NUMBER {bb.multiply((<%FT.type%>)Double.Parse(t1.Text));}  
-((GP | OP)?
-	(t2=BASIS_VECTOR {bb.wedgeBasisVector(t2.Text);} ) 
-(OP t3=BASIS_VECTOR {bb.wedgeBasisVector(t3.Text);})*)? |
-((t5=BASIS_VECTOR {bb.wedgeBasisVector(t5.Text);}) 
-(OP t6=BASIS_VECTOR {bb.wedgeBasisVector(t6.Text);})*)
-;
-
-antlr_sign returns [<%FT.type%> sg]
-@init{sg = <%FT.DoubleToString(S, 1.0)%>;}
-:
-	(PLUS | MINUS {sg = -sg;})
-;
-
-/*------------------------------------------------------------------
- * LEXER RULES
- *------------------------------------------------------------------*/
-
-WHITESPACE  	: ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ {$channel = HIDDEN;};
-
-BASIS_VECTOR	: ('<%S.m_basisVectorNames[0]%>'<%for (int i = 1; i < S.m_dimension; i++) {%> | '<%S.m_basisVectorNames[i]%>'<%}%>);
-
-NUMBER		: (INT ('.' INT)? | '.' INT) (('e' | 'E') ('+' | '-')? INT)?;
-
-
-fragment
-INT : ('0'..'9')+ ;
+// S = specification
+// gmvName = name of GMV type (first float type).
+${CODEBLOCK parserShortcut}
+	/// <summary>
+    /// Simple way to call parser (regardless of whether it is a builtin or ANTLR parser).
+    /// 
+    /// Throws a ParseException on failure.
+    /// 
+    /// When ANTLR throws an exception, all details (like line number and cause) are lost. 
+    /// If these details are required, call the ANTLR parser directly.
+    /// </summary>
+    /// <param name="str">The multivector string to be parsed (can be output of mv.ToString())</param>
+    /// <returns>Multivector value represented by 'str'.</returns>
+    public static <%gmvName%> Parse(string str)
+    {
+<%if (S.m_parserType == G25.PARSER.ANTLR) {%>
+        try
+        {
+            Antlr.Runtime.ANTLRStringStream input = new Antlr.Runtime.ANTLRStringStream(str);
+            c3gaLexer lexer = new c3gaLexer(input);
+            Antlr.Runtime.CommonTokenStream tokens = new Antlr.Runtime.CommonTokenStream(lexer);
+            c3gaParser parser = new c3gaParser(tokens);
+            return parser.antlr_multivector();
+        }
+        catch (Antlr.Runtime.RecognitionException)
+        {
+            throw new ParseException("ANTLR parser cannot parse " + str);
+        }
+<%} else {%>
+        return Parser.Parse(str, "string");
+<%}%>
+    }
 ${ENDCODEBLOCK}

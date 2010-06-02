@@ -30,6 +30,11 @@ namespace G25.CG.CSharp
             return MainGenerator.GetClassOutputPath(S, "Parser");
         }
 
+        public static string GetRawParseExceptionSourceFilename(Specification S)
+        {
+            return MainGenerator.GetClassOutputPath(S, "ParseException");
+        }
+
         public static string GetRawANTLRgrammarFilename(Specification S)
         {
             return S.GetOutputPath(S.m_namespace + ".g");
@@ -75,6 +80,10 @@ namespace G25.CG.CSharp
             string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
             generatedFiles.Add(parserSourceFilename);
 
+            // get parser exception source output path
+            string parseExceptionSourceFilename = S.GetOutputPath(GetRawParseExceptionSourceFilename(S));
+            generatedFiles.Add(parseExceptionSourceFilename);
+
             // get grammar output path
             string rawGrammarFilename = GetRawANTLRgrammarFilename(S);
             string grammarFilename = S.GetOutputPath(rawGrammarFilename);
@@ -83,32 +92,30 @@ namespace G25.CG.CSharp
 
             // get StringBuilder where all generated code goes
             StringBuilder sourceSB = new StringBuilder(); // parser source (if any) goes here
+            StringBuilder exceptionSB = new StringBuilder(); // ParseException source goes here
             StringBuilder grammarSB = new StringBuilder(); // grammar (if any) goes here
 
-            // output license, copyright
-            G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
-            G25.CG.Shared.Util.WriteLicense(sourceSB, S);
-
-            // using ...
-            Util.WriteGenericUsing(sourceSB, S);
+            // parser exception
+            G25.CG.Shared.Util.WriteCopyright(exceptionSB, S);
+            G25.CG.Shared.Util.WriteLicense(exceptionSB, S);
+            cgd.m_cog.EmitTemplate(exceptionSB, "ParseExceptionSource_CSharp", "S=", S);
+            G25.CG.Shared.Util.WriteFile(parseExceptionSourceFilename, exceptionSB.ToString());
 
             // parser declarations:
             if (S.m_parserType == PARSER.BUILTIN)
             {
+                // using ...
+                Util.WriteGenericUsing(sourceSB, S);
+                G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
+                G25.CG.Shared.Util.WriteLicense(sourceSB, S);
                 cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
+                G25.CG.Shared.Util.WriteFile(parserSourceFilename, sourceSB.ToString());
             }
             else if (S.m_parserType == PARSER.ANTLR)
             {
-                    //cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-//                cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp", "S=", S, "FT=", S.m_floatTypes[0]);
                 cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
-            }
-
-
-            // write all to file
-            G25.CG.Shared.Util.WriteFile(parserSourceFilename, sourceSB.ToString());
-            if (S.m_parserType == PARSER.ANTLR)
                 G25.CG.Shared.Util.WriteFile(grammarFilename, grammarSB.ToString());
+            }
 
             return generatedFiles;
         }

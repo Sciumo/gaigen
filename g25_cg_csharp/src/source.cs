@@ -137,6 +137,8 @@ namespace G25.CG.CSharp
 
             G25.CG.CSJ.Source.WriteToString(SB, S, cgd);
 
+            G25.CG.CSJ.Source.WriteParser(SB, S, cgd);
+
 #if RIEN
             // the list of names of smv types
             G25.CG.CSharp.SMV.WriteSMVtypenames(SB, S, cgd);

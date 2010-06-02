@@ -43,15 +43,7 @@ namespace G25.CG.Java
             // output license, copyright
             G25.CG.Shared.Util.WriteCopyright(SB, S);
             G25.CG.Shared.Util.WriteLicense(SB, S);
-#if RIEN
-            { // todo: import ...
-                SB.AppendLine("#include <stdio.h>");
-                SB.AppendLine("#include <utility> // for std::swap");
-                if (cgd.GetFeedback(G25.CG.Shared.Main.NEED_TIME) == "true")
-                    SB.AppendLine("#include <time.h> /* used to seed random generator */");
-                SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S)) + "\"");
-            }
-#endif 
+
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
             // open class
@@ -66,6 +58,8 @@ namespace G25.CG.Java
             G25.CG.CSJ.Source.WriteSetZeroCopyFloats(SB, S, cgd);
 
             G25.CG.CSJ.Source.WriteToString(SB, S, cgd);
+
+            G25.CG.CSJ.Source.WriteParser(SB, S, cgd);
 
 #if RIEN
             GenerateTables(S, cgd, SB);

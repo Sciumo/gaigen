@@ -212,7 +212,7 @@ namespace G25.CG.Shared
         /// <param name="FT">Float type (used for mangled name).</param>
         /// <param name="g">Grade/group of arguments.</param>
         /// <returns>name of a partial Hadamard product function.</returns>
-        public static String GetZeroPartFunctionName(Specification S, G25.FloatType FT, int g)
+        public static string GetZeroPartFunctionName(Specification S, G25.FloatType FT, int g)
         {
             return FT.GetMangledName(S, "zeroGroup") + "_" + g;
         }
@@ -1026,7 +1026,7 @@ namespace G25.CG.Shared
 
             // get number of groups:
             int nbGroups = gmv.NbGroups;
-             
+
             // for each group
             // test if present, then code / negate, etc
 

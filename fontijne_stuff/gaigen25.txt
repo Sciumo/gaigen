@@ -154,8 +154,7 @@ Maybe fix the float type stuff
 				member function shortcuts (for regular functions)
 				converters as constructors (SMV->SMV and such)
 			
-			 
-			GOM:     done?
+			GOM:    done?
 			 
 			SOM	done?
 			 
@@ -163,23 +162,27 @@ Maybe fix the float type stuff
 
 			V parser 
 			
-			compress function for multivectors
+			V compress function for multivectors
 			
-			operators
+			parse interface from 
 			
 			constants
 			
-			report usage
-			
 			runtime geometric product
+			
+			testing
+			
+			makefile for all platforms
+			
+			operators
+			
+			report usage
 			
 			SMV member function shortcuts (for regular functions)
 				
 			SMV converters as constructors (SMV->SMV and such)
 			
-			testing
 			
-			makefile for all platforms
 				
 
 	SourceForge website HTML pages

@@ -538,6 +538,21 @@ public class ParseException extends Exception {
 }
 ${ENDCODEBLOCK}
 
+// S = Specification of algebra.
+${CODEBLOCK ParseExceptionSource_CSharp}
+using System;
+
+namespace <%S.m_namespace%>_ns {
+	/// <summary>This exception is throws by parse() when there is an error in the input.</summary>
+    public class ParseException : Exception
+    {
+        public ParseException(String message)
+            : base(message)
+        {
+        }
+    }
+}
+${ENDCODEBLOCK}
 
 
 // S = Specification of algebra.
@@ -553,15 +568,6 @@ ${CODEBLOCK BuiltinParserSource_CSharp_Java}
 package <%S.m_namespace%>_pkg;
 <%} else {%>
 namespace <%S.m_namespace%>_ns {
-
-	/// <summary>This exception is throws by parse() when there is an error in the input.</summary>
-    public class ParseException : Exception
-    {
-        public ParseException(String message)
-            : base(message)
-        {
-        }
-    }
 <%}%>
 
 	public class Parser {
@@ -873,12 +879,14 @@ namespace <%S.m_namespace%>_ns {
 				// add
 				sum(bb);
 	    		
-				// remeber that the first loop is done
+				// remember that the first loop is done
 				firstLoop = false;
 			}
 
-			// compress (todo: actually compress!)
-			return new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0,  coord);
+			
+			<%FT.GetMangledName(S, S.m_GMV.Name)%> result = new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0,  coord);
+			result.<%G25.CG.CSJ.Util.GetFunctionName(S, "compress")%>(<%FT.DoubleToString(S, 0.0)%>);
+			return result;
 		} // end of Parse()
 
 
@@ -1005,8 +1013,8 @@ antlr_multivector returns [<%FT.GetMangledName(S, S.m_GMV.Name)%> result]
 	<%FT.type%>[] coord = new <%FT.type%>[<%1<<S.m_dimension%>];
 }
 @after{
-	// compress result into multivector (TODO: actually compress! Maybe make that a flag on the constructor?)
 	result = new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0, coord);
+	result.<%G25.CG.CSJ.Util.GetFunctionName(S, "compress")%>(<%FT.DoubleToString(S, 0.0)%>);
 }
 :
 (sg=antlr_sign {scale = sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);}

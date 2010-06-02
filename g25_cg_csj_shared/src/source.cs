@@ -317,13 +317,10 @@ namespace G25.CG.CSJ
             cgd.m_cog.EmitTemplate(SB, "sourceToString", "S=", S, "FT=", S.m_floatTypes[0], "gmv=", S.m_GMV, "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name));
         }
 
-/*        /// <summary>
-        /// Writes _float converters for the GMV and the SMVs. Currently, these methods are not public.
-        /// </summary>
-        public static void WriteToFloat(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        public static void WriteParser(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
-
-        }*/
+            cgd.m_cog.EmitTemplate(SB, "parserShortcut", "S=", S, "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name));
+        }
 
 
     } // end of class Source

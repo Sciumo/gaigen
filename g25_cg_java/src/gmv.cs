@@ -133,6 +133,9 @@ namespace G25.CG.Java
             // write 'largest coordinate' functions
             G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
+            // write compress functions
+            G25.CG.CSJ.GMV.WriteCompress(SB, S, cgd, FT);
+
             // write 'toString' functions
             G25.CG.CSJ.GMV.WriteToString(SB, S, cgd, FT, gmv);
 

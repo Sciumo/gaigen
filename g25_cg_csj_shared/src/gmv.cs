@@ -489,6 +489,38 @@ namespace G25.CG.CSJ
         }
 
         /// <summary>
+        /// Writes function for compressing general multivectors.
+        /// </summary>
+        /// <param name="SB"></param>
+        /// <param name="S"></param>
+        /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT"></param>
+        public static void WriteCompress(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
+        {
+            // comment
+            // name of zero function
+            G25.GMV gmv = S.m_GMV;
+
+            new G25.CG.Shared.Comment("Releases memory for (near-)zero groups/grades.\nThis also speeds up subsequent operations, because those do not have to process the released groups/grades anymore.").
+                AddParamComment("eps", "A positive threshold value.\nCoordinates which are smaller than epsilon are considered to be zero.").
+                Write(SB, S, 1);
+
+            string funcName = Util.GetFunctionName(S, "compress");
+            string funcDecl = "\t" + Keywords.PublicAccessModifier(S) + " void " + funcName + "(" + FT.type + " eps) ";
+
+            SB.Append(funcDecl);
+            SB.AppendLine(" {");
+
+            for (int g = 0; g < gmv.NbGroups; g++) {
+                SB.AppendLine("\t\tif ((m_c[" + g + "] != null) && " +
+                    S.m_namespace + "." + G25.CG.Shared.CANSparts.GetZeroPartFunctionName(S, FT, g) + "(m_c[" + g + "], eps))");
+                SB.AppendLine("\t\t\tm_c[" + g + "] = null;");
+            }
+
+            SB.AppendLine("\t}");
+        }
+
+        /// <summary>
         /// Writes function for converting to string.
         /// </summary>
         /// <param name="SB"></param>

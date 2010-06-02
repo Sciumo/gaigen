@@ -80,7 +80,7 @@ namespace G25.CG.Java
             string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
             generatedFiles.Add(parserSourceFilename);
 
-            // get parser source output path
+            // get parser exception source output path
             string parseExceptionSourceFilename = S.GetOutputPath(GetRawParseExceptionSourceFilename(S));
             generatedFiles.Add(parseExceptionSourceFilename);
 
@@ -95,37 +95,25 @@ namespace G25.CG.Java
             StringBuilder exceptionSB = new StringBuilder(); // ParseException source goes here
             StringBuilder grammarSB = new StringBuilder(); // grammar (if any) goes here
 
-            // output license, copyright
-            G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
-            G25.CG.Shared.Util.WriteLicense(sourceSB, S);
 
             // parser exception
             cgd.m_cog.EmitTemplate(exceptionSB, "ParseExceptionSource_Java", "S=", S);
+            G25.CG.Shared.Util.WriteFile(parseExceptionSourceFilename, exceptionSB.ToString());
 
             // parser declarations:
             if (S.m_parserType == PARSER.BUILTIN)
             {
+                // output license, copyright
+                G25.CG.Shared.Util.WriteCopyright(sourceSB, S);
+                G25.CG.Shared.Util.WriteLicense(sourceSB, S);
                 cgd.m_cog.EmitTemplate(sourceSB, "BuiltinParserSource_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
+                G25.CG.Shared.Util.WriteFile(parserSourceFilename, sourceSB.ToString());
             }
             else if (S.m_parserType == PARSER.ANTLR)
             {
-                /*    // ANTLR cannot handle custom float types (like myDouble) the way it handles 'float' and 'double'.
-                    // So once again we have to apply a hack to get around this.
-                    // All this thank to Jim Lazy^H^H^H^HIdle who's too lazy to write a true C++ target for ANTLR. Thanks Jim.
-                    FloatType realFT = S.m_floatTypes[0];
-                    FloatType FT = GetANTLRfloatType(S);
-
-                    cgd.m_cog.EmitTemplate(sourceSB, "ANTLRparserSource_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename, "grammarFilename=", S.GetOutputFilename(rawGrammarFilename));
-                    cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_C_CPP", "S=", S, "FT=", FT, "realFT=", realFT, "headerFilename=", headerFilename);*/
                 cgd.m_cog.EmitTemplate(grammarSB, "ANTLRgrammar_CSharp_Java", "S=", S, "FT=", S.m_floatTypes[0]);
-            }
-
-
-            // write all to file
-            G25.CG.Shared.Util.WriteFile(parserSourceFilename, sourceSB.ToString());
-            G25.CG.Shared.Util.WriteFile(parseExceptionSourceFilename, exceptionSB.ToString());
-            if (S.m_parserType == PARSER.ANTLR)
                 G25.CG.Shared.Util.WriteFile(grammarFilename, grammarSB.ToString());
+            }
 
             return generatedFiles;
         }
