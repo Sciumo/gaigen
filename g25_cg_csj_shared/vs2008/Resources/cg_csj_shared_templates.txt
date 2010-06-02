@@ -877,7 +877,7 @@ namespace <%S.m_namespace%>_ns {
 				firstLoop = false;
 			}
 
-			// compress
+			// compress (todo: actually compress!)
 			return new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0,  coord);
 		} // end of Parse()
 
@@ -900,6 +900,7 @@ ${CODEBLOCK ANTLRgrammar_CSharp_Java}
 	string FINAL = (S.OutputJava()) ? "final " : "";
 	string TEXT =  (S.OutputJava()) ? "getText()" : "Text";
 	string PARSE_DOUBLE =  (S.OutputJava()) ? "parseDouble" : "Parse";
+	string SET =  (S.OutputJava()) ? "set" : "Set";
 %>
 grammar <%S.m_namespace%>;
 
@@ -917,21 +918,25 @@ tokens
 	OP	= '^' ;
 }
 
-@lexer::namespace {
 <%if (S.OutputJava()) {%>
-    <%S.m_namespace%>_pkg
-<%} else {%>
-    <%S.m_namespace%>_ns
-<%}%>
+
+@lexer::header {
+package <%S.m_namespace%>_pkg;
+}
+@parser::header {
+package <%S.m_namespace%>_pkg;
 }
 
-@parser::namespace {
-<%if (S.OutputJava()) {%>
-    <%S.m_namespace%>_pkg
 <%} else {%>
+
+@lexer::namespace {
     <%S.m_namespace%>_ns
-<%}%>
 }
+@parser::namespace {
+    <%S.m_namespace%>_ns
+}
+
+<%}%>
 
 
 @members
@@ -949,7 +954,7 @@ tokens
 		public <%FINAL%>int getBitmap() { return bitmap;  }
 		public <%FINAL%><%FT.type%> getScale() { return scale;  }
 
-		public <%FINAL%>void wedgeBasisVector(<%FINAL%>int bvIdx)
+		public <%FINAL%>void wedgeBasisVector(int bvIdx)
 		{
 			int b;
 
@@ -1000,8 +1005,8 @@ antlr_multivector returns [<%FT.GetMangledName(S, S.m_GMV.Name)%> result]
 	<%FT.type%>[] coord = new <%FT.type%>[<%1<<S.m_dimension%>];
 }
 @after{
-	// compress result into multivector
-	result.Set(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0, coord);
+	// compress result into multivector (TODO: actually compress! Maybe make that a flag on the constructor?)
+	result = new <%FT.GetMangledName(S, S.m_GMV.Name)%>(<%for (int i = 0; i <= S.m_dimension; i++) {%>GroupBitmap.GRADE_<%i%> | <%}%>0, coord);
 }
 :
 (sg=antlr_sign {scale = sg;})* bb=antlr_basis_element {bb.multiply(scale); sum(coord, bb);}
