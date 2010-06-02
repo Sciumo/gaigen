@@ -140,31 +140,17 @@ Maybe fix the float type stuff
 	
 --
 
--make sure scalar coord never has a flipped orientation (would cause bugs everywhere)
+-make sure scalar coord never has a flipped orientation (this would cause bugs everywhere)
 
 -add include/import element in XML
 
-	Write C# and Java output.
+	-> Write C# and Java output.
 			
 			
-			GMV:    done?
-			  
 			SMV:
 				V class comment
 				member function shortcuts (for regular functions)
 				converters as constructors (SMV->SMV and such)
-			
-			GOM:    done?
-			 
-			SOM	done?
-			 
-			V applyOM functions
-
-			V parser 
-			
-			V compress function for multivectors
-			
-			parse interface from 
 			
 			constants
 			

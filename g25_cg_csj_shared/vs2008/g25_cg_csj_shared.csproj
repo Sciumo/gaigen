@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\src\constants.cs" />
     <Compile Include="..\src\gmv.cs" />
     <Compile Include="..\src\gom.cs" />
     <Compile Include="..\src\groupbitmap.cs" />

@@ -1315,7 +1315,7 @@ namespace G25
             // add new type to list of specialized multivectors
             S.AddSpecializedMV(smv);
 
-            // todo: add code for adding constant here
+            // if constant name is specified, the user wants a constant:
             if (constantName != null)
                 S.AddConstant(new ConstantSMV(constantName, smv, null, comment));
         } // end of ParseSMVelementAndAttributes()

@@ -58,12 +58,22 @@ namespace G25.CG.CSJ
                 : "int";
         }
 
+        /// <returns>Access modifier for a constant built-in type.</returns>
         public static string ConstAccessModifier(Specification S)
         {
             return (S.OutputCSharp())
             ? "const"
             : "static final";
         }
+
+        /// <returns>Access modifier for a constant class instance.</returns>
+        public static string ConstClassInstanceAccessModifier(Specification S)
+        {
+            return (S.OutputCSharp())
+            ? "static readonly"
+            : "static final";
+        }
+
 
         public static string ConstArrayAccessModifier(Specification S)
         {

@@ -127,6 +127,8 @@ namespace G25.CG.CSharp
 
             G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, S.m_namespace, null, null);
 
+            G25.CG.CSJ.Constants.WriteDefinitions(SB, S, cgd);
+            
             G25.CG.CSJ.Source.WriteSMVtypenames(SB, S, cgd);
 
             G25.CG.CSJ.Source.GenerateTables(SB, S, cgd);
