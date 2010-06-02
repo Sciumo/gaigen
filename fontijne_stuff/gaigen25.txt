@@ -152,13 +152,15 @@ Maybe fix the float type stuff
 				member function shortcuts (for regular functions)
 				converters as constructors (SMV->SMV and such)
 			
-			constants
+			V constants
 			
-			runtime geometric product
+			->runtime geometric product
 			
-			testing
+			testing code for C# and Java, test everything, fix all bugs
 			
 			makefile for all platforms
+			
+			Release first version with C# and Java support
 			
 			operators
 			
