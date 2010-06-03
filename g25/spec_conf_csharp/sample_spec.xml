@@ -8,7 +8,7 @@
 	defaultOperatorBindings="true"
 	dimension="5"
   	reportUsage="false"
-  	gmvCode="expand"
+  	gmvCode="runtime"
   	parser="builtin"
   	testSuite="true"
 	copyright="Copyright (C) 2008 Some Random Person"
@@ -39,9 +39,12 @@
 	name5="ni"
 	/>
 	
-<metric name="default" round="true">no.ni=-1</metric>
+<!--<metric name="default" round="true">no.ni=-1</metric>
 <metric name="default">e1.e1=e2.e2=e3.e3=1</metric>
-<metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
+<metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>-->
+
+  <metric name="default" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
+  <metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
 
   <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
   
@@ -91,9 +94,11 @@
 
 <constant name="e1Alt" type="vectorE3GA">e1=1 e2=0 e3=0</constant>
 <constant name="pointAtOrigin" type="normalizedPoint">no=1 e1=0 ni=0 <comment>The point at the origin . . . </comment></constant>
-
+  
+<!--
 <om name="om" coordinateOrder="default" />
-
+-->
+  
 <som name="euclideanGrade1OM">
   <domain>e1 e2 e3</domain>
 </som>
@@ -122,6 +127,7 @@
   
 <!--  <function name="add" arg1="scalar" arg2="double"  floatType="double"/> -->
 
+  <!--
   <function name="cgaPoint" arg1="vectorE3GA" floatType="double"/>
   <function name="cgaPoint" arg1="double" arg2="double" arg3="double" floatType="double"/>
   <function name="cgaPoint" arg1="float" arg2="float" arg3="float" optionOrigin="no" optionInfinity="ni" floatType="float"/>
@@ -131,7 +137,8 @@
   <function name="cgaPointDistance" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
   <function name="cgaPointDistance2" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
   <function name="cgaPointDistance2" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
-
+-->
+  
   <function name="extractGrade" arg1="mv"/>
   <function name="extractGrade2" arg1="mv" floatType="float"/>
   <function name="extractGrade0" arg1="rotorE3GA" floatType="double"/>
@@ -318,14 +325,14 @@
   <function name="increment" arg1="vectorE3GA" floatType="double"/>
   <function name="increment" arg1="bivectorE3GA" floatType="double"/>
 
--
+<!--
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="float"/>
   <function name="applyOM" arg1="flatPointOM" arg2="pointPair" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="sphere" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="mv" floatType="double"/>
-
-
+-->
+  
   <function name="_vectorE3GA" arg1="normalizedPoint"/>
 </g25spec>

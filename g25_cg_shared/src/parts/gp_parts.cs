@@ -97,7 +97,7 @@ namespace G25.CG.Shared
         /// <param name="g2">Grade/group of argument 2.</param>
         /// <param name="g3">Grade/group of result.</param>
         /// <returns>name of a partial geometric product function.</returns>
-        public static String GetGPpartFunctionName(Specification S, G25.FloatType FT, G25.Metric M, int g1, int g2, int g3)
+        public static string GetGPpartFunctionName(Specification S, G25.FloatType FT, G25.Metric M, int g1, int g2, int g3)
         {
             return FT.GetMangledName(S, "gp") + "_" + M.m_name + "_" + g1 + "_" + g2 + "_" + g3;
         }
@@ -109,10 +109,17 @@ namespace G25.CG.Shared
         /// <returns>The name of the function used to compute the geometric product in real-time (depends only on the floating point type)</returns>
         public static string GetRuntimeComputeGpFuncName(G25.Specification S, G25.FloatType FT, bool fromOutsideRuntimeNamespace)
         {
-            string prefix = "";
-            if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
-                prefix = Main.RUNTIME_NAMESPACE + "::";
-            return prefix + S.m_namespace + "_runtimeComputeGp_" + FT.type;
+            if (S.OutputCppOrC())
+            {
+                string prefix = "";
+                if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
+                    prefix = Main.RUNTIME_NAMESPACE + "::";
+                return prefix + S.m_namespace + "_runtimeComputeGp_" + FT.type;
+            }
+            else
+            {
+                return "runtimeComputeGp_" + FT.type;
+            }
         }
 
         /// <param name="S">Specification.</param>
@@ -124,10 +131,17 @@ namespace G25.CG.Shared
         /// <returns>The name of the table which is used to compute <c>gd = g1 g2</c> using metric <c>M</c></returns>
         public static string GetRuntimeGpTableName(G25.Specification S, G25.Metric M, int g1, int g2, int gd, bool fromOutsideRuntimeNamespace)
         {
-            string prefix = "";
-            if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
-                prefix = Main.RUNTIME_NAMESPACE + "::";
-            return prefix + S.m_namespace + "_runtimeGpProductTable_" + M.m_name + "_" + g1 + "_" + g2 + "_" + gd;
+            if (S.OutputCppOrC())
+            {
+                string prefix = "";
+                if (fromOutsideRuntimeNamespace && (S.OutputCpp()))
+                    prefix = Main.RUNTIME_NAMESPACE + "::";
+                return prefix + S.m_namespace + "_runtimeGpProductTable_" + M.m_name + "_" + g1 + "_" + g2 + "_" + gd;
+            }
+            else
+            {
+                return "runtimeGpProductTable_" + M.m_name + "_" + g1 + "_" + g2 + "_" + gd;
+            }
         }
 
 
@@ -199,12 +213,14 @@ namespace G25.CG.Shared
                                 }
                                 else if (S.m_gmvCodeGeneration == GMV_CODE.RUNTIME)
                                 { // code for runtime geometric product
+                                    string EMP = (S.OutputCppOrC()) ? "&" : "";
+
                                     if (!S.m_GMV.IsZeroGP(g1, g2, gd))
                                     {
                                         fromOutsideRuntimeNamespace = true;
                                         string runtimeGpTableName = GetRuntimeGpTableName(S, M, g1, g2, gd, fromOutsideRuntimeNamespace);
                                         code = "\t" + runtimeComputeGpFuncName + "(" + name1 + ", " + name2 + ", " + name3 +
-                                            ", &" + runtimeGpTableName + ", " + metricId + ", " + g1 + ", " + g2 + ", " + gd + ");\n";
+                                            ", " + EMP + runtimeGpTableName + ", " + metricId + ", " + g1 + ", " + g2 + ", " + gd + ");\n";
                                     }
                                 }
 

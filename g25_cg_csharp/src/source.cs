@@ -141,6 +141,10 @@ namespace G25.CG.CSharp
 
             G25.CG.CSJ.Source.WriteParser(SB, S, cgd);
 
+            if (S.m_gmvCodeGeneration == GMV_CODE.RUNTIME)
+                G25.CG.CSJ.Source.WriteRuntimeGp(SB, S, cgd);
+
+
 #if RIEN
             // the list of names of smv types
             G25.CG.CSharp.SMV.WriteSMVtypenames(SB, S, cgd);

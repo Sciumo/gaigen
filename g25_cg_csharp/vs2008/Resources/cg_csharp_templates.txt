@@ -602,3 +602,224 @@ ${CODEBLOCK parserShortcut}
 <%}%>
     }
 ${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+${CODEBLOCK runtimeGpTablesDefs}
+/*
+ * Tables for computing the geometric product at runtime. 
+ * The tables are initialized by initRuntimeGpTable() as needed,
+ * or all at once by calling initAllRuntimeGpTables().
+ */
+<%foreach (G25.Metric M in S.m_metric)
+{%><%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++){%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+	private byte[] runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = null;
+<%}%><%}%><%}%><%}%><%}%>
+${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+${CODEBLOCK bitmapGp}
+<%new G25.CG.Shared.Comment("Returns the number of 1 bits in 'i'.").ToString(S, 1)%>
+	private static int BitCount(int i)
+	{
+		i = i - ((i >> 1) & 0x55555555);
+		i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
+		i = (i + (i >> 4)) & 0x0F0F0F0F;
+		i = i + (i >> 8);
+		i = i + (i >> 16);
+		return i & 0x0000003F;
+	}
+
+<%new G25.CG.Shared.Comment("Returns sign change due to putting the basis blades represented\n" + 
+	"by 'a' and 'b' into canonical order.\n" + 
+	"The canonical order of a basis blade is the order in which the basis\n" + 
+	"vectors are listed in alphabetical order. E.g. 'e1^e2^e4' is in canonical order,\n" + 
+	"while 'e1^e4^e2' is not.\n").
+	SetReturnComment("either +1 or -1").
+	ToString(S, 1)%>
+	private static int CanonicalReorderingSign(int a, int b)
+	{
+		int sum = 0;
+
+		// Count the number of basis vector flips required to
+		// get a and b into canonical order.
+		a >>= 1;
+		while (a != 0)
+		{
+			sum += BitCount(a & b);
+			a >>= 1;
+		}
+
+		// even number of flips -> return 1
+		// odd number of flips -> return 1
+		return ((sum & 1) == 0) ? 1 : -1;
+	}
+
+
+	/* 
+	 * Computes the geometric product of basis blades (bitmaps) 'a' and 'b'.
+	 * The returned 'resultBitmap' is the new bitmap, 'resultSign' is the sign.
+	 * Input and output blades/bitmaps are assumed to be in canonical order.
+	 *
+	 * 'metricId' is the ID of the metric which is hard coded into the function:
+<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+		G25.Metric M = S.m_metric[mIdx];
+%>
+	 *  metricId = <%mIdx.ToString()%>: <%M.m_name%>
+	<%}%> */
+	private static void BitmapGp(int a, int b, int metricId, int[] result) // bitmap = result[0], sign = result[1]
+	{
+		int an = a & b;
+	    
+	<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+		G25.Metric M = S.m_metric[mIdx];
+	%>
+	<%if (M.m_metric.HasValueOnDiagonal(0.0)) {%>
+		// check here for annihilated basis vectors with 0 metric
+		if ((metricId == <%mIdx%>) && (<%for (int d = 0; d < S.m_dimension; d++) {%>
+	<%if (M.m_metric.DiagonalValue(d) == 0.0) {%>
+	(an & <%(1<<d).ToString()%>) ||<%}%><%}%> 0)) {
+    		result[1] = 0;
+    		result[0] = 0;
+    		return;
+		}
+		<%}%>
+	<%}%>
+	    
+		// compute the bitmap:
+		result[0] = a ^ b;
+
+		// compute the sign change due to reordering:
+		result[1] = CanonicalReorderingSign(a, b);
+
+	<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+		G25.Metric M = S.m_metric[mIdx];
+	%>
+	<%if (M.m_metric.HasValueOnDiagonal(-1.0)) {%>
+		// check here for annihilated basis vectors with -1 metric
+		if (metricId == <%mIdx%>) {
+	<%for (int d = 0; d < S.m_dimension; d++) {%>
+	<%if (M.m_metric.DiagonalValue(d) == -1.0) {%>
+			if (an & <%(1<<d).ToString()%>)<%}%><%}%> result[1] *= -1;
+		}
+	<%} /* close for if statement for -1 metric */ %>
+	<%} /* close for loop over metrics */ %>
+	
+	}   
+${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+${CODEBLOCK runtimeGpTable}
+	private static int RT_GP_T_ALL_DONE = 127;
+	private static int RT_GP_T_COORD_DONE = 126;
+	private static int RT_GP_T_SKIP_MAX = 125;
+	private static int RT_GP_T_SKIP_RESULT_MAX = 255;
+	private static int RT_GP_SIGN_BIT = 0x80;
+	
+	// how much mem used by tables, so far	
+	private static int runtimeGpTableMemUsed = 0;
+	
+<%new G25.CG.Shared.Comment("This function initializes a table which is used to compute the geometric product.\n" + 
+	"by 'a' and 'b' into canonical order.\n" + 
+	"The canonical order of a basis blade is the order in which the basis\n" + 
+	"vectors are listed in alphabetical order. E.g. 'e1^e2^e4' is in canonical order,\n" + 
+	"while 'e1^e4^e2' is not.\n").
+	AddParamComment("metricId", "the ID of the metric.").
+	AddParamComment("srcG1", "the grade/group of the first operand.").
+	AddParamComment("srcG2", "the grade/group of the second operand").
+	AddParamComment("metricId", "the grade/group of the destionation (other grades/groups are ignored).").
+	ToString(S, 1)%>
+	private static byte[] InitRuntimeGpTable(int metricId, int srcG1, int srcG2, int dstG) {
+		int srcG1size, srcG2size, dstGsize, idx, Tlength, i1, i2, iDst, sign1, sign2, signDst, baseIdx1, baseIdx2, baseIdxDst, prevI2, skip;
+		int[] tmp = new int[2];
+		int bitmap1, bitmap2, bitmapDst;
+		byte[] T = null;
+		
+		// get size of input and destination grades/groups
+		srcG1size = GroupSize[srcG1];
+		srcG2size = GroupSize[srcG2];
+		dstGsize = MvSize[(1<<srcG1)-1];
+		baseIdx1 = MvSize[(1<<srcG1)-1];
+		baseIdx2 = MvSize[(1<<srcG2)-1];
+
+		idx = 0; // index into T
+		Tlength = srcG1size * srcG2size * 6; // is this a safe upper bound?
+		T = new byte[Tlength];
+
+		// Loop over all basis blades of group 1, and then over all basis blade of group 2.
+		// Compute their geometric products. If the result is in the destination group, write a table entry
+		for (i1 = 0; i1 < srcG1size; i1++) {
+			// get bitmap representation and sign of src1 basis blade
+			bitmap1 = BasisElementBitmapByIndex[baseIdx1 + i1];
+			sign1 = (int)BasisElementSignByIndex[baseIdx1 + i1];
+			
+			prevI2 = 0;
+			for (i2 = 0; i2 < srcG2size; i2++) {
+				// get bitmap representation and sign of src2 basis blade
+				bitmap2 = BasisElementBitmapByIndex[baseIdx2 + i2];
+				sign2 = (int)BasisElementSignByIndex[baseIdx2 + i2];
+
+				// compute bitmap representation and sign of (dst = src1 src2) basis blade
+				BitmapGp(bitmap1, bitmap2, metricId, tmp);
+				bitmapDst = tmp[0];
+				signDst = tmp[1];
+				
+				if (signDst == 0) continue; // 0 is due to null metric
+				
+				// check if group of bitmapDst is the destination group.
+				if (dstG != BasisElementGroupByBitmap[bitmapDst]) continue; 
+				
+				// get index of bitmapDst inside its group
+				baseIdxDst = MvSize[(1<<dstG)-1];
+				iDst = BasisElementIndexByBitmap[bitmapDst] - baseIdxDst;
+				
+				signDst *= sign1 * sign2 * (int)BasisElementSignByBitmap[bitmapDst];
+				
+				// write table:
+				// how many positions to skip of to get to the next i2 which will lead to a result
+				skip = i2 - prevI2;
+				do {
+					if (skip >= RT_GP_T_SKIP_MAX) {
+						T[idx++] = (byte)RT_GP_T_SKIP_MAX;
+						skip -= RT_GP_T_SKIP_MAX;
+					}
+					if (skip < RT_GP_T_SKIP_MAX) {
+						T[idx++] = (byte)skip;
+						skip = 0;
+					}
+				} while (skip > 0);
+				prevI2 = i2;
+				
+				// write the sign of the result
+				T[idx-1] |= (byte)((signDst < 0) ? RT_GP_SIGN_BIT : 0);
+
+				// where to write the result
+				do {
+					if (iDst >= RT_GP_T_SKIP_RESULT_MAX) {
+						T[idx++] = (byte)RT_GP_T_SKIP_RESULT_MAX;
+						iDst -= RT_GP_T_SKIP_RESULT_MAX;
+					}
+					if (iDst < RT_GP_T_SKIP_RESULT_MAX) {
+						T[idx++] = (byte)iDst;
+						iDst = 0;
+					}				
+				} while (iDst > 0);
+				
+			} // end of loop over all basis blade of group 2
+			T[idx++] = (byte)RT_GP_T_COORD_DONE;
+		} // end of loop over all basis blade of group 2
+		T[idx-1] = (byte)RT_GP_T_ALL_DONE; // this overwrites the last RT_GP_T_COORD_DONE
+
+		if (idx <= 4 * Tlength / 5) { // reallocate of more than 80% of memory is wasted
+			Array.Resize(ref T, idx);
+		}
+		else if (idx >= Tlength) {
+			throw new Exception("Buffer overflow in initRuntimeGpTable() (" + idx + " >= " + Tlength + ")\n");
+		}
+		
+		runtimeGpTableMemUsed += idx;
+		
+		return T;
+	} // end of InitRuntimeGpTable()
+${ENDCODEBLOCK}
+

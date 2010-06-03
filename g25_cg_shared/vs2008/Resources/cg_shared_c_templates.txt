@@ -28,8 +28,8 @@ int <%S.m_namespace%>_canonicalReorderingSign(unsigned int a, unsigned int b)
     a >>= 1;
     while (a != 0)
     {
-	sum += <%S.m_namespace%>_bitCount(a & b);
-	a >>= 1;
+		sum += <%S.m_namespace%>_bitCount(a & b);
+		a >>= 1;
     }
 
     // even number of flips -> return 1
@@ -95,8 +95,8 @@ ${ENDCODEBLOCK}
 // S = Specification of algebra (G25.Specification)
 ${CODEBLOCK runtimeGpTablesDefs}
 /** 
- * Tables for computing the goometric product at runtime. 
- * The tables are initialized by initRuntimeGpTable() as required,
+ * Tables for computing the geometric product at runtime. 
+ * The tables are initialized by initRuntimeGpTable() as needed,
  * or all at once by calling initAllRuntimeGpTables().
  * The memory (allocated by malloc()) can be freed by calling freeAllRuntimeGpTables().
  */

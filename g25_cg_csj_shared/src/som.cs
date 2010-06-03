@@ -82,7 +82,8 @@ namespace G25.CG.CSJ
         /// <param name="FT">Float type</param>
         public static void WriteGOMtoSOMcopy(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.SOM som)
         {
-            G25.CG.Shared.OMinit.WriteOMtoOMcopy(S, cgd, FT, S.m_GOM, som);
+            if (S.m_GOM != null)
+                G25.CG.Shared.OMinit.WriteOMtoOMcopy(S, cgd, FT, S.m_GOM, som);
         } // end of WriteGOMtoSOMcopy()
 
 

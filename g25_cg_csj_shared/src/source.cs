@@ -323,5 +323,22 @@ namespace G25.CG.CSJ
         }
 
 
+        /// <summary>
+        /// Writes the code for the runtime computation of the geometric product.
+        /// </summary>
+        public static void WriteRuntimeGp(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            cgd.m_cog.EmitTemplate(SB, "runtimeGpTablesDefs", "S=", S);
+            cgd.m_cog.EmitTemplate(SB, "bitmapGp", "S=", S);
+            cgd.m_cog.EmitTemplate(SB, "runtimeGpTable", "S=", S);
+            /*foreach (G25.FloatType FT in S.m_floatTypes)
+            {
+                cgd.m_cog.EmitTemplate(SB, "runtimeComputeGp", "S=", S, "FT=", FT);
+            }
+            cgd.m_cog.EmitTemplate(SB, "runtimeGpInitTables", "S=", S);
+            cgd.m_cog.EmitTemplate(SB, "runtimeGpFreeTables", "S=", S);*/
+        }
+
+
     } // end of class Source
 } // end of namespace G25.CG.CSJ
