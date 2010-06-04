@@ -605,15 +605,15 @@ ${ENDCODEBLOCK}
 
 // S = Specification of algebra (G25.Specification)
 ${CODEBLOCK runtimeGpTablesDefs}
-/*
- * Tables for computing the geometric product at runtime. 
- * The tables are initialized by initRuntimeGpTable() as needed,
- * or all at once by calling initAllRuntimeGpTables().
- */
+	/*
+	 * Tables for computing the geometric product at runtime. 
+	 * The tables are initialized by initRuntimeGpTable() as needed,
+	 * or all at once by calling initAllRuntimeGpTables().
+	 */
 <%foreach (G25.Metric M in S.m_metric)
 {%><%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++){%>
 <%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
-	private byte[] runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = null;
+	private static byte[] runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = null;
 <%}%><%}%><%}%><%}%><%}%>
 ${ENDCODEBLOCK}
 
@@ -823,3 +823,73 @@ ${CODEBLOCK runtimeGpTable}
 	} // end of InitRuntimeGpTable()
 ${ENDCODEBLOCK}
 
+${CODEBLOCK runtimeGpInitTables}
+	public static void InitAllRuntimeGpTables() {
+<%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
+<%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+		runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = InitRuntimeGpTable(<%m%>, <%g1%>, <%g2%>, <%gd%>);
+<%}%><%}%><%}%><%}%><%}%>
+	} // end of InitAllRuntimeGpTables()
+${ENDCODEBLOCK}
+
+${CODEBLOCK runtimeGpFreeTables}
+	public static void FreeAllRuntimeGpTables() {
+<%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
+<%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+		runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = null;
+<%}%><%}%><%}%><%}%><%}%>
+	} // end of FreeAllRuntimeGpTables()
+${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+// FT = floating point type (G25.FloatType)
+${CODEBLOCK runtimeComputeGp}
+<%new G25.CG.Shared.Comment("Computes the geometric product at runtime using a table.\n").
+	ToString(S, 1)%>
+	private static void RuntimeComputeGp_<%FT.type%>(<%FT.type%>[] src1, <%FT.type%>[] src2, <%FT.type%>[] dst, 
+		byte[] table, int metricId, int g1, int g2, int gdst) 
+	{
+		int idx = 0; // index into *table
+		int skip, moreSkip, dstIdx, moreDstIdx;
+		//<%FT.type%>[] currentSrc2 = src2; // currentSrc2 will be incremented/reset in the loop below
+		int src1Idx = 0, src2Idx = 0;
+		<%FT.type%> sign;
+		
+		while (table[idx] != (byte)RT_GP_T_ALL_DONE) { 
+			// get next index into src2;
+			if (table[idx] == (byte)RT_GP_T_COORD_DONE) { 
+				// move on to the next coordinate of g1
+				src1Idx++;
+				src2Idx = 0;
+				idx++;
+				continue;
+			}
+			else {
+				// skip the right amount of coordinate in group 2
+				skip = ((int)table[idx++] & (0xFF^RT_GP_SIGN_BIT));
+				if (skip == RT_GP_T_SKIP_MAX) {
+					do {
+						moreSkip = (int)table[idx++] & (0xFF^RT_GP_SIGN_BIT);
+						skip += moreSkip;
+					} while (moreSkip == RT_GP_T_SKIP_MAX);
+				}
+				src2Idx += skip;
+				
+				// get the sign of the result (is on the last bit of the previous byte in the table
+				sign = ((table[idx-1] & RT_GP_SIGN_BIT) != 0) ? <%FT.DoubleToString(S, -1.0)%> : <%FT.DoubleToString(S, 1.0)%>;
+				
+				// get the index in the destination vector
+				dstIdx = (int)table[idx++] & 0xFF; // plus any extra if required
+				if (dstIdx == RT_GP_T_SKIP_RESULT_MAX) {
+					do {
+						moreDstIdx = (int)table[idx++] & 0xFF;
+						dstIdx += moreDstIdx;
+					} while (moreDstIdx == RT_GP_T_SKIP_RESULT_MAX);
+				}
+				dst[dstIdx] += sign * src1[src1Idx] * src2[src2Idx];
+			}
+		}
+	} // end of RuntimeComputeGp_<%FT.type%>()
+${ENDCODEBLOCK}

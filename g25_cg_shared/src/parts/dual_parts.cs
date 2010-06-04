@@ -84,8 +84,13 @@ namespace G25.CG.Shared
             // get sign of pseudo scalar basis blade in GMV:
             double IbladeSign = S.m_GMV.Group(g2)[0].scale;
 
+            string tmpArrayCode;
+            if (S.OutputCppOrC())
+                tmpArrayCode = "\t" + FT.type + " " + name2 + "[1] = {" + FT.DoubleToString(S, IbladeSign * I.BasisBlades[0].scale) + "};\n";
+            else tmpArrayCode = "\t\t" + FT.type + "[] " + name2 + " = new " + FT.type + "[]{" + FT.DoubleToString(S, IbladeSign * I.BasisBlades[0].scale) + "};\n\t";
+
             return 
-                "\t" + FT.type + " " + name2 + "[1] = {" + FT.DoubleToString(S, IbladeSign * I.BasisBlades[0].scale) + "};\n" +
+                tmpArrayCode + 
                 "\t" + GPparts.GetGPpartFunctionName(S, FT, M, g1, g2, gd) + "(" + name1 + ", " + name2 + ", " + name3 + ");\n";
         }
 

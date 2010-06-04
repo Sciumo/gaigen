@@ -116,6 +116,10 @@ namespace G25.CG.Shared
                     prefix = Main.RUNTIME_NAMESPACE + "::";
                 return prefix + S.m_namespace + "_runtimeComputeGp_" + FT.type;
             }
+            else if (S.OutputCSharp())
+            {
+                return "RuntimeComputeGp_" + FT.type;
+            }
             else
             {
                 return "runtimeComputeGp_" + FT.type;
@@ -219,7 +223,14 @@ namespace G25.CG.Shared
                                     {
                                         fromOutsideRuntimeNamespace = true;
                                         string runtimeGpTableName = GetRuntimeGpTableName(S, M, g1, g2, gd, fromOutsideRuntimeNamespace);
-                                        code = "\t" + runtimeComputeGpFuncName + "(" + name1 + ", " + name2 + ", " + name3 +
+                                        if (S.OutputCSharpOrJava())
+                                        {
+                                            string initFunc = S.OutputJava() ? "initRuntimeGpTable" : "InitRuntimeGpTable";
+
+                                            code = "\t\tif(" + runtimeGpTableName + " == null) " + 
+                                              runtimeGpTableName + " = " + initFunc + "(" + metricId + ", " + g1 + ", " + g2 + ", " + gd + ");\n\t";
+                                        }
+                                        code += "\t" + runtimeComputeGpFuncName + "(" + name1 + ", " + name2 + ", " + name3 +
                                             ", " + EMP + runtimeGpTableName + ", " + metricId + ", " + g1 + ", " + g2 + ", " + gd + ");\n";
                                     }
                                 }

@@ -331,12 +331,12 @@ namespace G25.CG.CSJ
             cgd.m_cog.EmitTemplate(SB, "runtimeGpTablesDefs", "S=", S);
             cgd.m_cog.EmitTemplate(SB, "bitmapGp", "S=", S);
             cgd.m_cog.EmitTemplate(SB, "runtimeGpTable", "S=", S);
-            /*foreach (G25.FloatType FT in S.m_floatTypes)
+            foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 cgd.m_cog.EmitTemplate(SB, "runtimeComputeGp", "S=", S, "FT=", FT);
             }
             cgd.m_cog.EmitTemplate(SB, "runtimeGpInitTables", "S=", S);
-            cgd.m_cog.EmitTemplate(SB, "runtimeGpFreeTables", "S=", S);*/
+            cgd.m_cog.EmitTemplate(SB, "runtimeGpFreeTables", "S=", S);
         }
 
 
