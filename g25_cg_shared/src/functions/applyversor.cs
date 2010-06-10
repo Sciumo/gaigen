@@ -133,7 +133,6 @@ namespace G25.CG.Shared.Func
             if (tmpFAI.Length > 2)
                 m_inverseVersorMv = (G25.MV)tmpFAI[2].Type;
 
-
             { // get symbolic result
                 // get grade of input blade:
                 m_inputGradeUsage = tmpFAI[1].MultivectorValue[0].GradeUsage();
