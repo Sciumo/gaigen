@@ -160,13 +160,16 @@ namespace G25.CG.Shared.Func
                     bool inline = false; // never inline GMV functions
                     StringBuilder defSB = (inline) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
 
-                    string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
-                    m_funcName[FT.type] = funcName;
+                    // because of lack of overloading, function names include names of argument types
+                    G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(m_specification, FT, m_fgs, FAI);
+
+//                    string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
+                    m_funcName[FT.type] = CF.OutputName;
 
                     // setup hashtable with template arguments:
                     System.Collections.Hashtable argTable = new System.Collections.Hashtable();
                     argTable["S"] = m_specification;
-                    argTable["functionName"] = funcName;
+                    argTable["functionName"] = m_funcName[FT.type];
                     argTable["FT"] = FT;
                     argTable["mvType"] = FT.GetMangledName(m_specification, m_specification.m_GMV.Name);
                     argTable["setPlaneFuncName"] = getSetPlaneFuncName();

@@ -1286,3 +1286,48 @@ void <%S.m_namespace%>_<%FT.type%>_copy_N(<%FT.type%> *dst, const <%FT.type%> *s
 }
 <%}%>
 ${ENDCODEBLOCK}
+
+// same arguments as logEuclidean
+${CODEBLOCK logEuclideanHeader}
+/**
+Returns logarithm of 3-D Euclidean rotor.
+*/
+void <%functionName%>(<%mvType%> *dst, const <%mvType%> *src);
+${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// functionName = name of generated function
+// FT = floating point type
+// mvType = multivector type name (with prefix/suffix)
+// setPlaneFuncName = Name of function to set coordinate of some Euclidean bivector coordinate.
+// randomScalarFuncName = name of function which generates random scalar values
+// scalarGpFuncName = geometric product of multivector and scalar
+// norm2FuncName = Euclidean norm, squared of multivector
+// grade2FuncName = extract grade 2 part of multivector
+${CODEBLOCK logEuclidean}
+
+void <%functionName%>(<%mvType%> *dst, const <%mvType%> *src) {
+	<%FT.type%> _g2norm2_ = <%norm2FuncName%>(src);
+	<%FT.type%> _scalarPart_ = <%mvType%>_scalar(src);
+	<%FT.type%> _g2norm_;
+	<%mvType%> grade2part;
+
+	if (_g2norm2_ <= <%FT.DoubleToString(S, 0.0)%>) {
+		if (_scalarPart_ < <%FT.DoubleToString(S, 0.0)%>) {
+			<%mvType%>_setZero(dst);
+			<%mvType%>_<%setPlaneFuncName%>(dst, <%FT.DoubleToString(S, Math.PI)%>);
+		}
+		else {
+			<%mvType%>_setZero(dst);
+		}
+	}
+	else {
+		_g2norm_ = (<%FT.type%>)sqrt(_g2norm2_);
+
+		<%grade2FuncName%>(&grade2part, src);
+
+		<%scalarGpFuncName%>(dst, &grade2part, (<%FT.type%>)atan2(_scalarPart_, _g2norm_)/_g2norm_);
+	}
+}
+
+${ENDCODEBLOCK}

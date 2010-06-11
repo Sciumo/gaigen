@@ -1959,12 +1959,12 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK logEuclidean}
 
 <%mvType%> <%functionName%>(const <%mvType%> &R) {
-	double _g2norm2_ = <%norm2FuncName%>(R);
+	<%FT.type%> _g2norm2_ = <%norm2FuncName%>(R);
 
-	double _scalarPart_ = R.get_scalar();
+	<%FT.type%> _scalarPart_ = R.get_scalar();
 
-	if (_g2norm2_ <= 0.0) {
-		if (_scalarPart_ < 0.0) {
+	if (_g2norm2_ <= <%FT.DoubleToString(S, 0.0)%>) {
+		if (_scalarPart_ < <%FT.DoubleToString(S, 0.0)%>) {
 			<%mvType%> tmp;
 			tmp.<%setPlaneFuncName%>(<%FT.DoubleToString(S, Math.PI)%>);
 			return tmp;
@@ -1973,14 +1973,11 @@ ${CODEBLOCK logEuclidean}
 			return <%mvType%>();
 		}
 	}
+	else {
+		<%FT.type%> _g2norm_ = ::sqrt(_g2norm2_);
 
-	double _g2norm_ = ::sqrt(_g2norm2_);
-
-	double _mul_ = (::atan2(_scalarPart_, _g2norm_))/(_g2norm_);
-
-	mv grade2part = <%grade2FuncName%>(R);
-
-	return <%scalarGpFuncName%>(grade2part, _mul_);
+		return <%scalarGpFuncName%>(<%grade2FuncName%>(R), ::atan2(_scalarPart_, _g2norm_)/_g2norm_);
+	}
 }
 
 ${ENDCODEBLOCK}
