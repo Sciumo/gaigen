@@ -189,7 +189,7 @@ namespace G25.CG.Shared
                 }
                 catch (Exception E)
                 {
-                    Console.WriteLine("Temp code (while developing C++ test templates");
+                    Console.WriteLine("Temporary code (for developing test templates)");
                     Console.WriteLine(E.Message);
                 }
             }

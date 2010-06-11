@@ -436,7 +436,8 @@ namespace G25.CG.Shared
             if (writeDecl)
             {
                 if (comment != null) comment.Write(cgd.m_declSB, S, 0);
-                WriteDeclaration(cgd.m_declSB, S, cgd, inline, staticFunc, returnType, functionName, returnArgument, arguments);
+                bool inlineDecl = false; // never put inline keywords in declaration
+                WriteDeclaration(cgd.m_declSB, S, cgd, inlineDecl, staticFunc, returnType, functionName, returnArgument, arguments);
                 cgd.m_declSB.AppendLine(";");
             }
 

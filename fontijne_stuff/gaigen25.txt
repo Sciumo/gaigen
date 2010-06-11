@@ -154,7 +154,9 @@ Maybe fix the float type stuff
 			
 			V constants
 			
-			->runtime geometric product
+			V runtime geometric product
+			
+			log (3D)
 			
 			testing code for C# and Java, test everything, fix all bugs
 			

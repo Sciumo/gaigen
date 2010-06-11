@@ -87,6 +87,9 @@
     <Compile Include="..\src\functions\unit.cs">
       <Link>functions\unit.cs</Link>
     </Compile>
+    <Compile Include="..\src\functions\log_euclidean.cs">
+      <Link>functions\log_euclidean.cs</Link>
+    </Compile>
     <Compile Include="..\src\functions\versorinverse.cs">
       <Link>functions\versorinverse.cs</Link>
     </Compile>

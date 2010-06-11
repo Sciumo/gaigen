@@ -275,6 +275,11 @@
   <function name="undual" arg1="normalizedPoint" floatType="double"/>
   <function name="undual" arg1="pointPair" floatType="double"/>
 
+  <function name="log" arg1="rotorE3GA" optionType="euclidean" floatType="double"/>
+  <function name="log" arg1="mv" optionType="euclidean" floatType="double"/>
+  <function name="log" outputName="logRT" arg1="RBM" optionType="conformalRT" floatType="double"/>
+  <function name="log" outputName="logRT" arg1="mv" optionType="conformalRT" floatType="double"/>
+
   <function name="sas" arg1="mv" arg2="double" arg3="double" floatType="double"/>
   <function name="sas" arg1="bivectorE3GA" arg2="double" arg3="double" floatType="double"/>
 
@@ -289,7 +294,7 @@
   <function name="cos" arg1="freeVector" floatType="double"/>
   <function name="sin" arg1="freeVector" floatType="double"/>
 
-  
+
   <function name="exp" arg1="mv" floatType="double"/>
   <function name="sinh" arg1="mv" floatType="double"/>
   <function name="cosh" arg1="mv" floatType="double"/>
