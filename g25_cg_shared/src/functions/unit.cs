@@ -120,7 +120,7 @@ namespace G25.CG.Shared.Func
         /// </summary>
         public override void WriteFunction()
         {
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 

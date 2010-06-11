@@ -31,12 +31,19 @@ namespace G25.CG.Shared.Func
     {
         protected const int NB_ARGS = 1;
         protected bool m_gmvFunc; ///< is this a function over GMVs?
-        protected RefGA.Multivector m_nValue;
+        protected RefGA.Multivector m_grade0Value;
+        protected RefGA.Multivector m_grade2Value;
+        RefGA.Multivector m_grade2norm2Value;
+        protected RefGA.Multivector m_mulValue;
         protected RefGA.Multivector m_returnValue; ///< returned value (symbolic multivector)
         protected G25.SMV m_smv = null; ///< if function over SMV, type goes here
         protected Dictionary<string, string> m_funcName = new Dictionary<string, string>();  ///< generated function name with full mangling, etc
         protected G25.VariableType m_returnType; ///< return type
-        protected const string normName = "_n_";
+                                                 ///
+        protected const string scalarPartName = "_scalarPart_";
+        protected const string norm2Name = "_g2norm2_";
+        protected const string normName = "_g2norm_";
+        protected const string mulName = "_mul_";
 
 
         /// <summary>
@@ -47,7 +54,12 @@ namespace G25.CG.Shared.Func
         /// <returns>true if 'F' can be implemented</returns>
         public override bool CanImplement(Specification S, G25.fgs F)
         {
-            return ((F.Name == "log") && (F.MatchNbArguments(1))); // TODO: and optionType==euclidean
+            if (!((F.Name == "log") && (F.MatchNbArguments(1)))) return false;
+
+            string type = F.GetOption("type");
+            if (type == null) return false;
+
+            return type.ToLower().Equals("euclidean");
         }
 
         /// <summary>
@@ -60,7 +72,7 @@ namespace G25.CG.Shared.Func
         {
             // fill in ArgumentTypeNames
             if (m_fgs.ArgumentTypeNames.Length == 0)
-                m_fgs.m_argumentTypeNames = new String[] { m_gmv.Name };
+                m_fgs.m_argumentTypeNames = new string[] { m_gmv.Name };
 
             // init argument pointers from the completed typenames (language sensitive);
             m_fgs.InitArgumentPtrFromTypeNames(m_specification);
@@ -79,37 +91,17 @@ namespace G25.CG.Shared.Func
                 m_smv = tmpFAI[0].Type as G25.SMV;
 
                 // get symbolic result
-                RefGA.Multivector value = tmpFAI[0].MultivectorValue[0];
-                RefGA.Multivector reverseValue = RefGA.Multivector.Reverse(value);
-                RefGA.Multivector n2Value = RefGA.Multivector.gp(reverseValue, value, m_M);
-                m_nValue = n2Value;
-                if (!m_M.IsPositiveDefinite())
-                    m_nValue = RefGA.Symbolic.ScalarOp.Abs(m_nValue);
-                m_nValue = RefGA.Symbolic.ScalarOp.Sqrt(m_nValue);
+                m_grade0Value = tmpFAI[0].MultivectorValue[0].ExtractGrade(0);
+                m_grade2Value = tmpFAI[0].MultivectorValue[0].ExtractGrade(2);
+                RefGA.Multivector reverseGrade2Value = RefGA.Multivector.Reverse(m_grade2Value);
+                m_grade2norm2Value = RefGA.Multivector.gp(reverseGrade2Value, m_grade2Value, m_M);
 
-                // round value if required by metric
-                if (m_G25M.m_round) m_nValue = m_nValue.Round(1e-14);
-
-                try // try to m_nValue = evaluate(m_nValue) 
-                {
-                    m_nValue = m_nValue.SymbolicEval(new RefGA.Symbolic.HashtableSymbolicEvaluator());
-                }
-                catch (ArgumentException) { }
-
-                if (m_nValue.HasSymbolicScalars() || (!m_nValue.IsScalar()) || m_nValue.IsZero())
-                {
-                    RefGA.Multivector inverseNValue = RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(normName));
-                    m_returnValue = RefGA.Multivector.gp(value, inverseNValue);
-                }
-                else
-                { // no extra step required
-                    m_returnValue = RefGA.Multivector.gp(value, new RefGA.Multivector(1.0 / m_nValue.RealScalarPart()));
-                    m_nValue = null;
-                }
+                m_returnValue = RefGA.Multivector.gp(m_grade2Value, new RefGA.Multivector(mulName)); // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
 
                 // get name of return type
                 if (m_fgs.m_returnTypeName.Length == 0)
                     m_fgs.m_returnTypeName = G25.CG.Shared.SpecializedReturnType.GetReturnType(m_specification, m_cgd, m_fgs, FT, m_returnValue).GetName();
+                 
             }
             m_returnType = m_specification.GetType(m_fgs.m_returnTypeName);
 
@@ -120,7 +112,7 @@ namespace G25.CG.Shared.Func
         /// </summary>
         public override void WriteFunction()
         {
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 
@@ -129,12 +121,13 @@ namespace G25.CG.Shared.Func
 
                 // generate comment
                 Comment comment = new Comment(
-                    m_fgs.AddUserComment("Returns LOG TODO of " + FAI[0].TypeName + " using " + m_G25M.m_name + " metric."));
+                    m_fgs.AddUserComment("Returns logarithm of " + FAI[0].TypeName + " using " + m_G25M.m_name + " metric, assuming a 3D Euclidean rotor."));
 
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
                 {
-                    m_funcName[FT.type] = G25.CG.Shared.GmvCASNparts.WriteDivFunction(m_specification, m_cgd, FT, m_G25M, FAI, m_fgs, comment, G25.CG.Shared.CANSparts.DIVCODETYPE.UNIT);
+                    // todo!
+               //     m_funcName[FT.type] = G25.CG.Shared.GmvCASNparts.WriteDivFunction(m_specification, m_cgd, FT, m_G25M, FAI, m_fgs, comment, G25.CG.Shared.CANSparts.DIVCODETYPE.UNIT);
                 }
                 else
                 {// write simple specialized function:
@@ -147,14 +140,34 @@ namespace G25.CG.Shared.Func
                         bool nPtr = false;
                         bool declareN = true;
 
-                        if (m_nValue != null)
-                        { // extra step required?
-                            // n2 = reverse(input) * input
-                            I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, m_nValue, normName, nPtr, declareN));
-                        }
+                        
+                        // get grade 2 norm, scalar part
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, m_grade2norm2Value, norm2Name, nPtr, declareN));
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, m_grade0Value, scalarPartName, nPtr, declareN));
+
+                        // setup checks for grade 2 == 0, grade 0 < 0.0
+                        System.Collections.Generic.List<G25.CG.Shared.Instruction> ifGrade2ZeroI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+
+                        // setup checks for grade 0 < 0.0
+                        System.Collections.Generic.List<G25.CG.Shared.Instruction> ifI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+                        System.Collections.Generic.List<G25.CG.Shared.Instruction> elseI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+
+                        // either return PI * ANY_GRADE2_BLADE or 0
+                        RefGA.Multivector arbRot360 = new RefGA.Multivector(new RefGA.BasisBlade(m_grade2Value.BasisBlades[0].bitmap, Math.PI));
+                        ifI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs + 2, m_returnType, FT, mustCast, arbRot360)); // return 360 degree rotation in arbitrary plane
+                        elseI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs+2, m_returnType, FT, mustCast, RefGA.Multivector.ZERO)); // return zero if grade2 == 0 and grade0 >= 0
+
+                        ifGrade2ZeroI.Add(new G25.CG.Shared.IfElseInstruction(nbTabs+1, scalarPartName + " < " + FT.DoubleToString(m_specification, 0.0), ifI, elseI));
+
+                        I.Add(new G25.CG.Shared.IfElseInstruction(nbTabs, norm2Name + " <= " + FT.DoubleToString(m_specification, 0.0), ifGrade2ZeroI, null));
+
+                        // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.ScalarOp.Sqrt(new RefGA.Multivector(norm2Name)), normName, nPtr, declareN));
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, new RefGA.Multivector(normName), mulName, nPtr, declareN));
 
                         // result = input / n2
                         I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_returnType, FT, mustCast, m_returnValue));
+                         
                     }
 
                     // because of lack of overloading, function names include names of argument types

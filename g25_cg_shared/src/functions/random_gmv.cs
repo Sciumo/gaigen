@@ -95,7 +95,7 @@ namespace G25.CG.Shared.Func
             string GMVname = m_specification.m_GMV.Name;
 
             // check dependencies for all float types
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 

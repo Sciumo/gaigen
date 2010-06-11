@@ -367,7 +367,7 @@ namespace G25
         /// <summary>
         /// Gets an options for a specific name.
         /// </summary>
-        /// <param name="name">The options you want.</param>
+        /// <param name="name">The options you want (case insensitive).</param>
         /// <returns>The value of the option, or null if none set.</returns>
         public string GetOption(string name)
         {

@@ -120,20 +120,6 @@ namespace G25.CG.Shared.Func
         } // end of CompleteFGS()
 
         /// <summary>
-        /// This function should check the dependencies of this function. If dependencies are
-        /// missing, the function can complain (throw DependencyException) or fix it (add the required functions).
-        /// 
-        /// If changes are made to the specification then it must be locked first because
-        /// multiple threads run in parallel which may all modify the specification!
-        /// 
-        /// </summary>
-        public override void CheckDepencies()
-        {
-            // subclass should override
-        }
-
-
-        /// <summary>
         /// Writes the declaration/definitions of 'F' to StringBuffer 'SB', taking into account parameters specified in specification 'S'.
         /// </summary>
         public override void WriteFunction()

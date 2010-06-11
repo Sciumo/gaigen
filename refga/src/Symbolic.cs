@@ -138,7 +138,7 @@ namespace RefGA.Symbolic
         /// <returns>human readable string that represents the value of this ScalarOp</returns>
         public override string ToString()
         {
-            String valueStr = value.ToString();
+            string valueStr = value.ToString();
             bool par = (valueStr[0] == '(');
 
             return m_opName  + (par ? "" : "(") + value.ToString() + (par ? "" : ")");

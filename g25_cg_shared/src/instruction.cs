@@ -131,7 +131,10 @@ namespace G25.CG.Shared
 
                 if (I.m_childInstructions != null)
                     foreach (List<Instruction> childL in I.m_childInstructions)
-                        GetReturnType(childL, returnTypes, returnTypeFT);
+                    {
+                        if (childL != null)
+                            GetReturnType(childL, returnTypes, returnTypeFT);
+                    }
             }
         }
 
