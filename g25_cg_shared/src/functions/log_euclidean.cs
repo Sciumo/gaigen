@@ -162,8 +162,9 @@ namespace G25.CG.Shared.Func
                         I.Add(new G25.CG.Shared.IfElseInstruction(nbTabs, norm2Name + " <= " + FT.DoubleToString(m_specification, 0.0), ifGrade2ZeroI, null));
 
                         // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
+                        RefGA.Multivector normValue = new RefGA.Multivector(normName);
                         I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.UnaryScalarOp.Sqrt(new RefGA.Multivector(norm2Name)), normName, nPtr, declareN));
-                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, new RefGA.Multivector(normName), mulName, nPtr, declareN));
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.BinaryScalarOp.Atan2(normValue, m_grade0Value), mulName, nPtr, declareN, "/", normValue));
 
                         // result = input / n2
                         I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_returnType, FT, mustCast, m_returnValue));
