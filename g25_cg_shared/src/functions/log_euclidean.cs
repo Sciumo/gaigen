@@ -39,12 +39,15 @@ namespace G25.CG.Shared.Func
         protected G25.SMV m_smv = null; ///< if function over SMV, type goes here
         protected Dictionary<string, string> m_funcName = new Dictionary<string, string>();  ///< generated function name with full mangling, etc
         protected G25.VariableType m_returnType; ///< return type
-                                                 ///
+
+        protected Dictionary<string, string> m_norm2Func = new Dictionary<string, string>(); ///< = mangled name of norm2 func
+        protected Dictionary<string, string> m_scalarGpFunc = new Dictionary<string, string>(); ///< = mangled name of gp(mv, scalar) func
+        protected Dictionary<string, string> m_grade2Func = new Dictionary<string, string>(); ///< = mangled name of grade2(mv) func
+
         protected const string scalarPartName = "_scalarPart_";
         protected const string norm2Name = "_g2norm2_";
         protected const string normName = "_g2norm_";
         protected const string mulName = "_mul_";
-
 
         /// <summary>
         /// Checks if this FunctionGenerator can implement a certain function.
@@ -108,6 +111,33 @@ namespace G25.CG.Shared.Func
         }
 
         /// <summary>
+        /// This function should check the dependencies of this function. If dependencies are
+        /// missing, the function can complain (throw exception) or fix it (add the required functions).
+        /// 
+        /// If changes are made to the specification then it must be locked first because
+        /// multiple threads run in parallel which may all modify the specification!
+        /// </summary>
+        public override void CheckDepencies()
+        {
+            string GMVname = m_specification.m_GMV.Name;
+
+            // check dependencies for all float types
+            foreach (string floatName in m_fgs.FloatNames)
+            {
+                FloatType FT = m_specification.GetFloatType(floatName);
+
+                m_norm2Func[floatName] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "norm2", new string[] { GMVname }, FT, m_G25M.m_name) + G25.CG.Shared.CANSparts.RETURNS_SCALAR;
+
+                m_scalarGpFunc[floatName] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "gp", new string[] { GMVname, floatName }, FT, null); // null = no metric for op required
+
+                m_grade2Func[floatName] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE + "2", new string[] { GMVname }, FT, null); // null = no metric for op required
+
+
+            }
+        }
+
+
+        /// <summary>
         /// Should write the declaration/definitions of 'F' to StringBuffer 'SB', taking into account parameters specified in specification 'S'.
         /// </summary>
         public override void WriteFunction()
@@ -126,8 +156,33 @@ namespace G25.CG.Shared.Func
                 // if scalar or specialized: generate specialized function
                 if (m_gmvFunc)
                 {
-                    // todo!
-               //     m_funcName[FT.type] = G25.CG.Shared.GmvCASNparts.WriteDivFunction(m_specification, m_cgd, FT, m_G25M, FAI, m_fgs, comment, G25.CG.Shared.CANSparts.DIVCODETYPE.UNIT);
+                    StringBuilder declSB = m_cgd.m_declSB;
+                    bool inline = false; // never inline GMV functions
+                    StringBuilder defSB = (inline) ? m_cgd.m_inlineDefSB : m_cgd.m_defSB;
+
+                    string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
+                    m_funcName[FT.type] = funcName;
+
+                    // setup hashtable with template arguments:
+                    System.Collections.Hashtable argTable = new System.Collections.Hashtable();
+                    argTable["S"] = m_specification;
+                    argTable["functionName"] = funcName;
+                    argTable["FT"] = FT;
+                    argTable["mvType"] = FT.GetMangledName(m_specification, m_specification.m_GMV.Name);
+                    argTable["setPlaneFuncName"] = getSetPlaneFuncName();
+                    argTable["scalarGpFuncName"] = m_scalarGpFunc[floatName];
+                    argTable["norm2FuncName"] = m_norm2Func[floatName];
+                    argTable["grade2FuncName"] = m_grade2Func[floatName];
+
+                    if (m_specification.OutputCppOrC())
+                    {
+                        // header
+                        m_cgd.m_cog.EmitTemplate(declSB, "logEuclideanHeader", argTable);
+                    }
+
+                    // source
+                    m_cgd.m_cog.EmitTemplate(defSB, "logEuclidean", argTable);
+               
                 }
                 else
                 {// write simple specialized function:
@@ -163,12 +218,12 @@ namespace G25.CG.Shared.Func
 
                         // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
                         RefGA.Multivector normValue = new RefGA.Multivector(normName);
+                        RefGA.Multivector grade0Value = new RefGA.Multivector(scalarPartName);
                         I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.UnaryScalarOp.Sqrt(new RefGA.Multivector(norm2Name)), normName, nPtr, declareN));
-                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.BinaryScalarOp.Atan2(normValue, m_grade0Value), mulName, nPtr, declareN, "/", normValue));
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.BinaryScalarOp.Atan2(normValue, grade0Value), mulName, nPtr, declareN, "/", normValue));
 
                         // result = input / n2
                         I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_returnType, FT, mustCast, m_returnValue));
-                         
                     }
 
                     // because of lack of overloading, function names include names of argument types
@@ -181,6 +236,31 @@ namespace G25.CG.Shared.Func
                 }
             }
         } // end of WriteFunction
+
+        /// <returns>Name of function to set coordinate of some Euclidean bivector coordinate.</returns>
+        private string getSetPlaneFuncName() 
+        {
+            int euclBitmap = m_G25M.GetEuclideanBasisVectorBitmap();
+            string setFuncName = "set";
+
+            int cnt = 0; // how many euclidean vectors found so far
+
+            // search for euclidean basis vectors.
+            for (int i = 0; i < m_specification.m_dimension; i++) {
+                int b = 1 << i;
+                if ((euclBitmap & b) != 0) {
+                    setFuncName = setFuncName + "_" + m_specification.m_basisVectorNames[i];
+                    cnt++;
+                }
+
+                if (cnt >= 2) break; // only the first two
+            }
+
+            if (cnt != 2) throw new G25.UserException("Euclidean logarithm needs at least two Euclidean basis vectors.");
+
+            return setFuncName;
+        }
+
 
         // used for testing:
         protected Dictionary<string, string> m_randomScalarFuncName = new Dictionary<string, string>();

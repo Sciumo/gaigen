@@ -25,7 +25,7 @@ namespace G25
     /// </summary>
     public class Metric
     {
-        public Metric(String name)
+        public Metric(string name)
         {
             m_name = name;
             m_metricBasisVectorIdx1 = new List<int>();
@@ -102,7 +102,7 @@ namespace G25
         /// <summary>
         /// Name of the metric (e.g., 'default' or 'Euclidean')
         /// </summary>
-        public String m_name;
+        public string m_name;
 
         /// <summary>Part of the metric specification (m_metricBasisVectorIdx1[i] . m_metricBasisVectorIdx2[i] = m_metricValue[i])</summary>
         public List<int> m_metricBasisVectorIdx1;

@@ -1939,3 +1939,48 @@ ${ENDCODEBLOCK}
 
 
 
+// same arguments as logEuclidean
+${CODEBLOCK logEuclideanHeader}
+/**
+Returns logarithm of 3-D Euclidean rotor.
+*/
+<%mvType%> <%functionName%>(const <%mvType%> &R);
+${ENDCODEBLOCK}
+
+// S = Specification of algebra.
+// functionName = name of generated function
+// FT = floating point type
+// mvType = multivector type name (with prefix/suffix)
+// setPlaneFuncName = Name of function to set coordinate of some Euclidean bivector coordinate.
+// randomScalarFuncName = name of function which generates random scalar values
+// scalarGpFuncName = geometric product of multivector and scalar
+// norm2FuncName = Euclidean norm, squared of multivector
+// grade2FuncName = extract grade 2 part of multivector
+${CODEBLOCK logEuclidean}
+
+<%mvType%> <%functionName%>(const <%mvType%> &R) {
+	double _g2norm2_ = <%norm2FuncName%>(R);
+
+	double _scalarPart_ = R.get_scalar();
+
+	if (_g2norm2_ <= 0.0) {
+		if (_scalarPart_ < 0.0) {
+			<%mvType%> tmp;
+			tmp.<%setPlaneFuncName%>(<%FT.DoubleToString(S, Math.PI)%>);
+			return tmp;
+		}
+		else {
+			return <%mvType%>();
+		}
+	}
+
+	double _g2norm_ = ::sqrt(_g2norm2_);
+
+	double _mul_ = (::atan2(_scalarPart_, _g2norm_))/(_g2norm_);
+
+	mv grade2part = <%grade2FuncName%>(R);
+
+	return <%scalarGpFuncName%>(grade2part, _mul_);
+}
+
+${ENDCODEBLOCK}

@@ -33,7 +33,7 @@ namespace G25.CG.Shared.Func
         {
             if (gradeStr == G25.CG.Shared.CANSparts.EXTRACT_GRADE) return -1;
 
-            String str = gradeStr.Substring(G25.CG.Shared.CANSparts.EXTRACT_GRADE.Length);
+            string str = gradeStr.Substring(G25.CG.Shared.CANSparts.EXTRACT_GRADE.Length);
             try
             {
                 return Int32.Parse(str);

@@ -136,7 +136,7 @@
   <function name="cgaPointDistance2" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
 
   <function name="extractGrade" arg1="mv"/>
-  <function name="extractGrade2" arg1="mv" floatType="float"/>
+  <function name="extractGrade2" arg1="mv"/>
   <function name="extractGrade0" arg1="rotorE3GA" floatType="double"/>
   <function name="extractGrade2" arg1="rotorE3GA" floatType="double"/>
 
