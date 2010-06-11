@@ -84,8 +84,8 @@ namespace G25.CG.Shared.Func
                 RefGA.Multivector n2Value = RefGA.Multivector.gp(reverseValue, value, m_M);
                 m_nValue = n2Value;
                 if (!m_M.IsPositiveDefinite())
-                    m_nValue = RefGA.Symbolic.ScalarOp.Abs(m_nValue);
-                m_nValue = RefGA.Symbolic.ScalarOp.Sqrt(m_nValue);
+                    m_nValue = RefGA.Symbolic.UnaryScalarOp.Abs(m_nValue);
+                m_nValue = RefGA.Symbolic.UnaryScalarOp.Sqrt(m_nValue);
 
                 // round value if required by metric
                 if (m_G25M.m_round) m_nValue = m_nValue.Round(1e-14);
@@ -98,7 +98,7 @@ namespace G25.CG.Shared.Func
 
                 if (m_nValue.HasSymbolicScalars() || (!m_nValue.IsScalar()) || m_nValue.IsZero())
                 {
-                    RefGA.Multivector inverseNValue = RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(normName));
+                    RefGA.Multivector inverseNValue = RefGA.Symbolic.UnaryScalarOp.Inverse(new RefGA.Multivector(normName));
                     m_returnValue = RefGA.Multivector.gp(value, inverseNValue);
                 }
                 else

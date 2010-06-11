@@ -163,7 +163,7 @@ namespace G25.CG.Shared.Func
                     m_scalarSquare = true;
 
                     // compute alpha = sqrt(fabs(value^2))
-                    m_alphaValue = RefGA.Symbolic.ScalarOp.Sqrt(RefGA.Symbolic.ScalarOp.Abs(squareValue));
+                    m_alphaValue = RefGA.Symbolic.UnaryScalarOp.Sqrt(RefGA.Symbolic.UnaryScalarOp.Abs(squareValue));
 
                     // use hyperbolic sin / cos or regular sin / cos for shortcuts?
                     bool hyperbolic =
@@ -177,11 +177,11 @@ namespace G25.CG.Shared.Func
                     {
                         if (hyperbolic)
                             m_mulValue = RefGA.Multivector.gp(
-                                                            RefGA.Symbolic.ScalarOp.Sinh(new RefGA.Multivector(m_alphaName)),
-                                                            RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(m_alphaName)));
+                                                            RefGA.Symbolic.UnaryScalarOp.Sinh(new RefGA.Multivector(m_alphaName)),
+                                                            RefGA.Symbolic.UnaryScalarOp.Inverse(new RefGA.Multivector(m_alphaName)));
                         else m_mulValue = RefGA.Multivector.gp(
-                                                            RefGA.Symbolic.ScalarOp.Sin(new RefGA.Multivector(m_alphaName)),
-                                                            RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(m_alphaName)));
+                                                            RefGA.Symbolic.UnaryScalarOp.Sin(new RefGA.Multivector(m_alphaName)),
+                                                            RefGA.Symbolic.UnaryScalarOp.Inverse(new RefGA.Multivector(m_alphaName)));
                     }
 
 
@@ -196,8 +196,8 @@ namespace G25.CG.Shared.Func
                     else
                     {
                         sinValue = RefGA.Multivector.gp(value, new RefGA.Multivector(m_mulName));
-                        if (hyperbolic) cosValue = RefGA.Symbolic.ScalarOp.Cosh(new RefGA.Multivector(m_alphaName));
-                        else cosValue = RefGA.Symbolic.ScalarOp.Cos(new RefGA.Multivector(m_alphaName));
+                        if (hyperbolic) cosValue = RefGA.Symbolic.UnaryScalarOp.Cosh(new RefGA.Multivector(m_alphaName));
+                        else cosValue = RefGA.Symbolic.UnaryScalarOp.Cos(new RefGA.Multivector(m_alphaName));
                     }
 
                     // compute return value

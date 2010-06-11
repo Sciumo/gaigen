@@ -55,6 +55,8 @@
     <Compile Include="..\src\Multivector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\src\Symbolic.cs" />
+    <Compile Include="..\src\UnaryScalarOp.cs" />
+    <Compile Include="..\src\BinaryScalarOp.cs" />
     <Compile Include="..\src\Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

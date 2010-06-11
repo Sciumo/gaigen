@@ -77,7 +77,7 @@ namespace G25.CG.Shared.Func
                 m_smv = tmpFAI[0].Type as G25.SMV;
 
                 RefGA.Multivector inputValue = tmpFAI[0].MultivectorValue[0];
-                RefGA.Multivector divValue = RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(tmpFAI[1].Name));
+                RefGA.Multivector divValue = RefGA.Symbolic.UnaryScalarOp.Inverse(new RefGA.Multivector(tmpFAI[1].Name));
                 m_returnValue = RefGA.Multivector.gp(inputValue, divValue);
 
                 // get name of return type

@@ -107,7 +107,7 @@ namespace G25.CG.Shared.Func
 
                 // apply sqrt(fabs()) if distance should not be squared:
                 if (IsDistance(m_fgs))
-                    m_returnValue = RefGA.Symbolic.ScalarOp.Sqrt(RefGA.Symbolic.ScalarOp.Abs(m_returnValue));
+                    m_returnValue = RefGA.Symbolic.UnaryScalarOp.Sqrt(RefGA.Symbolic.UnaryScalarOp.Abs(m_returnValue));
 
                 // round value if required by metric
                 if (m_G25M.m_round)
@@ -209,8 +209,8 @@ namespace G25.CG.Shared.Func
                     argTable["cgaPointName"] = FT.GetMangledName(m_specification, m_cgaPointTypeName[FT.type]);
                     argTable["cgaPointType"] = m_specification.GetType(m_cgaPointTypeName[FT.type]);
 
-                    argTable["sqrt"] = CodeUtil.OpNameToLangString(m_specification, FT, ScalarOp.SQRT);
-                    argTable["fabs"] = CodeUtil.OpNameToLangString(m_specification, FT, ScalarOp.ABS);
+                    argTable["sqrt"] = CodeUtil.OpNameToLangString(m_specification, FT, UnaryScalarOp.SQRT);
+                    argTable["fabs"] = CodeUtil.OpNameToLangString(m_specification, FT, UnaryScalarOp.ABS);
 
                     argTable["randomScalarFuncName"] = m_randomScalarFuncName[FT.type];
                     argTable["c3gaPointFuncName"] = m_cgaPointFuncName[FT.type];

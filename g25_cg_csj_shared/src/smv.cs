@@ -533,7 +533,7 @@ namespace G25.CG.CSJ
             const string smvName = G25.CG.Shared.SmvUtil.THIS;
             const bool ptr = false;
 
-            string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
+            string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.ABS);
 
             string[] AS = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, smvName, ptr);
 

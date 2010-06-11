@@ -92,7 +92,7 @@ namespace G25.CG.Shared.Func
 
                 // compute return value
                 if (m_isNorm2) m_returnValue = tmpFAI[0].MultivectorValue[0].Norm_r2(m_M);
-                else m_returnValue = RefGA.Symbolic.ScalarOp.Abs(tmpFAI[0].MultivectorValue[0].Norm_r(m_M));
+                else m_returnValue = RefGA.Symbolic.UnaryScalarOp.Abs(tmpFAI[0].MultivectorValue[0].Norm_r(m_M));
 
                 // round value if required by metric
                 if (m_G25M.m_round) m_returnValue = m_returnValue.Round(1e-14);

@@ -483,7 +483,7 @@ namespace G25.CG.CSJ
         /// <param name="FT"></param>
         public static void WriteLargestCoordinates(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT)
         {
-            string fabsFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
+            string fabsFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.ABS);
 
             cgd.m_cog.EmitTemplate(SB, "GMVlargestCoordinate", "S=", S, "FT=", FT, "gmvName=", FT.GetMangledName(S, S.m_GMV.Name), "fabsFunc=", fabsFuncName);
         }

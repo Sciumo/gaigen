@@ -91,7 +91,7 @@ namespace G25.CG.Shared.Func
                 if (m_n2Value.HasSymbolicScalars() || (!m_n2Value.IsScalar()) || m_n2Value.IsZero())
                 {
                     m_inverseValue = RefGA.Multivector.gp(m_reverseValue,
-                        RefGA.Symbolic.ScalarOp.Inverse(new RefGA.Multivector(new RefGA.BasisBlade(0, 1.0, m_normSquaredName))));
+                        RefGA.Symbolic.UnaryScalarOp.Inverse(new RefGA.Multivector(new RefGA.BasisBlade(0, 1.0, m_normSquaredName))));
                 }
                 else
                 {

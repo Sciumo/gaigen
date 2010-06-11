@@ -870,7 +870,7 @@ namespace G25.CG.Shared
                 if (squared) returnVal = "n2";
                 else
                 {
-                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.SQRT);
+                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.SQRT);
                     if (M.m_metric.IsPositiveDefinite()) // if PD, then negative values are impossible
                         returnVal = sqrtFuncName + "(n2)";
                     else returnVal = "((n2 < " + FT.DoubleToString(S, 0.0) + ") ? " + sqrtFuncName + "(-n2) : " + sqrtFuncName + "(n2))";
@@ -984,7 +984,7 @@ namespace G25.CG.Shared
                 if (squared) returnVal = "n2";
                 else
                 {
-                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.SQRT);
+                    string sqrtFuncName = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.SQRT);
                     if (M.m_metric.IsPositiveDefinite()) // if PD, then negative values are impossible
                         returnVal = sqrtFuncName + "(n2)";
                     else returnVal = "((n2 < " + FT.DoubleToString(S, 0.0) + ") ? " + sqrtFuncName + "(-n2) : " + sqrtFuncName + "(n2))";

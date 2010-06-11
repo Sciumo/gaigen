@@ -708,7 +708,7 @@ namespace G25.CG.CPP
 
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
-                string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS);
+                string fabsFunc = G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.ABS);
 
                 foreach (G25.SMV smv in S.m_SMV)
                 {

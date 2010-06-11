@@ -851,7 +851,7 @@ namespace RefGA
             }
             else {
                 // do symbolic inverse:
-                return gp(R, RefGA.Symbolic.ScalarOp.Inverse(s));
+                return gp(R, RefGA.Symbolic.UnaryScalarOp.Inverse(s));
             }
         }
 
@@ -1111,17 +1111,17 @@ namespace RefGA
                 Multivector A2 = Multivector._gp(this, this, M);
                 if (square < 0)
                 {
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(Multivector.Negate(A2));
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(Multivector.Negate(A2));
 
-                    return Multivector.Add(Symbolic.ScalarOp.Cos(sqrtA2),
-                            Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Sin(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this));
+                    return Multivector.Add(Symbolic.UnaryScalarOp.Cos(sqrtA2),
+                            Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Sin(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this));
                 }
                 else
                 { // square > 0
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(A2);
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(A2);
 
-                    return Multivector.Add(Symbolic.ScalarOp.Cosh(sqrtA2),
-                            Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Sinh(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this));
+                    return Multivector.Add(Symbolic.UnaryScalarOp.Cosh(sqrtA2),
+                            Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Sinh(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this));
                 }
             }
         }
@@ -1218,15 +1218,15 @@ namespace RefGA
                 Multivector A2 = Multivector._gp(this, this, M);
                 if (square < 0)
                 {
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(Multivector.Negate(A2));
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(Multivector.Negate(A2));
 
-                    return Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Sinh(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this);
+                    return Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Sinh(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this);
                 }
                 else
                 { // square > 0
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(A2);
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(A2);
 
-                    return Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Sin(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this);
+                    return Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Sin(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this);
                 }
             }
         }
@@ -1313,15 +1313,15 @@ namespace RefGA
                 Multivector A2 = Multivector._gp(this, this, M);
                 if (square < 0)
                 {
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(Multivector.Negate(A2));
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(Multivector.Negate(A2));
 
-                    return Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Cosh(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this);
+                    return Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Cosh(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this);
                 }
                 else
                 { // square > 0
-                    Multivector sqrtA2 = Symbolic.ScalarOp.Sqrt(A2);
+                    Multivector sqrtA2 = Symbolic.UnaryScalarOp.Sqrt(A2);
 
-                    return Multivector.gp(Multivector.gp(Symbolic.ScalarOp.Cos(sqrtA2), Symbolic.ScalarOp.Inverse(sqrtA2)), this);
+                    return Multivector.gp(Multivector.gp(Symbolic.UnaryScalarOp.Cos(sqrtA2), Symbolic.UnaryScalarOp.Inverse(sqrtA2)), this);
                 }
             }
         }
@@ -1381,8 +1381,8 @@ namespace RefGA
             {
                 // if metric is note positive definite, add a fabs inside the sqrt because otherwise we could do sqrt(negative value)
                 // TODO: maybe just also have a ABS because floating point noise can make a (small) positive or zero value negative . . .
-                if (!positiveDefinite) N2 = RefGA.Symbolic.ScalarOp.Abs(N2);
-                return RefGA.Symbolic.ScalarOp.Sqrt(N2); // NOTE: this is not the same result as the numerical version above!!!
+                if (!positiveDefinite) N2 = RefGA.Symbolic.UnaryScalarOp.Abs(N2);
+                return RefGA.Symbolic.UnaryScalarOp.Sqrt(N2); // NOTE: this is not the same result as the numerical version above!!!
             }
         }
 
@@ -1466,7 +1466,7 @@ namespace RefGA
             if (!N.HasSymbolicScalars())
                 return Multivector.gp(this, 1.0 / N.BasisBlades[0].scale);
             // otherwise: symbolically invert
-            else return Multivector.gp(this, RefGA.Symbolic.ScalarOp.Inverse(N));
+            else return Multivector.gp(this, RefGA.Symbolic.UnaryScalarOp.Inverse(N));
         }
 
         /// <summary>Computes unit version of this multivector using Euclidean norm.</summary>

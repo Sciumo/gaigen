@@ -258,10 +258,10 @@ namespace RefGA
                // recurse to scalar op, round their values too
                for (int j = 0; j < SS.Length; j++)
                {
-                   if (SS[j] is RefGA.Symbolic.ScalarOp)
+                   if (SS[j] is RefGA.Symbolic.UnaryScalarOp)
                    {
                        // get scalar op, value, round value
-                       RefGA.Symbolic.ScalarOp SA = (SS[j] as RefGA.Symbolic.ScalarOp).Round(eps);
+                       RefGA.Symbolic.UnaryScalarOp SA = (SS[j] as RefGA.Symbolic.UnaryScalarOp).Round(eps);
                        if (SA != SS[j])
                        {
                            SS[j] = SA;
@@ -643,7 +643,7 @@ namespace RefGA
            if (B.IsSymbolic())
            {
                B = new BasisBlade(B, bitmap); // get a copy of 'B', but as a scalar (0), so we can multiply the scalar part
-               return BasisBlade.gp(A, new BasisBlade(0, 1.0, new Symbolic.ScalarOp(Symbolic.ScalarOp.INVERSE, new Multivector(B))));
+               return BasisBlade.gp(A, new BasisBlade(0, 1.0, new Symbolic.UnaryScalarOp(Symbolic.UnaryScalarOp.INVERSE, new Multivector(B))));
            }
            else
            {
@@ -854,8 +854,8 @@ namespace RefGA
                        double value;
                        if (m_symScale[i][j] == null) value = 0.0;
                        else if (m_symScale[i][j] is Double) value = (double)m_symScale[i][j];
-                       else if (m_symScale[i][j] is Symbolic.ScalarOp) // evaluate scalar operation (like log, exp, sin, cos, etc)
-                           value = ((Symbolic.ScalarOp)m_symScale[i][j]).SymbolicEval(E);
+                       else if (m_symScale[i][j] is Symbolic.UnaryScalarOp) // evaluate scalar operation (like log, exp, sin, cos, etc)
+                           value = ((Symbolic.UnaryScalarOp)m_symScale[i][j]).SymbolicEval(E);
                        else value = E.Evaluate(m_symScale[i][j]); // substitute symbolic scalars for doubles
 
                        newSymScale[i][j] = value;

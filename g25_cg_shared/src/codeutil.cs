@@ -402,10 +402,15 @@ namespace G25.CG.Shared
                         else symResult.Append(FT.DoubleToString(S, (double)O));
 
                     }
-                    else if (O is ScalarOp)
+                    else if (O is UnaryScalarOp)
                     {
-                        ScalarOp SO = (ScalarOp)O;
-                        symResult.Append(ScalarOpToLangString(S, FT, SO));
+                        UnaryScalarOp USO = (UnaryScalarOp)O;
+                        symResult.Append(UnaryScalarOpToLangString(S, FT, USO));
+                    }
+                    else if (O is BinaryScalarOp)
+                    {
+                        BinaryScalarOp BSO = (BinaryScalarOp)O;
+                        symResult.Append(BinaryScalarOpToLangString(S, FT, BSO));
                     }
                     else if (O is RefGA.BasisBlade)
                     {
@@ -445,8 +450,8 @@ namespace G25.CG.Shared
         /// <returns>true when O is a RefGA.Symbolic.ScalarOp and the operations is RefGA.Symbolic.ScalarOp.INVERSE.</returns>
         protected static bool IsScalarOpInverse(Object O)
         {
-            return ((O is RefGA.Symbolic.ScalarOp) &&
-                    ((O as RefGA.Symbolic.ScalarOp).opName == RefGA.Symbolic.ScalarOp.INVERSE));
+            return ((O is RefGA.Symbolic.UnaryScalarOp) &&
+                    ((O as RefGA.Symbolic.UnaryScalarOp).opName == RefGA.Symbolic.UnaryScalarOp.INVERSE));
         }
 
         /// <summary>
@@ -479,7 +484,7 @@ namespace G25.CG.Shared
                 {
                     if (IsScalarOpInverse(T[i]))
                     { // strip the scalarop inverse part, and put T[i] in TI[i]
-                        TI[tiIdx++] = (T[i] as RefGA.Symbolic.ScalarOp).value;
+                        TI[tiIdx++] = (T[i] as RefGA.Symbolic.UnaryScalarOp).value;
                         T[i] = null;
                     }
                 }
@@ -549,7 +554,7 @@ namespace G25.CG.Shared
             else
             {
                 // get numerical part 
-                String numScaleStr = FT.DoubleToString(S, B.scale);
+                string numScaleStr = FT.DoubleToString(S, B.scale);
 
                 // merge symbolic and numerical
                 if (symScaleStr.Length > 0)
@@ -562,7 +567,18 @@ namespace G25.CG.Shared
 
 
         /// <summary>
-        /// Converts a <c>RefGA.Symbolic.ScalarOp</c> to code.
+        /// Converts scalar part of 'value' to ouput language dependent string.
+        /// </summary>
+        private static string ScalarOpValueToLangString(G25.Specification S, G25.FloatType FT, RefGA.Multivector value)
+        {
+            if (!value.IsScalar()) throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpValueToLangString(): value should be scalar, found: " + value.ToString(S.m_basisVectorNames));
+            if (value.IsZero()) return ScalarToLangString(S, FT, RefGA.BasisBlade.ZERO);
+            else return ScalarToLangString(S, FT, value.BasisBlades[0]);
+        }
+        
+
+        /// <summary>
+        /// Converts a <c>RefGA.Symbolic.UnaryScalarOp</c> to code.
         /// 
         /// Handles special cases (such as inversion) and understands floating point
         /// types (e.g., <c>fabsf()</c> is used for floats and <c>fabs()</c> is used for doubles in C.
@@ -571,16 +587,16 @@ namespace G25.CG.Shared
         /// <param name="FT">Floating point type used.</param>
         /// <param name="Op">The operation to convert to code.</param>
         /// <returns>Code for implementing <c>Op</c>c>.</returns>
-        public static string ScalarOpToLangString(G25.Specification S, G25.FloatType FT, RefGA.Symbolic.ScalarOp Op)
+        public static string UnaryScalarOpToLangString(G25.Specification S, G25.FloatType FT, RefGA.Symbolic.UnaryScalarOp Op)
         {
-            string valueStr = null;
-            {
+            string valueStr = ScalarOpValueToLangString(S, FT, Op.value);
+            /*{
                 if (!Op.value.IsScalar()) throw new Exception("G25.CG.Shared.BasisBlade.ScalarOpToLangString(): value should be scalar, found: " + Op.value.ToString(S.m_basisVectorNames));
                 if (Op.value.IsZero()) valueStr = ScalarToLangString(S, FT, RefGA.BasisBlade.ZERO);
                 else valueStr = ScalarToLangString(S, FT, Op.value.BasisBlades[0]);
-            }
+            }*/
 
-            if (Op.opName == ScalarOp.INVERSE)
+            if (Op.opName == UnaryScalarOp.INVERSE)
             {
                 if (FT.type == "float") return "1.0f / (" + valueStr + ")";
                 else if (FT.type == "double") return "1.0 / (" + valueStr + ")";
@@ -590,10 +606,28 @@ namespace G25.CG.Shared
             {
                 return OpNameToLangString(S, FT, Op.opName) + "(" + valueStr + ")";
             }
-
         } // end of function ScalarOpToLangString()
 
-        public static string OpNameToLangString(G25.Specification S, G25.FloatType FT, string opName) {
+        /// <summary>
+        /// Converts a <c>RefGA.Symbolic.BinaryScalarOpToLangString</c> to code.
+        /// 
+        /// Handles special cases (such as inversion) and understands floating point
+        /// types (e.g., <c>fabsf()</c> is used for floats and <c>fabs()</c> is used for doubles in C.
+        /// </summary>
+        /// <param name="S">Used for output language.</param>
+        /// <param name="FT">Floating point type used.</param>
+        /// <param name="Op">The operation to convert to code.</param>
+        /// <returns>Code for implementing <c>Op</c>c>.</returns>
+        public static string BinaryScalarOpToLangString(G25.Specification S, G25.FloatType FT, RefGA.Symbolic.BinaryScalarOp Op)
+        {
+            string value1Str = ScalarOpValueToLangString(S, FT, Op.value1);
+            string value2Str = ScalarOpValueToLangString(S, FT, Op.value2);
+            
+            return OpNameToLangString(S, FT, Op.opName) + "(" + value2Str + ", " + value1Str + ")";
+        } // end of function BinaryScalarOpToLangString()
+
+        public static string OpNameToLangString(G25.Specification S, G25.FloatType FT, string opName)
+        {
             switch (S.m_outputLanguage)
             {
                 case OUTPUT_LANGUAGE.C:
@@ -622,114 +656,122 @@ namespace G25.CG.Shared
 
             { // scalar math operations for C, double precision
                 m_doubleOpsC = new System.Collections.Generic.Dictionary<String, String>();
-                m_doubleOpsC[ScalarOp.SQRT] = "sqrt";
-                m_doubleOpsC[ScalarOp.EXP] = "exp";
-                m_doubleOpsC[ScalarOp.LOG] = "log";
-                m_doubleOpsC[ScalarOp.SIN] = "sin";
-                m_doubleOpsC[ScalarOp.COS] = "cos";
-                m_doubleOpsC[ScalarOp.TAN] = "tan";
-                m_doubleOpsC[ScalarOp.SINH] = "sinh";
-                m_doubleOpsC[ScalarOp.COSH] = "cosh";
-                m_doubleOpsC[ScalarOp.TANH] = "tanh";
-                m_doubleOpsC[ScalarOp.ABS] = "fabs";
+                m_doubleOpsC[UnaryScalarOp.SQRT] = "sqrt";
+                m_doubleOpsC[UnaryScalarOp.EXP] = "exp";
+                m_doubleOpsC[UnaryScalarOp.LOG] = "log";
+                m_doubleOpsC[UnaryScalarOp.SIN] = "sin";
+                m_doubleOpsC[UnaryScalarOp.COS] = "cos";
+                m_doubleOpsC[UnaryScalarOp.TAN] = "tan";
+                m_doubleOpsC[UnaryScalarOp.SINH] = "sinh";
+                m_doubleOpsC[UnaryScalarOp.COSH] = "cosh";
+                m_doubleOpsC[UnaryScalarOp.TANH] = "tanh";
+                m_doubleOpsC[UnaryScalarOp.ABS] = "fabs";
+                m_doubleOpsC[BinaryScalarOp.ATAN2] = "atan2";
             }
 
             { // scalar math operations for C, single precision (C has not single precision math functions)
                 m_floatOpsC = new System.Collections.Generic.Dictionary<String, String>();
-                m_floatOpsC[ScalarOp.SQRT] = "(float)sqrt";
-                m_floatOpsC[ScalarOp.EXP] = "(float)exp";
-                m_floatOpsC[ScalarOp.LOG] = "(float)log";
-                m_floatOpsC[ScalarOp.SIN] = "(float)sin";
-                m_floatOpsC[ScalarOp.COS] = "(float)cos";
-                m_floatOpsC[ScalarOp.TAN] = "(float)tan";
-                m_floatOpsC[ScalarOp.SINH] = "(float)sinh";
-                m_floatOpsC[ScalarOp.COSH] = "(float)cosh";
-                m_floatOpsC[ScalarOp.TANH] = "(float)tanh";
-                m_floatOpsC[ScalarOp.ABS] = "(float)fabs";
+                m_floatOpsC[UnaryScalarOp.SQRT] = "(float)sqrt";
+                m_floatOpsC[UnaryScalarOp.EXP] = "(float)exp";
+                m_floatOpsC[UnaryScalarOp.LOG] = "(float)log";
+                m_floatOpsC[UnaryScalarOp.SIN] = "(float)sin";
+                m_floatOpsC[UnaryScalarOp.COS] = "(float)cos";
+                m_floatOpsC[UnaryScalarOp.TAN] = "(float)tan";
+                m_floatOpsC[UnaryScalarOp.SINH] = "(float)sinh";
+                m_floatOpsC[UnaryScalarOp.COSH] = "(float)cosh";
+                m_floatOpsC[UnaryScalarOp.TANH] = "(float)tanh";
+                m_floatOpsC[UnaryScalarOp.ABS] = "(float)fabs";
+                m_floatOpsC[BinaryScalarOp.ATAN2] = "(float)atan2";
             }
 
             { // scalar math operations for C++, double precision
                 m_doubleOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
-                m_doubleOpsCpp[ScalarOp.SQRT] = "::sqrt";
-                m_doubleOpsCpp[ScalarOp.EXP] = "::exp";
-                m_doubleOpsCpp[ScalarOp.LOG] = "::log";
-                m_doubleOpsCpp[ScalarOp.SIN] = "::sin";
-                m_doubleOpsCpp[ScalarOp.COS] = "::cos";
-                m_doubleOpsCpp[ScalarOp.TAN] = "::tan";
-                m_doubleOpsCpp[ScalarOp.SINH] = "::sinh";
-                m_doubleOpsCpp[ScalarOp.COSH] = "::cosh";
-                m_doubleOpsCpp[ScalarOp.TANH] = "::tanh";
-                m_doubleOpsCpp[ScalarOp.ABS] = "::fabs";
+                m_doubleOpsCpp[UnaryScalarOp.SQRT] = "::sqrt";
+                m_doubleOpsCpp[UnaryScalarOp.EXP] = "::exp";
+                m_doubleOpsCpp[UnaryScalarOp.LOG] = "::log";
+                m_doubleOpsCpp[UnaryScalarOp.SIN] = "::sin";
+                m_doubleOpsCpp[UnaryScalarOp.COS] = "::cos";
+                m_doubleOpsCpp[UnaryScalarOp.TAN] = "::tan";
+                m_doubleOpsCpp[UnaryScalarOp.SINH] = "::sinh";
+                m_doubleOpsCpp[UnaryScalarOp.COSH] = "::cosh";
+                m_doubleOpsCpp[UnaryScalarOp.TANH] = "::tanh";
+                m_doubleOpsCpp[UnaryScalarOp.ABS] = "::fabs";
+                m_doubleOpsCpp[BinaryScalarOp.ATAN2] = "::atan2";
             }
 
             { // scalar math operations for C++, single precision
                 m_floatOpsCpp = new System.Collections.Generic.Dictionary<String, String>();
-                m_floatOpsCpp[ScalarOp.SQRT] = "::sqrtf";
-                m_floatOpsCpp[ScalarOp.EXP] = "::expf";
-                m_floatOpsCpp[ScalarOp.LOG] = "::logf";
-                m_floatOpsCpp[ScalarOp.SIN] = "::sinf";
-                m_floatOpsCpp[ScalarOp.COS] = "::cosf";
-                m_floatOpsCpp[ScalarOp.TAN] = "::tanf";
-                m_floatOpsCpp[ScalarOp.SINH] = "::sinhf";
-                m_floatOpsCpp[ScalarOp.COSH] = "::coshf";
-                m_floatOpsCpp[ScalarOp.TANH] = "::tanhf";
-                m_floatOpsCpp[ScalarOp.ABS] = "::fabsf";
+                m_floatOpsCpp[UnaryScalarOp.SQRT] = "::sqrtf";
+                m_floatOpsCpp[UnaryScalarOp.EXP] = "::expf";
+                m_floatOpsCpp[UnaryScalarOp.LOG] = "::logf";
+                m_floatOpsCpp[UnaryScalarOp.SIN] = "::sinf";
+                m_floatOpsCpp[UnaryScalarOp.COS] = "::cosf";
+                m_floatOpsCpp[UnaryScalarOp.TAN] = "::tanf";
+                m_floatOpsCpp[UnaryScalarOp.SINH] = "::sinhf";
+                m_floatOpsCpp[UnaryScalarOp.COSH] = "::coshf";
+                m_floatOpsCpp[UnaryScalarOp.TANH] = "::tanhf";
+                m_floatOpsCpp[UnaryScalarOp.ABS] = "::fabsf";
+                m_floatOpsCpp[BinaryScalarOp.ATAN2] = "::atan2f";
             }
 
             { // scalar math operations for C#, double precision
                 m_doubleOpsCSharp = new System.Collections.Generic.Dictionary<String, String>();
-                m_doubleOpsCSharp[ScalarOp.SQRT] = "Math.Sqrt";
-                m_doubleOpsCSharp[ScalarOp.EXP] = "Math.Exp";
-                m_doubleOpsCSharp[ScalarOp.LOG] = "Math.Log";
-                m_doubleOpsCSharp[ScalarOp.SIN] = "Math.Sin";
-                m_doubleOpsCSharp[ScalarOp.COS] = "Math.Cos";
-                m_doubleOpsCSharp[ScalarOp.TAN] = "Math.Tan";
-                m_doubleOpsCSharp[ScalarOp.SINH] = "Math.Sinh";
-                m_doubleOpsCSharp[ScalarOp.COSH] = "Math.Cosh";
-                m_doubleOpsCSharp[ScalarOp.TANH] = "Math.Tanh";
-                m_doubleOpsCSharp[ScalarOp.ABS] = "Math.Abs";
+                m_doubleOpsCSharp[UnaryScalarOp.SQRT] = "Math.Sqrt";
+                m_doubleOpsCSharp[UnaryScalarOp.EXP] = "Math.Exp";
+                m_doubleOpsCSharp[UnaryScalarOp.LOG] = "Math.Log";
+                m_doubleOpsCSharp[UnaryScalarOp.SIN] = "Math.Sin";
+                m_doubleOpsCSharp[UnaryScalarOp.COS] = "Math.Cos";
+                m_doubleOpsCSharp[UnaryScalarOp.TAN] = "Math.Tan";
+                m_doubleOpsCSharp[UnaryScalarOp.SINH] = "Math.Sinh";
+                m_doubleOpsCSharp[UnaryScalarOp.COSH] = "Math.Cosh";
+                m_doubleOpsCSharp[UnaryScalarOp.TANH] = "Math.Tanh";
+                m_doubleOpsCSharp[UnaryScalarOp.ABS] = "Math.Abs";
+                m_doubleOpsCSharp[BinaryScalarOp.ATAN2] = "Math.Atan2";
             }
 
             { // scalar math operations for C#, single precision
                 m_floatOpsCSharp = new System.Collections.Generic.Dictionary<String, String>();
-                m_floatOpsCSharp[ScalarOp.SQRT] = "(float)Math.Sqrt";
-                m_floatOpsCSharp[ScalarOp.EXP] = "(float)Math.Exp";
-                m_floatOpsCSharp[ScalarOp.LOG] = "(float)Math.Log";
-                m_floatOpsCSharp[ScalarOp.SIN] = "(float)Math.Sin";
-                m_floatOpsCSharp[ScalarOp.COS] = "(float)Math.Cos";
-                m_floatOpsCSharp[ScalarOp.TAN] = "(float)Math.Tan";
-                m_floatOpsCSharp[ScalarOp.SINH] = "(float)Math.Sinh";
-                m_floatOpsCSharp[ScalarOp.COSH] = "(float)Math.Cosh";
-                m_floatOpsCSharp[ScalarOp.TANH] = "(float)Math.Tanh";
-                m_floatOpsCSharp[ScalarOp.ABS] = "Math.Abs";
+                m_floatOpsCSharp[UnaryScalarOp.SQRT] = "(float)Math.Sqrt";
+                m_floatOpsCSharp[UnaryScalarOp.EXP] = "(float)Math.Exp";
+                m_floatOpsCSharp[UnaryScalarOp.LOG] = "(float)Math.Log";
+                m_floatOpsCSharp[UnaryScalarOp.SIN] = "(float)Math.Sin";
+                m_floatOpsCSharp[UnaryScalarOp.COS] = "(float)Math.Cos";
+                m_floatOpsCSharp[UnaryScalarOp.TAN] = "(float)Math.Tan";
+                m_floatOpsCSharp[UnaryScalarOp.SINH] = "(float)Math.Sinh";
+                m_floatOpsCSharp[UnaryScalarOp.COSH] = "(float)Math.Cosh";
+                m_floatOpsCSharp[UnaryScalarOp.TANH] = "(float)Math.Tanh";
+                m_floatOpsCSharp[UnaryScalarOp.ABS] = "Math.Abs";
+                m_floatOpsCSharp[BinaryScalarOp.ATAN2] = "(float)Math.Atan2";
             }
 
             { // scalar math operations for Java, double precision
                 m_doubleOpsJava = new System.Collections.Generic.Dictionary<String, String>();
-                m_doubleOpsJava[ScalarOp.SQRT] = "Math.sqrt";
-                m_doubleOpsJava[ScalarOp.EXP] = "Math.exp";
-                m_doubleOpsJava[ScalarOp.LOG] = "Math.log";
-                m_doubleOpsJava[ScalarOp.SIN] = "Math.sin";
-                m_doubleOpsJava[ScalarOp.COS] = "Math.cos";
-                m_doubleOpsJava[ScalarOp.TAN] = "Math.tan";
-                m_doubleOpsJava[ScalarOp.SINH] = "Math.sinh";
-                m_doubleOpsJava[ScalarOp.COSH] = "Math.cosh";
-                m_doubleOpsJava[ScalarOp.TANH] = "Math.tanh";
-                m_doubleOpsJava[ScalarOp.ABS] = "Math.abs";
+                m_doubleOpsJava[UnaryScalarOp.SQRT] = "Math.sqrt";
+                m_doubleOpsJava[UnaryScalarOp.EXP] = "Math.exp";
+                m_doubleOpsJava[UnaryScalarOp.LOG] = "Math.log";
+                m_doubleOpsJava[UnaryScalarOp.SIN] = "Math.sin";
+                m_doubleOpsJava[UnaryScalarOp.COS] = "Math.cos";
+                m_doubleOpsJava[UnaryScalarOp.TAN] = "Math.tan";
+                m_doubleOpsJava[UnaryScalarOp.SINH] = "Math.sinh";
+                m_doubleOpsJava[UnaryScalarOp.COSH] = "Math.cosh";
+                m_doubleOpsJava[UnaryScalarOp.TANH] = "Math.tanh";
+                m_doubleOpsJava[UnaryScalarOp.ABS] = "Math.abs";
+                m_doubleOpsJava[BinaryScalarOp.ATAN2] = "Math.Atan";
             }
 
             { // scalar math operations for Java, single precision
                 m_floatOpsJava = new System.Collections.Generic.Dictionary<String, String>();
-                m_floatOpsJava[ScalarOp.SQRT] = "(float)Math.sqrt";
-                m_floatOpsJava[ScalarOp.EXP] = "(float)Math.exp";
-                m_floatOpsJava[ScalarOp.LOG] = "(float)Math.log";
-                m_floatOpsJava[ScalarOp.SIN] = "(float)Math.sin";
-                m_floatOpsJava[ScalarOp.COS] = "(float)Math.cos";
-                m_floatOpsJava[ScalarOp.TAN] = "(float)Math.tan";
-                m_floatOpsJava[ScalarOp.SINH] = "(float)Math.sinh";
-                m_floatOpsJava[ScalarOp.COSH] = "(float)Math.cosh";
-                m_floatOpsJava[ScalarOp.TANH] = "(float)Math.tanh";
-                m_floatOpsJava[ScalarOp.ABS] = "Math.abs";
+                m_floatOpsJava[UnaryScalarOp.SQRT] = "(float)Math.sqrt";
+                m_floatOpsJava[UnaryScalarOp.EXP] = "(float)Math.exp";
+                m_floatOpsJava[UnaryScalarOp.LOG] = "(float)Math.log";
+                m_floatOpsJava[UnaryScalarOp.SIN] = "(float)Math.sin";
+                m_floatOpsJava[UnaryScalarOp.COS] = "(float)Math.cos";
+                m_floatOpsJava[UnaryScalarOp.TAN] = "(float)Math.tan";
+                m_floatOpsJava[UnaryScalarOp.SINH] = "(float)Math.sinh";
+                m_floatOpsJava[UnaryScalarOp.COSH] = "(float)Math.cosh";
+                m_floatOpsJava[UnaryScalarOp.TANH] = "(float)Math.tanh";
+                m_floatOpsJava[UnaryScalarOp.ABS] = "Math.abs";
+                m_floatOpsJava[BinaryScalarOp.ATAN2] = "(float)Math.atan2";
             }
 
         }

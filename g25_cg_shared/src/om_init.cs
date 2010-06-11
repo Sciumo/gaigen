@@ -257,6 +257,7 @@ namespace G25.CG.Shared
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
+        /// <param name="FT">Float type.</param>
         /// <param name="matrixMode">When true, generates code for setting from matrix instead of vector images.</param>
         /// <param name="transpose">When this parameter is true and <c>matrixMode</c> is true, generates code for setting from transpose matrix.</param>
         public static void WriteSetVectorImages(Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, bool matrixMode, bool transpose)
