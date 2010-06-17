@@ -237,8 +237,28 @@ namespace G25.CG.Shared.Func
                             if (m_specification.m_GMV.Group(g)[0].Grade() != m_gradeIdx)
                                 inverseGroupBitmap |= (1 << g);
                             else groupBitmap |= (1 << g);
-                        argTable["groupBitmap"] = groupBitmap.ToString();
-                        argTable["inverseGroupBitmap"] = inverseGroupBitmap.ToString();
+
+                        string groupBitmapString;
+                        string inverseGroupBitmapString;
+                        if (m_specification.OutputCppOrC())
+                        {
+                            groupBitmapString = groupBitmap.ToString();
+                            inverseGroupBitmapString = inverseGroupBitmap.ToString();
+                        }
+                        else
+                        {
+                            groupBitmapString = "0";
+                            inverseGroupBitmapString = "0";
+                            for (int g = 0; g < m_specification.m_GMV.NbGroups; g++)
+                            {
+                                string groupStr = " | GroupBitmap.GROUP_" + g;
+                                if ((groupBitmap & (1 << g)) != 0)
+                                    groupBitmapString = groupBitmapString + groupStr;
+                                else inverseGroupBitmapString = inverseGroupBitmapString + groupStr;
+                            }
+                        }
+                        argTable["groupBitmap"] = groupBitmapString;
+                        argTable["inverseGroupBitmap"] = inverseGroupBitmapString;
                     }
                 }
                 if (m_gmvFunc) // GMV test

@@ -491,8 +491,8 @@ public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int 
 		// fill array with random values
 		for (int i = 0; i < <%S.m_dimension%>; i++) 
 			randomValues[i] = ((basisVectorBitmap & (1 << i)) == 0)
-				? (<%FT.DoubleToString(S, -1.0)%> + <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>())
-				: <%FT.DoubleToString(S, 0.0)%>;
+				? <%FT.DoubleToString(S, 0.0)%> 
+				: (<%FT.DoubleToString(S, -1.0)%> + <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>());
 		
 		// make it a multivector:
 		randomVector.<%G25.CG.CSJ.Util.GetFunctionName(S, "set")%>(GroupBitmap.GRADE_1, randomValues);
@@ -561,6 +561,7 @@ ${CODEBLOCK BuiltinParserSource_CSharp_Java}
 <%{
 	string BOOL_TYPE = (S.OutputJava()) ? "boolean" : "bool";
 	string FINAL = (S.OutputJava()) ? "final " : "";
+	string CONST = (S.OutputJava()) ? "" : "const ";
 %>
 
 
@@ -615,17 +616,17 @@ namespace <%S.m_namespace%>_ns {
 		private <%FT.type%>[] coord = new <%FT.type%>[<%1 << S.m_dimension%>];
 
 		// TOKEN IDs: (for internal use only)
-		private <%FINAL%>int T_BAD_IDENTIFIER = -100;
-		private <%FINAL%>int T_BAD_NUMBER = -10;
-		private <%FINAL%>int T_BAD_CHARACTER = -1;
-		private <%FINAL%>int T_END_OF_STRING = 0;
-		private <%FINAL%>int T_WEDGE = 1;
-		private <%FINAL%>int T_MUL = 2;
-		private <%FINAL%>int T_PLUS = 3;
-		private <%FINAL%>int T_MINUS = 4;
-		private <%FINAL%>int T_NUMBER = 10;
-		private <%FINAL%>int T_FIRST_BASIS_VECTOR = 100;
-		private <%FINAL%>int T_LAST_BASIS_VECTOR = 104;
+		private <%FINAL%><%CONST%>int T_BAD_IDENTIFIER = -100;
+		private <%FINAL%><%CONST%>int T_BAD_NUMBER = -10;
+		private <%FINAL%><%CONST%>int T_BAD_CHARACTER = -1;
+		private <%FINAL%><%CONST%>int T_END_OF_STRING = 0;
+		private <%FINAL%><%CONST%>int T_WEDGE = 1;
+		private <%FINAL%><%CONST%>int T_MUL = 2;
+		private <%FINAL%><%CONST%>int T_PLUS = 3;
+		private <%FINAL%><%CONST%>int T_MINUS = 4;
+		private <%FINAL%><%CONST%>int T_NUMBER = 10;
+		private <%FINAL%><%CONST%>int T_FIRST_BASIS_VECTOR = 100;
+		private <%FINAL%><%CONST%>int T_LAST_BASIS_VECTOR = <%100 + S.m_dimension%>;
 
 		private <%FINAL%>ParseException GetException(<%FINAL%>String reason)
 		{
@@ -686,9 +687,10 @@ namespace <%S.m_namespace%>_ns {
 	   
 
 		private <%FINAL%>int getNextToken() {
-
+			int l = length(inputString);
+			
 			// skip all whitespace and other empty stuff, keep track of line index
-			while (startIdx < length(inputString) && (charAt(inputString, startIdx) >= 0) && (charAt(inputString, startIdx) <= ' ')) {
+			while ((startIdx < l) && (charAt(inputString, startIdx) >= 0) && (charAt(inputString, startIdx) <= ' ')) {
 				if (charAt(inputString, startIdx) == 0x0A) { // start of new line
 					lineIdx++;
 					currentLineStart = startIdx+1;
@@ -697,7 +699,7 @@ namespace <%S.m_namespace%>_ns {
 			}
 
 			// detect end of string
-			if (startIdx == length(inputString)) {
+			if (startIdx == l) {
 				startIdx = endIdx;
 				return T_END_OF_STRING; // EOS
 			}
@@ -713,7 +715,7 @@ namespace <%S.m_namespace%>_ns {
 
 				// eat up all digits and at most one point
 				<%BOOL_TYPE%> pointFound = false;
-				while (isDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '.')) {
+				while ((endIdx < l) && (isDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '.'))) {
 					endIdx++;
 					if (charAt(inputString, endIdx) == '.') {
 						endIdx++;
@@ -723,7 +725,7 @@ namespace <%S.m_namespace%>_ns {
 				}
 	    		
 				if (pointFound) { // if point found, eat up all digits
-					while (isDigit(charAt(inputString, endIdx))) {
+					while ((endIdx < l) && isDigit(charAt(inputString, endIdx))) {
 						endIdx++;
 					}
 				}
@@ -740,7 +742,7 @@ namespace <%S.m_namespace%>_ns {
 					if (!isDigit(charAt(inputString, endIdx))) return T_BAD_NUMBER; // bad number
 
 					// eat up all digits
-					while (isDigit(charAt(inputString, endIdx))) {
+					while ((endIdx < l) && isDigit(charAt(inputString, endIdx))) {
 						endIdx++;
 					}
 				}
@@ -752,7 +754,7 @@ namespace <%S.m_namespace%>_ns {
 				// find end of chain of numbers, letters and '_'
 				endIdx = startIdx + 1;
 
-				while (isLetterOrDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '_')) endIdx++;
+				while ((endIdx < l) && (isLetterOrDigit(charAt(inputString, endIdx)) || (charAt(inputString, endIdx) == '_'))) endIdx++;
 				endIdx--;  // end index is inclusive
 
 				// see which basis vector it is

@@ -143,6 +143,7 @@
   <function name="extractGrade2" arg1="mv" floatType="float"/>
   <function name="extractGrade0" arg1="rotorE3GA" floatType="double"/>
   <function name="extractGrade2" arg1="rotorE3GA" floatType="double"/>
+  <function name="extractGrade2" arg1="mv" floatType="double"/>
 
 
   <function name="random_double" optionGen="mt"/>
