@@ -156,9 +156,11 @@ Maybe fix the float type stuff
 			
 			V runtime geometric product
 			
-			log (3D)
+			V log (3D)
 			
-			testing code for C# and Java, test everything, fix all bugs
+			-> testing code for C# and Java, test everything, fix all bugs
+			
+			GMV log 3d for C#
 			
 			makefile for all platforms
 			
