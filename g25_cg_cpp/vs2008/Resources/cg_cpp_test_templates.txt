@@ -1860,7 +1860,7 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 	int NB_BINS = 256;
 	const int NB_LOOPS = NB_BINS * 1024;
 	int bins[256];
-	<%FT.type%> avg = 0.0;
+	<%FT.type%> avg = <%FT.DoubleToString(S, 0.0)%>;
 	<%FT.type%> r;
 	int idx, i;
 	

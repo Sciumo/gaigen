@@ -1573,8 +1573,9 @@ namespace G25.CG.Shared
                     normString = ((m < 0) ? "-" : "") + normVarName;
                 }
                 else normString = FAI[1].Name;
-                //string allocCcode = "cc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];";
+                //string allocCcode = 
                 SB.AppendLine("if (ac[" + g + "] != null) {");
+                SB.AppendLine("\tcc[" + g + "] = new " + FT.type + "[" + gmv.Group(g).Length + "];");
                 SB.AppendLine("\t" + funcName + "(ac[" + g + "], cc[" + g + "], " + normString + ");");
                 SB.AppendLine("}");
             }

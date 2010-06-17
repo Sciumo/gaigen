@@ -301,6 +301,9 @@
   <function name="sin" arg1="mv" floatType="double"/>
   <function name="cos" arg1="mv" floatType="double"/>
 
+  <function name="log" arg1="rotorE3GA" optionType="euclidean" floatType="double"/>
+  <function name="log" arg1="mv" optionType="euclidean" floatType="double"/>
+  
   <function name="random_blade" floatType="float" metric="euclidean" />
   <function name="random_versor" floatType="float"/>
   <function name="random_dualSphere" floatType="double"/>
