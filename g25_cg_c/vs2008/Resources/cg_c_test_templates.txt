@@ -2719,3 +2719,105 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// gmv = gmv
+// gmvName = name of gmv
+// euclideanBasisVectorBitmap = bitmap of basis vectors which are Euclidean
+// targetFuncName = name of function to test
+// randomBladeFuncName = name of random GMV blade function
+// randomScalarFuncName = name of random generator function
+// opGmvFunc = outer product for GMVs
+// expGmvFunc = exponential for GMVs
+// subtractGmvFuncName = subtract GMVs
+${CODEBLOCK testEuclideanLogGMV}
+int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	const int NB_LOOPS = 100 + NB_TESTS_SCALER / <%S.m_GMV.NbCoordinates%>;
+	<%gmvName%> v1, v2, B, R1, R2, L, dif;
+	<%FT.type%> s1, s2;
+	int g, i;
+	int basisVectorBitmap = <%euclideanBasisVectorBitmap%>;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s1 = <%FT.DoubleToString(S, 0.1)%> + <%FT.DoubleToString(S, 10.0)%> * <%randomScalarFuncName%>();
+		s2 = <%FT.DoubleToString(S, 0.1)%> + <%FT.DoubleToString(S, 10.0)%> * <%randomScalarFuncName%>();
+		g = 1;
+		<%randomBladeFuncName%>(&v1, s1, g, basisVectorBitmap);
+		<%randomBladeFuncName%>(&v2, s2, g, basisVectorBitmap);
+		
+		<%opGmvFunc%>(&B, &v1, &v2);
+		
+		<%expGmvFunc%>(&R1, &B, 12);
+		
+		// every now and then, enforce one of the special cases
+		if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.01)%>) {
+			if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.5)%>)
+				<%gmvName%>_setScalar(&R1, <%FT.DoubleToString(S, 1.0)%>); // no rotation
+			else <%gmvName%>_setScalar(&R1, <%FT.DoubleToString(S, -1.0)%>); // 180 degree rotation
+		}
+		
+		<%targetFuncName%>(&L, &R1);
+		
+		<%expGmvFunc%>(&R2, &L, 12);
+		
+		<%subtractGmvFuncName%>(&dif, &R1, &R2);
+
+		if (<%gmvName%>_largestCoordinate(&dif) > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			printf("<%targetFuncName%>() test failed (largest coordinate = %f)\n", <%gmvName%>_largestCoordinate(&dif));
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// rotorType = type of rotor
+// bivectorName = name of bivector type
+// rotorName = name of rotor type (rotor = exp(bivector))
+// targetFuncName = name of function to test
+// randomBivectorFuncName = name of random GMV blade function
+// randomScalarFuncName = name of random generator function
+// expBivectorFunc = exponential for bivector type
+// subtractRotorFuncName = subtract rotor type
+${CODEBLOCK testEuclideanLogSMV}
+int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	const int NB_LOOPS = 100 + NB_TESTS_SCALER / <%rotorType.NbCoordinates%>;
+	<%rotorName%> R1, R2, dif;
+	<%bivectorName%> B, L;
+	<%FT.type%> s;
+	int i;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s = <%FT.DoubleToString(S, 0.1)%> + <%FT.DoubleToString(S, 10.0)%> * <%randomScalarFuncName%>(); 
+		<%randomBivectorFuncName%>(&B, s);
+		
+		<%expBivectorFunc%>(&R1, &B);
+		
+		// every now and then, enforce one of the special cases
+		if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.01)%>) {
+			if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.5)%>)
+				<%rotorName%>_setScalar(&R1, <%FT.DoubleToString(S, 1.0)%>); // no rotation
+			else <%rotorName%>_setScalar(&R1, <%FT.DoubleToString(S, -1.0)%>); // 180 degree rotation
+		}
+		
+		<%targetFuncName%>(&L, &R1);
+		
+		<%expBivectorFunc%>(&R2, &L);
+		
+		<%subtractRotorFuncName%>(&dif, &R1, &R2);
+
+		if (<%rotorName%>_largestCoordinate(&dif) > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			printf("<%targetFuncName%>() test failed (largest coordinate = %f)\n", <%rotorName%>_largestCoordinate(&dif));
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}

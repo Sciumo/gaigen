@@ -1307,10 +1307,12 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK logEuclidean}
 
 void <%functionName%>(<%mvType%> *dst, const <%mvType%> *src) {
-	<%FT.type%> _g2norm2_ = <%norm2FuncName%>(src);
+	<%mvType%> grade2part;
+	<%FT.type%> _g2norm2_;
 	<%FT.type%> _scalarPart_ = <%mvType%>_scalar(src);
 	<%FT.type%> _g2norm_;
-	<%mvType%> grade2part;
+	<%grade2FuncName%>(&grade2part, src);
+	_g2norm2_ = <%norm2FuncName%>(&grade2part);
 
 	if (_g2norm2_ <= <%FT.DoubleToString(S, 0.0)%>) {
 		if (_scalarPart_ < <%FT.DoubleToString(S, 0.0)%>) {
@@ -1324,7 +1326,6 @@ void <%functionName%>(<%mvType%> *dst, const <%mvType%> *src) {
 	else {
 		_g2norm_ = (<%FT.type%>)sqrt(_g2norm2_);
 
-		<%grade2FuncName%>(&grade2part, src);
 
 		<%scalarGpFuncName%>(dst, &grade2part, (<%FT.type%>)atan2(_g2norm_, _scalarPart_)/_g2norm_);
 	}

@@ -2551,6 +2551,13 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 		
 		R1 = <%expGmvFunc%>(B);
 		
+		// every now and then, enforce one of the special cases
+		if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.01)%>) {
+			if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.5)%>)
+				R1.set(<%FT.DoubleToString(S, 1.0)%>); // no rotation
+			else R1.set(<%FT.DoubleToString(S, -1.0)%>); // 180 degree rotation
+		}
+		
 		L = <%targetFuncName%>(R1);
 		
 		R2 = <%expGmvFunc%>(L);
@@ -2591,6 +2598,13 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 		B = <%randomBivectorFuncName%>(s);
 		
 		R1 = <%expBivectorFunc%>(B);
+		
+		// every now and then, enforce one of the special cases
+		if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.01)%>) {
+			if (<%randomScalarFuncName%>() < <%FT.DoubleToString(S, 0.5)%>)
+				R1.set(<%FT.DoubleToString(S, 1.0)%>); // no rotation
+			else R1.set(<%FT.DoubleToString(S, -1.0)%>); // 180 degree rotation
+		}
 		
 		L = <%targetFuncName%>(R1);
 		
