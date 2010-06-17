@@ -1959,7 +1959,8 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK logEuclidean}
 
 <%mvType%> <%functionName%>(const <%mvType%> &R) {
-	<%FT.type%> _g2norm2_ = <%norm2FuncName%>(R);
+	<%mvType%> G2 = <%grade2FuncName%>(R);
+	<%FT.type%> _g2norm2_ = <%norm2FuncName%>(G2);
 
 	<%FT.type%> _scalarPart_ = R.get_scalar();
 
@@ -1976,7 +1977,7 @@ ${CODEBLOCK logEuclidean}
 	else {
 		<%FT.type%> _g2norm_ = ::sqrt(_g2norm2_);
 
-		return <%scalarGpFuncName%>(<%grade2FuncName%>(R), ::atan2(_scalarPart_, _g2norm_)/_g2norm_);
+		return <%scalarGpFuncName%>(G2, ::atan2(_g2norm_, _scalarPart_)/_g2norm_);
 	}
 }
 

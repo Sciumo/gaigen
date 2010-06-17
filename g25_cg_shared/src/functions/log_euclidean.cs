@@ -163,7 +163,6 @@ namespace G25.CG.Shared.Func
                     // because of lack of overloading, function names include names of argument types
                     G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(m_specification, FT, m_fgs, FAI);
 
-//                    string funcName = FT.GetMangledName(m_specification, m_fgs.OutputName);
                     m_funcName[FT.type] = CF.OutputName;
 
                     // setup hashtable with template arguments:
@@ -198,35 +197,41 @@ namespace G25.CG.Shared.Func
                         bool nPtr = false;
                         bool declareN = true;
 
-                        
+
                         // get grade 2 norm, scalar part
                         I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, m_grade2norm2Value, norm2Name, nPtr, declareN));
                         I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, m_grade0Value, scalarPartName, nPtr, declareN));
 
                         // setup checks for grade 2 == 0, grade 0 < 0.0
-                        System.Collections.Generic.List<G25.CG.Shared.Instruction> ifGrade2ZeroI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+                        List<G25.CG.Shared.Instruction> specialI = new List<G25.CG.Shared.Instruction>();
+                        List<G25.CG.Shared.Instruction> normalI = new List<G25.CG.Shared.Instruction>();
 
-                        // setup checks for grade 0 < 0.0
-                        System.Collections.Generic.List<G25.CG.Shared.Instruction> ifI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
-                        System.Collections.Generic.List<G25.CG.Shared.Instruction> elseI = new System.Collections.Generic.List<G25.CG.Shared.Instruction>();
+                        { // special cases
+                            // setup checks for grade 0 < 0.0
+                            List<G25.CG.Shared.Instruction> ifI = new List<G25.CG.Shared.Instruction>();
+                            List<G25.CG.Shared.Instruction> elseI = new List<G25.CG.Shared.Instruction>();
 
-                        // either return PI * ANY_GRADE2_BLADE or 0
-                        RefGA.Multivector arbRot360 = new RefGA.Multivector(new RefGA.BasisBlade(m_grade2Value.BasisBlades[0].bitmap, Math.PI));
-                        ifI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs + 2, m_returnType, FT, mustCast, arbRot360)); // return 360 degree rotation in arbitrary plane
-                        elseI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs+2, m_returnType, FT, mustCast, RefGA.Multivector.ZERO)); // return zero if grade2 == 0 and grade0 >= 0
+                            // either return PI * ANY_GRADE2_BLADE or 0
+                            RefGA.Multivector arbRot360 = new RefGA.Multivector(new RefGA.BasisBlade(m_grade2Value.BasisBlades[0].bitmap, Math.PI));
+                            ifI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs + 2, m_returnType, FT, mustCast, arbRot360)); // return 360 degree rotation in arbitrary plane
+                            elseI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs + 2, m_returnType, FT, mustCast, RefGA.Multivector.ZERO)); // return zero if grade2 == 0 and grade0 >= 0
 
-                        ifGrade2ZeroI.Add(new G25.CG.Shared.IfElseInstruction(nbTabs+1, scalarPartName + " < " + FT.DoubleToString(m_specification, 0.0), ifI, elseI));
+                            specialI.Add(new G25.CG.Shared.IfElseInstruction(nbTabs + 1, scalarPartName + " < " + FT.DoubleToString(m_specification, 0.0), ifI, elseI));
+                        }
 
-                        I.Add(new G25.CG.Shared.IfElseInstruction(nbTabs, norm2Name + " <= " + FT.DoubleToString(m_specification, 0.0), ifGrade2ZeroI, null));
+                        { // normal case
+                            // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
+                            RefGA.Multivector normValue = new RefGA.Multivector(normName);
+                            RefGA.Multivector grade0Value = new RefGA.Multivector(scalarPartName);
+                            normalI.Add(new G25.CG.Shared.AssignInstruction(nbTabs + 1, FT, FT, mustCast, RefGA.Symbolic.UnaryScalarOp.Sqrt(new RefGA.Multivector(norm2Name)), normName, nPtr, declareN));
+                            normalI.Add(new G25.CG.Shared.AssignInstruction(nbTabs + 1, FT, FT, mustCast, RefGA.Symbolic.BinaryScalarOp.Atan2(normValue, grade0Value), mulName, nPtr, declareN, "/", normValue));
 
-                        // where mulName = atan2(sqrt(grade2norm2), grade0) / sqrt(grade2norm2)
-                        RefGA.Multivector normValue = new RefGA.Multivector(normName);
-                        RefGA.Multivector grade0Value = new RefGA.Multivector(scalarPartName);
-                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.UnaryScalarOp.Sqrt(new RefGA.Multivector(norm2Name)), normName, nPtr, declareN));
-                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, FT, FT, mustCast, RefGA.Symbolic.BinaryScalarOp.Atan2(normValue, grade0Value), mulName, nPtr, declareN, "/", normValue));
+                            // result = input / n2
+                            normalI.Add(new G25.CG.Shared.ReturnInstruction(nbTabs + 1, m_returnType, FT, mustCast, m_returnValue));
+                        }
 
-                        // result = input / n2
-                        I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_returnType, FT, mustCast, m_returnValue));
+                        I.Add(new G25.CG.Shared.IfElseInstruction(nbTabs, norm2Name + " <= " + FT.DoubleToString(m_specification, 0.0), specialI, normalI));
+
                     }
 
                     // because of lack of overloading, function names include names of argument types
@@ -268,9 +273,13 @@ namespace G25.CG.Shared.Func
         // used for testing:
         protected Dictionary<string, string> m_randomScalarFuncName = new Dictionary<string, string>();
         protected Dictionary<string, string> m_randomBladeFuncName = new Dictionary<string, string>();
-        protected Dictionary<string, string> m_reverseFuncName = new Dictionary<string, string>();
-        protected Dictionary<string, string> m_spFuncName = new Dictionary<string, string>();
-        protected Dictionary<string, string> m_randomSmvFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_opFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_expFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_subtractGmvFuncName = new Dictionary<string, string>();
+        
+        protected Dictionary<string, string> m_randomBivectorFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_expBivectorFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_subtractRotorFuncName = new Dictionary<string, string>();
 
         /// <summary>
         /// This function checks the dependencies for the _testing_ code of this function. If dependencies are
@@ -284,17 +293,25 @@ namespace G25.CG.Shared.Func
                 FloatType FT = m_specification.GetFloatType(floatName);
 
                 m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new String[0], FT.type, FT, null);
-                m_reverseFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "reverse", new String[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
-                m_spFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "sp", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, m_G25M.m_name);
 
                 if (m_gmvFunc)
                 {
                     m_randomBladeFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_blade", new String[0], m_specification.m_GMV.Name, FT, null);
+                    m_expFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new String[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, m_G25M.m_name);
+                    m_opFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "op", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
+                    m_subtractGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
                 }
                 else if (m_smv != null)
                 {
+                    //argTable["randomBivectorFuncName"] = m_randomBivectorFuncName[FT.type];
+                    //argTable["expBivectorFunc"] = m_expBivectorFuncName[FT.type];
+                    //argTable["subtractRotorFuncName"] = m_subtractRotorFuncName[FT.type];
+
                     string defaultReturnTypeName = null;
-                    m_randomSmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_smv.Name, new String[0], defaultReturnTypeName, FT, null);
+                    string bivectorName = (m_returnType as G25.SMV).Name;
+                    m_randomBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + (m_returnType as G25.SMV).Name, new String[0], defaultReturnTypeName, FT, null);
+                    m_expBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new String[] { bivectorName }, m_smv.Name, FT, m_G25M.m_name);
+                    m_subtractRotorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new String[] { m_smv.Name, m_smv.Name }, m_smv.Name, FT, null);
                 }
             }
         }
@@ -324,12 +341,14 @@ namespace G25.CG.Shared.Func
                     argTable["S"] = m_specification;
                     argTable["FT"] = FT;
                     argTable["gmvName"] = FT.GetMangledName(m_specification, m_specification.m_GMV.Name);
+                    argTable["euclideanBasisVectorBitmap"] = m_G25M.GetEuclideanBasisVectorBitmap();
                     argTable["testFuncName"] = testFuncName;
                     argTable["targetFuncName"] = m_funcName[FT.type];
                     argTable["randomScalarFuncName"] = m_randomScalarFuncName[FT.type];
                     argTable["randomBladeFuncName"] = m_randomBladeFuncName[FT.type];
-                    argTable["reverseFuncName"] = m_reverseFuncName[FT.type];
-                    argTable["spFuncName"] = m_spFuncName[FT.type];
+                    argTable["opGmvFunc"] = m_opFuncName[FT.type];
+                    argTable["expGmvFunc"] = m_expFuncName[FT.type];
+                    argTable["subtractGmvFuncName"] = m_subtractGmvFuncName[FT.type];
                     m_cgd.m_cog.EmitTemplate(defSB, "testEuclideanLogGMV", argTable);
                 }
                 else if ((m_smv != null) && m_smv.CanConvertToGmv(m_specification)) // SMV test
@@ -338,16 +357,15 @@ namespace G25.CG.Shared.Func
                     System.Collections.Hashtable argTable = new System.Collections.Hashtable();
                     argTable["S"] = m_specification;
                     argTable["FT"] = FT;
-                    argTable["gmvName"] = FT.GetMangledName(m_specification, m_specification.m_GMV.Name);
-                    argTable["smv"] = m_smv;
-                    argTable["smvName"] = FT.GetMangledName(m_specification, m_smv.Name);
-                    argTable["resultSmvName"] = FT.GetMangledName(m_specification, m_fgs.m_returnTypeName);
+                    argTable["rotorType"] = m_smv;
+                    argTable["rotorName"] = FT.GetMangledName(m_specification, m_smv.Name);
+                    argTable["bivectorName"] = FT.GetMangledName(m_specification, m_fgs.m_returnTypeName);
                     argTable["testFuncName"] = testFuncName;
                     argTable["targetFuncName"] = m_funcName[FT.type];
                     argTable["randomScalarFuncName"] = m_randomScalarFuncName[FT.type];
-                    argTable["randomSmvFuncName"] = m_randomSmvFuncName[FT.type];
-                    argTable["reverseFuncName"] = m_reverseFuncName[FT.type];
-                    argTable["spFuncName"] = m_spFuncName[FT.type];
+                    argTable["randomBivectorFuncName"] = m_randomBivectorFuncName[FT.type];
+                    argTable["expBivectorFunc"] = m_expBivectorFuncName[FT.type];
+                    argTable["subtractRotorFuncName"] = m_subtractRotorFuncName[FT.type];
                     m_cgd.m_cog.EmitTemplate(defSB, "testEuclideanLogSMV", argTable);
                 }
             }

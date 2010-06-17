@@ -7,9 +7,9 @@
 	coordStorage="array"
 	defaultOperatorBindings="true"
 	dimension="5"
-  	reportUsage="true"
+  	reportUsage="false"
   	gmvCode="expand"
-  	parser="antlr"
+  	parser="builtin"
   	testSuite="true"
 	copyright="Copyright (C) 2008 Some Random Person"
 >

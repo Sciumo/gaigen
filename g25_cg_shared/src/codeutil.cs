@@ -623,7 +623,7 @@ namespace G25.CG.Shared
             string value1Str = ScalarOpValueToLangString(S, FT, Op.value1);
             string value2Str = ScalarOpValueToLangString(S, FT, Op.value2);
             
-            return OpNameToLangString(S, FT, Op.opName) + "(" + value2Str + ", " + value1Str + ")";
+            return OpNameToLangString(S, FT, Op.opName) + "(" + value1Str + ", " + value2Str + ")";
         } // end of function BinaryScalarOpToLangString()
 
         public static string OpNameToLangString(G25.Specification S, G25.FloatType FT, string opName)

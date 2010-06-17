@@ -177,6 +177,8 @@ Maybe fix the float type stuff
 
 	SourceForge website HTML pages
 	
+	Python version: ask Liam Candy liam.candy@gmail.com
+	
 	
 	Announce on GA net
 	

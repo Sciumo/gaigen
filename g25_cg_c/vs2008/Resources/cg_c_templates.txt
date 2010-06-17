@@ -1326,7 +1326,7 @@ void <%functionName%>(<%mvType%> *dst, const <%mvType%> *src) {
 
 		<%grade2FuncName%>(&grade2part, src);
 
-		<%scalarGpFuncName%>(dst, &grade2part, (<%FT.type%>)atan2(_scalarPart_, _g2norm_)/_g2norm_);
+		<%scalarGpFuncName%>(dst, &grade2part, (<%FT.type%>)atan2(_g2norm_, _scalarPart_)/_g2norm_);
 	}
 }
 

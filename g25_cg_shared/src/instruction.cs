@@ -224,7 +224,7 @@ namespace G25.CG.Shared
         /// <param name="value">The assigned value.</param>
         /// <param name="postOp">'post operation'. Currently allows for global multiplier (<c>"*"</c>) or divisor (<c>"/"</c>).</param>
         /// <param name="postOpValue">Value to use with 'post operation' (currently must be scalar).</param>
-        public AssignOrReturnInstruction(int nbTabs, G25.VariableType T, G25.FloatType FT, bool mustCast, RefGA.Multivector value, String postOp, RefGA.Multivector postOpValue)
+        public AssignOrReturnInstruction(int nbTabs, G25.VariableType T, G25.FloatType FT, bool mustCast, RefGA.Multivector value, string postOp, RefGA.Multivector postOpValue)
             : base(nbTabs)
         {
             m_type = T;
@@ -250,7 +250,7 @@ namespace G25.CG.Shared
             // TODO: currently only for *= and /=
 
             // get string of value:
-            String postOpValueStr;
+            string postOpValueStr;
             RefGA.Multivector sc = m_postOpValue.ScalarPart();
             if (sc.IsZero()) postOpValueStr = CodeUtil.ScalarToLangString(S, m_floatType, RefGA.BasisBlade.ZERO);
             else postOpValueStr = CodeUtil.ScalarToLangString(S, m_floatType, sc.BasisBlades[0]);
@@ -286,7 +286,7 @@ namespace G25.CG.Shared
         /// <summary>
         /// 'post operation'. Currently allows for global multiplier (<c>"*"</c>) or divisor (<c>"/"</c>).
         /// </summary>
-        public String m_postOp;
+        public string m_postOp;
 
         /// <summary>
         /// Value to use with 'post operation' (currently must be scalar).
@@ -401,7 +401,7 @@ namespace G25.CG.Shared
         /// <summary>
         /// The variable name to assign to.
         /// </summary>
-        public String m_name;
+        public string m_name;
 
         /// <summary>
         /// Is variable m_name a pointer?
@@ -409,7 +409,7 @@ namespace G25.CG.Shared
         public bool m_ptr;
 
         /// <summary>
-        /// If true, code for declraring the variable is also generated.
+        /// If true, code for declaring the variable is also generated.
         /// </summary>
         public bool m_declareVariable;
 
