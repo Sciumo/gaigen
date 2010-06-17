@@ -86,7 +86,7 @@ namespace G25.CG.CSharp
             if ((cgd.GetNbErrors() == 0) && (cgd.GetNbMissingDependencies() == 0) && S.m_generateTestSuite)
             {
                 // if no errors, then generate testing code
-                //TestSuite.GenerateCode(S, cgd, FGI);
+                TestSuite.GenerateCode(S, cgd, FGI);
             }
 
 

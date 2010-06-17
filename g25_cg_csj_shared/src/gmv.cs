@@ -90,7 +90,7 @@ namespace G25.CG.CSJ
             SB.Append(funcDecl);
             SB.AppendLine(" {");
             for (int g = 0; g < gmv.NbGroups; g++)
-                SB.AppendLine("\t\tm_c[(int)" + GroupBitmap.GetGroupBitmapCode(g) + "] = null;");
+                SB.AppendLine("\t\tm_c[" + g + "] = null;");
 
             if (S.m_reportUsage)
             {
@@ -120,7 +120,7 @@ namespace G25.CG.CSJ
 
             SB.Append(funcDecl);
             SB.AppendLine(" {");
-            SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(GroupBitmap.GROUP_" + (1 << gmv.GetGroupIdx(RefGA.BasisBlade.ONE)) + ");");
+            SB.AppendLine("\t\t" + GetAllocateGroupsString(S) + "(GroupBitmap.GROUP_" + gmv.GetGroupIdx(RefGA.BasisBlade.ONE) + ");");
             SB.AppendLine("\t\tm_c[0][0] = val;");
 
             if (S.m_reportUsage)
@@ -379,8 +379,8 @@ namespace G25.CG.CSJ
             SB.Append(funcDecl);
             SB.AppendLine(" {");
             SB.AppendLine("\t\treturn (m_c[" + groupIdx + "] == null) ? " +
-                "m_c[" + groupIdx + "][" + elementIdx + "] : " +
-                FT.DoubleToString(S, 0.0) + ";");
+                FT.DoubleToString(S, 0.0) + ": " + 
+                "m_c[" + groupIdx + "][" + elementIdx + "];");
             SB.AppendLine("\t}");
         }
 

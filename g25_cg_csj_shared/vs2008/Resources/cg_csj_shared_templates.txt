@@ -506,7 +506,7 @@ public static <%mvType%> <%functionName%>_ex(<%FT.type%> scale, int _grade, int 
 	
 	// compute norm/multiplier, apply it, or recurse if we happened to create a near-null versor
 	<%FT.type%> n2 = <%normFuncName%>(IR);
-	if ((<%FT.type%>)<%G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.ScalarOp.ABS)%>(n2) > minimumNorm * minimumNorm) {
+	if ((<%FT.type%>)<%G25.CG.Shared.CodeUtil.OpNameToLangString(S, FT, RefGA.Symbolic.UnaryScalarOp.ABS)%>(n2) > minimumNorm * minimumNorm) {
 		if (n2 != <%FT.DoubleToString(S, 0.0)%>) {
 			<%FT.type%> mul = scale * <%randomScalarFuncName%>() / n2;
 			if (IR.<%G25.CG.CSJ.Util.GetFunctionName(S, "largestCoordinate")%>() * mul < largestCoordinate)

@@ -43,6 +43,7 @@
     <Compile Include="..\src\smv.cs" />
     <Compile Include="..\src\som.cs" />
     <Compile Include="..\src\source.cs" />
+    <Compile Include="..\src\testsuite.cs" />
     <Compile Include="..\src\util.cs" />
     <Compile Include="..\src\functions\addsubtract.cs">
       <Link>functions\addsubtract.cs</Link>

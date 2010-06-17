@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace G25.CG.CPP
+namespace G25.CG.CSharp
 {
     /// <summary>
     /// Handles code generation of unit test suite.
@@ -28,7 +28,7 @@ namespace G25.CG.CPP
     {
         public static string GetRawTestSuiteFilename(Specification S)
         {
-            return S.m_namespace + "_test_main.cpp";
+            return MainGenerator.GetClassOutputPath(S, "TestSuite");
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace G25.CG.CPP
 
             // get list of generated filenames
             List<string> generatedFiles = new List<string>();
-            string sourceFilename = S.GetOutputPath(G25.CG.CPP.TestSuite.GetRawTestSuiteFilename(S));
+            string sourceFilename = GetRawTestSuiteFilename(S);
             generatedFiles.Add(sourceFilename);
 
             // reset code in cgd (get rid of all the code that was generated for the regular non-testsuite output)
@@ -58,6 +58,15 @@ namespace G25.CG.CPP
             // get StringBuilder where all generated code goes
             StringBuilder SB = new StringBuilder();
 
+            // output license, copyright
+            G25.CG.Shared.Util.WriteCopyright(SB, S);
+            G25.CG.Shared.Util.WriteLicense(SB, S);
+
+            // using ...
+            Util.WriteGenericUsing(SB, S);
+
+            // need other using ...?
+#if RIEN
             // #include all relevant headers
             SB.AppendLine("#include <time.h> /* used to seed random generator */");
             SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CPP.Header.GetRawHeaderFilename(S)) + "\"");
@@ -72,9 +81,11 @@ namespace G25.CG.CPP
             }
             if (cgd.GetFeedback(G25.CG.CPP.MainGenerator.MERSENNE_TWISTER) == "true")
                 SB.AppendLine("#include \"" + S.GetOutputFilename(G25.CG.CPP.RandomMT.GetRawMtHeaderFilename(S)) + "\"");
-
+#endif
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
+
+            G25.CG.Shared.Util.WriteOpenClass(SB, S, G25.CG.Shared.AccessModifier.AM_public, "TestSuite", new string[]{S.m_namespace}, null);
 
             // generate declarations for parts of the geometric product, dual, etc (works in parallel internally)
             try
@@ -145,6 +156,7 @@ namespace G25.CG.CPP
             cgd.ResetSB();
             List<string> testFunctionNames = new List<string>(); // list of names of bool functionName(void) goes here
 
+            // todo: metric, parser test
             { // write all 'other' test code (metric, parsing)
                 // metric
                 testFunctionNames.AddRange(WriteMetricTests(S, cgd, gpGmvFuncName));
@@ -200,14 +212,17 @@ namespace G25.CG.CPP
             SB.AppendLine("// Testing code definitions:");
             SB.Append(cgd.m_defSB);
 
-            G25.CG.Shared.Util.WriteCloseNamespace(SB, S);
-
             // write main function
             cgd.m_cog.EmitTemplate(SB, "testSuiteMain",
                 "S=", S,
                 "testFunctionNames=", testFunctionNames.ToArray(),
                 "randomNumberSeedFunctionNames=", randomNumberTimeSeedFuncs.ToArray());
 
+            // close class
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, S.m_namespace);
+
+            // close namespace
+            G25.CG.Shared.Util.WriteCloseNamespace(SB, S);                    
 
             // write all to file
             G25.CG.Shared.Util.WriteFile(sourceFilename, SB.ToString());
@@ -236,7 +251,7 @@ namespace G25.CG.CPP
                 "FT=", S.m_floatTypes[0],
                 "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name),
                 "testFuncName=", testFuncName,
-                "targetFuncName=", "parse",
+                "targetFuncName=", "Parse",
                 "randomScalarFuncName=", randomNumberGeneratorFuncName,
                 "randomVersorFuncName=", randomVersorFuncName,
                 "subtractGmvFuncName=", subtractGmvFuncName

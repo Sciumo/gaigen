@@ -563,8 +563,10 @@ ${CODEBLOCK parserShortcut}
      *  
      *  Throws a ParseException on failure.
      *  
-     *  When ANTLR throws an exception, all details (like line number and cause) are lost. 
+     *  When an ANTLR based parser throws an exception, 
+     *  all details (like line number and cause) are lost. 
      *  If these details are required, call the ANTLR parser directly.
+     * 
      *  @param str The multivector string to be parsed (can be output of mv.ToString()).
      *  @return Multivector value represented by 'str'.
      */

@@ -8,7 +8,7 @@
 	defaultOperatorBindings="true"
 	dimension="5"
   	reportUsage="false"
-  	gmvCode="runtime"
+  	gmvCode="expand"
   	parser="builtin"
   	testSuite="true"
 	copyright="Copyright (C) 2008 Some Random Person"
