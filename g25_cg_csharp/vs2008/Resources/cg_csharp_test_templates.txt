@@ -1582,3 +1582,162 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmvName = name of gmv
+// smv = smv type
+// smvName = name of smv
+// resultSmvName = name of result smv (inverse versor)
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random 'gmv' blade
+// gpFuncName = name of function for scalar product of two 'gmv'
+// extractGradeFuncName = name of function to extract grade parts from GMV
+${CODEBLOCK testVersorInverseSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv.NbCoordinates%>;
+	<%smvName%> V;
+	<%resultSmvName%> VI;
+	<%gmvName%> gmvV, gmvVI, VVI, VIV, X, Y;
+	int i;
+	<%FT.type%> n1, n2;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random blade
+		V = <%randomSmvFuncName%>(<%randomScalarFuncName%>() + <%FT.DoubleToString(S, 0.5)%>);
+		
+		// avoid 'near'-singular versors
+		if (V.LargestCoordinate() > <%FT.DoubleToString(S, 2.0)%>)
+			continue;
+		
+		// compute inverse
+		VI = <%targetFuncName%>(V);
+		
+		// convert to GMV
+		gmvV = new <%gmvName%>(V);
+		gmvVI = new <%gmvName%>(VI);
+		
+		// compute (inverse(V) V) and (V inverse(V))
+		VIV = <%gpFuncName%>(gmvVI, gmvV);
+		VVI = <%gpFuncName%>(gmvV, gmvVI);
+		
+		// check that scalar parts are 1
+		n1 = VIV.get_scalar();
+		n2 = VVI.get_scalar();
+		
+		if (Math.Abs(n1 - <%FT.DoubleToString(S, 1.0)%>) > <%FT.DoubleToString(S, 1000.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed |VI . V - 1|= " + (double)Math.Abs(n1 - <%FT.DoubleToString(S, 1.0)%>) + ")");
+			return 0; // failure
+		}
+		
+		if (Math.Abs(n2 - <%FT.DoubleToString(S, 1.0)%>) > <%FT.DoubleToString(S, 1000.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed ( |V . VI - 1| = " + (double)Math.Abs(n2 - <%FT.DoubleToString(S, 1.0)%>) + ")");
+			return 0; // failure
+		}
+		
+		// check that other grade parts are zero:
+		X = <%extractGradeFuncName%>(VIV, GroupBitmap.ALL_GROUPS ^ GroupBitmap.GROUP_0);
+		Y = <%extractGradeFuncName%>(VVI, GroupBitmap.ALL_GROUPS ^ GroupBitmap.GROUP_0);
+		
+		if (X.LargestCoordinate() > <%FT.DoubleToString(S, 1000.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate of VIV = " + (double)X.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+		
+		if (Y.LargestCoordinate() > <%FT.DoubleToString(S, 1000.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate of VVI = " + (double)Y.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+		
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// gmv = gmv
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomVersorFuncName = name of function for random versor
+${CODEBLOCK testZeroGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%S.m_GMV.NbCoordinates%>;
+	<%gmvName%> A;
+	<%FT.type%> s, eps = <%FT.DoubleToString(S, 0.2)%>;
+	int g, i;
+	bool z, l, c;
+	int basisVectorBitmap = -1;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s = <%randomScalarFuncName%>();
+		g = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+		A = <%randomVersorFuncName%>(s, g, basisVectorBitmap);
+		
+		// ask if <%targetFuncName%> thinks A is zero
+		z = <%targetFuncName%>(A, eps);
+		
+		// check it yourself
+		c = true; // assume it is zero
+		for (g = 0; g < <%S.m_GMV.NbGroups%>; g++) {
+			if (A.m_c[g] != null) {
+				for (int e = 0; e < A.m_c[g].Length; e++) {
+					if (Math.Abs(A.m_c[g][e]) > eps) c = false;
+				}
+			}
+		}
+		
+		// also use <%gmvName%>_largestCoordinate() to verify
+		l = !(A.LargestCoordinate() > eps);
+		
+		if ((c != z) || (l != z)) {
+			Console.WriteLine("<%targetFuncName%>() test failed\n");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// gmvName = name of gmv
+// smv = G25.SMV
+// smvName = mangled name of G25.SMV
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random smv
+${CODEBLOCK testZeroSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%(smv.NbCoordinates+1)%>;
+	<%smvName%> A;
+	<%FT.type%> s, eps = <%FT.DoubleToString(S, 0.2)%>;
+	int i;
+	bool l, z;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s = <%randomScalarFuncName%>();
+		A = <%randomSmvFuncName%>(s);
+		
+		// ask if <%targetFuncName%> thinks A is zero
+		z = <%targetFuncName%>(A, eps);
+		
+		// use <%smvName%>_largestCoordinate() to verify
+		l = !(A.LargestCoordinate() > eps);
+		
+		if (l != z) {
+			Console.WriteLine("<%targetFuncName%>() test failed\n");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
