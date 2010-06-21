@@ -420,7 +420,6 @@ ${ENDCODEBLOCK}
 // pointType = multivector type name (with prefix/suffix)
 // FT = floating point type
 ${CODEBLOCK randomCgaPointHeader}
-/** Returns a random conformal point where the coordinates lie in the interval [-scale, scale). */
 <%pointType%> <%functionName%>(<%FT.type%> scale);
 ${ENDCODEBLOCK}
 
@@ -431,7 +430,8 @@ ${ENDCODEBLOCK}
 // randomScalarFuncName = name of function which generates random scalar values
 // cgaPointFunc = function for computing a point from coordinates
 ${CODEBLOCK randomCgaPoint}
-<%if (S.m_inlineFunctions) {%>inline <%}%><%pointType%> <%functionName%>(<%FT.type%> scale) {
+/** Returns a random conformal point where the coordinates lie in the interval [-scale, scale). */
+public final static <%pointType%> <%functionName%>(final <%FT.type%> scale) {
 <%for (int i = 0; i < S.m_dimension-2; i++) {%>	<%FT.type%> ce<%(i+1).ToString()%> = scale * (<%FT.DoubleToString(S, -1.0)%> + <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>());
 <%}%>
 	return <%cgaPointFunc%>(<%for (int i = 0; i < S.m_dimension-2; i++) {%><%if (i > 0){%>, <%}%>ce<%(i+1).ToString()%><%}%>);

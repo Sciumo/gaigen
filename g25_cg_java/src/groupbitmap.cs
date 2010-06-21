@@ -65,13 +65,17 @@ namespace G25.CG.Java
                 SB.AppendLine();
             }
             SB.AppendLine();
+            SB.AppendLine("\tpublic static final int ALL_GROUPS = " + ((1 << S.m_GMV.NbGroups) - 1) + "; // all groups");
+            SB.AppendLine();
 
             // grade
             for (int i = 0; i <= S.m_dimension; i++)
             {
                 SB.AppendLine("\tpublic static final int " + G25.CG.CSJ.GroupBitmap.GetGradeBitmapName(i) + " = " + gradeBitmap[i] + ";");
             }
-
+            SB.AppendLine();
+            SB.AppendLine("\tpublic static final int ALL_GRADES = " + ((1 << S.m_GMV.NbGroups) - 1) + "; // all grades");
+            SB.AppendLine();
 
 
             SB.AppendLine("}");

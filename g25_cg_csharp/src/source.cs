@@ -54,14 +54,16 @@ namespace G25.CG.CSharp
                 SB.AppendLine();
             }
             SB.AppendLine();
+            SB.AppendLine("\tALL_GROUPS = " + ((1 << S.m_GMV.NbGroups) - 1) + ", // all groups");
+            SB.AppendLine();
 
             // grade
             for (int i = 0; i <= S.m_dimension; i++)
             {
-                SB.Append("\t" + G25.CG.CSJ.GroupBitmap.GetGradeBitmapName(i) + " = " + gradeBitmap[i]);
-                if (i == S.m_dimension) SB.AppendLine();
-                else SB.AppendLine(", ");
+                SB.AppendLine("\t" + G25.CG.CSJ.GroupBitmap.GetGradeBitmapName(i) + " = " + gradeBitmap[i] + ", ");
             }
+            SB.AppendLine();
+            SB.AppendLine("\tALL_GRADES = " + ((1 << S.m_GMV.NbGroups ) - 1) + " // all grades");
 
             SB.AppendLine("}");
         }

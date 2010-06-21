@@ -124,7 +124,7 @@
   
 <!--  <function name="add" arg1="scalar" arg2="double"  floatType="double"/> -->
 
-  <!--
+ 
   <function name="cgaPoint" arg1="vectorE3GA" floatType="double"/>
   <function name="cgaPoint" arg1="double" arg2="double" arg3="double" floatType="double"/>
   <function name="cgaPoint" arg1="float" arg2="float" arg3="float" optionOrigin="no" optionInfinity="ni" floatType="float"/>
@@ -134,7 +134,6 @@
   <function name="cgaPointDistance" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
   <function name="cgaPointDistance2" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
   <function name="cgaPointDistance2" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
--->
   
   <function name="extractGrade" arg1="mv"/>
   <function name="extractGrade2" arg1="mv" floatType="float"/>
@@ -234,13 +233,13 @@
 
   <function name="applyUnitVersor" arg1="normalizedTranslator" arg2="normalizedPoint" metric="default" floatType="double"/>
   
-  <!--<function name="applyVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
+  <function name="applyVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
   <function name="applyUnitVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
   <function name="applyVersorWI" arg1="rotorE3GA" arg2="normalizedPoint" arg3="rotorE3GA" returnType="normalizedPoint" metric="default" />
 
   <function name="applyVersor" arg1="mv" arg2="mv" metric="default"  />
   <function name="applyUnitVersor" arg1="mv" arg2="mv" metric="default"  />
-  <function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  />  -->
+  <function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  /> 
 
   <function name="versorInverse" arg1="rotorE3GA" metric="default" floatType="double"/>
   <function name="versorInverse" arg1="mv" metric="default" />

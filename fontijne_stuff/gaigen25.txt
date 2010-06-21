@@ -160,7 +160,11 @@ Maybe fix the float type stuff
 			
 			-> testing code for C# and Java, test everything, fix all bugs
 			
-			GMV log 3d for C#
+			GMV functions needs to be over the interface, not the multivectors themselves!!!!
+				Test this by having an algebra with no specialized functions and calling
+				all functions using an SMV as the argument
+			
+			GMV log 3d for C# (done?)
 			
 			makefile for all platforms
 			
