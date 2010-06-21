@@ -315,6 +315,7 @@ namespace G25.CG.Shared.Func
                     m_applyVersorGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "applyVersor", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, defaultReturnTypeName, FT, m_G25M.m_name);
                     m_randomVersorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_versorMv.Name, new String[0], defaultReturnTypeName, FT, m_G25M.m_name);
                     m_randomSmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_subjectMv.Name, new String[0], defaultReturnTypeName, FT, m_G25M.m_name);
+                 //   Console.WriteLine("Asking for unit versor with metric " + m_G25M.m_name);
                     m_unitVersorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "unit", new String[] { m_versorMv.Name }, defaultReturnTypeName, FT, m_G25M.m_name);
                     m_versorInverseFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "versorInverse", new String[] { m_versorMv.Name }, defaultReturnTypeName, FT, m_G25M.m_name);
                     m_norm2VersorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "norm2", new String[] { m_versorMv.Name }, defaultReturnTypeName, FT, m_G25M.m_name);

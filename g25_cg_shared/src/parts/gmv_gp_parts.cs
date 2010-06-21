@@ -235,13 +235,14 @@ namespace G25.CG.Shared
             int nbTabs = 1;
 
             // write this function:
-            String code = G25.CG.Shared.GPparts.GetVersorApplicationCode(S, cgd, FT, M, AVtype, FAI, fgs.RETURN_ARG_NAME);
+            string code = G25.CG.Shared.GPparts.GetVersorApplicationCode(S, cgd, FT, M, AVtype, FAI, fgs.RETURN_ARG_NAME);
 
             // add one instruction (verbatim code)
             I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, code));
 
             // because of lack of overloading, function names include names of argument types
             G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(S, FT, F, FAI);
+     //       Console.WriteLine("Ft = " + FT.type + " funname = " + CF.OutputName);
 
             string funcName = CF.OutputName;
 
@@ -255,7 +256,7 @@ namespace G25.CG.Shared
             // write function
             bool inline = false; // never inline GMV functions
             bool staticFunc = Functions.OutputStaticFunctions(S);
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, FT.GetMangledName(S, CF.OutputName), returnArgument, FAI, I, comment);
+            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, returnTypeName, CF.OutputName, returnArgument, FAI, I, comment);
 
             return funcName;
         }

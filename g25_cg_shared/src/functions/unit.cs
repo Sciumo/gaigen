@@ -110,6 +110,7 @@ namespace G25.CG.Shared.Func
                 // get name of return type
                 if (m_fgs.m_returnTypeName.Length == 0)
                     m_fgs.m_returnTypeName = G25.CG.Shared.SpecializedReturnType.GetReturnType(m_specification, m_cgd, m_fgs, FT, m_returnValue).GetName();
+
             }
             m_returnType = m_specification.GetType(m_fgs.m_returnTypeName);
 

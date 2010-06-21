@@ -1213,3 +1213,89 @@ static int <%testFuncName%>(int NB_TESTS_SCALER) {
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
+// gmv = GMV type
+// gmvName = name of GMV type
+// unit = whether versor should be unit
+// explicitInverse = whether explicit inverse should be used
+
+// versorType = type of versor
+// versorName = name of versor type
+// smvName = name of type that versor is applied to
+// transformedSmvName = name of transformed type 
+// inverseVersorName = name of inverse type
+
+// randomScalarFuncName = name of random generator function
+// randomVersorFunc = name of random versor of type versorName
+// randomSmvFunc = name of random versor of type smvName
+// unitVersorFuncName = name of unit function for type versorName
+// versorInverseFuncName = name of versor inverse for versorName
+// applyVersorGmvFuncName = apply versor GMV to subject GMV
+// subtractGmvFuncName = subtract two GMVs
+// norm2VersorFuncName = name of norm squared function for type versorName
+${CODEBLOCK testApplyVersor_SMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) {
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%versorType.NbCoordinates%>;
+	<%versorName%> V;
+<%if (unit) {%>
+	<%versorName%> tmp;
+<%}%>
+	<%inverseVersorName%> IV;
+	<%smvName%> X;
+	<%transformedSmvName%> VX, tmpVX2;
+	<%gmvName%> gmvV, gmvIV, gmvX, gmvVX, gmvVX2, dif;
+	int i;
+
+	for (i = 0; i < NB_LOOPS; i++) {
+		// generate random versor of target type, make unit if required, invert
+		V = <%randomVersorFunc%>(<%randomScalarFuncName%>());
+		
+<%if (unit) {%>
+		// Test if norm2(V) is positive, otherwise do not perform the test.
+		// (because with a negative norm2(v), the reverse is not the inverse)
+		if (<%norm2VersorFuncName%>(V) <= <%FT.DoubleToString(S, 0.0)%>) continue;
+
+		tmp = <%unitVersorFuncName%>(V);
+		V = tmp;
+<%}	%>
+		IV = <%versorInverseFuncName%>(V);
+
+		// avoid near-singular versors
+		if ((V.LargestCoordinate() > <%FT.DoubleToString(S, 2.0)%>) ||
+			(IV.LargestCoordinate() > <%FT.DoubleToString(S, 2.0)%>))
+			continue;
+		 
+
+		// generate random SMV 
+		X = <%randomSmvFunc%>(<%randomScalarFuncName%>());
+
+		//  apply random versor to random SMV, convert to GMV
+		VX = <%targetFuncName%>(V, X<%if (explicitInverse) {%>, IV<%}%>);
+		gmvVX2 = new <%gmvName%>(VX);
+
+		// convert all to GMV type, apply versor too as GMV
+		gmvV = new <%gmvName%>(V);
+		gmvIV = new <%gmvName%>(IV);
+		gmvX = new <%gmvName%>(X);
+		gmvVX = <%applyVersorGmvFuncName%>(gmvV, gmvX);
+		
+		// convert GMV back and forth to return type to fix possible constant coordinates
+		tmpVX2 = new <%transformedSmvName%>(gmvVX);
+		gmvVX = new <%gmvName%>(tmpVX2);
+		
+		// see if VX equals gmvVX
+		dif = <%subtractGmvFuncName%>(gmvVX, gmvVX2);
+		if (dif.LargestCoordinate() > (<%FT.DoubleToString(S, FT.PrecisionEpsilon() * 100.0)%> )) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largest coordinate = " + dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+
+	return 1; // success
+}
+
+${ENDCODEBLOCK}

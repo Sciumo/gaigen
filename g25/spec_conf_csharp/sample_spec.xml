@@ -39,12 +39,9 @@
 	name5="ni"
 	/>
 	
-<!--<metric name="default" round="true">no.ni=-1</metric>
+<metric name="default" round="true">no.ni=-1</metric>
 <metric name="default">e1.e1=e2.e2=e3.e3=1</metric>
-<metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>-->
-
-  <metric name="default" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
-  <metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
+<metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
 
   <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
   
@@ -235,14 +232,15 @@
   <function name="unit" arg1="mv" floatType="double"/>
   <function name="unit" outputName="unitE" arg1="mv" metric="euclidean"/>
 
-  <function name="applyVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
+  <function name="applyUnitVersor" arg1="normalizedTranslator" arg2="normalizedPoint" metric="default" floatType="double"/>
+  
+  <!--<function name="applyVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
   <function name="applyUnitVersor" arg1="rotorE3GA" arg2="vectorE3GA" metric="default" />
-  <function name="applyUnitVersor" arg1="normalizedTranslator" arg2="normalizedPoint" metric="default" />
   <function name="applyVersorWI" arg1="rotorE3GA" arg2="normalizedPoint" arg3="rotorE3GA" returnType="normalizedPoint" metric="default" />
 
   <function name="applyVersor" arg1="mv" arg2="mv" metric="default"  />
   <function name="applyUnitVersor" arg1="mv" arg2="mv" metric="default"  />
-  <function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  /> 
+  <function name="applyVersorWI" arg1="mv" arg2="mv" arg3="mv" metric="default"  />  -->
 
   <function name="versorInverse" arg1="rotorE3GA" metric="default" floatType="double"/>
   <function name="versorInverse" arg1="mv" metric="default" />
