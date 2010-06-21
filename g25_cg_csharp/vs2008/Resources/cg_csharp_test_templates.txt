@@ -655,3 +655,122 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// smv1 = smv1 type
+// smv2 = smv2 type
+// smv1Name = name of smv1
+// smv2Name = name of smv2
+// smvRName = name of return type smv
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomSmv1FuncName = name of function for random 'smv1'
+// randomSmv2FuncName = name of function for random 'smv2'
+// subtractGmvFuncName = name of subtraction of two GMVs
+// gpFuncName = name of function for geometric product of two 'gmv'
+// versorInverseFuncName = name of function for versor inverse of 'gmv'
+${CODEBLOCK testIGP_SMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv1.NbCoordinates%>;
+	<%smv1Name%> A;
+	<%smv2Name%> B;
+	<%smvRName%> C;
+	<%gmvName%> gA, gB, gC, IB, D, E;
+	
+	int i;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		A = <%randomSmv1FuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		B = <%randomSmv2FuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		
+		// apply IGP
+		C = <%targetFuncName%>(A, B);
+		
+		// convert A, B, C to GMV
+		gA = new <%gmvName%>(A);
+		gB = new <%gmvName%>(B);
+		gC = new <%gmvName%>(C);
+		
+		// get versor inverse of B, compute A * versorInverse(B)
+		IB = <%versorInverseFuncName%>(gB);
+		D = <%gpFuncName%>(gA, IB);
+		
+		E = <%subtractFuncName%>(gC, D);
+		
+		if (E.LargestCoordinate() > <%FT.DoubleToString(S, 1000.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate of E = " + (double)E.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
+// gmv = gmv type
+// gmvName = name of gmv
+// productName = name of product to be tested (op, mhip, hip, lc, rc, sp)
+// randomScalarFuncName = name of random generator function
+// randomBladeFuncName = name of function for random 'gmv'
+// gpGmvFuncName = name of geometric product of a GMVs
+// extractGradeFuncName = name of function to extract a grade part from a GMV
+// subtractGmvFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testFilteredGpGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	<%gmvName%> A, B, C, D, E, dif;
+	int i, ga, gb, gd;
+	<%FT.type%> s;
+	int basisVectorBitmap = -1;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s = <%randomScalarFuncName%>();
+		ga = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+		A = <%randomBladeFuncName%>(s, ga, basisVectorBitmap);
+		
+		s = <%randomScalarFuncName%>();
+		gb = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+		B = <%randomBladeFuncName%>(s, gb, basisVectorBitmap);
+		
+		// compute product using <%targetFuncName%>()
+		C = new <%gmvName%>(<%targetFuncName%>(A, B));
+		
+		// simulate product using geometric product & grade part selection
+		D = <%gpGmvFuncName%>(A, B);
+		gd = (ga > gb) ? ga - gb : gb - ga;
+<%if (productName.Equals("op")) {%>
+		E = <%extractGradeFuncName%>(D,  Grades[ga + gb]);
+<%} else if (productName.Equals("hip")) {%>
+		if ((ga == 0) || (gb == 0)) E = new <%gmvName%>(<%FT.DoubleToString(S, 0.0)%>);
+		else E = <%extractGradeFuncName%>(D, Grades[gd]);
+<%} else if (productName.Equals("mhip")) {%>
+		E = <%extractGradeFuncName%>(D, Grades[gd]);
+<%} else if (productName.Equals("lc")) {%>
+		if (ga > gb) E = new <%gmvName%>(<%FT.DoubleToString(S, 0.0)%>);
+		else E = <%extractGradeFuncName%>(D, Grades[gd]);
+<%} else if (productName.Equals("rc")) {%>
+		if (ga < gb) E = new <%gmvName%>(<%FT.DoubleToString(S, 0.0)%>);
+		else E = <%extractGradeFuncName%>(D, Grades[gd]);
+<%} else if (productName.Equals("sp")) {%>
+		E = <%extractGradeFuncName%>(D, Grades[0]);
+<%}%>
+
+		// check if equal:
+		dif = <%subtractGmvFuncName%>(C, E);
+		if (dif.LargestCoordinate() > <%FT.DoubleToString(S, 100.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+

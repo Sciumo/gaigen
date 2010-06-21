@@ -645,6 +645,12 @@ namespace G25.CG.Shared
             if (FAI[0].IsScalar()) GroupAlwaysPresent1[0] = true;
             if (FAI[1].IsScalar()) GroupAlwaysPresent2[0] = true;
 
+            if (resultIsScalar)
+            {
+                // make sure scalar part is present in result
+                SB.AppendLine("cc[0] = new " + FT.type + "[" + gmv.Group(0).Length + "];");
+            }
+
             int g1Cond = -1; // grade 1 conditional which is open (-1 = none)
             int g2Cond = -1; // grade 2 conditional which is open (-1 = none)
 
@@ -680,7 +686,8 @@ namespace G25.CG.Shared
                                 g2Cond = g2;
                             }
 
-                            SB.AppendLine("\t\tif (cc[" + g3+ "] == null) cc[" + g3+ "] = new " + FT.type + "[" + gmv.Group(g3).Length + "];");
+                            if (!(resultIsScalar && (g3 == 0))) // grade 0 is always allocated for scalar result
+                                SB.AppendLine("\t\tif (cc[" + g3 + "] == null) cc[" + g3 + "] = new " + FT.type + "[" + gmv.Group(g3).Length + "];");
 
                             // get function name
                             string funcName = GetGPpartFunctionName(S, FT, M, g1, g2, g3);
