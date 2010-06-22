@@ -251,24 +251,24 @@ extern const char *e2ga_string_minus; /* = \" - \" */
 
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
+__declspec(dllexport) const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
 
 
 
-extern e1_t e1;
-extern e2_t e2;
-extern I2_t I2;
+__declspec(dllexport) extern e1_t e1;
+__declspec(dllexport) extern e2_t e2;
+__declspec(dllexport) extern I2_t I2;
 
 
 /** Sets 1 double to zero */
@@ -444,26 +444,34 @@ double e2_t_double(const e2_t *x);
 /** Returns scalar part of  I2_t */
 double I2_t_double(const I2_t *x);
 /**
+ * Returns mv + mv.
+ */
+__declspec(dllexport) void add_mv_mv(mv *_dst, const mv *a, const mv *b);
+/**
+ * Returns vector + vector.
+ */
+__declspec(dllexport) void add_vector_vector(vector *_dst, const vector *a, const vector *b);
+/**
  * Returns geometric product of mv and mv.
  */
-void gp_mv_mv(mv *_dst, const mv *a, const mv *b);
+__declspec(dllexport) void gp_mv_mv(mv *_dst, const mv *a, const mv *b);
 /**
  * Returns geometric product of vector and vector.
  */
-void gp_vector_vector(rotor *_dst, const vector *a, const vector *b);
+__declspec(dllexport) void gp_vector_vector(rotor *_dst, const vector *a, const vector *b);
 /**
  * Returns a * b * reverse(a) using default metric. Only gives the correct result when the versor has a positive squared norm.
  * 
  */
-void applyUnitVersor_rotor_vector(vector *_dst, const rotor *a, const vector *b);
+__declspec(dllexport) void applyUnitVersor_rotor_vector(vector *_dst, const rotor *a, const vector *b);
 /**
  * Returns grade groupBitmap of  mv.
  */
-void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap);
+__declspec(dllexport) void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap);
 /**
  * Returns reverse of mv.
  */
-void reverse_mv(mv *_dst, const mv *a);
+__declspec(dllexport) void reverse_mv(mv *_dst, const mv *a);
 // inline def SB:
 
 
@@ -479,7 +487,7 @@ struct e2gaParseMultivectorData {
 Parses 'str' (output of toString_mv()) and stores result in 'val' 
 Returns true when 'str' parsed correctly.
 */
-int parse_mv(mv *val, const char *str);
+__declspec(dllexport) int parse_mv(mv *val, const char *str);
 
 /** 
 Parses 'str' (output of toString_mv()) and stores result in 'data'. 

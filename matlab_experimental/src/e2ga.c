@@ -1259,6 +1259,59 @@ double e2_t_double(const e2_t *x) {
 double I2_t_double(const I2_t *x) {
 	return 0.0;
 }
+void add_mv_mv(mv *_dst, const mv *a, const mv *b)
+{
+	int aidx = 0, bidx = 0, cidx = 0;
+	_dst->gu = a->gu | b->gu;
+	
+	if (a->gu & 1) {
+		if (b->gu & 1) {
+			add2_0_0(a->c + aidx, b->c + bidx, _dst->c + cidx);
+			bidx += 1;
+		}
+		else copyGroup_0(a->c + aidx, _dst->c + cidx);
+		aidx += 1;
+		cidx += 1;
+	}
+	else if (b->gu & 1) {
+		copyGroup_0(b->c + bidx, _dst->c + cidx);
+		bidx += 1;
+		cidx += 1;
+	}
+	
+	if (a->gu & 2) {
+		if (b->gu & 2) {
+			add2_1_1(a->c + aidx, b->c + bidx, _dst->c + cidx);
+			bidx += 2;
+		}
+		else copyGroup_1(a->c + aidx, _dst->c + cidx);
+		aidx += 2;
+		cidx += 2;
+	}
+	else if (b->gu & 2) {
+		copyGroup_1(b->c + bidx, _dst->c + cidx);
+		bidx += 2;
+		cidx += 2;
+	}
+	
+	if (a->gu & 4) {
+		if (b->gu & 4) {
+			add2_2_2(a->c + aidx, b->c + bidx, _dst->c + cidx);
+		}
+		else copyGroup_2(a->c + aidx, _dst->c + cidx);
+		cidx += 1;
+	}
+	else if (b->gu & 4) {
+		copyGroup_2(b->c + bidx, _dst->c + cidx);
+		cidx += 1;
+	}
+}
+void add_vector_vector(vector *_dst, const vector *a, const vector *b)
+{
+	_dst->c[0] = (a->c[0]+b->c[0]);
+	_dst->c[1] = (a->c[1]+b->c[1]);
+
+}
 void gp_mv_mv(mv *_dst, const mv *a, const mv *b)
 {
 	double c[4];
