@@ -16,10 +16,11 @@
 
 
 <floatType type="double" suffix=""/>
+  
 
 <basisVectorNames 
-	name2="e1"
-	name3="e2"
+	name1="e1"
+	name2="e2"
 	/>
 	
 <metric name="default">e1.e1=e2.e2=1</metric>
@@ -37,4 +38,6 @@
 <function name="gp" arg1="vector" arg2="vector"/>
 <function name="applyUnitVersor" arg1="rotor" arg2="vector"/>
 
+<function name="extractGrade" arg1="mv"/>
+<function name="reverse" arg1="mv"/>
 </g25spec>
