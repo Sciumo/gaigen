@@ -23,10 +23,10 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 // Copyright:    (c) 2003 Industrial Research Limited
 //
 
-#include "mex_if.hpp"
+#include "mex_if.h"
 
 // two input arguments, one output argument
-mxArray* calc(ga_ns::ga* first, ga_ns::ga* second);
+mxArray* calc(const mv* first, const mv* second);
 
 
 void mexFunction(int nlhs, mxArray *plhs[], 
@@ -53,11 +53,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		mexErrMsgTxt("Second argument must be a GA object or double");
 	}
 
-	ga_ns::ga* in0 = createGAFromMxArray(prhs[0]);
-	ga_ns::ga* in1 = createGAFromMxArray(prhs[1]);
+	mv in0, in1;
+	createGAFromMxArray(prhs[0], in0);
+	createGAFromMxArray(prhs[1], in1);
 	plhs[0] = calc(in0, in1);
-	delete in0;
-	delete in1;
 
-    return;    
+   return;    
 }

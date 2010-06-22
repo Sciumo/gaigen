@@ -23,7 +23,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 // Copyright:    (c) 2003 Industrial Research Limited
 //
 
-#include "mex_if.hpp"
+#include "mex_if.h"
 
 // no input argument, one output argument
 mxArray* calc(void);
