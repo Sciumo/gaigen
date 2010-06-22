@@ -15,17 +15,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 
-// File:         $RCSfile: mexFunction11.cpp,v $
-// Part Of:      GAMatlab
-// Revision:     $Revision: 1.7 $
-// Last Edited:  $Date: 2003/12/15 02:59:18 $, $Author: martina $
-// Author:       
-// Copyright:    (c) 2003 Industrial Research Limited
-//
-
 #include "mex_if.h"
 
-// one input argument, one output argument
+/* one input argument, one output argument */
 mxArray* calc(const mv* arg);
 
 

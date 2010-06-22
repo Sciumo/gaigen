@@ -28,9 +28,9 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 
 static int calcSumSquaredGradeSizes();
 
-const char*const cArrayName = "c";
-const char*const tFieldName = "t";
-const char*const gFieldName = "g";
+const char *const cArrayName = "c";
+const char *const tFieldName = "t";
+const char *const gFieldName = "g";
 
 const int MX_C_FIELD = 0;
 const int MX_T_FIELD = 1;
@@ -194,7 +194,7 @@ bool isDoubleOrGA(const mxArray* array)
 int isGA(const mxArray* array)
 {
 	// mexPrintf("%s == %s: %d\n", mxGetClassName(array), cClassNameGA, mxIsClass(array, cClassNameGA));
-	return mxIsClass(array, cClassNameGA);
+	return mxIsClass(array, cClassNameMV);
 }
 /*
 // platform compatibility Wrapper around isClass for Outermorphism

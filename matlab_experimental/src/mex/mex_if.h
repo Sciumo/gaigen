@@ -22,23 +22,25 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 #include <mex.h>
 #include "../g25/e2ga.h"
 
-/// The name of the internal array of the Matlab objects
+/** The name of the internal array of the Matlab objects */
 extern const char* const cArrayName;
 
-/// The name of the GA Matlab class
-extern const char* cClassNameGA;
+/** The name of the GA Matlab class */
+extern const char* cClassNameMV;
 
-/// The name of the Outermorphism Matlab class
+/** The name of the Outermorphism Matlab class */
 extern const char* cClassNameOM;
 
-/// The sum of the squared grade sizes, needed by OM
-//extern const int   cSumSquaredGradeSizes;
+#ifdef RIEN
+/** The sum of the squared grade sizes, needed by OM */
+extern const int   cSumSquaredGradeSizes;
 
-/// The scaling factor for random values
-//extern const float cScaleForRandomValues;
+/** The scaling factor for random values */
+extern const float cScaleForRandomValues;
 
-/// The number of iterations for the gexp algorithm
-//extern const int   cGexpIterations;
+/** The number of iterations for the gexp algorithm */
+extern const int   cGexpIterations;
+#endif
 
 /** Convert Matlab GA object to Gaigen object.
  * Centralised function to convert Matlab GA object to
@@ -50,7 +52,7 @@ void createGAFromMxArray(const mxArray* array, mv *result);
  * Returns a pointer to an array of ga objects.
  * Caller responsible for deletion of array (delete []) after use.
  */
-//ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);
+/*ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);*/
 
 /** Convert Gaigen object to Matlab GA object.
  * Centralised function to convert C++ GA object to
@@ -62,22 +64,22 @@ mxArray* createMxArrayFromGA(const mv *X);
  * Centralised function to convert C++ GA objects to
  * Matlab GA objects.
  */
-//mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& mv_vec);
+/*mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& mv_vec);*/
 
 /** Convert Matlab OM object to Gaigen object.
  * Centralised function to convert Matlab Outermorphism object
  * to C++ GA_OM object
  */
-//ga_ns::ga_om* createOMFromMxArray(const mxArray* array);
+/*ga_ns::ga_om* createOMFromMxArray(const mxArray* array);*/
 
 /** Check if parameter is of class GA. */
 int isGA(const mxArray* array);
 
 /** Check if parameter is either of class GA or double. */
-//bool isDoubleOrGA(const mxArray* array);
+/*bool isDoubleOrGA(const mxArray* array);*/
 
 /** Return vector images for OM from double array. */
-//ga_ns::ga* getVectorImages(double* data);
+/*ga_ns::ga* getVectorImages(double* data);*/
 
 #endif
 
