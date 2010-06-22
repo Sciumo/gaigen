@@ -81,6 +81,7 @@ mxArray* createMxArrayFromGA(const mv &X)
 	mxArray *groupUsageArray = mxCreateDoubleMatrix(1, 1, mxREAL);
 	mxGetPr(groupUsageArray)[0] = X.gu;
 	
+	// init the struct
  	mxArray *structArray = mxCreateStructMatrix(1, 1, 3, fieldNames);
 	mxSetFieldByNumber(structArray, 0, MX_C_FIELD, doubleArray);
 	mxSetFieldByNumber(structArray, 1, MX_T_FIELD, typeArray);
@@ -93,6 +94,7 @@ mxArray* createMxArrayFromGA(const mv &X)
 	return result;
 }
 
+/*
 mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
 {
      size_t num_ga = ga_vec.size();
@@ -107,7 +109,7 @@ mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
 	{
 	    int gradeFlag = 1 << grade;
 	
-	    /* coordinates takes a gradeflag, but returns only one grade. */
+	    // coordinates takes a gradeflag, but returns only one grade.
 	    const double *coordinates = ga_vec[row].coordinates(gradeFlag);
 	
 	    for (int element=0; element<ga_ns::gai_gradeSize[grade]; ++element)
@@ -123,23 +125,28 @@ mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
      mexCallMATLAB(1, &result, 1, &structArray, cClassNameGA);
      return result;
 }
-/*
-ga_ns::ga* createGAFromMxArray(const mxArray* array)
+*/
+
+void createGAFromMxArray(const mxArray* array, mv *result)
 {
 	if (isGA(array))
 	{
-		const mxArray *fieldArray1 = mxGetField(array, 0, cArrayName);
-	
-		double* numArray = mxGetPr(fieldArray1);
+		const mxArray *coordinateField = mxGetField(array, 0, cArrayName);	
+		double* coordinateArray = mxGetPr(coordinateField);
 		
-		ga_ns::ga* retVal = new ga_ns::ga((1 << (ga_ns::gai::dim + 1)) - 1, numArray);
-		// adjust internal gradeUsage array so that function work correctly
-		retVal->compress(0.0f);
-		return retVal;
+		const mxArray *typeField = mxGetField(array, 0, tFieldName);	
+		double* typeArray = mxGetPr(typeField);
+	
+		const mxArray *groupUsageField = mxGetField(array, 0, gFieldName);	
+		double* groupUsageArray = mxGetPr(groupUsageField);
+	
+		mv_setArray(result, (int)groupUsageArray[0], coordinateArray);
+		
+		return;
 	}
 	else if (mxIsDouble(array)) 
 	{
-		return new ga_ns::ga(mxGetScalar(array));
+		mv_setScalar(result, mxGetScalar(array));
 	}
 	else
 	{
@@ -149,7 +156,7 @@ ga_ns::ga* createGAFromMxArray(const mxArray* array)
 	}
 	return 0;
 }
-
+/*
 ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements)
 {
     double* numArray = 0;
@@ -175,14 +182,14 @@ bool isDoubleOrGA(const mxArray* array)
 	return isGA(array) 
 		|| (mxIsDouble(array) && mxGetM(array) == 1 && mxGetN(array) == 1);
 }
-
+*/
 // platform compatibility Wrapper around isClass for GA
 bool isGA(const mxArray* array)
 {
 	// mexPrintf("%s == %s: %d\n", mxGetClassName(array), cClassNameGA, mxIsClass(array, cClassNameGA));
 	return mxIsClass(array, cClassNameGA);
 }
-
+/*
 // platform compatibility Wrapper around isClass for Outermorphism
 bool isOM(const mxArray* array)
 {
