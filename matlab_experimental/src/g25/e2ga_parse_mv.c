@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2008 Some Random Person*/
+Copyright (C) 2008 Some Random Person
+*/
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,16 +32,16 @@ static void e2gaParseWedgeBasisVector(unsigned int bvIdx, double *scale, unsigne
 	unsigned b;
 	
 	b = 1 << bvIdx;
-	if ((*bitmap) & b) { // bv ^ bv = 0
+	if ((*bitmap) & b) { /* bv ^ bv = 0 */
 		*scale = 0.0;
 		return;
 	}
 
-	// add basis vector to bitmap	
+	/* add basis vector to bitmap */
 	(*bitmap) |= b;
 
 	bvIdx++;
-	for (; bvIdx < 2; bvIdx++) // compute sign flips due to anti commuting basis vectors
+	for (; bvIdx < 2; bvIdx++) /* compute sign flips due to anti commuting basis vectors */
 		if ((*bitmap) & (1 << bvIdx)) (*scale) = -(*scale);
 }
 
@@ -54,19 +55,19 @@ static void e2gaParseDataInit(struct e2gaParseMultivectorData *PD) {
 	mv_setZero(PD->value);
 }
 
-/// return true when 'buf' starts with 'pattern
+/** returns true when 'buf' starts with 'pattern' */
 static int e2gaCompareId(const char *pattern, const char *buf, int len) {
 	int i = 0;
 	while (pattern[i] != 0) {
 		if (buf[i] != pattern[i]) return 0;
 		else i++;
 	}
-	if (i != len) return 0; // must match full pattern
+	if (i != len) return 0; /* must match full pattern */
 	else return 1;
 }
 
 
-/// TOKEN IDs: (for internal use only)
+/** TOKEN IDs: (for internal use only) */
 #define T_BAD_IDENTIFIER -100
 #define T_BAD_NUMBER -10
 #define T_BAD_CHARACTER -1
@@ -95,31 +96,31 @@ the index of that char.
 int e2gaParseGetNextToken(const char *buf, int *startIdx, int *endIdx, int *lineIdx, int *currentLineStart) {
 	int i, pointFound = 0;
 
-	// skip all whitespace and other empty stuff, keep track of line index
+	/* skip all whitespace and other empty stuff, keep track of line index */
 	while ((buf[(*startIdx)] > 0) && (buf[(*startIdx)] <= ' ')) {
-		if (buf[(*startIdx)] == 0x0A) { // start of new line
+		if (buf[(*startIdx)] == 0x0A) { /* start of new line */
 			(*lineIdx)++;
 			*currentLineStart = (*startIdx)+1;
 		}
 		(*startIdx)++;
 	}
 
-	// detect end of string
+	/* detect end of string */
 	if (buf[(*startIdx)] == 0) {
 		*startIdx = *endIdx;
-		return T_END_OF_STRING; // EOS
+		return T_END_OF_STRING; /* EOS */
 	}
 
-	// operators
-	if (buf[(*startIdx)] == '^') {*endIdx = *startIdx; return T_WEDGE;} // ^
-	else if (buf[(*startIdx)] == '*') {*endIdx = *startIdx; return T_MUL;} // *
-	else if (buf[(*startIdx)] == '+') {*endIdx = *startIdx; return T_PLUS;} // +
-	else if (buf[(*startIdx)] == '-') {*endIdx = *startIdx; return T_MINUS;} // -
+	/* operators */
+	if (buf[(*startIdx)] == '^') {*endIdx = *startIdx; return T_WEDGE;} /*   ^   */
+	else if (buf[(*startIdx)] == '*') {*endIdx = *startIdx; return T_MUL;} /*   *   */
+	else if (buf[(*startIdx)] == '+') {*endIdx = *startIdx; return T_PLUS;} /*   +   */
+	else if (buf[(*startIdx)] == '-') {*endIdx = *startIdx; return T_MINUS;} /*   -   */
 
-	else if (isdigit((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '.')) { // parse number?
+	else if (isdigit((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '.')) { /* parse number? */
 		*endIdx = (*startIdx);
 
-		// eat up all digits and at most one point
+		/* eat up all digits and at most one point */
 		while (isdigit((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '.')) {
 			(*endIdx)++;
 			if (buf[(*endIdx)] == '.') {
@@ -129,70 +130,67 @@ int e2gaParseGetNextToken(const char *buf, int *startIdx, int *endIdx, int *line
 			}
 		}
 		
-		if (pointFound) { // if point found, eat up all digits
+		if (pointFound) { /* if point found, eat up all digits */
 			while (isdigit((unsigned char)buf[(*endIdx)])) {
 				(*endIdx)++;
 			}
 		}
 
-		// see if there is a 'e' or 'E'
+		/* see if there is a 'e' or 'E' */
 		if  ((buf[(*endIdx)] == 'e') || (buf[(*endIdx)] == 'E')) {
 			(*endIdx)++;
-			// accept at most one +-
+			/* accept at most one +- */
 			if  ((buf[(*endIdx)] == '-') || (buf[(*endIdx)] == '+')) {
 				(*endIdx)++;
 			}
 
-			// if there is an 'e', there must be some digit
-			if (!isdigit((unsigned char)buf[(*endIdx)])) return -10; // bad number
+			/* if there is an 'e', there must be some digit */
+			if (!isdigit((unsigned char)buf[(*endIdx)])) return T_BAD_NUMBER; /* bad number */
 
-			// eat up all digits
+			/* eat up all digits */
 			while (isdigit((unsigned char)buf[(*endIdx)])) {
 				(*endIdx)++;
 			}
 		}
-		(*endIdx)--; // end index is inclusive
+		(*endIdx)--; /* end index is inclusive */
 		return T_NUMBER;
 	}
 
-	else if (isalpha((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '_')) { // parse identifier?
-		// find end of chain of numbers, letters and '_'
+	else if (isalpha((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '_')) { /* parse identifier? */
+		/* find end of chain of numbers, letters and '_' */
 		*endIdx = (*startIdx) + 1;
 
-//		if ((*startIdx) == 396) {
-//			printf("AT!\n");
-//		}
-
 		while (isalnum((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '_')) (*endIdx)++;
-		(*endIdx)--;  // end index is inclusive
+		(*endIdx)--;  /* end index is inclusive */
 
-		// see which basis vector it is
+		/* see which basis vector it is */
 		for (i = 0; i < 2; i++)
-			if (e2gaCompareId(e2ga_basisVectorNames[i], buf + (*startIdx), (*endIdx) - (*startIdx) + 1)) return T_FIRST_BASIS_VECTOR + i; // basis vector
-		return T_BAD_IDENTIFIER; // bad identifier
+			if (e2gaCompareId(e2ga_basisVectorNames[i], buf + (*startIdx), (*endIdx) - (*startIdx) + 1)) return T_FIRST_BASIS_VECTOR + i; /* basis vector */
+		return T_BAD_IDENTIFIER; /* bad identifier */
 	}
 
 	else return T_BAD_CHARACTER;
-} // end of e2gaParseGetNextToken
+} /* end of e2gaParseGetNextToken */
+
 extern void compress(const double *c, double *cc, int *cgu, double epsilon, int gu);
 int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char *strSourceName)
 {
 	double coord[4];
-	char buf[256]; // use to copy number tokens
+	char buf[256]; /* used to copy number tokens */
 	double scale;
 	unsigned int bitmap;
 	int startIdx = 0, endIdx;
 	int lineIdx = 0, currentLineStart = 0;
 	int token, i, beDone, cnt, firstLoop = 1;
 
-	e2gaParseDataInit(PD); // should reset all
+	e2gaParseDataInit(PD); /* should reset all */
 	e2ga_double_zero_4(coord);
 
-	// get the first token
+	/* get the first token */
 	token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 
 	while (1) {
-		// reset for next basis blade
+		/* reset for next basis blade */
 		bitmap = 0;
 		scale = 1.0;
 		beDone = 0;
@@ -201,22 +199,22 @@ int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char 
 
 
 		cnt = 0;
-		while ((token == T_PLUS) || (token == T_MINUS)) { // accept all +- 
+		while ((token == T_PLUS) || (token == T_MINUS)) { /* accept all +- */
 			cnt++;
 			startIdx = endIdx+1;
-			if (token == T_MINUS) scale *= -1.0; // -
+			if (token == T_MINUS) scale *= -1.0; /*   -   */
 			token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 		}
 		
-		// require at least one +- if this is not the first term:
+		/* require at least one +- if this is not the first term: */
 		if ((!firstLoop) && (cnt == 0)) {
 			snprintf(PD->message, 256, "Expected '+' or '-' at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
 			return 0;
 		}
 
-		if ((token == T_NUMBER) || ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR))) { // must be number or basis vector
+		if ((token == T_NUMBER) || ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR))) { /* must be number or basis vector */
 			if (token == T_NUMBER) {
-				{ // copy token to buf, multiply scale with value of number
+				{ /* copy token to buf, multiply scale with value of number */
 					for (i = 0; i <= (endIdx-startIdx); i++)
 						buf[i] = str[startIdx+i];
 					buf[(endIdx-startIdx)+1] = 0;
@@ -224,15 +222,15 @@ int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char 
 				}
 				startIdx = endIdx+1;
 
-				// * or ^ ?
+				/*   * or ^ ?   */
 				token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 				if ((token == T_WEDGE) || (token == T_MUL)) {
 					startIdx = endIdx+1;
 
-					// must find basis vector
+					/* must find basis vector */
 					token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 				}
-				else { // just a single scalar is OK
+				else { /* just a single scalar is OK */
 					startIdx = endIdx+1;
 					beDone = 1;
 				}
@@ -251,14 +249,14 @@ int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char 
 			}
 
 			if (!beDone) {
-				// accept ^ basis vector as many times as it takes
+				/* accept ^ basis vector as many times as it takes */
 				while (1) {
-					// ^
+					/* ^ */
 					token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 					if (token != T_WEDGE) break;
 					startIdx = endIdx+1;
 
-					// basis vector
+					/* basis vector */
 					token = e2gaParseGetNextToken(str, &startIdx, &endIdx, &lineIdx, &currentLineStart);
 					if ((token >= T_FIRST_BASIS_VECTOR) && (token <= T_LAST_BASIS_VECTOR)) {
 						e2gaParseWedgeBasisVector((unsigned int)token - T_FIRST_BASIS_VECTOR, &scale, &bitmap);
@@ -273,7 +271,7 @@ int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char 
 				}
 
 			}
-		} // end of 'if number or bv'
+		} /* end of 'if number or bv' */
 		else if (token == T_BAD_CHARACTER) {
 			snprintf(PD->message, 256, "Bad character at %s, line %d, column %d", strSourceName, lineIdx+1, startIdx - currentLineStart +1);
 			return 0;
@@ -291,18 +289,18 @@ int parse_mvEx(struct e2gaParseMultivectorData *PD, const char *str, const char 
 			return 0;
 		}
 
-		// add
+		/* add */
 		e2gaParseSum(coord, scale, bitmap);
 		
-		// remeber that the first loop is done
+		/* remember that the first loop is done */
 		firstLoop = 0;
 	}
 
-	// compress
+	/* compress */
 	compress(coord, PD->value->c, &(PD->value->gu), 0.0, 7);
 
-	return 1; // success
-} // end of parse_mvEx
+	return 1; /* success */
+} /* end of parse_mvEx */
 
 int parse_mv(mv *val, const char *str)
 {

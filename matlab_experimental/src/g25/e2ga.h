@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2008 Some Random Person*/
+Copyright (C) 2008 Some Random Person
+*/
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -51,67 +52,67 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string.h>
 #include <math.h>
 
-// group: 1
+/* group: 1*/
 #define GROUP_0 1
-// group: e1, e2
+/* group: e1, e2*/
 #define GROUP_1 2
-// group: e1^e2
+/* group: e1^e2*/
 #define GROUP_2 4
 #define GRADE_0 1
 #define GRADE_1 2
 #define GRADE_2 4
 
 
-/// The dimension of the space:
+/** The dimension of the space. */
 extern const int e2ga_spaceDim;
 
-/// Number of groups/grades of coordinates in multivector:
+/** Number of groups/grades of coordinates in multivector. */
 extern const int e2ga_nbGroups;
 
-/// The constants for the grades in an array:
+/** The constants for the grades in an array. */
 extern const int e2ga_grades[];
 
-/// The constants for the groups in an array:
+/** The constants for the groups in an array. */
 extern const int e2ga_groups[];
 
-/// Is the metric of the space Euclidean? (0 or 1)
+/** Is the metric of the space Euclidean? (0 or 1). */
 extern const int e2ga_metricEuclidean;
 
-/// This array can be used to lookup the number of coordinates for a group part of a general multivector
+/** This array can be used to lookup the number of coordinates for a group part of a general multivector. */
 extern const int e2ga_groupSize[3];
 
-/// This array can be used to lookup the number of coordinates based on a group usage bitmap
+/** This array can be used to lookup the number of coordinates based on a group usage bitmap. */
 extern const int e2ga_mvSize[8];
 
-/// This array of ASCIIZ strings contains the names of the basis vectors
+/** This array of ASCIIZ strings contains the names of the basis vectors. */
 extern const char *e2ga_basisVectorNames[2];
 
-/// This array of integers contains the order of basis elements in the general multivector
-/// Use it to answer: 'what basis vectors are in the basis element at position [x]'?
+/** This array of integers contains the order of basis elements in the general multivector
+  * Use it to answer: 'what basis vectors are in the basis element at position [x]'? */
 extern const int e2ga_basisElements[4][3];
 
-/// This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector
-/// Use it to answer 'what is the permutation of the coordinate at index [x]'?
+/** This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector
+  * Use it to answer 'what is the permutation of the coordinate at index [x]'? */
 extern const double e2ga_basisElementSignByIndex[4];
 
-/// This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector
-/// Use it to answer 'what is the permutation of the coordinate of bitmap [x]'?
+/** This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector
+  * Use it to answer 'what is the permutation of the coordinate of bitmap [x]'? */
 extern const double e2ga_basisElementSignByBitmap[4];
 
-/// This array of integers contains the order of basis elements in the general multivector
-/// Use it to answer: 'at what index do I find basis element [x] (x = basis vector bitmap)?'
+/** This array of integers contains the order of basis elements in the general multivector
+   * Use it to answer: 'at what index do I find basis element [x] (x = basis vector bitmap)?' */
 extern const int e2ga_basisElementIndexByBitmap[4];
 
-/// This array of integers contains the indices of basis elements in the general multivector
-/// Use it to answer: 'what basis element do I find at index [x]'?
+/** This array of integers contains the indices of basis elements in the general multivector
+  * Use it to answer: 'what basis element do I find at index [x]'? */
 extern const int e2ga_basisElementBitmapByIndex[4];
 
-/// This array of grade of each basis elements in the general multivector
-/// Use it to answer: 'what is the grade of basis element bitmap [x]'?
+/** This array of grade of each basis elements in the general multivector
+   * Use it to answer: 'what is the grade of basis element bitmap [x]'? */
 extern const int e2ga_basisElementGradeByBitmap[4];
 
-/// This array of group of each basis elements in the general multivector
-/// Use it to answer: 'what is the group of basis element bitmap [x]'?
+/** This array of group of each basis elements in the general multivector
+  * Use it to answer: 'what is the group of basis element bitmap [x]'? */
 extern const int e2ga_basisElementGroupByBitmap[4];
 
 /**
@@ -128,8 +129,10 @@ extern const int e2ga_basisElementGroupByBitmap[4];
  */
 typedef struct 
 {
-	int gu; ///< group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below).
-	double c[4]; ///< the coordinates (full)
+	/** group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below). */
+	int gu;
+	/** The coordinates (full). */
+	double c[4];
 } mv;
 
 /** index of coordinate for e1 in vector.c */
@@ -152,7 +155,7 @@ typedef struct
 typedef struct 
 {
 	/** The coordinates (stored in an array). */
-	double c[2]; // e1, e2
+	double c[2]; /* e1, e2*/
 } vector;
 
 /** index of coordinate for 1 in rotor.c */
@@ -175,7 +178,7 @@ typedef struct
 typedef struct 
 {
 	/** The coordinates (stored in an array). */
-	double c[2]; // 1, e1^e2
+	double c[2]; /* 1, e1^e2*/
 } rotor;
 
 
@@ -192,8 +195,9 @@ typedef struct
  */
 typedef struct 
 {
-	int filler; ///< Filler, because C does not allow empty structs.
-	// e1 = 1
+	/** Filler, because C does not allow empty structs. */
+	int filler;
+	/* e1 = 1*/
 } e1_t;
 
 
@@ -210,8 +214,9 @@ typedef struct
  */
 typedef struct 
 {
-	int filler; ///< Filler, because C does not allow empty structs.
-	// e2 = 1
+	/** Filler, because C does not allow empty structs. */
+	int filler;
+	/* e2 = 1*/
 } e2_t;
 
 
@@ -228,8 +233,9 @@ typedef struct
  */
 typedef struct 
 {
-	int filler; ///< Filler, because C does not allow empty structs.
-	// e1^e2 = 1
+	/** Filler, because C does not allow empty structs. */
+	int filler;
+	/* e1^e2 = 1*/
 } I2_t;
 
 /**
@@ -247,18 +253,18 @@ extern const char *e2ga_string_plus; /* = \" + \" */
 extern const char *e2ga_string_minus; /* = \" - \" */
 
 
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
-/// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
 
 
@@ -336,7 +342,6 @@ void e2ga_double_copy_16(double *dst, const double *src);
 void e2ga_double_zero_N(double *dst, int N);
 /** Copies N doubles from 'src' to 'dst' */
 void e2ga_double_copy_N(double *dst, const double *src, int N);
-// decl SB:
 /** Sets a mv to zero */
 void mv_setZero(mv *M);
 /** Sets a mv to a scalar value */
@@ -390,9 +395,9 @@ double mv_e1_e2(const mv *A);
 /** Sets the e1^e2 coordinate of 'A' */
 void mv_set_e1_e2(mv *A, double e1_e2_coord);
 
-/// Returns absolute largest coordinate in mv.
+/** Returns absolute largest coordinate in mv. */
 double mv_largestCoordinate(const mv *x);
-/// Returns absolute largest coordinate in mv, and the bitmap of the corresponding basis blade (in 'bm').
+/** Returns absolute largest coordinate in mv, and the bitmap of the corresponding basis blade (in 'bm'). */
 double mv_largestBasisBlade(const mv *x, unsigned int *bm);
 
 /** Sets vector to zero */
@@ -440,24 +445,35 @@ double e1_t_double(const e1_t *x);
 double e2_t_double(const e2_t *x);
 /** Returns scalar part of  I2_t */
 double I2_t_double(const I2_t *x);
-
-
-/** Returns mv + mv. */
+/**
+ * Returns mv + mv.
+ */
 void add_mv_mv(mv *_dst, const mv *a, const mv *b);
-/** Returns vector + vector. */
+/**
+ * Returns vector + vector.
+ */
 void add_vector_vector(vector *_dst, const vector *a, const vector *b);
-/** Returns geometric product of mv and mv. */
+/**
+ * Returns geometric product of mv and mv.
+ */
 void gp_mv_mv(mv *_dst, const mv *a, const mv *b);
-/** Returns geometric product of vector and vector. */
+/**
+ * Returns geometric product of vector and vector.
+ */
 void gp_vector_vector(rotor *_dst, const vector *a, const vector *b);
-/** Returns a * b * reverse(a) using default metric. Only gives the correct result when the versor has a positive squared norm.
+/**
+ * Returns a * b * reverse(a) using default metric. Only gives the correct result when the versor has a positive squared norm.
+ * 
  */
 void applyUnitVersor_rotor_vector(vector *_dst, const rotor *a, const vector *b);
-/** Returns grade groupBitmap of  mv. */
+/**
+ * Returns grade groupBitmap of  mv.
+ */
 void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap);
-/** Returns reverse of mv. */
+/**
+ * Returns reverse of mv.
+ */
 void reverse_mv(mv *_dst, const mv *a);
-// inline def SB:
 
 
 /** structure used by custom parser */
