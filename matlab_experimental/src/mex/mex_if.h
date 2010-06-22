@@ -26,14 +26,11 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 // Copyright:    (c) 2003 Industrial Research Limited
 //
 
-
-// #include <math.h>
-#include <vector>
-#include "mex.h"
+#include <mex.h>
 #include "../g25/e2ga.h"
 
 /// The name of the internal array of the Matlab objects
-extern const char* cArrayName;
+extern const char* const cArrayName;
 
 /// The name of the GA Matlab class
 extern const char* cClassNameGA;
@@ -54,19 +51,19 @@ extern const char* cClassNameOM;
  * Centralised function to convert Matlab GA object to
  * C++ GA object.
  */
-ga_ns::ga* createGAFromMxArray(const mxArray* array);
+void createGAFromMxArray(const mxArray* array, mv *result);
 
 /** Convert Matlab array of GA objecta to array of Gaigen objects.
  * Returns a pointer to an array of ga objects.
  * Caller responsible for deletion of array (delete []) after use.
  */
-ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);
+//ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);
 
 /** Convert Gaigen object to Matlab GA object.
  * Centralised function to convert C++ GA object to
  * Matlab GA object.
  */
-//mxArray* createMxArrayFromGA(const ga_ns::ga& mv);
+mxArray* createMxArrayFromGA(const mv *X);
 
 /** Convert vector of Gaigen objects to Matlab array of GA objects.
  * Centralised function to convert C++ GA objects to
@@ -81,7 +78,7 @@ ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);
 //ga_ns::ga_om* createOMFromMxArray(const mxArray* array);
 
 /** Check if parameter is of class GA. */
-//bool isGA(const mxArray* array);
+int isGA(const mxArray* array);
 
 /** Check if parameter is either of class GA or double. */
 //bool isDoubleOrGA(const mxArray* array);

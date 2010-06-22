@@ -24,19 +24,17 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 //
 
 #include <string.h>
-#include "mex_if.hpp"
+#include "mex_if.h"
 
 static int calcSumSquaredGradeSizes();
 
-const char* cArrayName = "c";
-const char* tFieldName = "t";
-const char* gFieldName = "g";
+const char*const cArrayName = "c";
+const char*const tFieldName = "t";
+const char*const gFieldName = "g";
 
 const int MX_C_FIELD = 0;
 const int MX_T_FIELD = 1;
 const int MX_G_FIELD = 2;
-
-const char *fieldNames[3] = {cArrayName, tFieldName, gFieldName};
 
 
 // the 'type name' of the mv type
@@ -64,14 +62,14 @@ static int calcSumSquaredGradeSizes()
 */
 
 
-mxArray* createMxArrayFromGA(const mv &X) 
+mxArray* createMxArrayFromGA(const mv *X) 
 {
-	int nbCoords = e2ga_mvSize[X.gu];
+	int nbCoords = e2ga_mvSize[X->gu];
 	
 	// init the coordinate array
 	mxArray *doubleArray = mxCreateDoubleMatrix(nbCoords, 1, mxREAL);
 	double *content = mxGetPr(doubleArray);
-	memcpy(content, X.c, sizeof(double) * nbCoords);
+	memcpy(content, X->c, sizeof(double) * nbCoords);
 
 	// init the type array
 	mxArray *typeArray = mxCreateDoubleMatrix(1, 1, mxREAL);
@@ -79,13 +77,21 @@ mxArray* createMxArrayFromGA(const mv &X)
 
 	// init the type array
 	mxArray *groupUsageArray = mxCreateDoubleMatrix(1, 1, mxREAL);
-	mxGetPr(groupUsageArray)[0] = X.gu;
+	mxGetPr(groupUsageArray)[0] = X->gu;
+
+	const char **fieldNames = malloc(3 * sizeof(char*));
+	fieldNames[0] = cArrayName;
+	fieldNames[1] = tFieldName;
+	fieldNames[2] = gFieldName;
+	
 	
 	// init the struct
  	mxArray *structArray = mxCreateStructMatrix(1, 1, 3, fieldNames);
 	mxSetFieldByNumber(structArray, 0, MX_C_FIELD, doubleArray);
 	mxSetFieldByNumber(structArray, 1, MX_T_FIELD, typeArray);
 	mxSetFieldByNumber(structArray, 2, MX_G_FIELD, groupUsageArray);
+	
+	free(fieldNames);
 
 	// this makes it into a GA class (MUST CALL)
  	mxArray* result;
@@ -147,14 +153,15 @@ void createGAFromMxArray(const mxArray* array, mv *result)
 	else if (mxIsDouble(array)) 
 	{
 		mv_setScalar(result, mxGetScalar(array));
+		return;
 	}
 	else
 	{
 		char str[100];
 		sprintf(str, "class '%s' is not GA or a double.", mxGetClassName(array));
 		mexErrMsgTxt(str);
+		return;
 	}
-	return 0;
 }
 /*
 ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements)
@@ -184,7 +191,7 @@ bool isDoubleOrGA(const mxArray* array)
 }
 */
 // platform compatibility Wrapper around isClass for GA
-bool isGA(const mxArray* array)
+int isGA(const mxArray* array)
 {
 	// mexPrintf("%s == %s: %d\n", mxGetClassName(array), cClassNameGA, mxIsClass(array, cClassNameGA));
 	return mxIsClass(array, cClassNameGA);
