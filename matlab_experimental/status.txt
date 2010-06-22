@@ -1,0 +1,18 @@
+Was using GAmatlab as an example of how to bind g25 C to matlab.
+The first function (constant e1) is almost working.
+
+GAmatlab is in ga/GAmatlab repository.
+
+Need to create a class 'MV' with a 'constructor' MV or else
+e1 cannot work.
+
+Make sure LD_LIBRARY PATH is set OK.
+
+Once e1 works, add a function to convert to string.
+Then add e2, add addition function.
+
+Then figure out how to do the specialized classes.
+
+Then add a function over specialized classes.
+
+Merge the 'g' and 't' fields.
