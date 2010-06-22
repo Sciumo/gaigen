@@ -87,7 +87,7 @@ extern const int e2ga_mvSize[8];
 extern const char *e2ga_basisVectorNames[2];
 
 /// This array of integers contains the order of basis elements in the general multivector
-/// Use it to answer: 'what basis vectors are in the basis element at position [x]?
+/// Use it to answer: 'what basis vectors are in the basis element at position [x]'?
 extern const int e2ga_basisElements[4][3];
 
 /// This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector

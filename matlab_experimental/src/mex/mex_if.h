@@ -18,13 +18,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 
-// File:         $RCSfile: functions.hpp,v $
-// Part Of:      GAMatlab
-// Revision:     $Revision: 1.8 $
-// Last Edited:  $Date: 2003/12/16 01:45:15 $, $Author: thomasl $
-// Author:       
-// Copyright:    (c) 2003 Industrial Research Limited
-//
 
 #include <mex.h>
 #include "../g25/e2ga.h"
@@ -86,4 +79,5 @@ int isGA(const mxArray* array);
 /** Return vector images for OM from double array. */
 //ga_ns::ga* getVectorImages(double* data);
 
-#endif //GAMATLAB_MEX_INTERFACE_FUNCTIONS_HPP_INCLUDED
+#endif
+
