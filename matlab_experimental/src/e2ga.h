@@ -251,24 +251,24 @@ extern const char *e2ga_string_minus; /* = \" - \" */
 
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
-__declspec(dllexport) const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
+/*__declspec(dllexport)*/ const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
 
 
 
-__declspec(dllexport) extern e1_t e1;
-__declspec(dllexport) extern e2_t e2;
-__declspec(dllexport) extern I2_t I2;
+/*__declspec(dllexport)*/ extern e1_t e1;
+/*__declspec(dllexport)*/ extern e2_t e2;
+/*__declspec(dllexport)*/ extern I2_t I2;
 
 
 /** Sets 1 double to zero */
