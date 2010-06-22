@@ -32,10 +32,12 @@ foreach(srcfile ${MEXSRCS})
  
   message ( "build ${filename}" ) 
 
-	message("${MEXCOMMAND} ${MEX_ARGS} -output ${filename} ${srcfile}")
+	message("${MEXCOMMAND} -O CFLAGS=\"  \$CFLAGS   -std=C99\" ${MEX_ARGS} ${MEX_ARGS} -output ${filename} ${srcfile}")
 
   add_custom_command(OUTPUT ${filename} 
-    COMMAND ${MEXCOMMAND} -O CFLAGS="\$CFLAGS -std=C99" ${MEX_ARGS} -output ${filename} ${srcfile}  
+  
+     COMMAND ${MEXCOMMAND} -O CFLAGS=\"-std=C99\" ${MEX_ARGS} -output ${filename} ${srcfile}  
+#    COMMAND ${MEXCOMMAND} -O CFLAGS="\$CFLAGS -Wp,-lang-c-c++-comments" -output ${filename} ${srcfile}  
     DEPENDS ${srcfile}) 
   add_custom_target(${targetname} ALL DEPENDS ${filename})
   
