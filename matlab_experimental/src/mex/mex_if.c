@@ -128,7 +128,7 @@ mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
      }
 
      mxArray* result;
-     mexCallMATLAB(1, &result, 1, &structArray, cClassNameGA);
+     mexCallMATLAB(1, &result, 1, &structArray, cClassNameMV);
      return result;
 }
 */
@@ -193,7 +193,7 @@ bool isDoubleOrGA(const mxArray* array)
 // platform compatibility Wrapper around isClass for GA
 int isGA(const mxArray* array)
 {
-	// mexPrintf("%s == %s: %d\n", mxGetClassName(array), cClassNameGA, mxIsClass(array, cClassNameGA));
+	// mexPrintf("%s == %s: %d\n", mxGetClassName(array), cClassNameMV, mxIsClass(array, cClassNameMV));
 	return mxIsClass(array, cClassNameMV);
 }
 /*

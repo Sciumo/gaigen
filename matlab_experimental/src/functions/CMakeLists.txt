@@ -5,7 +5,7 @@ message( "===== generating files for ${alg} =====" )
 link_directories( ../g25 ../mex )
 
 # add libs 
-set(MEX_LIBS_LIST e2ga_matlab mex_if_e2ga)
+set(MEX_LIBS_LIST e2ga_matlab mex_e2ga)
 
 
 # form mex command line args
