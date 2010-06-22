@@ -81,13 +81,13 @@ namespace G25.CG.C
                     {
                         gradeBitmap[S.m_GMV.Group(i)[0].Grade()] |= 1 << i;
 
-                        SB.Append("// group: ");
+                        SB.Append("/* group: ");
                         for (int j = 0; j < S.m_GMV.Group(i).Length; j++)
                         {
                             if (j > 0) SB.Append(", ");
                             SB.Append(S.m_GMV.Group(i)[j].ToString(S.m_basisVectorNames));
                         }
-                        SB.AppendLine("");
+                        SB.AppendLine("*/");
                         SB.AppendLine("#define GROUP_" + i + " " + (1 << i));
                     }
 
@@ -131,10 +131,10 @@ namespace G25.CG.C
             // set to zero / copy floats
             cgd.m_cog.EmitTemplate(SB, "float_zero_copy_decl", "S=", S, "MAX_N=", G25.CG.Shared.Main.MAX_EXPLICIT_ZERO);
 
-            SB.AppendLine("// decl SB:");
+            //SB.AppendLine("/* decl SB: */");
             SB.Append(cgd.m_declSB);
 
-            SB.AppendLine("// inline def SB:");
+            //SB.AppendLine("/* inline def SB: */");
             SB.Append(cgd.m_inlineDefSB);
 
             // parser declarations:

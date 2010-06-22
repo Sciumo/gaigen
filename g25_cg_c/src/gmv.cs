@@ -90,7 +90,8 @@ namespace G25.CG.C
             SB.AppendLine("typedef struct ");
             SB.AppendLine("{");
             // group/grade usage
-            SB.AppendLine("\tint gu; ///< group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below).");
+            SB.AppendLine("\t/** group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below). */");
+            SB.AppendLine("\tint gu;");
 
             // coordinates
             switch (S.m_GMV.MemoryAllocationMethod)
@@ -99,16 +100,21 @@ namespace G25.CG.C
 //                          SB.AppendLine("\t" + FT.type + " *c; ///< the coordinates (array is allocated using realloc())");
 //                        break;
                 case G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE:
-                    SB.AppendLine("\t" + FT.type + " c[" + (gmv.NbCoordinates / 2) + "]; ///< the coordinates (note: parity pure) ");
+                    SB.AppendLine("\t/** The coordinates (note: parity pure). */");
+                    SB.AppendLine("\t" + FT.type + " c[" + (gmv.NbCoordinates / 2) + "];");
                     break;
                 case G25.GMV.MEM_ALLOC_METHOD.FULL:
-                    SB.AppendLine("\t" + FT.type + " c[" + (gmv.NbCoordinates) + "]; ///< the coordinates (full)");
+                    SB.AppendLine("\t/** The coordinates (full). */");
+                    SB.AppendLine("\t" + FT.type + " c[" + (gmv.NbCoordinates) + "];");
                     break;
             }
 
             // If we report non-optimized function usage, we need to know original type of GMVs:
-            if (S.m_reportUsage) 
-                SB.AppendLine("\tint t; ///< Specialized multivector type. Used to report about non-optimized function usage.");
+            if (S.m_reportUsage)
+            {
+                SB.AppendLine("\t/** Specialized multivector type. Used to report about non-optimized function usage. */");
+                SB.AppendLine("\tint t;");
+            }
 
             SB.AppendLine("} " + FT.GetMangledName(S, gmv.Name) + ";");
 
@@ -591,7 +597,7 @@ namespace G25.CG.C
 	            // move coordinate beyond new group
 	            defSB.AppendLine("\t\tdst = " + varName + "->c + " + S.m_namespace + "_mvSize[newGroupUsageBelowNextGroup];");
                 defSB.AppendLine("\t\tsrc = " + varName + "->c + " + S.m_namespace + "_mvSize[groupUsageBelow];");
-	            defSB.AppendLine("\t\tfor (i = " + S.m_namespace + "_mvSize[groupUsageAbove]-1; i >= 0; i--) // work from end to start of array to avoid overwriting (dst is always beyond src)");
+	            defSB.AppendLine("\t\tfor (i = " + S.m_namespace + "_mvSize[groupUsageAbove]-1; i >= 0; i--) /* work from end to start of array to avoid overwriting (dst is always beyond src) */");
 	            defSB.AppendLine("\t\t\tdst[i] = src[i];");
             }
 /*                    defSB.AppendLine("\t\tmemmove(" +

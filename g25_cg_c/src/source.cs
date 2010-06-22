@@ -334,7 +334,7 @@ namespace G25.CG.C
                 G25.CG.C.ToString.WriteToString(SB, S, cgd, def);
             }
 
-            SB.AppendLine("// def SB:");
+            //SB.AppendLine("/* def SB: */");
             SB.Append(cgd.m_defSB);
 
             // write all to file

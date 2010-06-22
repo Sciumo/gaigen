@@ -38,8 +38,8 @@ namespace G25.CG.C
         {
             SB.AppendLine("");
 
-            SB.AppendLine("// These constants define a unique number for each specialized multivector type.");
-            SB.AppendLine("// They are used to report usage of non-optimized functions.");
+            SB.AppendLine("/* These constants define a unique number for each specialized multivector type.");
+            SB.AppendLine(" They are used to report usage of non-optimized functions. */");
 
             {
                 int idx = 0;
@@ -58,8 +58,8 @@ namespace G25.CG.C
             }
 
             SB.AppendLine("");
-            SB.AppendLine("/// For each specialized multivector type, the mangled typename.");
-            SB.AppendLine("/// This is used to report usage of non-optimized functions.");
+            SB.AppendLine("/** For each specialized multivector type, the mangled typename.");
+            SB.AppendLine("  * This is used to report usage of non-optimized functions. */");
             SB.AppendLine("extern const char *g_" + S.m_namespace + "Typenames[];");
 
         }
@@ -188,25 +188,26 @@ namespace G25.CG.C
                 {
                     // emit: float c[3]; // e1, e2, e3
                     SB.AppendLine("\t/** The coordinates (stored in an array). */");
-                    SB.Append("\t" + FT.type + " c[" + smv.NbNonConstBasisBlade + "]; // ");
+                    SB.Append("\t" + FT.type + " c[" + smv.NbNonConstBasisBlade + "]; /* ");
                     for (int i = 0; i < smv.NbNonConstBasisBlade; i++)
                     {
                         if (i > 0) SB.Append(", ");
                         SB.Append(smv.NonConstBasisBlade(i).ToString(S.m_basisVectorNames));
                     }
-                    SB.AppendLine("");
+                    SB.AppendLine("*/");
                 }
             }
             else
             {
-                SB.AppendLine("\tint filler; ///< Filler, because C does not allow empty structs.");
+                SB.AppendLine("\t/** Filler, because C does not allow empty structs. */");
+                SB.AppendLine("\tint filler;");
             }
 
             // emit: // no=1
             for (int i = 0; i < smv.NbConstBasisBlade; i++)
             {
 
-                SB.AppendLine("\t// " + smv.ConstBasisBlade(i).ToString(S.m_basisVectorNames) + " = " + smv.ConstBasisBladeValue(i).ToString());
+                SB.AppendLine("\t/* " + smv.ConstBasisBlade(i).ToString(S.m_basisVectorNames) + " = " + smv.ConstBasisBladeValue(i).ToString() + "*/");
 
             }
 

@@ -143,10 +143,10 @@ namespace G25.CG.Shared.Func
                     if ((assStr1[i] == null) && (assStr2[i] == null)) continue;
                     else if (assStr1[i] == null)
                         I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs,
-                            "if ((" + assStr2[i] + " < -" + FAI[2].Name + ") || (" + assStr2[i] + " > " + FAI[2].Name + ")) return " + FALSE + "; // " + BL[i].ToString(m_specification.m_basisVectorNames)));
+                            "if ((" + assStr2[i] + " < -" + FAI[2].Name + ") || (" + assStr2[i] + " > " + FAI[2].Name + ")) return " + FALSE + "; /* " + BL[i].ToString(m_specification.m_basisVectorNames) + " */"));
                     else if (assStr2[i] == null)
                         I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs,
-                            "if ((" + assStr1[i] + " < -" + FAI[2].Name + ") || (" + assStr1[i] + " > " + FAI[2].Name + ")) return " + FALSE + "; // " + BL[i].ToString(m_specification.m_basisVectorNames)));
+                            "if ((" + assStr1[i] + " < -" + FAI[2].Name + ") || (" + assStr1[i] + " > " + FAI[2].Name + ")) return " + FALSE + "; /* " + BL[i].ToString(m_specification.m_basisVectorNames) + " */"));
                     else
                     {
                         if (!dDeclared)
@@ -158,7 +158,7 @@ namespace G25.CG.Shared.Func
 
                         I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs,
                             "d = " + assStr1[i] + " - " + assStr2[i] + "; " +
-                            "if ((d < -" + FAI[2].Name + ") || (d > " + FAI[2].Name + ")) return " + FALSE + "; // " + BL[i].ToString(m_specification.m_basisVectorNames)));
+                            "if ((d < -" + FAI[2].Name + ") || (d > " + FAI[2].Name + ")) return " + FALSE + "; /* " + BL[i].ToString(m_specification.m_basisVectorNames) + " */"));
                     }
                 }
                 // finally, return 1 if all check were OK

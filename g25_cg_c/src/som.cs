@@ -98,7 +98,7 @@ namespace G25.CG.C
             {
                 if (!som.EmptyGrade(g))
                 {
-                    SB.AppendLine("\t/// Matrix for grade " + g + "; the size is " + som.DomainForGrade(g).Length + " x " + som.RangeForGrade(g).Length);
+                    SB.AppendLine("\t/** Matrix for grade " + g + "; the size is " + som.DomainForGrade(g).Length + " x " + som.RangeForGrade(g).Length + " */");
                     SB.AppendLine("\t" + FT.type + " m" + g + "[" +
                         som.DomainForGrade(g).Length * som.RangeForGrade(g).Length + "];");
                 }

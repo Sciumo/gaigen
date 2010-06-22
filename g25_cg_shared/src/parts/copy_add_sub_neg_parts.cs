@@ -1623,7 +1623,7 @@ namespace G25.CG.Shared
             // copy group usage / allocate memory for result
             if (S.OutputC())
             {
-                SB.AppendLine(resultName + "->gu = " + agu + " | ((" + FAI[2].Name + " != 0.0) ? GRADE_0 : 0); // '| GRADE_0' to make sure the scalar part is included");
+                SB.AppendLine(resultName + "->gu = " + agu + " | ((" + FAI[2].Name + " != 0.0) ? GRADE_0 : 0); /* '| GRADE_0' to make sure the scalar part is included */");
             }
             else
             {

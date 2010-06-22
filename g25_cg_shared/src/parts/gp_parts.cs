@@ -851,7 +851,7 @@ namespace G25.CG.Shared
                 if (S.OutputCSharpOrJava())
                     SB.Append("if (ac[" + g + "] != null) {");
                 else SB.Append("if (" + agu + " & " + (1 << g) + ") {");
-                SB.AppendLine(" // group " + g + " (grade " + gmv.Group(g)[0].Grade() + ")");
+                SB.AppendLine(" /* group " + g + " (grade " + gmv.Group(g)[0].Grade() + ") */");
 
                 // check if funcName (gp part) exists)
                 Tuple<string, string, string> key = new Tuple<string, string, string>(FT.type, M.m_name, funcName);
@@ -952,7 +952,7 @@ namespace G25.CG.Shared
                             if (S.OutputCSharpOrJava())
                                 SB.Append("if (ac[" + g1 + "] != null) {");
                             else SB.Append("if (" + exaName + "[" + g1 + "] != NULL) { ");
-                            SB.AppendLine(" // group " + g1 + " (grade " + gmv.Group(g1)[0].Grade() + ")");
+                            SB.AppendLine(" /* group " + g1 + " (grade " + gmv.Group(g1)[0].Grade() + ") */");
                             SB.AppendLine("\tc[0] = " + FT.DoubleToString(S, 0.0) + ";");
                             funcFound = true;
                         }
@@ -962,7 +962,7 @@ namespace G25.CG.Shared
                             if (S.OutputCSharpOrJava())
                                 SB.Append("\tif (ac[" + g2 + "] != null) {");
                             else SB.Append("\tif (" + exaName + "[" + g2 + "] != NULL) {");
-                            SB.AppendLine(" // group " + g2 + " (grade " + gmv.Group(g2)[0].Grade() + ")");
+                            SB.AppendLine(" /* group " + g2 + " (grade " + gmv.Group(g2)[0].Grade() + ") */");
                         }
 
                         if (S.OutputCSharpOrJava())
@@ -1114,32 +1114,32 @@ namespace G25.CG.Shared
                 else if (T == ApplyVersorTypes.INVERSE)
                 {
                     inverseInputName = "&inv";
-                    SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " inv; // temp space for reverse");
+                    SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " inv; /* temp space for reverse */");
                 }
                 else // (T == ApplyVersorTypes.REVERSE)
                 {
                     inverseInputName = "&rev";
-                    SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " rev; // temp space for reverse");
+                    SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " rev; /* temp space for reverse */");
                 }
 
                 // get temp space for input * object
-                SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " tmp, tmp2; // temp variables");
+                SB.AppendLine(FT.GetMangledName(S, gmv.Name) + " tmp, tmp2; /* temp variables */");
 
                 // compute inverse or reverse, if required
                 if ((T == ApplyVersorTypes.INVERSE) || (T == ApplyVersorTypes.REVERSE))
                 {
-                    SB.AppendLine(invFuncName + "(" + inverseInputName + ", " + FAI[0].Name + "); // compute inverse or reverse");
+                    SB.AppendLine(invFuncName + "(" + inverseInputName + ", " + FAI[0].Name + "); /* compute inverse or reverse */");
                 }
 
                 // compute input * object
-                SB.AppendLine(gpFuncName + "(&tmp, " + FAI[0].Name + ", " + FAI[1].Name + "); // compute geometric product " + FAI[0].Name + " " + FAI[1].Name);
+                SB.AppendLine(gpFuncName + "(&tmp, " + FAI[0].Name + ", " + FAI[1].Name + "); /* compute geometric product " + FAI[0].Name + " " + FAI[1].Name + " */");
 
                 // compute (input * object) * inverse
-                SB.AppendLine(gpFuncName + "(&tmp2, &tmp, " + inverseInputName + "); // compute geometric product (" + FAI[0].Name + " " + FAI[1].Name + ") " + inverseInputName);
+                SB.AppendLine(gpFuncName + "(&tmp2, &tmp, " + inverseInputName + "); /* compute geometric product (" + FAI[0].Name + " " + FAI[1].Name + ") " + inverseInputName + " */");
 
                 // select grade parts!
                 SB.AppendLine(gradeUsageCode.ToString());
-                SB.AppendLine(gradeFuncName + "(" + resultName + ", &tmp2, " + gradeUsageString + "); // ditch grade parts which were not in " + FAI[1].Name);
+                SB.AppendLine(gradeFuncName + "(" + resultName + ", &tmp2, " + gradeUsageString + "); /* ditch grade parts which were not in " + FAI[1].Name + " */");
             } // end of 'C' version
             else // C++ version
             {

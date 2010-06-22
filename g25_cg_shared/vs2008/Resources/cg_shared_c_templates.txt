@@ -202,9 +202,9 @@ void <%S.m_namespace%>_initRuntimeGpTable(unsigned char **table, int metricId, i
 					}				
 				} while (iDst > 0);
 				
-			} // end of loop over all basis blade of group 2
+			} /* end of loop over all basis blade of group 2 */
 			T[idx++] = RT_GP_T_COORD_DONE;
-		} // end of loop over all basis blade of group 2
+		} /* end of loop over all basis blade of group 2 */
 		T[idx-1] = RT_GP_T_ALL_DONE; // this overwrites the last RT_GP_T_COORD_DONE
 
 		if (idx <= 4 * Tlength / 5) { // reallocate of more than 80% of memory is wasted
@@ -230,7 +230,7 @@ void <%S.m_namespace%>_initRuntimeGpTable(unsigned char **table, int metricId, i
 		
 		<%S.m_namespace%>_runtimeGpTableMemUsed += idx;
 	}
-} // end of <%S.m_namespace%>_initRuntimeGpTable()
+} /* end of <%S.m_namespace%>_initRuntimeGpTable() */
 ${ENDCODEBLOCK}
 
 // S = Specification of algebra (G25.Specification)
@@ -286,7 +286,7 @@ void <%S.m_namespace%>_runtimeComputeGp_<%FT.type%>(const <%FT.type%> *src1, con
 			dst[dstIdx] += sign * (*src1) * (*currentSrc2);
 		}
 	}
-} // end of <%S.m_namespace%>_runtimeComputeGp_<%FT.type%>()
+} /* end of <%S.m_namespace%>_runtimeComputeGp_<%FT.type%>() */
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK runtimeGpInitTables}
@@ -296,7 +296,7 @@ void <%S.m_namespace%>_initAllRuntimeGpTables() {
 <%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
 	<%S.m_namespace%>_initRuntimeGpTable(&<%S.m_namespace%>_runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%>, <%m%>, <%g1%>, <%g2%>, <%gd%>);
 <%}%><%}%><%}%><%}%><%}%>
-} // end of <%S.m_namespace%>_initAllRuntimeGpTables()
+} /* end of <%S.m_namespace%>_initAllRuntimeGpTables() */
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK runtimeGpFreeTables}
@@ -307,7 +307,7 @@ void <%S.m_namespace%>_freeAllRuntimeGpTables() {
 <%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
 	T = &<%S.m_namespace%>_runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%>; if (*T != NULL) {free(*T);*T = NULL;}
 <%}%><%}%><%}%><%}%><%}%>
-} // end of <%S.m_namespace%>_freeAllRuntimeGpTables()
+} /* end of <%S.m_namespace%>_freeAllRuntimeGpTables() */
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK runtimeGpTablesHeader}

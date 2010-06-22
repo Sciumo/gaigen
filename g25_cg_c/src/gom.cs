@@ -96,7 +96,7 @@ namespace G25.CG.C
             SB.AppendLine("{");
             for (int g = 1; g < gom.Domain.Length; g++) // start at '1' in order to skip scalar grade
             {
-                SB.AppendLine("\t/// Matrix for grade " + g + "; the size is " + gom.DomainForGrade(g).Length + " x " + gom.RangeForGrade(g).Length);
+                SB.AppendLine("\t/** Matrix for grade " + g + "; the size is " + gom.DomainForGrade(g).Length + " x " + gom.RangeForGrade(g).Length + " */");
                 SB.AppendLine("\t" + FT.type + " m" + g + "[" + 
                     gom.DomainForGrade(g).Length * gom.RangeForGrade(g).Length + "];");
             }
