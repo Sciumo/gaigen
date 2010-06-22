@@ -1,6 +1,5 @@
 /*
-Copyright (C) 2008 Some Random Person
-*/
+Copyright (C) 2008 Some Random Person*/
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -145,7 +144,7 @@ int e2gaParseGetNextToken(const char *buf, int *startIdx, int *endIdx, int *line
 			}
 
 			// if there is an 'e', there must be some digit
-			if (!isdigit((unsigned char)buf[(*endIdx)])) return T_BAD_NUMBER; // bad number
+			if (!isdigit((unsigned char)buf[(*endIdx)])) return -10; // bad number
 
 			// eat up all digits
 			while (isdigit((unsigned char)buf[(*endIdx)])) {
@@ -159,6 +158,10 @@ int e2gaParseGetNextToken(const char *buf, int *startIdx, int *endIdx, int *line
 	else if (isalpha((unsigned char)buf[(*startIdx)]) || (buf[(*startIdx)] == '_')) { // parse identifier?
 		// find end of chain of numbers, letters and '_'
 		*endIdx = (*startIdx) + 1;
+
+//		if ((*startIdx) == 396) {
+//			printf("AT!\n");
+//		}
 
 		while (isalnum((unsigned char)buf[(*endIdx)]) || (buf[(*endIdx)] == '_')) (*endIdx)++;
 		(*endIdx)--;  // end index is inclusive

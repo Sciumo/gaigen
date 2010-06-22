@@ -1,6 +1,5 @@
 /*
-Copyright (C) 2008 Some Random Person
-*/
+Copyright (C) 2008 Some Random Person*/
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -320,8 +319,7 @@ void compress(const double *c, double *cc, int *cgu, double epsilon, int gu) {
 			if (fabs(c[ia]) > epsilon) {f = 1; break;}
 		ia = j;
 		if (f) {
-			if ((ib+s) > 2) break; // when this 'break' happens, the input is not parity pure
-			e2ga_double_copy_N(cc + ib, c + ia - s, s);
+						e2ga_double_copy_N(cc + ib, c + ia - s, s);
 			ib += s;
 			*cgu |= (1 << i);
 		}
@@ -510,216 +508,112 @@ const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp)
 }
 
 // def SB:
-/**
- * Computes the partial geometric product of two multivectors (group 0  x  group 0 -> group 0)
- */
+/* Computes the partial geometric product of two multivectors (group 0  x  group 0 -> group 0) */
 void gp_default_0_0_0(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 0  x  group 1 -> group 1)
- */
+/* Computes the partial geometric product of two multivectors (group 0  x  group 1 -> group 1) */
 void gp_default_0_1_1(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 0  x  group 2 -> group 2)
- */
+/* Computes the partial geometric product of two multivectors (group 0  x  group 2 -> group 2) */
 void gp_default_0_2_2(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 1  x  group 0 -> group 1)
- */
+/* Computes the partial geometric product of two multivectors (group 1  x  group 0 -> group 1) */
 void gp_default_1_0_1(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 1  x  group 1 -> group 0)
- */
+/* Computes the partial geometric product of two multivectors (group 1  x  group 1 -> group 0) */
 void gp_default_1_1_0(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 1  x  group 1 -> group 2)
- */
+/* Computes the partial geometric product of two multivectors (group 1  x  group 1 -> group 2) */
 void gp_default_1_1_2(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 1  x  group 2 -> group 1)
- */
+/* Computes the partial geometric product of two multivectors (group 1  x  group 2 -> group 1) */
 void gp_default_1_2_1(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 2  x  group 0 -> group 2)
- */
+/* Computes the partial geometric product of two multivectors (group 2  x  group 0 -> group 2) */
 void gp_default_2_0_2(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 2  x  group 1 -> group 1)
- */
+/* Computes the partial geometric product of two multivectors (group 2  x  group 1 -> group 1) */
 void gp_default_2_1_1(const double *A, const double *B, double *C);
-/**
- * Computes the partial geometric product of two multivectors (group 2  x  group 2 -> group 0)
- */
+/* Computes the partial geometric product of two multivectors (group 2  x  group 2 -> group 0) */
 void gp_default_2_2_0(const double *A, const double *B, double *C);
-/**
- * copies coordinates of group 0
- */
-void copyGroup_0(const double *A, double *C);
-/**
- * copies and multiplies (by s) coordinates of group 0
- */
+/* copies coordinates of group 0 */
+void copy_0(const double *A, double *C);
+/* copies and multiplies (by s) coordinates of group 0 */
 void copyMul_0(const double *A, double *C, double s);
-/**
- * copies and divides (by s) coordinates of group 0
- */
+/* copies and divides (by s) coordinates of group 0 */
 void copyDiv_0(const double *A, double *C, double s);
-/**
- * adds coordinates of group 0 from variable A to C
- */
+/* adds coordinates of group 0 from variable A to C */
 void add_0(const double *A, double *C);
-/**
- * subtracts coordinates of group 0 in variable A from C
- */
+/* subtracts coordinates of group 0 in variable A from C */
 void sub_0(const double *A, double *C);
-/**
- * negate coordinates of group 0 of variable A
- */
+/* negate coordinates of group 0 of variable A */
 void neg_0(const double *A, double *C);
-/**
- * adds coordinates of group 0 of variables A and B
- */
+/* adds coordinates of group 0 of variables A and B */
 void add2_0_0(const double *A, const double *B, double *C);
-/**
- * subtracts coordinates of group 0 of variables A from B
- */
+/* subtracts coordinates of group 0 of variables A from B */
 void sub2_0_0(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise multiplication of coordinates of group 0 of variables A and B
- */
+/* performs coordinate-wise multiplication of coordinates of group 0 of variables A and B */
 void hp_0_0(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise division of coordinates of group 0 of variables A and B
- * (no checks for divide by zero are made)
- */
+/* performs coordinate-wise division of coordinates of group 0 of variables A and B
+(no checks for divide by zero are made) */
 void ihp_0_0(const double *A, const double *B, double *C);
-/**
- * check for equality up to eps of coordinates of group 0 of variables A and B
- */
+/* check for equality up to eps of coordinates of group 0 of variables A and B */
 int equals_0_0(const double *A, const double *B, double eps);
-/**
- * checks if coordinates of group 0 of variable A are zero up to eps
- */
-int zeroGroup_0(const double *A, double eps);
-/**
- * copies coordinates of group 1
- */
-void copyGroup_1(const double *A, double *C);
-/**
- * copies and multiplies (by s) coordinates of group 1
- */
+/* checks if coordinates of group 0 of variable A are zero up to eps */
+int zero_0(const double *A, double eps);
+/* copies coordinates of group 1 */
+void copy_1(const double *A, double *C);
+/* copies and multiplies (by s) coordinates of group 1 */
 void copyMul_1(const double *A, double *C, double s);
-/**
- * copies and divides (by s) coordinates of group 1
- */
+/* copies and divides (by s) coordinates of group 1 */
 void copyDiv_1(const double *A, double *C, double s);
-/**
- * adds coordinates of group 1 from variable A to C
- */
+/* adds coordinates of group 1 from variable A to C */
 void add_1(const double *A, double *C);
-/**
- * subtracts coordinates of group 1 in variable A from C
- */
+/* subtracts coordinates of group 1 in variable A from C */
 void sub_1(const double *A, double *C);
-/**
- * negate coordinates of group 1 of variable A
- */
+/* negate coordinates of group 1 of variable A */
 void neg_1(const double *A, double *C);
-/**
- * adds coordinates of group 1 of variables A and B
- */
+/* adds coordinates of group 1 of variables A and B */
 void add2_1_1(const double *A, const double *B, double *C);
-/**
- * subtracts coordinates of group 1 of variables A from B
- */
+/* subtracts coordinates of group 1 of variables A from B */
 void sub2_1_1(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise multiplication of coordinates of group 1 of variables A and B
- */
+/* performs coordinate-wise multiplication of coordinates of group 1 of variables A and B */
 void hp_1_1(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise division of coordinates of group 1 of variables A and B
- * (no checks for divide by zero are made)
- */
+/* performs coordinate-wise division of coordinates of group 1 of variables A and B
+(no checks for divide by zero are made) */
 void ihp_1_1(const double *A, const double *B, double *C);
-/**
- * check for equality up to eps of coordinates of group 1 of variables A and B
- */
+/* check for equality up to eps of coordinates of group 1 of variables A and B */
 int equals_1_1(const double *A, const double *B, double eps);
-/**
- * checks if coordinates of group 1 of variable A are zero up to eps
- */
-int zeroGroup_1(const double *A, double eps);
-/**
- * copies coordinates of group 2
- */
-void copyGroup_2(const double *A, double *C);
-/**
- * copies and multiplies (by s) coordinates of group 2
- */
+/* checks if coordinates of group 1 of variable A are zero up to eps */
+int zero_1(const double *A, double eps);
+/* copies coordinates of group 2 */
+void copy_2(const double *A, double *C);
+/* copies and multiplies (by s) coordinates of group 2 */
 void copyMul_2(const double *A, double *C, double s);
-/**
- * copies and divides (by s) coordinates of group 2
- */
+/* copies and divides (by s) coordinates of group 2 */
 void copyDiv_2(const double *A, double *C, double s);
-/**
- * adds coordinates of group 2 from variable A to C
- */
+/* adds coordinates of group 2 from variable A to C */
 void add_2(const double *A, double *C);
-/**
- * subtracts coordinates of group 2 in variable A from C
- */
+/* subtracts coordinates of group 2 in variable A from C */
 void sub_2(const double *A, double *C);
-/**
- * negate coordinates of group 2 of variable A
- */
+/* negate coordinates of group 2 of variable A */
 void neg_2(const double *A, double *C);
-/**
- * adds coordinates of group 2 of variables A and B
- */
+/* adds coordinates of group 2 of variables A and B */
 void add2_2_2(const double *A, const double *B, double *C);
-/**
- * subtracts coordinates of group 2 of variables A from B
- */
+/* subtracts coordinates of group 2 of variables A from B */
 void sub2_2_2(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise multiplication of coordinates of group 2 of variables A and B
- */
+/* performs coordinate-wise multiplication of coordinates of group 2 of variables A and B */
 void hp_2_2(const double *A, const double *B, double *C);
-/**
- * performs coordinate-wise division of coordinates of group 2 of variables A and B
- * (no checks for divide by zero are made)
- */
+/* performs coordinate-wise division of coordinates of group 2 of variables A and B
+(no checks for divide by zero are made) */
 void ihp_2_2(const double *A, const double *B, double *C);
-/**
- * check for equality up to eps of coordinates of group 2 of variables A and B
- */
+/* check for equality up to eps of coordinates of group 2 of variables A and B */
 int equals_2_2(const double *A, const double *B, double eps);
-/**
- * checks if coordinates of group 2 of variable A are zero up to eps
- */
-int zeroGroup_2(const double *A, double eps);
-/**
- * Computes the partial dual (w.r.t. full space) of a multivector.
- */
+/* checks if coordinates of group 2 of variable A are zero up to eps */
+int zero_2(const double *A, double eps);
+/* Computes the partial dual (w.r.t. full space) of a multivector */
 void dual_default_0_2(const double *A, double *C);
-/**
- * Computes the partial undual (w.r.t. full space) of a multivector.
- */
+/* Computes the partial undual (w.r.t. full space) of a multivector */
 void undual_default_0_2(const double *A, double *C);
-/**
- * Computes the partial dual (w.r.t. full space) of a multivector.
- */
+/* Computes the partial dual (w.r.t. full space) of a multivector */
 void dual_default_1_1(const double *A, double *C);
-/**
- * Computes the partial undual (w.r.t. full space) of a multivector.
- */
+/* Computes the partial undual (w.r.t. full space) of a multivector */
 void undual_default_1_1(const double *A, double *C);
-/**
- * Computes the partial dual (w.r.t. full space) of a multivector.
- */
+/* Computes the partial dual (w.r.t. full space) of a multivector */
 void dual_default_2_0(const double *A, double *C);
-/**
- * Computes the partial undual (w.r.t. full space) of a multivector.
- */
+/* Computes the partial undual (w.r.t. full space) of a multivector */
 void undual_default_2_0(const double *A, double *C);
 void gp_default_0_0_0(const double *A, const double *B, double *C) {
 	C[0] += A[0]*B[0];
@@ -755,7 +649,7 @@ void gp_default_2_1_1(const double *A, const double *B, double *C) {
 void gp_default_2_2_0(const double *A, const double *B, double *C) {
 	C[0] += -A[0]*B[0];
 }
-void copyGroup_0(const double *A, double *C) {
+void copy_0(const double *A, double *C) {
 	C[0] = A[0];
 }
 void copyMul_0(const double *A, double *C, double s) {
@@ -789,11 +683,11 @@ int equals_0_0(const double *A, const double *B, double eps) {
 		if (((A[0] - B[0]) < -eps) || ((A[0] - B[0]) > eps)) return 0;
 	return 1;
 }
-int zeroGroup_0(const double *A, double eps) {
+int zero_0(const double *A, double eps) {
 		if ((A[0] < -eps) || (A[0] > eps)) return 0;
-		return 1;
+	return 1;
 }
-void copyGroup_1(const double *A, double *C) {
+void copy_1(const double *A, double *C) {
 	C[0] = A[0];
 	C[1] = A[1];
 }
@@ -838,13 +732,13 @@ int equals_1_1(const double *A, const double *B, double eps) {
 		if (((A[1] - B[1]) < -eps) || ((A[1] - B[1]) > eps)) return 0;
 	return 1;
 }
-int zeroGroup_1(const double *A, double eps) {
+int zero_1(const double *A, double eps) {
 		if ((A[0] < -eps) || (A[0] > eps)) return 0;
 		if ((A[1] < -eps) || (A[1] > eps)) return 0;
-		return 1;
+	return 1;
 }
-void copyGroup_2(const double *A, double *C) {
-	copyGroup_0(A, C);
+void copy_2(const double *A, double *C) {
+	copy_0(A, C);
 }
 void copyMul_2(const double *A, double *C, double s) {
 	copyMul_0(A, C, s);
@@ -876,8 +770,8 @@ void ihp_2_2(const double *A, const double *B, double *C) {
 int equals_2_2(const double *A, const double *B, double eps) {
 	return equals_0_0(A, B, eps);
 }
-int zeroGroup_2(const double *A, double eps) {
-	return zeroGroup_0(A, eps);
+int zero_2(const double *A, double eps) {
+	return zero_0(A, eps);
 }
 void dual_default_0_2(const double *A, double *C) {
 	C[0] = -A[0];
@@ -1259,6 +1153,8 @@ double e2_t_double(const e2_t *x) {
 double I2_t_double(const I2_t *x) {
 	return 0.0;
 }
+
+
 void add_mv_mv(mv *_dst, const mv *a, const mv *b)
 {
 	int aidx = 0, bidx = 0, cidx = 0;
@@ -1269,12 +1165,12 @@ void add_mv_mv(mv *_dst, const mv *a, const mv *b)
 			add2_0_0(a->c + aidx, b->c + bidx, _dst->c + cidx);
 			bidx += 1;
 		}
-		else copyGroup_0(a->c + aidx, _dst->c + cidx);
+		else copy_0(a->c + aidx, _dst->c + cidx);
 		aidx += 1;
 		cidx += 1;
 	}
 	else if (b->gu & 1) {
-		copyGroup_0(b->c + bidx, _dst->c + cidx);
+		copy_0(b->c + bidx, _dst->c + cidx);
 		bidx += 1;
 		cidx += 1;
 	}
@@ -1284,12 +1180,12 @@ void add_mv_mv(mv *_dst, const mv *a, const mv *b)
 			add2_1_1(a->c + aidx, b->c + bidx, _dst->c + cidx);
 			bidx += 2;
 		}
-		else copyGroup_1(a->c + aidx, _dst->c + cidx);
+		else copy_1(a->c + aidx, _dst->c + cidx);
 		aidx += 2;
 		cidx += 2;
 	}
 	else if (b->gu & 2) {
-		copyGroup_1(b->c + bidx, _dst->c + cidx);
+		copy_1(b->c + bidx, _dst->c + cidx);
 		bidx += 2;
 		cidx += 2;
 	}
@@ -1298,11 +1194,11 @@ void add_mv_mv(mv *_dst, const mv *a, const mv *b)
 		if (b->gu & 4) {
 			add2_2_2(a->c + aidx, b->c + bidx, _dst->c + cidx);
 		}
-		else copyGroup_2(a->c + aidx, _dst->c + cidx);
+		else copy_2(a->c + aidx, _dst->c + cidx);
 		cidx += 1;
 	}
 	else if (b->gu & 4) {
-		copyGroup_2(b->c + bidx, _dst->c + cidx);
+		copy_2(b->c + bidx, _dst->c + cidx);
 		cidx += 1;
 	}
 }
@@ -1375,7 +1271,7 @@ void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap)
 	
 	if (a->gu & 1) {
 		if (groupBitmap & 1) {
-			copyGroup_0(a->c + aidx, _dst->c + cidx);
+			copy_0(a->c + aidx, _dst->c + cidx);
 			cidx += 1;
 		}
 		aidx += 1;
@@ -1383,7 +1279,7 @@ void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap)
 	
 	if (a->gu & 2) {
 		if (groupBitmap & 2) {
-			copyGroup_1(a->c + aidx, _dst->c + cidx);
+			copy_1(a->c + aidx, _dst->c + cidx);
 			cidx += 2;
 		}
 		aidx += 2;
@@ -1391,7 +1287,7 @@ void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap)
 	
 	if (a->gu & 4) {
 		if (groupBitmap & 4) {
-			copyGroup_2(a->c + aidx, _dst->c + cidx);
+			copy_2(a->c + aidx, _dst->c + cidx);
 		}
 	}
 }
@@ -1401,12 +1297,12 @@ void reverse_mv(mv *_dst, const mv *a)
 	_dst->gu = a->gu;
 	
 	if (a->gu & 1) {
-		copyGroup_0(a->c + idx, _dst->c + idx);
+		copy_0(a->c + idx, _dst->c + idx);
 		idx += 1;
 	}
 	
 	if (a->gu & 2) {
-		copyGroup_1(a->c + idx, _dst->c + idx);
+		copy_1(a->c + idx, _dst->c + idx);
 		idx += 2;
 	}
 	

@@ -28,16 +28,26 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 
 static int calcSumSquaredGradeSizes();
 
-const char* cArrayName = "m";
+const char* cArrayName = "c";
+const char* tFieldName = "t";
+const char* gFieldName = "g";
 
-#ifdef CYGWIN
-const char* cClassNameGA = "ga";
-const char* cClassNameOM = "outermorphism";
-#else
-const char* cClassNameGA = "GA";
-const char* cClassNameOM = "Outermorphism";
-#endif
+const int MX_C_FIELD = 0;
+const int MX_T_FIELD = 1;
+const int MX_G_FIELD = 2;
 
+const char *fieldNames[3] = {cArrayName, tFieldName, gFieldName};
+
+
+// the 'type name' of the mv type
+const int TYPE_ID_MV = 0;
+// the 'type name' of the mv type
+const int TYPE_ID_VECTOR = 1;
+
+const char* cClassNameMV = "MV";
+const char* cClassNameOM = "OM";
+
+/*
 const int   cSumSquaredGradeSizes = calcSumSquaredGradeSizes();
 const float cScaleForRandomValues = 1.0f;
 const int   cGexpIterations = 50;
@@ -51,47 +61,37 @@ static int calcSumSquaredGradeSizes()
 	}
 	return sum;
 }
+*/
 
 
-mxArray* createMxArrayFromGA(const ga_ns::ga& mv) 
+mxArray* createMxArrayFromGA(const mv &X) 
 {
-	mxArray *doubleArray = mxCreateDoubleMatrix(ga_ns::gai::nbCoor, 1, mxREAL);
-	double *content = mxGetPr(doubleArray);
+	int nbCoords = e2ga_mvSize[X.gu];
 	
-	for (int grade=0; grade<=ga_ns::gai::dim; ++grade) 
-	{
-		int gradeFlag = 1 << grade;
-		
-		/* coordinates takes a gradeflag, but returns only one grade. */
-		const double *coordinates = mv.coordinates(gradeFlag);
-		
-		for (int element=0; element<ga_ns::gai_gradeSize[grade]; ++element)
-		{
-			*(content++) = coordinates[element];
-		}
-	}
+	// init the coordinate array
+	mxArray *doubleArray = mxCreateDoubleMatrix(nbCoords, 1, mxREAL);
+	double *content = mxGetPr(doubleArray);
+	memcpy(content, X.c, sizeof(double) * nbCoords);
 
-	mxArray *structArray = mxCreateStructMatrix(1, 1, 1, &cArrayName);
-	mxSetFieldByNumber(structArray, 0, 0, doubleArray);
+	// init the type array
+	mxArray *typeArray = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mxGetPr(typeArray)[0] = TYPE_ID_MV;
 
+	// init the type array
+	mxArray *groupUsageArray = mxCreateDoubleMatrix(1, 1, mxREAL);
+	mxGetPr(groupUsageArray)[0] = X.gu;
+	
+ 	mxArray *structArray = mxCreateStructMatrix(1, 1, 3, fieldNames);
+	mxSetFieldByNumber(structArray, 0, MX_C_FIELD, doubleArray);
+	mxSetFieldByNumber(structArray, 1, MX_T_FIELD, typeArray);
+	mxSetFieldByNumber(structArray, 2, MX_G_FIELD, groupUsageArray);
+
+	// this makes it into a GA class (MUST CALL)
  	mxArray* result;
-	mexCallMATLAB(1, &result, 1, &structArray, cClassNameGA);
+	mexCallMATLAB(1, &result, 1, &structArray, cClassNameMV);
 
 	return result;
 }
-
-#if 0
-// mv_array what do we want? 
-//   std containers, boost array, ublas  + c array  double[]
-// anything a[k], boost::size(
-template <class Vec_type>
-mxArray* createMxArrayFromGaArray(const Vec_type& mv_array ) 
-{
-    // check  Vec_type::value_type == ga
-    size_t numElements = mv_array.size();
-
-}
-#endif
 
 mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
 {
@@ -123,7 +123,7 @@ mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& ga_vec)
      mexCallMATLAB(1, &result, 1, &structArray, cClassNameGA);
      return result;
 }
-
+/*
 ga_ns::ga* createGAFromMxArray(const mxArray* array)
 {
 	if (isGA(array))
@@ -219,3 +219,4 @@ ga_ns::ga_om* createOMFromMxArray(const mxArray* array)
 	}
 	return 0;
 }
+*/

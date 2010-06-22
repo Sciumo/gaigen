@@ -25,7 +25,7 @@
 	
 <metric name="default">e1.e1=e2.e2=1</metric>
 
-<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="parityPure"/> 
+<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="full"/> 
 
 <smv name="vector" type="blade">e1 e2</smv>
 <smv name="rotor" type="versor">scalar e1^e2</smv>

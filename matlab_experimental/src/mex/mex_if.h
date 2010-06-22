@@ -30,7 +30,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
 // #include <math.h>
 #include <vector>
 #include "mex.h"
-#include "gaigen_if.hpp"
+#include "../g25/e2ga.h"
 
 /// The name of the internal array of the Matlab objects
 extern const char* cArrayName;
@@ -42,13 +42,13 @@ extern const char* cClassNameGA;
 extern const char* cClassNameOM;
 
 /// The sum of the squared grade sizes, needed by OM
-extern const int   cSumSquaredGradeSizes;
+//extern const int   cSumSquaredGradeSizes;
 
 /// The scaling factor for random values
-extern const float cScaleForRandomValues;
+//extern const float cScaleForRandomValues;
 
 /// The number of iterations for the gexp algorithm
-extern const int   cGexpIterations;
+//extern const int   cGexpIterations;
 
 /** Convert Matlab GA object to Gaigen object.
  * Centralised function to convert Matlab GA object to
@@ -66,27 +66,27 @@ ga_ns::ga* createGaArrayFromMxArray(const mxArray* array, int& numElements);
  * Centralised function to convert C++ GA object to
  * Matlab GA object.
  */
-mxArray* createMxArrayFromGA(const ga_ns::ga& mv);
+//mxArray* createMxArrayFromGA(const ga_ns::ga& mv);
 
 /** Convert vector of Gaigen objects to Matlab array of GA objects.
  * Centralised function to convert C++ GA objects to
  * Matlab GA objects.
  */
-mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& mv_vec);
+//mxArray* createMxArrayFromGaArray(const std::vector<ga_ns::ga>& mv_vec);
 
 /** Convert Matlab OM object to Gaigen object.
  * Centralised function to convert Matlab Outermorphism object
  * to C++ GA_OM object
  */
-ga_ns::ga_om* createOMFromMxArray(const mxArray* array);
+//ga_ns::ga_om* createOMFromMxArray(const mxArray* array);
 
 /** Check if parameter is of class GA. */
-bool isGA(const mxArray* array);
+//bool isGA(const mxArray* array);
 
 /** Check if parameter is either of class GA or double. */
-bool isDoubleOrGA(const mxArray* array);
+//bool isDoubleOrGA(const mxArray* array);
 
 /** Return vector images for OM from double array. */
-ga_ns::ga* getVectorImages(double* data);
+//ga_ns::ga* getVectorImages(double* data);
 
 #endif //GAMATLAB_MEX_INTERFACE_FUNCTIONS_HPP_INCLUDED

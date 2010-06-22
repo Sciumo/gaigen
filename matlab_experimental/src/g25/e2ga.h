@@ -1,6 +1,5 @@
 /*
-Copyright (C) 2008 Some Random Person
-*/
+Copyright (C) 2008 Some Random Person*/
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -125,14 +124,12 @@ extern const int e2ga_basisElementGroupByBitmap[4];
  * group 1:e1, e2  (grade 1).
  * group 2:e1^e2  (grade 2).
  * 
- * 2 doubles are allocated inside the struct ('parity pure').
- * Hence creating a multivector which needs more than that number of coordinates 
- * will result in unpredictable behaviour (buffer overflow).
+ * 4 doubles are allocated inside the struct.
  */
 typedef struct 
 {
 	int gu; ///< group/grade usage (a bitmap which specifies which groups/grades are stored in 'c', below).
-	double c[2]; ///< the coordinates (note: parity pure) 
+	double c[4]; ///< the coordinates (full)
 } mv;
 
 /** index of coordinate for e1 in vector.c */
@@ -217,6 +214,7 @@ typedef struct
 	// e2 = 1
 } e2_t;
 
+
 /**
  * This struct can hold a specialized multivector of type I2_t.
  * 
@@ -250,24 +248,24 @@ extern const char *e2ga_string_minus; /* = \" - \" */
 
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
+const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
+const char *toString_vector(const vector *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
+const char *toString_rotor(const rotor *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
+const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
+const char *toString_e2_t(const e2_t *V, char *str, int maxLength, const char *fp);
 /// Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned.
- const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
+const char *toString_I2_t(const I2_t *V, char *str, int maxLength, const char *fp);
 
 
 
- extern e1_t e1;
- extern e2_t e2;
- extern I2_t I2;
+extern e1_t e1;
+extern e2_t e2;
+extern I2_t I2;
 
 
 /** Sets 1 double to zero */
@@ -442,35 +440,23 @@ double e1_t_double(const e1_t *x);
 double e2_t_double(const e2_t *x);
 /** Returns scalar part of  I2_t */
 double I2_t_double(const I2_t *x);
-/**
- * Returns mv + mv.
+
+
+/** Returns mv + mv. */
+void add_mv_mv(mv *_dst, const mv *a, const mv *b);
+/** Returns vector + vector. */
+void add_vector_vector(vector *_dst, const vector *a, const vector *b);
+/** Returns geometric product of mv and mv. */
+void gp_mv_mv(mv *_dst, const mv *a, const mv *b);
+/** Returns geometric product of vector and vector. */
+void gp_vector_vector(rotor *_dst, const vector *a, const vector *b);
+/** Returns a * b * reverse(a) using default metric. Only gives the correct result when the versor has a positive squared norm.
  */
- void add_mv_mv(mv *_dst, const mv *a, const mv *b);
-/**
- * Returns vector + vector.
- */
- void add_vector_vector(vector *_dst, const vector *a, const vector *b);
-/**
- * Returns geometric product of mv and mv.
- */
- void gp_mv_mv(mv *_dst, const mv *a, const mv *b);
-/**
- * Returns geometric product of vector and vector.
- */
- void gp_vector_vector(rotor *_dst, const vector *a, const vector *b);
-/**
- * Returns a * b * reverse(a) using default metric. Only gives the correct result when the versor has a positive squared norm.
- * 
- */
- void applyUnitVersor_rotor_vector(vector *_dst, const rotor *a, const vector *b);
-/**
- * Returns grade groupBitmap of  mv.
- */
- void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap);
-/**
- * Returns reverse of mv.
- */
- void reverse_mv(mv *_dst, const mv *a);
+void applyUnitVersor_rotor_vector(vector *_dst, const rotor *a, const vector *b);
+/** Returns grade groupBitmap of  mv. */
+void extractGrade_mv(mv *_dst, const mv *a, int groupBitmap);
+/** Returns reverse of mv. */
+void reverse_mv(mv *_dst, const mv *a);
 // inline def SB:
 
 
