@@ -1741,3 +1741,454 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomBladeFuncName = name of function for random 'gmv'
+// addGmvFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testGradeBitmapGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%S.m_GMV.NbCoordinates%>;
+	<%gmvName%> A, tmp, randomBlade;
+	int i, j;
+	int basisVectorBitmap = -1;
+	int gradeBitmap1, gradeBitmap2, nbBlades, grade;
+<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
+	int even;
+<%}%>
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get sum of random blades, keep track of grades used
+		gradeBitmap1 = 0;
+		A = new <%gmvName%>();
+		nbBlades = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
+		even = (<%randomScalarFuncName%>() >  <%FT.DoubleToString(S, 0.5)%>);
+<%}%>
+		for (j = 0; j < nbBlades; j++) {
+			grade = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+<%if (gmv.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
+			if (even) grade &= 0xFFFFFFFE;
+			else grade |= 1;
+			if (grade > <%S.m_dimension%>) grade -= 2;
+<%}%>
+			gradeBitmap1 |= 1 << grade;
+			randomBlade = <%randomBladeFuncName%>(<%FT.DoubleToString(S, 1.0)%>, grade, basisVectorBitmap);
+			tmp = <%addGmvFuncName%>(A, randomBlade);
+			A = tmp;
+		}
+		
+		gradeBitmap2 = <%targetFuncName%>(A, <%FT.DoubleToString(S, 0.0)%>);
+		
+		// check if grade bitmaps match
+		if (gradeBitmap1 != gradeBitmap2) {
+			Console.WriteLine("<%targetFuncName%>() test failed (grade bitmap " + gradeBitmap1 + " vs " + gradeBitmap2 + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// smv
+// smvName = name of smv
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random 'gmv'
+// gradeBitmapGmvFuncName = name of grade bitmap func for GMV
+${CODEBLOCK testGradeBitmapSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv.NbCoordinates%>;
+	<%gmvName%> gmvA;
+	<%smvName%> A;
+	int i;
+	int gradeBitmap1, gradeBitmap2;
+	<%FT.type%> threshold;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		threshold = <%FT.DoubleToString(S, 0.01)%> * <%randomScalarFuncName%>();
+		A = <%randomSmvFuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		
+		gradeBitmap1 = <%targetFuncName%>(A, threshold);
+		
+		gmvA = new <%gmvName%>(A);
+		
+		gradeBitmap2 = <%gradeBitmapGmvFuncName%>(gmvA, threshold);
+		
+		// check if grade bitmaps match
+		if (gradeBitmap1 != gradeBitmap2) {
+			Console.WriteLine("<%targetFuncName%>() test failed (grade bitmap " + gradeBitmap1 + " vs " + gradeBitmap2 + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
+// squared = whether distance or distance squared is being computed
+// gmv = gmv type
+// gmvName = name of GMV type
+// randomScalarFuncName = name of random generator function
+// randomBladeFuncName = name of function for random 'gmv' blade
+// gpFuncName = name of geometric product of GMV and FT
+// subtractGmvFuncName = name of subtraction of two GMVs
+${CODEBLOCK testDivGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) {
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	int i;
+	<%gmvName%> A, B, C, dif;
+	<%FT.type%> divider;
+	
+	int basisVectorBitmap = -1;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random blade
+		A = <%randomBladeFuncName%>(<%randomScalarFuncName%>(), (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>), basisVectorBitmap);
+		
+		divider = <%FT.DoubleToString(S, 0.01)%> + <%randomScalarFuncName%>();
+		
+		B = <%targetFuncName%>(A, divider);
+		
+		C = <%gpFuncName%>(B, divider);
+		
+		// see if C equals A
+		dif = <%subtractGmvFuncName%>(C, A);
+		if (dif.LargestCoordinate() > (<%FT.DoubleToString(S, FT.PrecisionEpsilon())%> )) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
+// squared = whether distance or distance squared is being computed
+// gmvName = name of GMV type
+// smv = name of SMV type
+// smvName = name of SMV type
+// resultSmvName = name of GMV type
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random 'smv' blade
+// gpFuncName = name of geometric product of GMV and FT
+// subtractGmvFuncName = name of subtraction of two GMVs
+${CODEBLOCK testDivSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) {
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv.NbCoordinates%>;
+	int i;
+	<%smvName%> A;
+	<%resultSmvName%> B;
+	<%gmvName%> gmvA, gmvB, C, dif;
+	<%FT.type%> divider;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random smv
+		A = <%randomSmvFuncName%>(<%randomScalarFuncName%>());
+		
+		divider = <%FT.DoubleToString(S, 0.01)%> + <%randomScalarFuncName%>();
+		
+		B = <%targetFuncName%>(A, divider);
+		
+		gmvB = new <%gmvName%>(B);
+		C = <%gpFuncName%>(gmvB, divider);
+		
+		gmvA = new <%gmvName%>(A);
+		
+		// see if C equals A
+		dif = <%subtractGmvFuncName%>(C, gmvA);
+		if (dif.LargestCoordinate() > (<%FT.DoubleToString(S, 10.0 * FT.PrecisionEpsilon())%> )) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// targetFuncReturnsFloat = true when target function returns result as a float 
+// smv = name of SMV type
+// smvName = name of SMV type
+// resultSmvName = name of GMV type
+// resultIsScalar = whether result is scalar of SMV
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random 'smv' blade
+// gpSinCosExpFuncName = name of targetFuncName for GMV 
+// subtractGmvFuncName = name of function for subtracting two 'gmv'
+// scalarSquare = whether the square of the SMV is a scalar.
+${CODEBLOCK testSinCosExpSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv.NbCoordinates%>;
+	<%smvName%> A;
+	<%resultSmvName%> B;
+	<%gmvName%> gmvA, gmvB, gmvC, dif;
+	int i;
+	int order = 12;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random blade
+		A = <%randomSmvFuncName%>(<%randomScalarFuncName%>());
+		
+		// compute sin, cos or exp
+<%if (resultIsScalar) {%>
+		B = <%targetFuncName%>(A);
+		gmvB = new <%gmvName%>(B);
+<%} else {%>
+		B = <%targetFuncName%>(A<% if (!scalarSquare)  { %>, 12<%}%>);
+		gmvB = new <%gmvName%>(B);
+<%}%>
+		
+		// compute sin, cos or exp using GMV
+		gmvA = new <%gmvName%>(A); 
+		gmvC = <%gpSinCosExpFuncName%>(gmvA, order);
+		
+		// check if equal:
+		dif = <%subtractGmvFuncName%>(gmvC, gmvB);
+		if (dif.LargestCoordinate() > <%FT.DoubleToString(S, 100.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmv = gmv type
+// gmvName = name of gmv
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
+// expFuncName = name of exp function for GMVs
+// sinhFuncName = name of sinh function for GMVs
+// coshFuncName = name of cosh function for GMVs
+// randomScalarFuncName = name of random generator function
+// randomBladeFuncName = name of function for random blade
+// addGmvFuncName = name of function for adding two 'gmv'
+// subtractGmvFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testSinhCoshExpGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	<%gmvName%> A, expA, sinhA, coshA, S, dif, tmp1; //, tmp2;
+	int i, g;
+	int basisVectorBitmap = -1;
+	<%FT.type%> s;
+	int order = 12;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random blade of grade 2
+		s = <%FT.DoubleToString(S, 2.0)%> * <%randomScalarFuncName%>();
+		g = 2;
+		A = <%randomBladeFuncName%>(s, g, basisVectorBitmap);
+		
+		if (<%randomScalarFuncName%>() > <%FT.DoubleToString(S, 0.5)%>) { // make sure that 'A' is not always a blade
+			s = <%randomScalarFuncName%>();
+			tmp1 = <%randomBladeFuncName%>(s, g, basisVectorBitmap);	
+			A = <%addGmvFuncName%>(A, tmp1);
+			//A = tmp2;
+		}
+
+		// apply sinh, cosh, exp functions
+		expA = <%expFuncName%>(A, order);
+		sinhA = <%sinhFuncName%>(A, order);
+		coshA = <%coshFuncName%>(A, order);
+		
+		// sum sinh and cosh
+		S = <%addGmvFuncName%>(coshA, sinhA);
+		
+		// test that sinh+cosh == exp
+		dif = <%subtractGmvFuncName%>(expA, S);
+		if (dif.LargestCoordinate() > <%FT.DoubleToString(S, Math.Exp(Math.Log(FT.PrecisionEpsilon()) / 4.0))%>) { // sinh, cosh precision is very low
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmv = gmv type
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// reverseFuncName = name of function for subtracting two 'gmv'
+// gpFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testRandomGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	<%gmvName%> A, reverseA, tmp;
+	int i, g;
+	int basisVectorBitmap = -1;
+	<%FT.type%> s, n;
+	int nbSummed = 0;
+	<%FT.type%> sumMean = <%FT.DoubleToString(S, 0.0)%>;
+	<%FT.type%> sumVariance = <%FT.DoubleToString(S, 0.0)%>;
+	<%FT.type%> mean, variance, v;
+	
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random blade
+		s = <%randomScalarFuncName%>();
+		g = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+		A = <%targetFuncName%>(s, g, basisVectorBitmap);
+
+		// todo: test for versor / bladed-ness (this functionality is not implemented yet)
+		
+		// test if norm is <= s
+		reverseA = <%reverseFuncName%>(A);
+		tmp = <%gpFuncName%>(A, reverseA);
+		n = (<%FT.type%>)Math.Sqrt(Math.Abs(tmp.get_scalar()));
+		if (n > s) {
+			Console.WriteLine("<%targetFuncName%>() test failed (norm = " + n + ")");
+			return 0; // failure
+		}
+		
+		// very crude test of mean and variance of coordinates
+		for (int groupIdx = 0; groupIdx < A.m_c.Length; groupIdx++) {
+			if ((A.gu() & Groups[groupIdx]) != 0) {
+				for (int e = 0; e < GroupSize[groupIdx]; e++) {
+					sumMean += A.m_c[groupIdx][e];
+					nbSummed++;
+					v = A.m_c[groupIdx][e] - sumMean / (<%FT.type%>)nbSummed;
+					sumVariance += v * v;
+				}
+			}
+		}
+	}
+	
+	// very simple test of mean, variance
+	mean = sumMean / (<%FT.type%>)nbSummed;
+	variance = sumVariance / (<%FT.type%>)nbSummed;
+	if (variance < <%FT.DoubleToString(S, 0.0001)%>) {
+		Console.WriteLine("<%targetFuncName%>() test failed (mean = " + (double)mean + ", variance = " + (double)variance + ")");
+		return 0; // failure
+	}
+	
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomVersorFuncName = name of function for random 'gmv' blade
+// subtractGmvFuncName = name of subtraction of two GMVs
+// increment = whether to test increment or decrement
+${CODEBLOCK testIncrementGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%S.m_GMV.NbCoordinates%>;
+	<%gmvName%> A, B, C, D, one;
+	int i, g;
+	int basisVectorBitmap = -1;
+
+<%if (increment) {%>
+	one = new <%gmvName%>(<%FT.DoubleToString(S, 1.0)%>);
+<%} else {%>
+	one = new <%gmvName%>(<%FT.DoubleToString(S, -1.0)%>);
+<%}%>
+
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random versor
+		g = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+<%if (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE) {%>
+		g ^= (g & 1); // make sure grade is even (parity pure memory allocation of GMV)
+<%}%>
+		A = <%randomVersorFuncName%>(<%randomScalarFuncName%>() + <%FT.DoubleToString(S, 0.5)%>, g, basisVectorBitmap);
+		
+		// increment/decrement
+		B = <%targetFuncName%>(A);
+		
+		// undo the increment/decrement
+		C = <%subtractFuncName%>(B, one);
+		
+		// see if (A - (B-1)) == 0
+		D = <%subtractFuncName%>(A, C);
+		
+		if (D.LargestCoordinate() > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate of D = " + (double)D.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// smv = smv1 type
+// smvName = name of smv1
+// smvRName = name of return type smv
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomSmvFuncName = name of function for random 'smv1'
+// subtractGmvFuncName = name of subtraction of two GMVs
+// incrementGmvFuncName = name of subtraction of two GMVs
+${CODEBLOCK testIncrementSMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv.NbCoordinates%>;
+	<%smvName%> A;
+	<%smvRName%> C;
+	<%gmvName%> gA, gC1, gC2;
+	<%FT.type%> s;
+	
+	int i;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		s = <%randomScalarFuncName%>();
+		A = <%randomSmvFuncName%>(s);
+		
+		// increment or decrement
+		C = <%targetFuncName%>(A);
+		
+		// convert A and C to gmv
+		gA = new <%gmvName%>(A);
+		gC1 = new <%gmvName%>(C);
+		
+		gC2 = <%incrementGmvFuncName%>(gA);
+		
+		// see if result is equal up to precision:
+		gA = <%subtractGmvFuncName%>(gC1, gC2);
+		if (gA.LargestCoordinate() > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed\n");
+			return 0; // failure
+		}		
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}

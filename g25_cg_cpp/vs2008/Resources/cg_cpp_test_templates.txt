@@ -1842,8 +1842,8 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 	mean = sumMean / (<%FT.type%>)nbSummed;
 	variance = sumVariance / (<%FT.type%>)nbSummed;
 	if (variance < <%FT.DoubleToString(S, 0.0001)%>) {
-			("<%targetFuncName%>() test failed (mean = %e, variance = %e)\n", (double)mean, (double)variance);
-			return 0; // failure
+		printf("<%targetFuncName%>() test failed (mean = %e, variance = %e)\n", (double)mean, (double)variance);
+		return 0; // failure
 	}
 	
 	return 1; // success
@@ -1912,7 +1912,7 @@ ${CODEBLOCK testSinhCoshExpGMV}
 int <%testFuncName%>(int NB_TESTS_SCALER) 
 {
 	const int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
-	<%gmvName%> A, expA, sinhA, coshA, S, dif, tmp1, tmp2;
+	<%gmvName%> A, expA, sinhA, coshA, S, dif, tmp1;//, tmp2;
 	int i, g;
 	int basisVectorBitmap = -1;
 	<%FT.type%> s;
@@ -1928,7 +1928,7 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 			s = <%randomScalarFuncName%>();
 			tmp1 = <%randomBladeFuncName%>(s, g, basisVectorBitmap);	
 			A = <%addGmvFuncName%>(A, tmp1);
-			A = tmp2;
+			//A = tmp2;
 		}
 
 		// apply sinh, cosh, exp functions
