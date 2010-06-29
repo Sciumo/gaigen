@@ -1,1 +1,10 @@
- 
+${CODEBLOCK ConsoleWriteLine}
+	static class ConsoleInternal {
+		public ConsoleInternal() {}
+		public void WriteLine(String line) {
+			System.out.println(line);
+		}
+	}
+	
+	static ConsoleInternal Console = new ConsoleInternal();
+${ENDCODEBLOCK}

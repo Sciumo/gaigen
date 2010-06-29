@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace G25.CG.CSharp
+namespace G25.CG.Java
 {
     /// <summary>
     /// Handles code generation of unit test suite.
@@ -63,7 +63,7 @@ namespace G25.CG.CSharp
             G25.CG.Shared.Util.WriteLicense(SB, S);
 
             // using ...
-            Util.WriteGenericUsing(SB, S);
+            //Util.WriteGenericUsing(SB, S);
 
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
@@ -127,6 +127,7 @@ namespace G25.CG.CSharp
                 } while (count < cgd.m_missingDependencies.Count);
             }
 
+
             // write code for all dependencies to output
             SB.AppendLine("// Missing dependencies definitions:");
             SB.Append(cgd.m_defSB);
@@ -182,6 +183,9 @@ namespace G25.CG.CSharp
             SB.AppendLine("// Testing code definitions:");
             SB.Append(cgd.m_defSB);
 
+            // write console.WriteLine class/function
+            cgd.m_cog.EmitTemplate(SB, "ConsoleWriteLine");
+
             // write main function
             cgd.m_cog.EmitTemplate(SB, "testSuiteMain",
                 "S=", S,
@@ -221,7 +225,7 @@ namespace G25.CG.CSharp
                 "FT=", S.m_floatTypes[0],
                 "gmvName=", S.m_floatTypes[0].GetMangledName(S, S.m_GMV.Name),
                 "testFuncName=", testFuncName,
-                "targetFuncName=", "Parse",
+                "targetFuncName=", "parse",
                 "randomScalarFuncName=", randomNumberGeneratorFuncName,
                 "randomVersorFuncName=", randomVersorFuncName,
                 "subtractGmvFuncName=", subtractGmvFuncName

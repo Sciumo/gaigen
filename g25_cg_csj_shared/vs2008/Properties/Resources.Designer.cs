@@ -66,18 +66,26 @@ namespace g25_cg_csj_shared.Properties {
         ///// gmvName = name of GMV class
         ///// fabsFunc = name of floating point absolute function
         ///${CODEBLOCK GMVlargestCoordinate}
-        ///	/** returns the absolute largest coordinate. */
-        ///	public &lt;%FT.type%&gt; largestCoordinate() {
-        ///		&lt;%FT.type%&gt; maxValue = &lt;%FT.DoubleToString(S, 0.0)%&gt;, C;
-        ///		for (int g = 0; g &lt; m_c.length; g++) {
-        ///			if (m_c[g] != null) {
-        ///				&lt;%FT.type%&gt;[] Cg = m_c[g];
-        ///				for (int b = 0; b &lt; Cg.length; b++) {
-        ///			 [rest of string was truncated]&quot;;.
+        ///&lt;%if (S.m_outputLanguage == G25.OUTPUT_LANGUAGE.CSHARP) {%&gt;
+        ///	/// &lt;summary&gt;returns the absolute largest coordinate.&lt;/summary&gt;
+        ///&lt;%} else {%&gt;
+        ///	/** returns the absolute largest coordinate.*/
+        ///&lt;%}%&gt;
+        ///	public &lt;%FT.type%&gt; &lt;%G25.CG.CSJ.Util.GetFunctionName(S, &quot;largestCoordinate&quot;)%&gt;() {
+        ///		&lt;%FT.type%&gt; max [rest of string was truncated]&quot;;.
         /// </summary>
         public static string cg_csj_shared_templates {
             get {
                 return ResourceManager.GetString("cg_csj_shared_templates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string cg_csj_shared_test_templates {
+            get {
+                return ResourceManager.GetString("cg_csj_shared_test_templates", resourceCulture);
             }
         }
     }

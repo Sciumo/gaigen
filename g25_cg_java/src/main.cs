@@ -83,7 +83,7 @@ namespace G25.CG.Java
             generatedFiles.AddRange(GroupBitmap.GenerateCode(S, cgd));
             // generate multivector interfaces
             generatedFiles.AddRange(MvInterface.GenerateCode(S, cgd));
-            // generate multivector interfaces
+            // generate parser
             generatedFiles.AddRange(Parser.GenerateCode(S, cgd));
 
             // report errors and missing deps to user
@@ -91,8 +91,8 @@ namespace G25.CG.Java
             cgd.PrintMissingDependencies(S);
             if ((cgd.GetNbErrors() == 0) && (cgd.GetNbMissingDependencies() == 0) && S.m_generateTestSuite)
             {
-                // if no errors, then generate testing code
-                //TestSuite.GenerateCode(S, cgd, FGI);
+                // generate test suite
+                generatedFiles.AddRange(TestSuite.GenerateCode(S, cgd, FGI));
             }
 
 
@@ -114,6 +114,7 @@ namespace G25.CG.Java
             G25.CG.Shared.Util.LoadTemplates(cog);
 
             cog.LoadTemplates(g25_cg_csj_shared.Properties.Resources.cg_csj_shared_templates , "cg_csj_shared_templates.txt");
+            cog.LoadTemplates(g25_cg_csj_shared.Properties.Resources.cg_csj_shared_test_templates, "cg_csj_shared_test_templates.txt");
 
             cog.LoadTemplates(g25_cg_java.Properties.Resources.cg_java_templates, "cg_java_templates.txt");
             if (S.m_generateTestSuite) // only load when testing code is required
