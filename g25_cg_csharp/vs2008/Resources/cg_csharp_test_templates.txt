@@ -2192,3 +2192,184 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmv = gmv type
+// gmvName = name of gmv
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomVersorFuncName = name of function for random versor
+// subtractGmvFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testHadamardProductGMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	<%gmvName%> A, B, C, D, dif;
+	int i, g;
+	int basisVectorBitmap = -1;
+	<%FT.type%> s;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// get random versor
+		s = <%randomScalarFuncName%>();
+		g = (int)(<%randomScalarFuncName%>() * <%FT.DoubleToString(S, S.m_dimension + 0.5)%>);
+		A = <%randomVersorFuncName%>(s, g, basisVectorBitmap);
+		
+		// copy it to another versor
+		B = new <%gmvName%>(A);
+		
+		// set coordinates of B to random values (which may not be zero)
+		for (g = 0; g < <%gmv.NbGroups%>; g++) {
+			if (B.m_c[g] == null) continue;
+			for (int e = 0; e < B.m_c[g].Length; e++) {
+				B.m_c[g][e] = <%FT.DoubleToString(S, 0.5)%> + <%randomScalarFuncName%>();
+			}
+		}
+		
+		// do hadamard product
+		C = <%targetFuncName%>(A, B);
+		
+		// invert coordinates of B manually
+		for (g = 0; g < <%gmv.NbGroups%>; g++) {
+			if (B.m_c[g] == null) continue;
+			for (int e = 0; e < B.m_c[g].Length; e++) {
+				B.m_c[g][e] = <%FT.DoubleToString(S, 1.0)%> / B.m_c[g][e];
+			}
+		}
+
+		// do inverse hadamard product
+		D = <%targetFuncName%>(C, B);
+		
+		// check if equal to original:
+		dif = <%subtractGmvFuncName%>(A, D);
+		if (dif.LargestCoordinate() > <%FT.DoubleToString(S, 100.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")");
+			return 0; // failure
+		}
+	}
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+// S = Specification
+// FT = float type
+// gmvName = name of gmv
+// smv1
+// smv1Name = name of smv1
+// smv2Name = name of smv2
+// resultSmvName = SMV result type
+// resultSmvName = name of SMV result type
+// targetFuncName = name of function to test
+// testFuncName = name of testing function
+// randomScalarFuncName = name of random generator function
+// randomSmv1FuncName = name of function for random 'smv1'
+// randomSmv2FuncName = name of function for random 'smv2'
+// hpGmvFuncName = hadamard product of GMVs
+// subtractGmvFuncName = name of function for subtracting two 'gmv'
+${CODEBLOCK testHadamardProductSMV}
+<%{
+G25.VariableType _resultSMV = resultSmv; // to avoid C# compiler problems
+bool useDifTest = ((_resultSMV is G25.FloatType) || ((_resultSMV is G25.MV) && G25.MV.BasisBladeScalesMatch((G25.MV)_resultSMV, S.m_GMV)));
+%>
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%smv1.NbCoordinates%>;
+	<%gmvName%> gmvA, gmvB, gmvC, gmvD;
+	<%smv1Name%> A;
+	<%smv2Name%> B;
+	<%resultSmvName%> C;
+	int i;
+<%if	(inverseHadamard) {%>
+	bool ok;
+<%}%>
+<%if (useDifTest) {%>
+	<%gmvName%> dif;
+<%} else {%>
+	<%FT.type%> vC, vD, Q;
+<%}%>
+
+<%if	(inverseHadamard) {%>
+	// initialize a lookup table which tells us which coordinates should not be non-null	
+	bool[] nonNull2 = new bool[<%gmv.NbCoordinates%>];
+	for (i = 0; i < 100; i++) {
+		B = <%randomSmv2FuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		gmvB = new <%gmvName%>(B);
+		int nonNull2idx = 0;
+		for (int g = 0; g < <%gmv.NbGroups%>; g++) {
+			if (gmvB.m_c[g] == null) continue;
+			for (int e = 0; e < gmvB.m_c[g].Length; e++) {
+				if (gmvB.m_c[g][e] != <%FT.DoubleToString(S, 0.0)%>) nonNull2[nonNull2idx] = true;
+				nonNull2idx++;
+			}
+		}
+	}
+<%}%>
+
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		A = <%randomSmv1FuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		B = <%randomSmv2FuncName%>(<%FT.DoubleToString(S, 1.0)%>);
+		
+		// convert smv to GMV
+		gmvA = new <%gmvName%>(A);
+		gmvB = new <%gmvName%>(B);
+		
+<%if	(inverseHadamard) {%>
+		// make sure that none of the 'B' coordinates are 0, because then inverse hadamard won't work
+		ok = true;
+
+		{		
+			int nonNull2idx = 0;
+			for (int g = 0; g < <%gmv.NbGroups%>; g++) {
+				if (gmvB.m_c[g] == null) continue;
+				for (int e = 0; e < gmvB.m_c[g].Length; e++) {
+					if (gmvB.m_c[g][e] == <%FT.DoubleToString(S, 0.0)%>) {
+						if (nonNull2[nonNull2idx]) ok = false;
+						else gmvB.m_c[g][e] = <%FT.DoubleToString(S, FT.MaxValue())%>;
+						nonNull2idx++;
+					}
+				}
+			}
+		}
+		
+		if (!ok) continue; // some SMV coordinate was set to 0 by the random generator (very rare)
+<%}%>
+		
+		// do hadamard product (SMV)
+		C = <%targetFuncName%>(A, B);
+		gmvC = new <%gmvName%>(C);
+		
+		// do hadamard product (GMV)
+		gmvD = <%hpGmvFuncName%>(gmvA, gmvB);
+		
+<%if (useDifTest) {%>
+		// check if equal to original:
+		dif = <%subtractGmvFuncName%>(gmvC, gmvD);
+		if (dif.LargestCoordinate() > <%FT.DoubleToString(S, 100.0 * FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largestCoordinate = " + (double)dif.LargestCoordinate() + ")\n");
+			return 0; // failure
+		}
+<%} else {%>
+<%for (int groupIdx = 0; groupIdx < S.m_GMV.NbGroups; groupIdx++) {%>
+<%for (int elementIdx = 0; elementIdx < S.m_GMV.Group(groupIdx).Length; elementIdx++) {%>
+		vC = gmvC.get_<%S.m_GMV.Group(groupIdx)[elementIdx].ToLangString(S.m_basisVectorNames)%>();
+		vD = gmvD.get_<%S.m_GMV.Group(groupIdx)[elementIdx].ToLangString(S.m_basisVectorNames)%>();
+		if ((vD < <%FT.DoubleToString(S, -FT.PrecisionEpsilon())%>) || (vD > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>)) {
+			Q = vC / vD;
+			if (Q < <%FT.DoubleToString(S, 0.0)%>) Q = -Q;
+			if (((Q - <%FT.DoubleToString(S, 1.0)%>) < <%FT.DoubleToString(S, -FT.PrecisionEpsilon())%>) || ((Q - <%FT.DoubleToString(S, 1.0)%>) > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>)) {
+				Console.WriteLine("<%targetFuncName%>() test failed (using alternate test, Q = " + (double)Q + ")\n");
+				return 0; // failure
+			}
+		}
+<%}%>
+<%}%>
+<%}%>
+	}
+	return 1; // success
+}
+<%}%>
+${ENDCODEBLOCK}
+

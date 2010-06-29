@@ -1190,7 +1190,7 @@ int <%testFuncName%>(int NB_TESTS_SCALER)
 		// copy it to another versor
 		B = A;
 		
-		// set coordinates of B to random values (which may not be zero
+		// set coordinates of B to random values (which may not be zero)
 		for (j = 0; j < <%S.m_namespace%>_mvSize[B.gu()]; j++) {
 			B.m_c[j] = <%FT.DoubleToString(S, 0.5)%> + <%randomScalarFuncName%>();
 		}
