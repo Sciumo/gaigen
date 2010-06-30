@@ -147,34 +147,30 @@ Maybe fix the float type stuff
 	-> Write C# and Java output.
 			
 			
-			SMV:
-				V class comment
-				member function shortcuts (for regular functions)
-				converters as constructors (SMV->SMV and such)
-			
 			V constants
 			
 			V runtime geometric product
 			
 			V log (3D)
 			
-			-> testing code for C# and Java, test everything, fix all bugs
+			V testing code for C# and Java, test everything, fix all bugs
+				-> only apply OM to SMV is left to do
 			
 			GMV functions needs to be over the interface, not the multivectors themselves!!!!
 				Test this by having an algebra with no specialized functions and calling
 				all functions using an SMV as the argument
 			
-			GMV log 3d for C# (done?)
-			
 			makefile for all platforms
 			
 			Release first version with C# and Java support
 			
-			operators
+			GMV log 3d for C# (done?), for Java, too, testing
+			
+			C# operators
 			
 			report usage
 			
-			SMV member function shortcuts (for regular functions)
+			GMV, SMV member function shortcuts (for regular functions)
 				
 			SMV converters as constructors (SMV->SMV and such)
 			
@@ -183,7 +179,10 @@ Maybe fix the float type stuff
 
 	SourceForge website HTML pages
 	
-	Python version: ask Liam Candy liam.candy@gmail.com
+	Matlab version: working on it with Robert Valkenburg
+	Python version: ask Liam Candy (liam.candy AT gmail DOT com)
+	Fortran 77 version: Philip Kuntz (cloraphyl AT gmx DOT com)
+	
 	
 	
 	Announce on GA net
