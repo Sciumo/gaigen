@@ -656,7 +656,7 @@ namespace <%S.m_namespace%>_ns {
     		return Character.isLetterOrDigit(x);
 		}
 		private final String substring(final int startIdx, final int endIdx) {
-    		return inputString.substring(startIdx, endIdx);
+    		return inputString.substring(startIdx, endIdx+1); // endIdx of String.substring is exclusive!
 		}
 		private final static int length(final String str) {
     		return str.length();
@@ -758,8 +758,9 @@ namespace <%S.m_namespace%>_ns {
 				endIdx--;  // end index is inclusive
 
 				// see which basis vector it is
+				String bvName = substring(startIdx, endIdx);
 				for (int i = 0; i < <%S.m_dimension%>; i++)
-					if (<%S.m_namespace%>.BasisVectorNames[i].<%G25.CG.CSJ.Util.GetFunctionName(S, "equals")%>(substring(startIdx, endIdx))) return T_FIRST_BASIS_VECTOR + i; // basis vector
+					if (<%S.m_namespace%>.BasisVectorNames[i].<%G25.CG.CSJ.Util.GetFunctionName(S, "equals")%>(bvName)) return T_FIRST_BASIS_VECTOR + i; // basis vector
 				return T_BAD_IDENTIFIER; // bad identifier
 			}
 
