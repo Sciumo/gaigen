@@ -92,9 +92,7 @@
 <constant name="e1Alt" type="vectorE3GA">e1=1 e2=0 e3=0</constant>
 <constant name="pointAtOrigin" type="normalizedPoint">no=1 e1=0 ni=0 <comment>The point at the origin . . . </comment></constant>
   
-<!--
 <om name="om" coordinateOrder="default" />
--->
   
 <som name="euclideanGrade1OM">
   <domain>e1 e2 e3</domain>
@@ -326,14 +324,13 @@
   <function name="increment" arg1="vectorE3GA" floatType="double"/>
   <function name="increment" arg1="bivectorE3GA" floatType="double"/>
 
-<!--
+
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="flatPointOM" arg2="flatPoint" floatType="float"/>
   <function name="applyOM" arg1="flatPointOM" arg2="pointPair" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="flatPoint" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="sphere" floatType="double"/>
   <function name="applyOM" arg1="om" arg2="mv" floatType="double"/>
--->
   
   <function name="_vectorE3GA" arg1="normalizedPoint"/>
 </g25spec>

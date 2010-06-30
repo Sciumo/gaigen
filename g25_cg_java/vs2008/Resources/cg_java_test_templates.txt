@@ -8,3 +8,5 @@ ${CODEBLOCK ConsoleWriteLine}
 	
 	static ConsoleInternal Console = new ConsoleInternal();
 ${ENDCODEBLOCK}
+
+// The other templates are shared with C# in cg_csj_shared_test_templates.txt
