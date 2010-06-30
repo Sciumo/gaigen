@@ -2385,3 +2385,146 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 <%}%>
 ${ENDCODEBLOCK}
 
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// gmv = gmv type
+// gmvName = name of gmv
+// gomName = name of gom
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomBladeFuncName = name of function for random 'gmv'
+// subtractGmvFuncName = name of function for subtracting two 'gmv's
+// opGmvFuncName = name of function for outer product of two 'gmv's
+${CODEBLOCK testApplyOM_GMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%gmv.NbCoordinates%>;
+	<%FT.type%>[] OMmatrix = new <%FT.type%>[<%S.m_dimension%> * <%S.m_dimension%>];
+	int i, d, d2;
+	int nbRandomVectors;
+	<%gomName%> randomOM;
+	<%gmvName%>[] randomVectors = new <%gmvName%>[<%S.m_dimension%>];
+	<%gmvName%>[] OMrandomVectors = new <%gmvName%>[<%S.m_dimension%>];
+	<%gmvName%> op1, op2, tmp, dif;
+	int basisVectorBitmap = -1;
+	int vectorGrade = 1;
+
+	for (i = 0; i < NB_LOOPS; i++) {
+		// init random outermorphism matrix
+		for (d2 = 0; d2 < <%S.m_dimension%> * <%S.m_dimension%>; d2++)
+			OMmatrix[d2] = <%randomScalarFuncName%>();
+		
+		// init random OM
+		randomOM = new <%gomName%>(OMmatrix);
+		
+		// get n < <%S.m_dimension%> random vectors stored in GMV
+		nbRandomVectors = (int)(<%FT.DoubleToString(S, S.m_dimension)%> * <%randomScalarFuncName%>());
+		if (nbRandomVectors < 1) nbRandomVectors = 1;
+		for (d = 0; d < nbRandomVectors; d++) {
+			randomVectors[d] = <%randomBladeFuncName%>(<%randomScalarFuncName%>(), vectorGrade, basisVectorBitmap);
+			OMrandomVectors[d] = <%targetFuncName%>(randomOM, randomVectors[d]);
+		}
+		
+		// compute outer product of randomVectors, OMrandomVectors
+		op1 = randomVectors[0];
+		op2 = OMrandomVectors[0];
+		for (d = 1; d < nbRandomVectors; d++) {
+			tmp = <%opGmvFuncName%>(op1, randomVectors[d]);
+			op1 = tmp;
+			
+			tmp = <%opGmvFuncName%>(op2, OMrandomVectors[d]);
+			op2 = tmp;
+		}
+		
+		// apply OM to op1
+		tmp = <%targetFuncName%>(randomOM, op1);
+		op1 = tmp;
+		
+		// test equality
+		dif = <%subtractGmvFuncName%>(op1, op2);
+		if (dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+			Console.WriteLine("<%targetFuncName%>() test failed");
+			return 0; // failure
+		}
+	}
+		
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+
+
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// gmvName = name of GMV type
+// gomName = name of gom
+// testOm = om type
+// testOmName = om name
+// rangeVectorName = name of range vector type
+// domainSmv = domain smv type
+// domainSmvName = name of domain smv
+// rangeSmvName = name of domain smv
+// targetFuncName = name of function to test
+// randomScalarFuncName = name of random generator function
+// randomRangeVectorFunc  = name of function for random 'rangeVectorName'
+// randomDomainSmvFunc  = name of function for random 'domainSmvName'
+// subtractGmvFuncName = name of function for subtracting two 'gmv's
+// gmvApplyOmFunc = function to apply OM to GMV
+${CODEBLOCK testApplyOM_SMV}
+static int <%testFuncName%>(int NB_TESTS_SCALER) 
+{
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%domainSmv.NbCoordinates%>;
+	<%rangeVectorName%>[] rangeVectors = new <%rangeVectorName%>[<%S.m_dimension%>];
+	<%gomName%> refOM;
+	<%testOmName%> testOM;
+	<%domainSmvName%> randomDomainSmv;
+	<%rangeSmvName%> rangeSmv, tmp;
+	<%gmvName%> mv1, mv2, mv3, dif;
+	int d, i;
+	
+	for (i = 0; i < NB_LOOPS; i++) {
+		// init two range OMs (GOM and SOM)
+		for (d = 0; d < <%S.m_dimension%>; d++) {
+			rangeVectors[d] = <%randomRangeVectorFunc%>(<%randomScalarFuncName%>());
+		}
+		refOM = new <%gomName%>(<%for (int d = 0; d < S.m_dimension; d++) {%><%if (d > 0) {%>, <%}%>rangeVectors[<%d%>]<%}%>);
+<%if (testOm.Specialized) {%>
+		testOM = new <%testOmName%>(refOM);
+		refOM = new <%gomName%>(testOM);
+<%} else {%>
+		testOM = new <%testOmName%>(refOM);
+<%}%>		
+		
+		// apply OM directly to domainSMV
+		randomDomainSmv = <%randomDomainSmvFunc%>(<%randomScalarFuncName%>());
+		
+		rangeSmv = <%targetFuncName%>(testOM, randomDomainSmv);
+		mv3 = new <%gmvName%>(rangeSmv);
+		
+		// convert domain SMV to GMV, apply to GMV
+		mv1 = new <%gmvName%>(randomDomainSmv);
+		mv2 = <%gmvApplyOmFunc%>(refOM, mv1);
+		
+		// get rid of extra coordinates outside the range of the testOM
+<%if (S.IsFloatType(rangeSmvName)) {%> 
+		tmp = mv2.get_scalar();
+		mv2 = new <%gmvName%>(tmp);
+<%} else {%> 
+		tmp = new <%rangeSmvName%>(mv2);
+		mv2 = new <%gmvName%>(tmp);
+<%}%> 
+		
+		// test equality
+		dif = <%subtractGmvFuncName%>(mv2, mv3);
+		if (dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > (<%FT.DoubleToString(S, FT.PrecisionEpsilon() * 100.0)%> )) {
+			Console.WriteLine("<%targetFuncName%>() test failed\n");
+			return 0; // failure
+		}
+	}
+		
+	return 1; // success
+}
+${ENDCODEBLOCK}
