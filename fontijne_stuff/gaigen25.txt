@@ -157,6 +157,24 @@ Maybe fix the float type stuff
 			
 			makefile, test scripts for all platforms
 			
+				For C#
+				csc /t:exe /out:test.exe *.cs
+				java org.antlr.Tool c3ga.g
+				csc /r:"..\Antlr3.Runtime.dll" /t:exe /out:test.exe *.cs
+				I'm stuck on how to get Antlr3 from GAC
+					For now, I think the simplest solution is to distribute Antlr3.Runtime.dll with
+					G25, and for testing copy it into a bin dir, then compile all of the tests
+					into that bin dir
+					Or just have a lot of 
+				
+				Install, list, uninstall dlls:
+				gacutil /i xyz.dll
+				gacutil /l xyz
+				gacutil /u xyz
+				
+				
+			
+			
 			GMV functions needs to be over the interface, not the multivectors themselves!!!!
 				Test this by having an algebra with no specialized functions and calling
 				all functions using an SMV as the argument
