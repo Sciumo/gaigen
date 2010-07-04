@@ -705,6 +705,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B64752D7F9F04236A8FBB7B25CB60AA9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B7768F652C627F706E48A1B32B2AB53B"
         "OwnerKey" = "8:_462B9127336E4E30A649E1CA53D286E2"
         "MsmSig" = "8:_UNDEFINED"
@@ -947,6 +953,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D06400399E88469FA2D5D702A9C51858"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B64752D7F9F04236A8FBB7B25CB60AA9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3171,6 +3183,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{BC1349BC-2140-4AE1-A9AD-EAAD80721BCB}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B64752D7F9F04236A8FBB7B25CB60AA9"
+            {
+            "SourcePath" = "8:..\\..\\..\\g25_copy_resource\\vs2008\\obj\\Release\\g25_copy_resource.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_936C15859ADD44F591C67A42D5766F1E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{2D8925BE-C1BB-417F-827F-01DE89D309FF}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
