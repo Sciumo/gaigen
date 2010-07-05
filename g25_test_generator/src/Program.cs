@@ -50,7 +50,7 @@ namespace g25_test_generator
         public const string TEST_CMD = "test";
         public const string XML_TEST_CMD = "xml_test";
 
-        public static List<string> Languages = new List<string> { "c", "cpp" };
+        public static List<string> Languages = new List<string> { G25.XML.XML_C, G25.XML.XML_CPP, G25.XML.XML_CSHARP };
 
         static void Main(string[] args)
         {
@@ -779,22 +779,49 @@ namespace g25_test_generator
         }
 
 		
-		public static string GetMakefileTemplateName() {
+		public static string GetMakefileTemplateName(string language) {
+            if (language.Equals(G25.XML.XML_C) || language.Equals(G25.XML.XML_CPP))
+                return GetMakefileTemplateNameCppOrC();
+            if (language.Equals(G25.XML.XML_CSHARP))
+                return GetMakefileTemplateNameCSharp();
+            else return "makefile_unknown_language";
+        }
+
+        public static string GetMakefileTemplateNameCppOrC()
+        {
 			switch (GetPlatformID()) {
 			case PlatformID.Win32NT:
 			case PlatformID.Win32Windows:
 			case PlatformID.Win32S:
 			case PlatformID.WinCE:
 			case PlatformID.Xbox:
-				return "makefile_vs";
+				return "makefile_c_cpp_vs";
 			case PlatformID.Unix:
 			case PlatformID.MacOSX:
-				return "makefile_unix";
+				return "makefile_c_cpp_unix";
 			default:
 				return "makefile_unknown_platform";
 			}
 		}
-		
+
+        public static string GetMakefileTemplateNameCSharp()
+        {
+            switch (GetPlatformID())
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32S:
+                case PlatformID.WinCE:
+                case PlatformID.Xbox:
+                    return "makefile_csharp_vs";
+                case PlatformID.Unix:
+                case PlatformID.MacOSX:
+                    return "makefile_csharp_unix";
+                default:
+                    return "makefile_unknown_platform";
+            }
+        }
+
 		public static string GetScriptExtension() {
 			return (IsUnix()) ? "sh" : "bat";
 		}
