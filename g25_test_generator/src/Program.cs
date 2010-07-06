@@ -369,7 +369,7 @@ namespace g25_test_generator
             foreach (SpecVars V in vars)
             {
                 V.Dimension = 2;
-                GenerateFromVar(cog, commands, "e2ga_spec", GetMakefileTemplateName(), "e2ga", V);
+                GenerateFromVar(cog, commands, "e2ga_spec", GetMakefileTemplateName(V.OutputLanguage), "e2ga", V);
             }
         }
 
@@ -399,7 +399,7 @@ namespace g25_test_generator
             foreach (SpecVars V in vars)
             {
                 V.Dimension = 3;
-                GenerateFromVar(cog, commands, "e3ga_spec", GetMakefileTemplateName(), "e3ga", V);
+                GenerateFromVar(cog, commands, "e3ga_spec", GetMakefileTemplateName(V.OutputLanguage), "e3ga", V);
             }
         }
 
@@ -429,7 +429,7 @@ namespace g25_test_generator
             foreach (SpecVars V in vars)
             {
                 V.Dimension = 4;
-                GenerateFromVar(cog, commands, "p3ga_spec", GetMakefileTemplateName(), "p3ga", V);
+                GenerateFromVar(cog, commands, "p3ga_spec", GetMakefileTemplateName(V.OutputLanguage), "p3ga", V);
             }
         }
 
@@ -454,7 +454,7 @@ namespace g25_test_generator
             foreach (SpecVars V in vars)
             {
                 V.Dimension = 5;
-                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(), "c3ga", V);
+                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(V.OutputLanguage), "c3ga", V);
             }
         }
 
@@ -463,7 +463,7 @@ namespace g25_test_generator
             foreach (SpecVars V in vars)
             {
                 V.Dimension = 5;
-                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(), "c3ga", V);
+                GenerateFromVar(cog, commands, "c3ga_spec", GetMakefileTemplateName(V.OutputLanguage), "c3ga", V);
             }
         }
 
@@ -503,7 +503,7 @@ namespace g25_test_generator
 
             foreach (SpecVars V in vars)
             {
-                GenerateFromVar(cog, commands, "eNga_spec", GetMakefileTemplateName(), "e" + V.Dimension + "ga", V);
+                GenerateFromVar(cog, commands, "eNga_spec", GetMakefileTemplateName(V.OutputLanguage), "e" + V.Dimension + "ga", V);
             }
         }
 
@@ -733,10 +733,14 @@ namespace g25_test_generator
                     list = SpecVars.VaryGmvCode(list, new List<G25.GMV_CODE> { G25.GMV_CODE.EXPAND, G25.GMV_CODE.RUNTIME });
 
                 // vary GMV function coding 
-                list = SpecVars.VaryRandomGenerator(list, new List<string> { "libc", "mt" });
+                if ((lang == G25.XML.XML_CPP) || (lang == G25.XML.XML_C))
+                {
+                    list = SpecVars.VaryRandomGenerator(list, new List<string> { "libc", "mt" });
+                }
+                else list = SpecVars.VaryRandomGenerator(list, new List<string> { "libc" });
 
                 // vary inline, report usage
-                if ((lang != "c") && varyInline)
+                if ((lang != G25.XML.XML_C) && varyInline)
                 {
                     list = SpecVars.VaryInline(list, new List<bool> { false, true });
                     list = SpecVars.VaryReportUsage(list, new List<bool> { false, true });
@@ -744,19 +748,12 @@ namespace g25_test_generator
 
                 // vary GMV memory allocation
                 List<G25.GMV.MEM_ALLOC_METHOD> AL = new List<G25.GMV.MEM_ALLOC_METHOD> { G25.GMV.MEM_ALLOC_METHOD.FULL, G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE };
-                if (lang != "c") AL.Add(G25.GMV.MEM_ALLOC_METHOD.DYNAMIC);
+                if (lang != G25.XML.XML_C) AL.Add(G25.GMV.MEM_ALLOC_METHOD.DYNAMIC);
                 list = SpecVars.VaryGmvMemAlloc(list, AL);
 
                 // vary floating point types
                 List<List<string>> FT = null;
-                if (lang == "c") {
-                    FT = new List<List<string>>{
-                        new List<string>{"float"},
-                        new List<string>{"double"},
-                        new List<string>{"double", "float"}
-                    };
-                }
-                else if (lang == "cpp") {
+                if (lang ==G25.XML.XML_CPP) {
                     if (minDim < 5)
                         FT = new List<List<string>>{
                             new List<string>{"float"},
@@ -770,6 +767,15 @@ namespace g25_test_generator
                             new List<string>{"double", "myDouble"}
                         };
                 }
+                else
+                {
+                    FT = new List<List<string>>{
+                        new List<string>{"float"},
+                        new List<string>{"double"},
+                        new List<string>{"double", "float"}
+                    };
+                }
+
                 list = SpecVars.VaryFloatTypes(list, FT);
 
                 returnList.AddRange(list);

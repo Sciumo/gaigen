@@ -295,21 +295,29 @@ clean:
 ${ENDCODEBLOCK}
 
 
-${CODEBLOCK makefile_csharp_windows}
+// SV = SpecVars
+// SPEC_NAME = name of specification (without .xml)
+// ALGEBRA_NAME = name of algebra
+${CODEBLOCK makefile_csharp_vs}
 # <%ALGEBRA_NAME%> makefile for Microsoft C# (run nmake)
 
 all: test.exe
 
 test.exe: 
   g25 <%SPEC_NAME%>.xml
+<%if (!SV.BuiltInParser) {%>
   g25_copy_resource Antlr3.Runtime.dll .
-  csc /t:exe /out:test.exe *.cs
+  java org.antlr.Tool <%ALGEBRA_NAME%>.g
+<%}%>
+  csc /t:exe /out:test.exe <%if (!SV.BuiltInParser) {%>/r:Antlr3.Runtime.dll<%} %>*.cs
   
 clean:
   del *.cs
-  del *.g
   del test.exe
+<%if (!SV.BuiltInParser) {%>
+  del *.g
   del Antlr3.Runtime.dll
+<%}%>
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_csharp_unix}

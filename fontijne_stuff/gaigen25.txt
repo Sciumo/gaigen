@@ -161,15 +161,9 @@ Maybe fix the float type stuff
 				
 				Working on the Makefile, first version is in test_suite_templates.txt
 				
-				Something is wrong with generated code for ApplyVersor, fix that first.
-				It decides to add in to GRADE_X code which wasn't there for c3ga test
-				so far. 
+				disable report usage code for now!
 				
-				Also, runtime GP code seems bad.;
-				
-				There also was a bad test for gradebitmap
-				
-				Compile ANTLR: java org.antlr.Tool c3ga.g
+				runtime GP code seems bad.;
 				
 				
 			

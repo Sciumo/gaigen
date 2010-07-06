@@ -1069,7 +1069,7 @@ namespace G25.CG.Shared
                 string inputFuncName = (T == ApplyVersorTypes.INVERSE) ? "versorInverse" : "reverse";
 
                 invFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd,
-                     inputFuncName, new String[] { gmv.Name }, FT, (T == ApplyVersorTypes.INVERSE) ? M.m_name : null);
+                     inputFuncName, new string[] { gmv.Name }, FT, (T == ApplyVersorTypes.INVERSE) ? M.m_name : null);
             }
 
             // get grade function
@@ -1078,9 +1078,10 @@ namespace G25.CG.Shared
             // get string to be used for grade extraction
             string gradeUsageString;
             string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string groupBitmapType = (S.OutputCSharpOrJava() ? "GroupBitmap" : "int");
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {
-                SB.AppendLine("int gradeUsageBitmap;");
+                SB.AppendLine(groupBitmapType + " gradeUsageBitmap;");
                 gradeUsageString = "gradeUsageBitmap";
             }
             else
@@ -1095,11 +1096,12 @@ namespace G25.CG.Shared
             StringBuilder gradeUsageCode = new StringBuilder();
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {
+                string groupBitmapStr = (S.OutputCSharpOrJava() ? (groupBitmapType + ".") : "");
                 gradeUsageCode.Append(gradeUsageString + " = ");
                 for (int g = 0; g <= S.m_dimension; g++)
                 {
                     if (g > 0) gradeUsageCode.Append(" | ");
-                    gradeUsageCode.Append("((" + bgu + " & GRADE_" + g + ") ? GRADE_" + g + " : 0)");
+                    gradeUsageCode.Append("(((" + bgu + " & " + groupBitmapStr + "GRADE_" + g + ") != 0) ? " + groupBitmapStr + "GRADE_" + g + " : 0)");
                 }
                 gradeUsageCode.AppendLine(";");
             }
