@@ -952,7 +952,7 @@ package <%S.m_namespace%>_pkg;
 
 @members
 {
-	private <%FINAL%>void sum(<%FINAL%>double[] coord, <%FINAL%>BasisBlade bb) {
+	private <%FINAL%>void sum(<%FINAL%><%FT.type%>[] coord, <%FINAL%>BasisBlade bb) {
 		int idx = <%S.m_namespace%>.BasisElementIndexByBitmap[bb.getBitmap()];
 		coord[idx] += bb.getScale() / (<%FT.type%>)<%S.m_namespace%>.BasisElementSignByIndex[idx];
 	}

@@ -241,7 +241,7 @@ ${CODEBLOCK sourceToString}
 			<%FT.type%>[] Cg = obj.m_c[g];
 			if (Cg != null) {
 				for (int b = 0; b < GroupSize[g]; b++) {
-					<%FT.type%> coord = (double)BasisElementSignByIndex[ia] * Cg[b];
+					double coord = (double)BasisElementSignByIndex[ia] * Cg[b];
 					
 					// goal: print [+|-]obj.m_c[k][* basisVector1 ^ ... ^ basisVectorN]
 					
@@ -676,17 +676,17 @@ ${CODEBLOCK bitmapGp}
 	<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
 		G25.Metric M = S.m_metric[mIdx];
 	%>
-	<%if (M.m_metric.HasValueOnDiagonal(0.0)) {%>
+<%if (M.m_metric.HasValueOnDiagonal(0.0)) {%>
 		// check here for annihilated basis vectors with 0 metric
 		if ((metricId == <%mIdx%>) && (<%for (int d = 0; d < S.m_dimension; d++) {%>
-	<%if (M.m_metric.DiagonalValue(d) == 0.0) {%>
-	(an & <%(1<<d).ToString()%>) ||<%}%><%}%> 0)) {
+<%if (M.m_metric.DiagonalValue(d) == 0.0) {%>
+	((an & <%(1<<d).ToString()%>) != 0) ||<%}%><%}%> false)) {
     		result[1] = 0;
     		result[0] = 0;
     		return;
 		}
-		<%}%>
-	<%}%>
+<%}%>
+<%}%>
 	    
 		// compute the bitmap:
 		result[0] = a ^ b;

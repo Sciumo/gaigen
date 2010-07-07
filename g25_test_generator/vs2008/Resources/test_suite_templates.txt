@@ -309,7 +309,7 @@ test.exe:
   g25_copy_resource Antlr3.Runtime.dll .
   java org.antlr.Tool <%ALGEBRA_NAME%>.g
 <%}%>
-  csc /t:exe /out:test.exe <%if (!SV.BuiltInParser) {%>/r:Antlr3.Runtime.dll<%} %>*.cs
+  csc /t:exe /out:test.exe <%if (!SV.BuiltInParser) {%>/r:Antlr3.Runtime.dll <%} %>*.cs
   
 clean:
   del *.cs

@@ -41,7 +41,7 @@ namespace G25.CG.Shared
         // what arguments are required??
         public static Instruction GetReportInstruction(Specification S, G25.fgs F, FuncArgInfo[] FAI)
         {
-            if ((S.OutputC()) ||
+            if ((S.OutputC()) || (S.OutputCSharpOrJava()) || // TEMP DISABLE C# and Java report usage!
                 (!S.m_reportUsage)  ||
                 (FAI.Length == 0)) return new NOPinstruction();
 
