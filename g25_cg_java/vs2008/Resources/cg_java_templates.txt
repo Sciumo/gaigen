@@ -576,9 +576,9 @@ ${CODEBLOCK parserShortcut}
         try
         {
             org.antlr.runtime.ANTLRStringStream input = new org.antlr.runtime.ANTLRStringStream(str);
-            c3gaLexer lexer = new c3gaLexer(input);
+            <%S.m_namespace%>Lexer lexer = new <%S.m_namespace%>Lexer(input);
             org.antlr.runtime.CommonTokenStream tokens = new org.antlr.runtime.CommonTokenStream(lexer);
-            c3gaParser parser = new c3gaParser(tokens);
+            <%S.m_namespace%>Parser parser = new <%S.m_namespace%>Parser(tokens);
             return parser.antlr_multivector();
         }
         catch (org.antlr.runtime.RecognitionException ex)

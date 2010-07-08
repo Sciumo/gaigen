@@ -339,18 +339,18 @@ all: test.bat
 test.bat: 
   g25 <%SPEC_NAME%>.xml
 <%if (!SV.BuiltInParser) {%>
-  java org.antlr.Tool <%ALGEBRA_NAME%>.g
+  java org.antlr.Tool <%ALGEBRA_NAME%>_pkg\<%ALGEBRA_NAME%>.g
+  g25_copy_resource antlr-runtime-3.2.jar .
 <%}%>
-  javac <%ALGEBRA_NAME%>_pkg\*.java
+  javac <%if (!SV.BuiltInParser) {%>-sourcepath antlr-runtime-3.2.jar <%}%><%ALGEBRA_NAME%>_pkg\*.java
   echo java <%ALGEBRA_NAME%>_pkg.TestSuite > test.bat
 	  
 clean:
-  del test.bat
-  del <%ALGEBRA_NAME%>_pkg\*.java
-  del <%ALGEBRA_NAME%>_pkg\*.class
 <%if (!SV.BuiltInParser) {%>
-  del <%ALGEBRA_NAME%>_pkg\*.g
+  del /q antlr-runtime-3.2.jar
 <%}%>
+  del /q test.bat
+  rmdir /q /s <%ALGEBRA_NAME%>_pkg
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_java_unix}

@@ -1077,7 +1077,7 @@ ${ENDCODEBLOCK}
 // S = Specification of algebra.
 ${CODEBLOCK bitmapGp}
 <%new G25.CG.Shared.Comment("Returns the number of 1 bits in 'i'.").ToString(S, 1)%>
-	private static int BitCount(int i)
+	private static int <%G25.CG.CSJ.Util.GetFunctionName(S, "BitCount")%>(int i)
 	{
 		i = i - ((i >> 1) & 0x55555555);
 		i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
@@ -1094,7 +1094,7 @@ ${CODEBLOCK bitmapGp}
 	"while 'e1^e4^e2' is not.\n").
 	SetReturnComment("either +1 or -1").
 	ToString(S, 1)%>
-	private static int CanonicalReorderingSign(int a, int b)
+	private static int <%G25.CG.CSJ.Util.GetFunctionName(S, "CanonicalReorderingSign")%>(int a, int b)
 	{
 		int sum = 0;
 
@@ -1124,7 +1124,7 @@ ${CODEBLOCK bitmapGp}
 %>
 	 *  metricId = <%mIdx.ToString()%>: <%M.m_name%>
 	<%}%> */
-	private static void BitmapGp(int a, int b, int metricId, int[] result) // bitmap = result[0], sign = result[1]
+	private static void <%G25.CG.CSJ.Util.GetFunctionName(S, "BitmapGp")%>(int a, int b, int metricId, int[] result) // bitmap = result[0], sign = result[1]
 	{
 		int an = a & b;
 	    
@@ -1147,7 +1147,7 @@ ${CODEBLOCK bitmapGp}
 		result[0] = a ^ b;
 
 		// compute the sign change due to reordering:
-		result[1] = CanonicalReorderingSign(a, b);
+		result[1] = <%G25.CG.CSJ.Util.GetFunctionName(S, "CanonicalReorderingSign")%>(a, b);
 
 	<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
 		G25.Metric M = S.m_metric[mIdx];
@@ -1186,7 +1186,7 @@ ${CODEBLOCK runtimeGpTable}
 	AddParamComment("srcG2", "the grade/group of the second operand").
 	AddParamComment("metricId", "the grade/group of the destionation (other grades/groups are ignored).").
 	ToString(S, 1)%>
-	private static byte[] InitRuntimeGpTable(int metricId, int srcG1, int srcG2, int dstG) {
+	private static byte[] <%G25.CG.CSJ.Util.GetFunctionName(S, "InitRuntimeGpTable")%>(int metricId, int srcG1, int srcG2, int dstG) {
 		int srcG1size, srcG2size, dstGsize, idx, Tlength, i1, i2, iDst, sign1, sign2, signDst, baseIdx1, baseIdx2, baseIdxDst, prevI2, skip;
 		int[] tmp = new int[2];
 		int bitmap1, bitmap2, bitmapDst;
@@ -1217,7 +1217,7 @@ ${CODEBLOCK runtimeGpTable}
 				sign2 = (int)BasisElementSignByIndex[baseIdx2 + i2];
 
 				// compute bitmap representation and sign of (dst = src1 src2) basis blade
-				BitmapGp(bitmap1, bitmap2, metricId, tmp);
+				<%G25.CG.CSJ.Util.GetFunctionName(S, "BitmapGp")%>(bitmap1, bitmap2, metricId, tmp);
 				bitmapDst = tmp[0];
 				signDst = tmp[1];
 				
@@ -1268,7 +1268,14 @@ ${CODEBLOCK runtimeGpTable}
 		T[idx-1] = (byte)RT_GP_T_ALL_DONE; // this overwrites the last RT_GP_T_COORD_DONE
 
 		if (idx <= 4 * Tlength / 5) { // reallocate of more than 80% of memory is wasted
+<%if (S.OutputCSharp()) {%>
 			Array.Resize(ref T, idx);
+<%} else {%>
+			byte[] newT = new byte[idx];
+			for (int i = 0; i < idx; i++)
+				newT[i] = T[i];
+			T = newT;
+<%}%>
 		}
 		else if (idx >= Tlength) {
 			throw new Exception("Buffer overflow in initRuntimeGpTable() (" + idx + " >= " + Tlength + ")\n");
@@ -1277,27 +1284,27 @@ ${CODEBLOCK runtimeGpTable}
 		runtimeGpTableMemUsed += idx;
 		
 		return T;
-	} // end of InitRuntimeGpTable()
+	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "InitRuntimeGpTable")%>()
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK runtimeGpInitTables}
-	public static void InitAllRuntimeGpTables() {
+	public static void <%G25.CG.CSJ.Util.GetFunctionName(S, "InitAllRuntimeGpTables")%>() {
 <%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
 <%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
 <%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
-		runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = InitRuntimeGpTable(<%m%>, <%g1%>, <%g2%>, <%gd%>);
+		runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = <%G25.CG.CSJ.Util.GetFunctionName(S, "InitRuntimeGpTable")%>(<%m%>, <%g1%>, <%g2%>, <%gd%>);
 <%}%><%}%><%}%><%}%><%}%>
-	} // end of InitAllRuntimeGpTables()
+	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "InitAllRuntimeGpTables")%>()
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK runtimeGpFreeTables}
-	public static void FreeAllRuntimeGpTables() {
+	public static void <%G25.CG.CSJ.Util.GetFunctionName(S, "FreeAllRuntimeGpTables")%>() {
 <%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
 <%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
 <%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
 		runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = null;
 <%}%><%}%><%}%><%}%><%}%>
-	} // end of FreeAllRuntimeGpTables()
+	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "FreeAllRuntimeGpTables")%>()
 ${ENDCODEBLOCK}
 
 // S = Specification of algebra (G25.Specification)
@@ -1305,7 +1312,7 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK runtimeComputeGp}
 <%new G25.CG.Shared.Comment("Computes the geometric product at runtime using a table.\n").
 	ToString(S, 1)%>
-	private static void RuntimeComputeGp_<%FT.type%>(<%FT.type%>[] src1, <%FT.type%>[] src2, <%FT.type%>[] dst, 
+	private static void <%G25.CG.CSJ.Util.GetFunctionName(S, "RuntimeComputeGp_")%><%FT.type%>(<%FT.type%>[] src1, <%FT.type%>[] src2, <%FT.type%>[] dst, 
 		byte[] table, int metricId, int g1, int g2, int gdst) 
 	{
 		int idx = 0; // index into *table
@@ -1348,5 +1355,5 @@ ${CODEBLOCK runtimeComputeGp}
 				dst[dstIdx] += sign * src1[src1Idx] * src2[src2Idx];
 			}
 		}
-	} // end of RuntimeComputeGp_<%FT.type%>()
+	} // end of <%G25.CG.CSJ.Util.GetFunctionName(S, "RuntimeComputeGp_")%><%FT.type%>()
 ${ENDCODEBLOCK}
