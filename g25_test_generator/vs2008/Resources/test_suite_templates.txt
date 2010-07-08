@@ -349,8 +349,8 @@ clean:
 <%if (!SV.BuiltInParser) {%>
   del /q antlr-runtime-3.2.jar
 <%}%>
-  del /q test.bat
-  rmdir /q /s <%ALGEBRA_NAME%>_pkg
+  IF EXIST test.bat del /q test.bat
+  IF EXIST <%ALGEBRA_NAME%>_pkg rmdir /q /s <%ALGEBRA_NAME%>_pkg
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_java_unix}

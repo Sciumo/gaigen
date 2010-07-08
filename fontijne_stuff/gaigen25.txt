@@ -158,10 +158,14 @@ Maybe fix the float type stuff
 			makefile, test scripts for all platforms
 				make sure all scripts work, including 'clean'
 				Also, on OSX and Linux!
+				make sure all tests pass!
+				
 				
 				For C#:
 					
 				For Java:
+				
+				Fix the Exception problems in initRuntimeGp
 				
 			
 			

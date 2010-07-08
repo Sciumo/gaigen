@@ -1186,7 +1186,7 @@ ${CODEBLOCK runtimeGpTable}
 	AddParamComment("srcG2", "the grade/group of the second operand").
 	AddParamComment("metricId", "the grade/group of the destionation (other grades/groups are ignored).").
 	ToString(S, 1)%>
-	private static byte[] <%G25.CG.CSJ.Util.GetFunctionName(S, "InitRuntimeGpTable")%>(int metricId, int srcG1, int srcG2, int dstG) <%if (S.OutputJava()) {%>throws Exception <%}%>{
+	private static byte[] <%G25.CG.CSJ.Util.GetFunctionName(S, "InitRuntimeGpTable")%>(int metricId, int srcG1, int srcG2, int dstG) {
 		int srcG1size, srcG2size, dstGsize, idx, Tlength, i1, i2, iDst, sign1, sign2, signDst, baseIdx1, baseIdx2, baseIdxDst, prevI2, skip;
 		int[] tmp = new int[2];
 		int bitmap1, bitmap2, bitmapDst;
@@ -1278,7 +1278,7 @@ ${CODEBLOCK runtimeGpTable}
 <%}%>
 		}
 		else if (idx >= Tlength) {
-			throw new Exception("Buffer overflow in initRuntimeGpTable() (" + idx + " >= " + Tlength + ")\n");
+			throw new <%if (S.OutputCSharp()) {%>Exception<%} else  {%>Error<%}%>("Buffer overflow in initRuntimeGpTable() (" + idx + " >= " + Tlength + ")\n");
 		}
 		
 		runtimeGpTableMemUsed += idx;
