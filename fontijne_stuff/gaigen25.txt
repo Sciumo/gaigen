@@ -156,12 +156,12 @@ Maybe fix the float type stuff
 			V testing code for C# and Java, test everything, fix all bugs
 			
 			makefile, test scripts for all platforms
-			
+				make sure all scripts work, including 'clean'
+				Also, on OSX and Linux!
+				
 				For C#:
 					
 				For Java:
-				javac e2ga_pkg\*.java
-				java e2ga_pkg.TestSuite
 				
 			
 			
@@ -169,17 +169,17 @@ Maybe fix the float type stuff
 				Test this by having an algebra with no specialized functions and calling
 				all functions using an SMV as the argument
 			
-			Release first version with C# and Java support
+			Release first version with 'functional but incomplete' C# and Java support
 			
-			GMV log 3d for C# (done?), for Java, too, testing
+			GMV log 3d for C# (done?), for Java, too, add testing functions
 			
 			C# operators
 			
-			report usage
+			Java and C# report usage
 			
-			GMV, SMV member function shortcuts (for regular functions)
+			Java and C# GMV, SMV member function shortcuts (for regular functions)
 				
-			SMV converters as constructors (SMV->SMV and such)
+			Java and C# SMV converters as constructors (SMV->SMV and such)
 			
 			
 				
