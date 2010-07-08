@@ -328,6 +328,38 @@ ${CODEBLOCK makefile_csharp_unix}
 
 ${ENDCODEBLOCK}
 
+// SV = SpecVars
+// SPEC_NAME = name of specification (without .xml)
+// ALGEBRA_NAME = name of algebra
+${CODEBLOCK makefile_java_vs}
+# <%ALGEBRA_NAME%> makefile for Java (run nmake)
+
+all: test.bat
+
+test.bat: 
+  g25 <%SPEC_NAME%>.xml
+<%if (!SV.BuiltInParser) {%>
+  java org.antlr.Tool <%ALGEBRA_NAME%>.g
+<%}%>
+  javac <%ALGEBRA_NAME%>_pkg\*.java
+  echo java <%ALGEBRA_NAME%>_pkg.TestSuite > test.bat
+	  
+clean:
+  del test.bat
+  del <%ALGEBRA_NAME%>_pkg\*.java
+  del <%ALGEBRA_NAME%>_pkg\*.class
+<%if (!SV.BuiltInParser) {%>
+  del <%ALGEBRA_NAME%>_pkg\*.g
+<%}%>
+${ENDCODEBLOCK}
+
+${CODEBLOCK makefile_java_unix}
+# <%ALGEBRA_NAME%> makefile for  Java (run make)
+
+# TO DO
+
+
+${ENDCODEBLOCK}
 
 
 

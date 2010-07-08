@@ -50,7 +50,11 @@ namespace g25_test_generator
         public const string TEST_CMD = "test";
         public const string XML_TEST_CMD = "xml_test";
 
-        public static List<string> Languages = new List<string> { G25.XML.XML_C, G25.XML.XML_CPP, G25.XML.XML_CSHARP };
+        public static List<string> Languages = new List<string> { 
+            G25.XML.XML_C, 
+            G25.XML.XML_CPP, 
+            G25.XML.XML_CSHARP, 
+            G25.XML.XML_JAVA };
 
         static void Main(string[] args)
         {
@@ -610,9 +614,15 @@ namespace g25_test_generator
 
             SB.AppendLine("");
             SB.AppendLine("cd " + specName);
-            SB.AppendLine("echo \"Testing " + specName + " \"");			
-			if (IsUnix()) SB.AppendLine("./test");
-			else SB.AppendLine("test.exe");
+            SB.AppendLine("echo \"Testing " + specName + " \"");
+            if (IsUnix()) SB.AppendLine("./test");
+            else
+            {
+                if (SV.OutputLanguage == G25.XML.XML_JAVA)
+                    SB.AppendLine("test.bat");
+                else 
+                    SB.AppendLine("test.exe");
+            }
             SB.AppendLine("cd ..");
 
             return SB.ToString();
@@ -788,8 +798,10 @@ namespace g25_test_generator
 		public static string GetMakefileTemplateName(string language) {
             if (language.Equals(G25.XML.XML_C) || language.Equals(G25.XML.XML_CPP))
                 return GetMakefileTemplateNameCppOrC();
-            if (language.Equals(G25.XML.XML_CSHARP))
+            else if (language.Equals(G25.XML.XML_CSHARP))
                 return GetMakefileTemplateNameCSharp();
+            else if (language.Equals(G25.XML.XML_JAVA))
+                return GetMakefileTemplateNameJava();
             else return "makefile_unknown_language";
         }
 
@@ -828,7 +840,26 @@ namespace g25_test_generator
             }
         }
 
-		public static string GetScriptExtension() {
+        public static string GetMakefileTemplateNameJava()
+        {
+            switch (GetPlatformID())
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32S:
+                case PlatformID.WinCE:
+                case PlatformID.Xbox:
+                    return "makefile_java_vs";
+                case PlatformID.Unix:
+                case PlatformID.MacOSX:
+                    return "makefile_java_unix";
+                default:
+                    return "makefile_unknown_platform";
+            }
+        }
+
+        public static string GetScriptExtension()
+        {
 			return (IsUnix()) ? "sh" : "bat";
 		}
 		

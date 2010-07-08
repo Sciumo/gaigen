@@ -158,13 +158,10 @@ Maybe fix the float type stuff
 			makefile, test scripts for all platforms
 			
 				For C#:
-				
-				Working on the Makefile, first version is in test_suite_templates.txt
-				
-				disable report usage code for now!
-				
-				runtime GP code seems bad.;
-				
+					
+				For Java:
+				javac e2ga_pkg\*.java
+				java e2ga_pkg.TestSuite
 				
 			
 			
