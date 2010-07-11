@@ -1078,7 +1078,7 @@ namespace G25.CG.Shared
             // get string to be used for grade extraction
             string gradeUsageString;
             string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
-            string groupBitmapType = (S.OutputCSharpOrJava() ? "GroupBitmap" : "int");
+            string groupBitmapType = (S.OutputCSharp() ? "GroupBitmap" : "int");
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {
                 SB.AppendLine(groupBitmapType + " gradeUsageBitmap;");
@@ -1096,7 +1096,7 @@ namespace G25.CG.Shared
             StringBuilder gradeUsageCode = new StringBuilder();
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {
-                string groupBitmapStr = (S.OutputCSharpOrJava() ? (groupBitmapType + ".") : "");
+                string groupBitmapStr = (S.OutputCSharpOrJava() ? ("GroupBitmap.") : "");
                 gradeUsageCode.Append(gradeUsageString + " = ");
                 for (int g = 0; g <= S.m_dimension; g++)
                 {

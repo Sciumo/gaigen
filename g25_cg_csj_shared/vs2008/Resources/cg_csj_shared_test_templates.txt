@@ -1259,7 +1259,7 @@ static int <%testFuncName%>(int NB_TESTS_SCALER) {
 	<%inverseVersorName%> IV;
 	<%smvName%> X;
 	<%transformedSmvName%> VX, tmpVX2;
-	<%gmvName%> gmvV, gmvIV, gmvX, gmvVX, gmvVX2, dif;
+	<%gmvName%> gmvV, gmvX, gmvVX, gmvVX2, dif; // gmvIV, 
 	int i;
 
 	for (i = 0; i < NB_LOOPS; i++) {
@@ -1291,7 +1291,7 @@ static int <%testFuncName%>(int NB_TESTS_SCALER) {
 
 		// convert all to GMV type, apply versor too as GMV
 		gmvV = new <%gmvName%>(V);
-		gmvIV = new <%gmvName%>(IV);
+//		gmvIV = new <%gmvName%>(IV);
 		gmvX = new <%gmvName%>(X);
 		gmvVX = <%applyVersorGmvFuncName%>(gmvV, gmvX);
 		

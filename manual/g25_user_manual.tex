@@ -57,8 +57,10 @@ Daniel Fontijne\\University of Amsterdam
 \section{Introduction}
 
 Gaigen 2.5 is a code generator for geometric algebra. It compiles an XML specification
-of an algebra into an implementation. Supported output languages are C and C++.
-Support for C\# and Java will be finished in May 2010. The tool itself is written in C\#.
+of an algebra into an implementation. Supported output languages are C and C++,
+C\# and Java. C\# and Java support is functional but incomplete: some shortcuts and operator
+overloading should still be added (this should be finished in August 2010). 
+Matlab support is under development. The tool itself is written in C\#.
 
 \section{History, Background, Licensing}
 
@@ -91,20 +93,41 @@ See \cite{GA4CS} and \cite{fontijnePhD} for background information on (implement
 
 An installer is provided on SourceForge for each platform.
 On Linux and OSX, Mono is required because Gaigen 2.5 is written in C\#.
-Mono is a free, open source implementation of Microsofts .Net platform.
+Mono is a free, open source implementation of the Microsoft .Net platform.
 
 \begin{itemize}
 \item {\bf Windows: } Run {\tt InstallG25.msi}. By default, the files are installed in {\tt c:/program files/g25}.
 The system path is updated to include this directory.
 \item {\bf Linux: } Make sure Mono and ANTLR are installed, then install the RPM using 
 {\tt rpm -i g25-2.5.X.rpm}. Use {\tt rpm -U g25-2.5.X.rpm} to update.
-By default three small scripts are installed in {\tt /usr/bin}, the actual program is installed in {\tt /usr/share/g25}.
-\item {\bf Mac OS X:} Install Mono, then run {\tt g25.pkg}. Three small scripts are installed in {\tt /usr/bin}, the actual 
+By default four small scripts are installed in {\tt /usr/bin}, the actual program is installed in {\tt /usr/share/g25}.
+\item {\bf Mac OS X:} Install Mono, then run {\tt g25.pkg}. Four small scripts are installed in {\tt /usr/bin}, the actual 
 program is installed in {\tt /usr/share/g25}.
 \end{itemize}
 
-ANTLR is only required to compile grammars for parsing multivector strings.
-To avoid its use, simply ask for the built-in parser in the specification.
+ANTLR is required to compile ANTLR grammars for parsing multivector strings.
+To avoid its use, simply ask for the built-in parser (instead of ANTLR) in the algebra specification.
+
+\section{Sample Algebra Specificatopms}
+\label{s:sample_algebras}
+
+The {\tt g25\_test\_generator} can be used to generate a few sample algebra specifications
+that can be used as a starting point for your own specs. Use the following command
+to generate them: {\tt g25\_test\_generator -sa }.
+
+A directory {\tt TestG25} will be created. In that directory will be a number algebra specifications.
+Build-scripts, test-scripts and Makefiles are also provided (these scripts are platform dependent).
+
+The sample algebras are:
+\begin{itemize}
+\item {\bf e2ga}. 2-D Euclidean geometric algebra.
+\item {\bf e3ga}. 3-D Euclidean geometric algebra.
+\item {\bf p3ga}. Geometric algebra for the homogeneous model of 3-D space (so it is a 4-D algebra).
+Multivector types for points, planes, lines and so on are defined.
+\item {\bf c3ga} Geometric algebra for the conformal model of 3-D space (so it is a 5-D algebra).
+Multivector types for points, spheres, circles, lines and so on are defined.
+\end{itemize}
+
 
 \section{Running}
 
@@ -200,40 +223,19 @@ If the ANTLR parser is enabled:
 {\tt A\_parser.c} to {\tt A\_parser.cpp}, and {\tt A\_lexer.c} to {\tt A\_lexer.cpp}.
 \end{itemize}
 
-% \subsection{Generated Files for the C\# Programming Language}
+\subsection{Generated Files for the C\# Programming Language}
 
-% To do.
+To do.
 
-% \subsection{Generated Files for the Java Programming Language}
+\subsection{Generated Files for the Java Programming Language}
 
-% To do.
-
-\section{Sample Algebras}
-\label{s:sample_algebras}
-
-The {\tt g25\_test\_generator} can be used to generate a few algebra specifications.
-These may be used as a starting for your own specs. Use the following command
-to generate them: {\tt g25\_test\_generator -sa }.
-
-
-A directory {\tt TestG25} will be created. In that directory will be a number algebra specifications.
-Build-scripts, test-scripts and Makefiles are provided
-
-The sample algebras are:
-\begin{itemize}
-\item {\bf e2ga}. 2-D Euclidean geometric algebra.
-\item {\bf e3ga}. 3-D Euclidean geometric algebra.
-\item {\bf p3ga}. Geometric algebra for the homogeneous model of 3-D space (so it is a 4-D algebra).
-Multivector types for points, planes, lines and so on are defined.
-\item {\bf c3ga} Geometric algebra for the conformal model of 3-D space (so it is a 5-D algebra).
-Multivector types for points, spheres, circles, lines and so on are defined.
-\end{itemize}
+To do.
 
 \section{Documentation of Generated Code}
 
 The generated code is self-documenting, although this
 feature is not fully finished yet (the overview page
-is not implemented yet). Run {\tt doxygen } to extract
+is not implemented yet and not all functions are documented). Run {\tt doxygen } to extract
 the documentation from the code.
 
 The generated test code is also a good way to get an example
@@ -254,19 +256,19 @@ code by default. Building them will result in executables named
 
 A special tool called {\tt g25\_test\_generator} is included with Gaigen 2.5.
 Its purpose is to generate variations on algebra specifications for thorough testing
-Gaigen 2.5. It for regression testing during development. 
+of the code generator. It is used for regression testing during development. 
 
 If you are interested in running it, run {\tt g25\_test\_generator -r 5000 -s} on
 the command line.
 This should generate a directory named {\tt TestG25}. 
 Inside that directory, run the {\tt build} script to see if all the
-generated algebras actually build. Run the {\tt test} script to see if
+generated algebras actually build. Then run the {\tt test} script to see if
 all algebras work correctly. Run the {\tt xml\_test} script to see if
 loading and saving specification XML files works correctly.
 Run the {\tt clean} script to get rid of all intermediate build and test
 files.
 
-The {\tt -r} option reduces the number of algebras generated. Without it,
+The {\tt -r} option reduces the number of algebras that are generated. Without it,
 many thousands of algebras would be generated, which would take a long time to build.
 Building takes a long time anyway since the test algebras include an unrealistic
 large number of functions.
@@ -294,7 +296,7 @@ To build Gaigen 2.5 from source, first download the source code as a tarball {\t
 or from SourceForge SVN.
 
 Using Visual Studio or MonoDevelop, open the main project {\tt g25.sln} in {\tt g25/vs2008}.
-(When using MonoDevelop you will get a warning that the Windows installer project cannot be loaded.)
+(When using MonoDevelop you will get a warning that the Windows installer project cannot be loaded).
 Do {\tt Build->Build Solution} to build all. 
 
 If you want to build from the command line on Windows, open a Visual Studio Command Prompt and
@@ -977,6 +979,16 @@ A custom metric can be specified.
           metric="euclidean"/>
 \end{verbatim}
 
+\subsubsection*{log}
+
+
+
+Computes the logarithm of a rotor. The type of rotor must be specified.
+Currently, only 3D Euclidean rotors are supported ({\tt optionType="euclidean"}).
+\begin{verbatim}
+<function name="log" arg1="mv" optionType="euclidean"/>
+<function name="log" arg1="rotor" optionType="euclidean" floatType="double"/>
+\end{verbatim}
 
 \subsubsection*{norm}
 
