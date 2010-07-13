@@ -76,9 +76,10 @@ namespace G25.CG.CSharp
             List<string> generatedFiles = new List<string>();
             if (S.m_parserType == PARSER.NONE) return generatedFiles; // nothing to do
             
-            // get parser c source output path
+            // get parser C# source output path
             string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
-            generatedFiles.Add(parserSourceFilename);
+            if (S.m_parserType == PARSER.BUILTIN)
+                generatedFiles.Add(parserSourceFilename);
 
             // get parser exception source output path
             string parseExceptionSourceFilename = S.GetOutputPath(GetRawParseExceptionSourceFilename(S));

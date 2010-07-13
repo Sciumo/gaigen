@@ -78,7 +78,8 @@ namespace G25.CG.Java
 
             // get parser source output path
             string parserSourceFilename = S.GetOutputPath(GetRawParserSourceFilename(S));
-            generatedFiles.Add(parserSourceFilename);
+            if (S.m_parserType == PARSER.BUILTIN)
+                generatedFiles.Add(parserSourceFilename);
 
             // get parser exception source output path
             string parseExceptionSourceFilename = S.GetOutputPath(GetRawParseExceptionSourceFilename(S));

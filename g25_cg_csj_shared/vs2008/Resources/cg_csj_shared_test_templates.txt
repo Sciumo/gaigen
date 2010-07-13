@@ -2528,3 +2528,4 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	return 1; // success
 }
 ${ENDCODEBLOCK}
+

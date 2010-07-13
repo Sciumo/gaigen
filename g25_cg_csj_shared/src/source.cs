@@ -28,7 +28,7 @@ namespace G25.CG.CSJ
 
             string accessModifier = Keywords.ProtectedStaticAccessModifier(S);
             string stringType = Keywords.StringType(S);
-
+            
             SB.AppendLine("");
             SB.AppendLine("\t" + accessModifier + " " + stringType + "[] typenames = ");
             SB.AppendLine("\t\tnew " + stringType + "[] {");
@@ -55,16 +55,20 @@ namespace G25.CG.CSJ
             string boolType = G25.CG.Shared.CodeUtil.GetBoolType(S);
 
             // dimension of space
+            new G25.CG.Shared.Comment("The dimension of the space").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifier + " int SpaceDim = " + S.m_dimension + ";");
 
-            // number of groups of space
+            // number of groups in general multivector
+            new G25.CG.Shared.Comment("Number of groups/grades of coordinates in multivector").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifier + " int NbGroups = " + S.m_GMV.NbGroups + ";");
 
             // Euclidean metric?
+            new G25.CG.Shared.Comment("Is the metric of the space Euclidean? (false or true)").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifier + " " + boolType + " MetricEuclidean = " +
                 (S.GetMetric("default").m_metric.IsEuclidean() ? "true" : "false") + ";");
 
             // basis vector names
+            new G25.CG.Shared.Comment("Names of the basis vectors.").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " " + stringType + "[] BasisVectorNames = new " + stringType + "[] {");
             SB.Append("\t\t");
             for (int i = 0; i < S.m_dimension; i++)
@@ -82,6 +86,7 @@ namespace G25.CG.CSJ
             string groupBitmapType = Keywords.GroupBitmapType(S);
 
             // constants for the grades in an array:
+            new G25.CG.Shared.Comment("The constants for the grades, in an array.").Write(SB, S, 1);
             SB.Append("\tpublic " + accessModifierArr + " " + groupBitmapType + "[] Grades = {");
 
             string gStr = G25.CG.CSJ.GMV.GROUP_BITMAP + ".GRADE_";
@@ -105,6 +110,7 @@ namespace G25.CG.CSJ
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
             string groupBitmapType = Keywords.GroupBitmapType(S);
 
+            new G25.CG.Shared.Comment("The constants for the groups, in an array.").Write(SB, S, 1);
             SB.Append("\tpublic " + accessModifierArr + " " + groupBitmapType + "[] Groups = {");
 
             string gStr = G25.CG.CSJ.GMV.GROUP_BITMAP + ".GROUP_";
@@ -122,6 +128,7 @@ namespace G25.CG.CSJ
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
 
             G25.GMV gmv = S.m_GMV;
+            new G25.CG.Shared.Comment("This array can be used to lookup the number of coordinates for a group part of a general multivector.").Write(SB, S, 1);
             SB.Append("\tpublic " + accessModifierArr + " int[] GroupSize = { ");
             for (int i = 0; i < gmv.NbGroups; i++)
             {
@@ -132,6 +139,15 @@ namespace G25.CG.CSJ
         }
 
         public static void GenerateMultivectorSizeArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            new G25.CG.Shared.Comment("This array can be used to lookup the number of coordinates based on a group usage bitmap.").Write(SB, S, 1);
+            if (S.m_GMV.NbGroups < 10)
+                GenerateMultivectorSizeArrayInit(SB, S, cgd);
+            else GenerateMultivectorSizeArrayCodeInit(SB, S, cgd);
+        }
+
+
+        private static void GenerateMultivectorSizeArrayInit(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
 
@@ -158,12 +174,26 @@ namespace G25.CG.CSJ
             SB.AppendLine("\t};");
         }
 
+        private static void GenerateMultivectorSizeArrayCodeInit(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
+        {
+            string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
+
+            G25.GMV gmv = S.m_GMV;
+
+            // size of multivector based on grade usage bitmap
+            SB.AppendLine("\tpublic " + accessModifierArr + " int[] MvSize = initMvSize();");
+
+            cgd.m_cog.EmitTemplate(SB, "initMvSize", "S=", S);
+        }
+
         public static void GenerateBasisElementsArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
         {
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
 
             G25.GMV gmv = S.m_GMV;
             // basis vectors in basis elements
+            new G25.CG.Shared.Comment("This array of integers contains the order of basis elements in the general multivector.\n" + 
+                "Use it to answer: 'what basis vectors are in the basis element at position [x]?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " int[][] BasisElements = new int[][] {");
             {
                 bool comma = false;
@@ -196,6 +226,8 @@ namespace G25.CG.CSJ
             int[] BitmapByIndex = new int[1 << S.m_dimension];
             int[] GradeByBitmap = new int[1 << S.m_dimension];
             int[] GroupByBitmap = new int[1 << S.m_dimension];
+            new G25.CG.Shared.Comment("This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector.\n" +
+                "Use it to answer 'what is the permutation of the coordinate at index [x]'?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " double[] BasisElementSignByIndex = new double[]");
             SB.Append("\t\t{");
             {
@@ -220,6 +252,8 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
+            new G25.CG.Shared.Comment("This array of integers contains the 'sign' (even/odd permutation of canonical order) of basis elements in the general multivector.\n" +
+                "Use it to answer 'what is the permutation of the coordinate of bitmap [x]'?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " double[] BasisElementSignByBitmap = new double[]");
             SB.Append("\t\t{");
             {
@@ -231,6 +265,8 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
+            new G25.CG.Shared.Comment("This array of integers contains the order of basis elements in the general multivector.\n" +
+                "Use it to answer: 'at what index do I find basis element [x] (x = basis vector bitmap)?'").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementIndexByBitmap = new int[]");
             SB.Append("\t\t{");
             {
@@ -242,6 +278,8 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
+            new G25.CG.Shared.Comment("This array of integers contains the indices of basis elements in the general multivector.\n" +
+                "Use it to answer: 'what basis element do I find at index [x]'?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementBitmapByIndex = new int[]");
             SB.Append("\t\t{");
             {
@@ -253,6 +291,8 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
+            new G25.CG.Shared.Comment("This array of grade of each basis elements in the general multivector.\n" +
+                "Use it to answer: 'what is the grade of basis element bitmap [x]'?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementGradeByBitmap = new int[]");
             SB.Append("\t\t{");
             {
@@ -264,6 +304,8 @@ namespace G25.CG.CSJ
             }
             SB.AppendLine("};");
 
+            new G25.CG.Shared.Comment("This array of group of each basis elements in the general multivector.\n" +
+                "Use it to answer: 'what is the group of basis element bitmap [x]'?").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifierArr + " int[] BasisElementGroupByBitmap = new int[]");
             SB.Append("\t\t{");
             {

@@ -160,28 +160,17 @@ Maybe fix the float type stuff
 				Also, on OSX and Linux!
 				make sure all tests pass!
 				
-				
-				For C#:
+				-> xml_test : do not test the testsuite, because it is not deterministic (the mangle names)
 					
-				For Java:
-					Fix the problem with MV size:
-					Use code to do static initialization.
-				
-				Fix the Exception problems in initRuntimeGp
-				
-			Add comments to MvSize and such (data fields at the top of files)
-			The comments got lost because they were in the headers for C and C++.
-				
 			Test doxygen for C# and Java
-				
-			try fix installer path for windows (remember what string was added, remove it from path,
-			instead of just put old path back into place (first check if this is a problem).
-			
-			GMV functions needs to be over the interface, not the multivectors themselves!!!!
-				Test this by having an algebra with no specialized functions and calling
-				all functions using an SMV as the argument
+
+			GMV functions need to be over the interface, not the multivectors themselves!!!!
 			
 			Release first version with 'functional but incomplete' C# and Java support
+			
+			First check if this is a problem, then fix it:				
+				try fix installer path for windows (remember what string was added, remove it from path,
+				instead of just put old path back into place (first check if this is a problem).
 			
 			GMV log 3d for C# (done?), for Java, too, add testing functions
 			
