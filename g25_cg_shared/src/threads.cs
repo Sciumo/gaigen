@@ -26,6 +26,24 @@ namespace G25.CG.Shared
     /// </summary>
     public class Threads
     {
+        /// <summary>
+        /// This option can be set to true to force deterministic behaviour, at the cost
+        /// of some performance of course. It is useful for the xml_test which tests whether
+        /// the files generated from a saved specification is identical to the original.
+        /// 
+        /// It is also useful during debugging.
+        /// </summary>
+        private static bool RUN_THREADS_SERIALLY = false;
+
+        public static void SetRunThreadsSerially(bool serial)
+        {
+            RUN_THREADS_SERIALLY = serial;
+            if (serial)
+            {
+                Console.Out.WriteLine("Warning: threads are run serially. This probably lowers performance.");
+                Console.Out.WriteLine("This option is only useful for debugging and running the the xml_test script.");
+            }
+        }
 
         /// <summary>
         /// Starts all threads in <c>T</c> (a check for null threads is made).
@@ -35,8 +53,10 @@ namespace G25.CG.Shared
         {
             for (int t = 0; t < T.Length; t++)
             {
-                if (T[t] != null)
+                if (T[t] != null) {
                     T[t].Start();
+                    if (RUN_THREADS_SERIALLY) T[t].Join();
+                }
             }
         }
 
@@ -46,10 +66,17 @@ namespace G25.CG.Shared
         /// <param name="T">Array of threads.</param>
         public static void JoinThreadArray(System.Threading.Thread[] T)
         {
-            for (int t = 0; t < T.Length; t++)
+            if (RUN_THREADS_SERIALLY)
             {
-                if (T[t] != null)
-                    T[t].Join();
+                // nothing to do.
+            }
+            else
+            {
+                for (int t = 0; t < T.Length; t++)
+                {
+                    if (T[t] != null)
+                        T[t].Join();
+                }
             }
         }
 

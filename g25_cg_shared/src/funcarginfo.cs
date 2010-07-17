@@ -52,6 +52,10 @@ namespace G25.CG.Shared
             }
             else {
                 m_mangledTypeName = FT.GetMangledName(S, m_typeName);
+
+                // temp test for C# and Java
+                // if (S.OutputCSharpOrJava() && (m_varType == VARIABLE_TYPE.GMV))
+                // m_mangledTypeName = m_mangledTypeName + G25.CG.Shared.Main.IF_SUFFIX;
             }
 
             // set pointer / non pointer flag
@@ -90,7 +94,7 @@ namespace G25.CG.Shared
         /// <param name="defaultTypeName">When the user does not specify arguments, this is the default type used.</param>
         /// <param name="computeMultivectorValue">Set to true to expand all multivector values to symbolic RefGA.Multivectors.</param>
         /// <returns>Array of FuncArgInfo describing the arguments of 'F'.</returns>
-        public static FuncArgInfo[] GetAllFuncArgInfo(G25.Specification S, G25.fgs F, int nbArgs, G25.FloatType FT, String defaultTypeName, bool computeMultivectorValue)
+        public static FuncArgInfo[] GetAllFuncArgInfo(G25.Specification S, G25.fgs F, int nbArgs, G25.FloatType FT, string defaultTypeName, bool computeMultivectorValue)
         {
             FuncArgInfo[] FAI = new FuncArgInfo[nbArgs];
             for (int i = 0; i < nbArgs; i++)

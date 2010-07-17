@@ -636,11 +636,11 @@ namespace g25_test_generator
 
             SB.AppendLine("");
             SB.AppendLine("cd " + specName);
-            SB.AppendLine("g25 -f " + fileListName + " " + specName + ".xml");
+            SB.AppendLine("g25 -d true -f " + fileListName + " " + specName + ".xml");
             SB.AppendLine("mkdir " + xmlTestdirName);
-            SB.AppendLine("g25 -s " + xmlTestdirName + "\\" + specName + ".xml " + specName + ".xml");
+            SB.AppendLine("g25 -d true -s " + xmlTestdirName + "\\" + specName + ".xml " + specName + ".xml");
             SB.AppendLine("cd " + xmlTestdirName);
-            SB.AppendLine("g25 -f " + fileListName + " " + specName + ".xml");
+            SB.AppendLine("g25 -d true -f " + fileListName + " " + specName + ".xml");
 
             SB.AppendLine("g25_diff " + fileListName + " ..\\" + fileListName);
             SB.AppendLine("if not %errorlevel%==0 goto :error");

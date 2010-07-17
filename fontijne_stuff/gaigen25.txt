@@ -160,11 +160,10 @@ Maybe fix the float type stuff
 				Also, on OSX and Linux!
 				make sure all tests pass!
 				
-				-> xml_test : do not test the testsuite, because it is not deterministic (the mangle names)
-					
+			-> GMV functions need to be over the interface, not the multivectors themselves!!!!
+			
+			Java: code too large for 7D algebra (see 'd:\temp\testg25\test')
 			Test doxygen for C# and Java
-
-			GMV functions need to be over the interface, not the multivectors themselves!!!!
 			
 			Release first version with 'functional but incomplete' C# and Java support
 			

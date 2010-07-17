@@ -91,8 +91,9 @@ namespace G25.CG.Shared
             }
 
             string funcName = CF.OutputName;
-            //if (S.OutputC())
-              //  funcName = FT.GetMangledName(S, funcName);
+
+            // FAI[0].MangledTypeName;
+            //CF.ArgumentTypeNames[0] = CF.ArgumentTypeNames[0] + G25.CG.Shared.Main.IF_SUFFIX;
 
             // write function
             bool inline = false; // never inline GMV functions

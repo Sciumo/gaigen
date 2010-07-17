@@ -12,6 +12,9 @@ namespace G25.CG.Shared
         public const string MERSENNE_TWISTER = "MERSENNE_TWISTER";
         public const string NEED_TIME = "NEED_TIME";
 
+        /// <summary>Multivector interface suffix (used for C# and Java)</summary>
+        public const string IF_SUFFIX = "_if";
+
         /// <summary>
         /// Name of namespace for runtime computation of geometric product.
         /// </summary>

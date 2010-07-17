@@ -87,6 +87,7 @@ namespace G25
                 { "v|version", (string str) => {OptionDisplayVersion = true;} },
                 { "s|save=", (string str) => {OptionSaveSpecXmlFile = str;} },
                 { "f|filelist=", (string str) => {OptionSaveFileListFile = str;} },
+                { "d|deterministic=", (Boolean B) => G25.CG.Shared.Threads.SetRunThreadsSerially(B) },
             };
 
             List<string> extra = p.Parse(args);
@@ -202,6 +203,7 @@ namespace G25
                 "-v -version: display version.\n" +
                 "-s file.xml -save file.xml: saves loaded specification back to XML (for testing).\n" +
                 "-f list.txt -filelist list.txt: writes names of generated files to text file.\n" +
+                "-d true -deterministic true: set to true to enforce deterministic behavior.\n" +
                 "\n");
         }
 

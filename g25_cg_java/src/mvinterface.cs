@@ -27,7 +27,7 @@ namespace G25.CG.Java
     {
         public static string GetMvInterfaceName(Specification S, FloatType FT)
         {
-            return FT.GetMangledName(S, S.m_GMV.Name) + "_if";
+            return FT.GetMangledName(S, S.m_GMV.Name) + G25.CG.Shared.Main.IF_SUFFIX;
         }
 
         public static string GetRawSourceFilename(Specification S, FloatType FT)

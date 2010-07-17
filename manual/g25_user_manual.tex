@@ -165,6 +165,18 @@ Example: {\tt g25 -s spec\_out.xml spec\_in.xml}
 \noindent {\tt -f, -filelist}: save a list of generated files to a file.\\
 Example: {\tt g25 -f filelist.txt spec.xml}
 
+\vspace*{2mm}
+
+\noindent {\tt -d, -deterministic}: whether code generation should be deterministic ({\tt true} or {\tt false}).
+Names of test functions and dependencies have a number suffix to avoid name clashes. These
+numbers are not assigned in a deterministic manner when multiple threads are running concurrently.
+The {\tt xml\_test} script uses the {\tt -d true} option to make sure that the names of functions are
+consistent between runs. This option is also useful for debugging.
+\\
+Examples: \\
+{\tt g25 -d true spec.xml}\\
+{\tt g25 -d false spec.xml}
+
 \section{Generated Files}
 
 When Gaigen 2.5 compiles an algebra specification. a number of files
