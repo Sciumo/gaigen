@@ -53,7 +53,7 @@ namespace G25.CG.Shared
             else {
                 m_mangledTypeName = FT.GetMangledName(S, m_typeName);
 
-                // temp test for C# and Java
+                // temp (currently disabled) test for C# and Java
                 // if (S.OutputCSharpOrJava() && (m_varType == VARIABLE_TYPE.GMV))
                 // m_mangledTypeName = m_mangledTypeName + G25.CG.Shared.Main.IF_SUFFIX;
             }

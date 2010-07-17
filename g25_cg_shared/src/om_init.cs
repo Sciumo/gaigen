@@ -294,7 +294,7 @@ namespace G25.CG.Shared
                 }
             }
             else
-            { 
+            {
                 for (int d = 0; d < NB_ARGS; d++)
                 {
                     argTypes[d] = rangeVectorType.Name;
@@ -305,27 +305,20 @@ namespace G25.CG.Shared
                 }
             }
 
+            // generate function names for all grades
             string typeName = FT.GetMangledName(S, gom.Name);
-            string funcName = GetFunctionName(S, typeName, "set", (matrixMode) ? "_setMatrix" : "_setVectorImages");
-
-            G25.fgs F = new G25.fgs(funcName, funcName, "", argTypes, argNames, new string[] { FT.type }, null, null, null); // null, null = metricName, comment, options
-            F.InitArgumentPtrFromTypeNames(S);
-            if (matrixMode)
+            string[] funcNames = new string[gom.Domain.Length];
+            for (int g = 1; g < gom.Domain.Length; g++)
             {
-                F.m_argumentPtr[0] = S.OutputCppOrC();
-                F.m_argumentArr[0] = S.OutputCSharpOrJava();
+                string nameC = (g > 1) ? "_set" : ((matrixMode) ? "_setMatrix" : "_setVectorImages");
+                string suffix = (g > 1) ? ("_grade_" + g) : "";
+                funcNames[g] = GetFunctionName(S, typeName, "set" + suffix, nameC + suffix);
             }
 
-            bool computeMultivectorValue = false;
 
-            G25.CG.Shared.FuncArgInfo returnArgument = null;
-            if (S.OutputC())
-                returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, gom.Name, computeMultivectorValue);
-
-            G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
-
-            // setup instructions
-            List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
+            // setup instructions (for main function, and subfunctions for grades)
+            List<G25.CG.Shared.Instruction> mainI = new List<G25.CG.Shared.Instruction>();
+            List<G25.CG.Shared.Instruction>[] bladeI = new List<G25.CG.Shared.Instruction>[1 << S.m_dimension];
             {
                 bool mustCast = false;
                 int nbTabs = 1;
@@ -334,10 +327,22 @@ namespace G25.CG.Shared
                 bool declareDst = false;
                 for (int g = 1; g < gom.Domain.Length; g++)
                 {
+
                     for (int d = 0; d < gom.DomainForGrade(g).Length; d++)
                     {
                         G25.SMVOM smvOM = gom.DomainSmvForGrade(g)[d];
                         RefGA.BasisBlade domainBlade = gom.DomainForGrade(g)[d];
+
+
+                        if (g > 1)
+                        {
+                            bladeI[domainBlade.bitmap] = new List<G25.CG.Shared.Instruction>();
+
+                            string funcCallCode = funcNames[g] + "_" + d + "(";
+                            if (S.OutputC()) funcCallCode += G25.fgs.RETURN_ARG_NAME;
+                            funcCallCode += ");";
+                            mainI.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, funcCallCode));
+                        }
 
                         // follow the plan
                         RefGA.Multivector value = new RefGA.Multivector(signs[g][d]);
@@ -346,24 +351,74 @@ namespace G25.CG.Shared
                             value = RefGA.Multivector.op(value, symbolicBBvalues[P[p]]);
 
                         // add instructions
+                        List<G25.CG.Shared.Instruction> I = (g == 1) ? mainI : bladeI[domainBlade.bitmap];
                         I.Add(new G25.CG.Shared.CommentInstruction(nbTabs, "Set image of " + domainBlade.ToString(S.m_basisVectorNames)));
                         I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, smvOM, FT, mustCast, value, dstName, dstPtr, declareDst));
 
-                        if (g > 1)
-                        { // store symbolic value
-                            symbolicBBvalues[domainBlade.bitmap] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smvOM, dstName, dstPtr);
-                        }
+                        // store symbolic value
+                        symbolicBBvalues[domainBlade.bitmap] = G25.CG.Shared.Symbolic.SMVtoSymbolicMultivector(S, smvOM, dstName, dstPtr);
                     }
                 }
             }
 
-            Comment comment;
-            if (!matrixMode) comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
-            else comment = new Comment("Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix");
-            bool inline = false; // do not inline this potentially huge function
-            bool staticFunc = false;
-            bool writeDecl = S.OutputC();
-            G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcName, returnArgument, FAI, I, comment, writeDecl);
+            // output grade > 1 functions
+            if (cgd.generateOmInitCode(FT.type))
+            {
+                for (int g = 2; g < gom.Domain.Length; g++)
+                {
+                    for (int d = 0; d < gom.DomainForGrade(g).Length; d++)
+                    {
+                        RefGA.BasisBlade domainBlade = gom.DomainForGrade(g)[d];
+
+                        string funcName = funcNames[g] + "_" + d;
+                        G25.fgs F = new G25.fgs(funcName, funcName, "", new string[0], new string[0], new string[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+                        //F.InitArgumentPtrFromTypeNames(S);
+
+                        bool computeMultivectorValue = false;
+
+                        G25.CG.Shared.FuncArgInfo returnArgument = null;
+                        if (S.OutputC())
+                            returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, gom.Name, computeMultivectorValue);
+
+                        int nbArgs = 0;
+                        G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, nbArgs, FT, S.m_GMV.Name, computeMultivectorValue);
+
+                        Comment comment;
+                        comment = new Comment("Sets grade " + g + " part of outermorphism matrix based on lower grade parts.");
+                        bool inline = false; // do not inline this potentially huge function
+                        bool staticFunc = false;
+                        bool writeDecl = S.OutputC();
+                        G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcName, returnArgument, FAI, bladeI[domainBlade.bitmap], comment, writeDecl);
+                    }
+                }
+            }
+
+
+            { // output grade 1 function
+                G25.fgs F = new G25.fgs(funcNames[1], funcNames[1], "", argTypes, argNames, new string[] { FT.type }, null, null, null); // null, null = metricName, comment, options
+                F.InitArgumentPtrFromTypeNames(S);
+                if (matrixMode)
+                {
+                    F.m_argumentPtr[0] = S.OutputCppOrC();
+                    F.m_argumentArr[0] = S.OutputCSharpOrJava();
+                }
+
+                bool computeMultivectorValue = false;
+
+                G25.CG.Shared.FuncArgInfo returnArgument = null;
+                if (S.OutputC())
+                    returnArgument = new G25.CG.Shared.FuncArgInfo(S, F, -1, FT, gom.Name, computeMultivectorValue);
+
+                G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, F, NB_ARGS, FT, S.m_GMV.Name, computeMultivectorValue);
+
+                Comment comment;
+                if (!matrixMode) comment = new Comment("Sets " + typeName + " from images of the domain vectors.");
+                else comment = new Comment("Sets " + typeName + " from a " + (transpose ? "transposed " : "") + "matrix");
+                bool inline = false; // do not inline this potentially huge function
+                bool staticFunc = false;
+                bool writeDecl = S.OutputC();
+                G25.CG.Shared.Functions.WriteFunction(S, cgd, F, inline, staticFunc, "void", funcNames[1], returnArgument, FAI, mainI, comment, writeDecl);
+            }
         } // end of WriteSetVectorImages()
 
         public static void WriteOMtoOMcopy(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, OM srcOm, OM dstOm)

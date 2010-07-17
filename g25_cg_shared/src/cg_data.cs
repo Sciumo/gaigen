@@ -293,6 +293,17 @@ namespace G25.CG.Shared
             m_inlineDefSB = new StringBuilder();
         }
 
+        public bool generateOmInitCode(string floatType)
+        {
+            bool generate = false;
+            lock (m_generateOmSetFromVectorMatrixCode)
+            {
+                generate = !m_generateOmSetFromVectorMatrixCode.ContainsKey(floatType);
+                m_generateOmSetFromVectorMatrixCode[floatType] = true;
+            }
+
+            return generate;
+        }
 
         /// <summary>
         /// Map from FloatType X Metric X function name -> bool 
@@ -367,6 +378,15 @@ namespace G25.CG.Shared
         /// overloading.
         /// </summary>
         public StringBuilder m_dependencyId = new StringBuilder();
+
+
+        /// <summary>
+        /// The first time om_init.WriteSetVectorImages() gets called, it must generate extra functions
+        /// to set the matrices of the higher grade parts from the vector part.
+        /// This dictionary is keeps track of the float types for which this code has been generated
+        /// so far. Use generateOmInitCode(string floatType) to get this info.
+        /// </summary>
+        public Dictionary<string, bool> m_generateOmSetFromVectorMatrixCode = new Dictionary<string, bool>();
 
     } // end of class CGdata
 } // end of namepace G25.CG.Shared
