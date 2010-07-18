@@ -177,7 +177,7 @@ namespace G25.CG.Shared
         /// <summary>
         /// Returns the SMV type that can hold an image of a basis vector.
         /// </summary>
-        public static G25.SMV getRangeVectorType(Specification S, G25.FloatType FT, CGdata cgd, G25.GOM gom)
+        public static G25.SMV GetRangeVectorType(Specification S, G25.FloatType FT, CGdata cgd, G25.GOM gom)
         {
             RefGA.Multivector rangeVectorValue = new RefGA.Multivector(gom.RangeVectors);
             G25.SMV rangeVectorType = (G25.SMV)G25.CG.Shared.SpecializedReturnType.FindTightestMatch(S, rangeVectorValue, FT);
@@ -191,7 +191,7 @@ namespace G25.CG.Shared
         /// <summary>
         /// Returns the SMV type that can hold an image of a basis vector.
         /// </summary>
-        public static G25.SMV getRangeVectorType(Specification S, G25.FloatType FT, CGdata cgd, G25.SOM som)
+        public static G25.SMV GetRangeVectorType(Specification S, G25.FloatType FT, CGdata cgd, G25.SOM som)
         {
             RefGA.Multivector rangeVectorValue = new RefGA.Multivector(som.RangeVectors);
             G25.SMV rangeVectorType = (G25.SMV)G25.CG.Shared.SpecializedReturnType.FindTightestMatch(S, rangeVectorValue, FT);
@@ -252,6 +252,21 @@ namespace G25.CG.Shared
             }
         }
 
+        public static string[] GetSetFromLowerGradeFunctionNames(Specification S, FloatType FT, bool matrixMode)
+        {
+            G25.GOM gom = S.m_GOM;
+            // generate function names for all grades (basis blade names not included)
+            string typeName = FT.GetMangledName(S, gom.Name);
+            string[] funcNames = new string[gom.Domain.Length];
+            for (int g = 1; g < gom.Domain.Length; g++)
+            {
+                string nameC = (g > 1) ? "_set" : ((matrixMode) ? "_setMatrix" : "_setVectorImages");
+                string suffix = (g > 1) ? ("_grade_" + g) : "";
+                funcNames[g] = GetFunctionName(S, typeName, "set" + suffix, nameC + suffix);
+            }
+            return funcNames;
+        }
+
         /// <summary>
         /// Writes a function to set a GOM struct according to vector images, for all floating point types.
         /// </summary>
@@ -269,7 +284,7 @@ namespace G25.CG.Shared
             double[][] signs = G25.CG.Shared.OMinit.ComputeOmInitFromVectorsSigns(S, gom, plan);
 
             // get range vector type
-            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, gom);
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.GetRangeVectorType(S, FT, cgd, gom);
 
             // setup array of arguments, function specification, etc
             int NB_ARGS = (matrixMode) ? 1 : gom.DomainVectors.Length;
@@ -305,15 +320,9 @@ namespace G25.CG.Shared
                 }
             }
 
-            // generate function names for all grades
+            // generate function names for all grades (basis blade names not included)
             string typeName = FT.GetMangledName(S, gom.Name);
-            string[] funcNames = new string[gom.Domain.Length];
-            for (int g = 1; g < gom.Domain.Length; g++)
-            {
-                string nameC = (g > 1) ? "_set" : ((matrixMode) ? "_setMatrix" : "_setVectorImages");
-                string suffix = (g > 1) ? ("_grade_" + g) : "";
-                funcNames[g] = GetFunctionName(S, typeName, "set" + suffix, nameC + suffix);
-            }
+            string[] funcNames = GetSetFromLowerGradeFunctionNames(S, FT, matrixMode);
 
 
             // setup instructions (for main function, and subfunctions for grades)
@@ -738,7 +747,7 @@ namespace G25.CG.Shared
 
         public static void WriteSetVectorImages(Specification S, G25.CG.Shared.CGdata cgd, G25.FloatType FT, G25.SOM som)
         {
-            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, som);
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.GetRangeVectorType(S, FT, cgd, som);
 
             // loop over som.DomainVectors
             // setup array of arguments, function specification, etc

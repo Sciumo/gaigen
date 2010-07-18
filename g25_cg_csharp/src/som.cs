@@ -39,7 +39,7 @@ namespace G25.CG.CSharp
             string className = FT.GetMangledName(S, som.Name);
 
             // get range vector type
-            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, som);
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.GetRangeVectorType(S, FT, cgd, som);
             string rangeVectorSMVname = FT.GetMangledName(S, rangeVectorType.Name);
 
             // get filename, list of generated filenames

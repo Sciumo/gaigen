@@ -151,7 +151,7 @@ namespace G25.CG.CPP
             string gomClassName = (S.m_GOM == null) ? "" : FT.GetMangledName(S, S.m_GOM.Name);
             
             // get range vector type
-            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, som);
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.GetRangeVectorType(S, FT, cgd, som);
             string rangeVectorSMVname = FT.GetMangledName(S, rangeVectorType.Name);
 
             WriteComment(SB, S, cgd, FT, som);

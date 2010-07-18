@@ -124,6 +124,26 @@ namespace G25.CG.CPP
         public static void WriteSetDeclarations(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.GOM gom, string className, string rangeVectorSMVname)
         {
             cgd.m_cog.EmitTemplate(SB, "GOMsetDecl", "S=", S, "FT=", FT, "className=", className, "rangeVectorSMVname=", rangeVectorSMVname);
+
+            { // extra code for per-grade-per-basisblade functions to set OM from vectors
+                SB.AppendLine("\tprivate:");
+                bool matrixMode = false; // this value is irrelevant at this point
+                string typeName = FT.GetMangledName(S, gom.Name);
+                string prefix = typeName + "::";
+                string[] funcNames = G25.CG.Shared.OMinit.GetSetFromLowerGradeFunctionNames(S, FT, matrixMode);
+                for (int g = 1; g < gom.Domain.Length; g++)
+                {
+
+                    for (int d = 0; d < gom.DomainForGrade(g).Length; d++)
+                    {
+                        string funcName = funcNames[g] + "_" + d;
+                        if (funcName.IndexOf(prefix) == 0)
+                            funcName = funcName.Substring(prefix.Length);
+                        SB.AppendLine("\tvoid " + funcName + "();");
+                    }
+                }
+                SB.AppendLine("\tpublic:");
+            }
         }
 
         /// <summary>
@@ -141,7 +161,7 @@ namespace G25.CG.CPP
             string className = FT.GetMangledName(S, gom.Name);
 
             // get range vector type
-            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.getRangeVectorType(S, FT, cgd, gom);
+            G25.SMV rangeVectorType = G25.CG.Shared.OMinit.GetRangeVectorType(S, FT, cgd, gom);
             string rangeVectorSMVname = FT.GetMangledName(S, rangeVectorType.Name);
 
             WriteComment(SB, S, cgd, FT, gom);
