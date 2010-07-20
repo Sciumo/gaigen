@@ -25,7 +25,7 @@ ${CODEBLOCK basicInfo}
 /** The dimension of the space. */
 extern const int <%S.m_namespace%>_spaceDim;
 
-/** Number of groups/grades of coordinates in multivector. */
+/** Number of groups/grades of coordinates in a multivector. */
 extern const int <%S.m_namespace%>_nbGroups;
 
 /** The constants for the grades in an array. */

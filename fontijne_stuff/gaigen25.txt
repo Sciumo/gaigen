@@ -162,10 +162,9 @@ Maybe fix the float type stuff
 				
 			-> GMV functions need to be over the interface, not the multivectors themselves!!!!
 			
-			Java: code too large for 7D algebra (see 'd:\temp\testg25\test')
-				-> to do: make sure all code compiles again
-				currently C++ fails because OM class needs to know about new member functions.
-				
+			-> This one crashes:
+			D:\temp\TestG25\test\todo_test (original: D:\temp\TestG25\p3ga_java_4xAAxA_I_x_Pmv_1f_libc_scalar)
+			
 				
 			Test doxygen for C# and Java
 			

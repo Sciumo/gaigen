@@ -59,7 +59,7 @@ namespace G25.CG.CSJ
             SB.AppendLine("\tpublic " + accessModifier + " int SpaceDim = " + S.m_dimension + ";");
 
             // number of groups in general multivector
-            new G25.CG.Shared.Comment("Number of groups/grades of coordinates in multivector").Write(SB, S, 1);
+            new G25.CG.Shared.Comment("Number of groups/grades of coordinates in a multivector").Write(SB, S, 1);
             SB.AppendLine("\tpublic " + accessModifier + " int NbGroups = " + S.m_GMV.NbGroups + ";");
 
             // Euclidean metric?
@@ -194,26 +194,37 @@ namespace G25.CG.CSJ
             // basis vectors in basis elements
             new G25.CG.Shared.Comment("This array of integers contains the order of basis elements in the general multivector.\n" + 
                 "Use it to answer: 'what basis vectors are in the basis element at position [x]?").Write(SB, S, 1);
-            SB.AppendLine("\tpublic " + accessModifierArr + " int[][] BasisElements = new int[][] {");
+            SB.Append("\tpublic " + accessModifierArr + " int[][] BasisElements = ");
+            if (S.m_gmvCodeGeneration == GMV_CODE.EXPAND)
             {
-                bool comma = false;
-                for (int i = 0; i < gmv.NbGroups; i++)
+                SB.AppendLine("new int[][] {");
                 {
-                    for (int j = 0; j < gmv.Group(i).Length; j++)
+                    bool comma = false;
+                    for (int i = 0; i < gmv.NbGroups; i++)
                     {
-                        if (comma) SB.Append(",\n");
-                        RefGA.BasisBlade B = gmv.Group(i)[j];
-                        SB.Append("\t\tnew int[] {");
-                        for (int k = 0; k < S.m_dimension; k++)
-                            if ((B.bitmap & (1 << k)) != 0)
-                                SB.Append(k + ", ");
-                        SB.Append("-1}");
-                        comma = true;
+                        for (int j = 0; j < gmv.Group(i).Length; j++)
+                        {
+                            if (comma) SB.Append(",\n");
+                            RefGA.BasisBlade B = gmv.Group(i)[j];
+                            SB.Append("\t\tnew int[] {");
+                            for (int k = 0; k < S.m_dimension; k++)
+                                if ((B.bitmap & (1 << k)) != 0)
+                                    SB.Append(k + ", ");
+                            SB.Append("-1}");
+                            comma = true;
+                        }
                     }
                 }
+                SB.AppendLine("");
+                SB.AppendLine("\t};");
             }
-            SB.AppendLine("");
-            SB.AppendLine("\t};");
+            else
+            {
+                SB.AppendLine(G25.CG.CSJ.Util.GetFunctionName(S, "initBasisElementsArray") + "();");
+                SB.AppendLine();
+                
+                cgd.m_cog.EmitTemplate(SB, "initBasisElementsArray", "S=", S);
+            }
         }
 
         public static void GenerateBasisElementArrays(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd)
@@ -334,9 +345,9 @@ namespace G25.CG.CSJ
 
             GenerateMultivectorSizeArray(SB, S, cgd);
 
-            GenerateBasisElementsArray(SB, S, cgd);
-
             GenerateBasisElementArrays(SB, S, cgd);
+
+            GenerateBasisElementsArray(SB, S, cgd);
 
         } // end of GenerateTables()
 

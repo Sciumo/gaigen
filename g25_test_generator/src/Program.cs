@@ -619,7 +619,7 @@ namespace g25_test_generator
             else
             {
                 if (SV.OutputLanguage == G25.XML.XML_JAVA)
-                    SB.AppendLine("test.bat");
+                    SB.AppendLine("call test.bat");
                 else 
                     SB.AppendLine("test.exe");
             }
@@ -707,10 +707,12 @@ namespace g25_test_generator
 
                 // vary output language
                 list[0].OutputLanguage = lang;
+                int langMaxDim = (lang == G25.XML.XML_JAVA) ? 10 : maxDim; // limit Java to 10-D due to the 64K method-size limit (doh).
 
                 // vary dimension
                 List<int> dims = new List<int>();
-                for (int d = minDim; d <= maxDim; d++) dims.Add(d);
+                for (int d = minDim; d <= Math.Min(langMaxDim, maxDim); d++)
+                    dims.Add(d);
                 list = SpecVars.VaryDimension(list, dims);
 
                 // vary scalar type

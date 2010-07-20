@@ -1376,3 +1376,24 @@ ${CODEBLOCK initMvSize}
 		return A;
 	}
 ${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+${CODEBLOCK initBasisElementsArray}
+	public static int[][] <%G25.CG.CSJ.Util.GetFunctionName(S, "initBasisElementsArray")%>() {
+		int[][] be = new int[BasisElementBitmapByIndex.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>][];
+		for (int i = 0; i < BasisElementBitmapByIndex.<%G25.CG.CSJ.Util.GetFunctionName(S, "length")%>; i++) {
+			int bitmap = BasisElementBitmapByIndex[i];
+			int nbBasisVectors = <%G25.CG.CSJ.Util.GetFunctionName(S, "bitCount")%>(bitmap);
+			int[] arr = new int[nbBasisVectors+1];
+			int arrIdx = 0;
+			for (int j = 0; ((1 << j) <= bitmap); j++) {
+				if (((1 << j) & bitmap) != 0) {
+					arr[arrIdx++] = j; 
+				}
+			}
+			arr[arrIdx++] = -1;
+			be[i] = arr; 
+		}
+		return be;
+	}
+${ENDCODEBLOCK}
