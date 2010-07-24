@@ -432,12 +432,16 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 				return 0; // failure
 			}
 			
-			// check each coordinate 
-			for (c = 0; c < MvSize[(int)GA.gu()]; c++) {
-				dif = (<%FT.type%>)Math.<%G25.CG.CSJ.Util.GetFunctionName(S, "Abs")%>(GA.m_c[n][c] * (<%FT.type%>)signTable[n] - GB.m_c[n][c]);
-				if (dif > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
-					Console.WriteLine("<%targetFuncName%>() test failed (dif = " + dif + ")");
-					return 0; // failure
+			// check each coordinate of each groups which is still present after the grade selection
+			for (int m = 0; m < <%gmv.NbGroups%>; m++) {
+				if (GA.m_c[m] != null) {
+					for (c = 0; c < GA.m_c[m].<%G25.CG.CSJ.Util.GetFunctionName(S, "Length")%>; c++) {
+						dif = (<%FT.type%>)Math.<%G25.CG.CSJ.Util.GetFunctionName(S, "Abs")%>(GA.m_c[m][c] * (<%FT.type%>)signTable[n] - GB.m_c[m][c]);
+						if (dif > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
+							Console.WriteLine("<%targetFuncName%>() test failed (dif = " + dif + ")");
+							return 0; // failure
+						}
+					}
 				}
 			}
 		}

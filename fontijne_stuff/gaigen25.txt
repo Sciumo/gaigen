@@ -155,24 +155,21 @@ Maybe fix the float type stuff
 			
 			V testing code for C# and Java, test everything, fix all bugs
 			
+			-> GMV functions need to be over the interface, not the multivectors themselves!!!!
+			
+			-> This still has a bad test (versor inverse)
+			D:\temp\TestG25\test\ (original: D:\temp\TestG25\p3ga_java_4xAAxA_I_x_Pmv_1f_libc_scalar)
+			
+			complete all tests on windows
+				
 			makefile, test scripts for all platforms
 				make sure all scripts work, including 'clean'
 				Also, on OSX and Linux!
 				make sure all tests pass!
 				
-			-> GMV functions need to be over the interface, not the multivectors themselves!!!!
-			
-			-> This one crashes:
-			D:\temp\TestG25\test\todo_test (original: D:\temp\TestG25\p3ga_java_4xAAxA_I_x_Pmv_1f_libc_scalar)
-			
-				
 			Test doxygen for C# and Java
 			
 			Release first version with 'functional but incomplete' C# and Java support
-			
-			First check if this is a problem, then fix it:				
-				try fix installer path for windows (remember what string was added, remove it from path,
-				instead of just put old path back into place (first check if this is a problem).
 			
 			GMV log 3d for C# (done?), for Java, too, add testing functions
 			
