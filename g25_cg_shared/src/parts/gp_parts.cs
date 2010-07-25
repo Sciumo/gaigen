@@ -380,14 +380,12 @@ namespace G25.CG.Shared
                     if (FAI[i].IsScalar())
                     {
                         // 'expand' scalar
-                        //int nb = 1; // nbGroups
-                        //SB.AppendLine(FT.type + "[][] " + FAI[i].Name + "c = new " + FT.type + "[1][]{new " + FT.type + "[" + nb + "]{" + FAI[i].Name + "}};");
                         SB.AppendLine(FT.type + "[][] " + name + "c = new " + FT.type + "[][]{new " + FT.type + "[]{" + FAI[i].Name + "}};");
                     }
                     else
                     {
                         // expand general multivector
-                        SB.AppendLine(FT.type + "[][] " + name + "c = " + FAI[i].Name + ".c();");
+                        SB.AppendLine(FT.type + "[][] " + name + "c = " + FAI[i].Name + ".to_" + FAI[i].MangledTypeName + "().c();");
                     }
                 }
             }
@@ -828,7 +826,7 @@ namespace G25.CG.Shared
             if (S.OutputCSharpOrJava())
             {
                 SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
-                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "().c();");
             }
             else SB.AppendLine(FT.type + " c[1];");
 
@@ -925,7 +923,7 @@ namespace G25.CG.Shared
             if (S.OutputCSharpOrJava())
             {
                 SB.AppendLine(FT.type + "[] c = new " + FT.type + "[1];");
-                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+                SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "().c();");
             }
             else {
                 bool resultIsScalar = true;

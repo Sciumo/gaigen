@@ -279,7 +279,7 @@ namespace G25.CG.Shared
             StringBuilder SB = new StringBuilder();
 
             // allocate memory to store result:
-            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".to_" + FAI[1].MangledTypeName +"().c();");
             bool resultIsScalar = false;
             bool initResultToZero = !groupedByGrade;
             SB.Append(GPparts.GetExpandCode(S, cgd, FT, null, resultIsScalar, initResultToZero));

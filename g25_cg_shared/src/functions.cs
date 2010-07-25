@@ -324,6 +324,9 @@ namespace G25.CG.Shared
 
                     SB.Append(A.MangledTypeName);
 
+                    if (S.OutputCSharpOrJava() && A.IsGMV() && A.MvInterface)
+                        SB.Append(Main.IF_SUFFIX);
+
                     if (A.Array && S.OutputCSharpOrJava())
                         SB.Append("[]");
 

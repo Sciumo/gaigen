@@ -39,6 +39,7 @@ namespace G25.CG.Shared
         /// <param name="computeMultivectorValue">Set to true to convert the type into symbolic code. Uses 'F' to obtain the actual name of the variable to use inside the symbolic multivector.</param>
         public FuncArgInfo(G25.Specification S, G25.fgs F, int argIdx, G25.FloatType FT, string defaultTypeName, bool computeMultivectorValue)
         {
+            m_mvInterface = true;
             m_name = F.GetArgumentName(argIdx);
             m_typeName = F.GetArgumentTypeName(argIdx, defaultTypeName);
             m_type = S.GetType(m_typeName);
@@ -130,6 +131,8 @@ namespace G25.CG.Shared
             return (m_varType == VARIABLE_TYPE.SCALAR);
         }
 
+        public bool MvInterface { get { return m_mvInterface; } }
+
         /// <summary>Name of argument (e.g., "A").</summary>
         public string Name { get { return m_name; } }
         /// <summary>Name of type, e.g., "float" or "vectorE3GA".</summary>
@@ -166,13 +169,20 @@ namespace G25.CG.Shared
         protected string m_typeName;
 
         /// <summary>Mangled version of m_typeName, e.g., "float" or "vectorE3GA_f".</summary>
-        protected String m_mangledTypeName;
+        protected string m_mangledTypeName;
 
         /// <summary>G25.FloatType, G25.OM or G25.MV.</summary>
         protected G25.VariableType m_type;
 
         /// <summary>If m_type is not a G25.FloatType, then this is the floating point type used for m_type.</summary>
         protected FloatType m_floatType;
+
+        /// <summary>
+        /// Only for C# and Java:
+        /// If m_type is a G25.GMV, then should the function declaration list it as an multivector interface?
+        /// (true by default).
+        /// </summary>
+        protected bool m_mvInterface;
 
         /// <summary>Whether this is a float or an SMV, or a GMV, etc.</summary>
         protected G25.VARIABLE_TYPE m_varType;
