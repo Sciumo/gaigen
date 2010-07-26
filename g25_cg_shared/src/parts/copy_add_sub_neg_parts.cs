@@ -1063,7 +1063,7 @@ namespace G25.CG.Shared
             // get number of groups:
             int nbGroups = gmv.NbGroups;
 
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "().c();");
 
             string falseStr = CodeUtil.GetFalseValue(S);
             string trueStr = CodeUtil.GetTrueValue(S);
@@ -1259,9 +1259,8 @@ namespace G25.CG.Shared
             string falseStr = CodeUtil.GetFalseValue(S);
             string trueStr = CodeUtil.GetTrueValue(S);
 
-            // TODO: share this code everywhere
-            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".c();");
-            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".c();");
+            SB.AppendLine(FT.type + "[][] ac = " + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "().c();");
+            SB.AppendLine(FT.type + "[][] bc = " + FAI[1].Name + ".to_" + FAI[1].MangledTypeName + "().c();");
 
             // for each group
             // test if present in both-> then add both, etc
@@ -1411,7 +1410,7 @@ namespace G25.CG.Shared
                 int nbGroups = gmv.NbGroups;
 
                 string GroupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
-                SB.AppendLine(GroupBitmapType + " gu = " + FAI[0].Name + ".gu() " + " & " + groupBitmapName + ";");
+                SB.AppendLine(GroupBitmapType + " gu = " + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "().gu() & " + groupBitmapName + ";");
                 bool resultIsScalar = false, initResultToZero = false;
                 SB.Append(GPparts.GetExpandCode(S, cgd, FT, FAI, resultIsScalar, initResultToZero));
 
@@ -1547,7 +1546,8 @@ namespace G25.CG.Shared
             if ((funcType == DIVCODETYPE.UNIT) || (funcType == DIVCODETYPE.VERSOR_INVERSE))
             {
                 // compute norm
-                SB.AppendLine(FT.type + " " + normVarName + " = " + normFuncName + G25.CG.Shared.CANSparts.RETURNS_SCALAR + "(" + FAI[0].Name + ");");
+                SB.AppendLine(FT.type + " " + normVarName + " = " + normFuncName + G25.CG.Shared.CANSparts.RETURNS_SCALAR +
+                    "(" + FAI[0].Name + ".to_" + FAI[0].MangledTypeName + "());");
             }
 
 

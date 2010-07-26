@@ -457,7 +457,7 @@ ${ENDCODEBLOCK}
 // norm2FuncName = norm2FuncName
 // divFuncName = divFuncName
 ${CODEBLOCK igp_GMV_GMV_body}
-<%FT.type%> _N2_ = <%norm2FuncName%>(<%arg2name%>);
+<%FT.type%> _N2_ = <%norm2FuncName%>(<%arg2name%>.to_<%gmvName%>());
 return <%divFuncName%>(
 	<%gpFuncName%>(<%arg1name%>, <%reverseFuncName%>(<%arg2name%>)),
 	_N2_);
@@ -484,7 +484,7 @@ ${ENDCODEBLOCK}
 // norm2FuncName = norm2FuncName
 // mulFuncName = divFuncName
 ${CODEBLOCK igp_float_GMV_body}
-<%FT.type%> _N2_ = <%norm2FuncName%>(<%arg2name%>);
+<%FT.type%> _N2_ = <%norm2FuncName%>(<%arg2name%>.to_<%gmvName%>());
 return <%mulFuncName%>(<%reverseFuncName%>(<%arg2name%>), <%arg1name%> / _N2_);
 ${ENDCODEBLOCK}
 

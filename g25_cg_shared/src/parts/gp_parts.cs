@@ -1075,7 +1075,17 @@ namespace G25.CG.Shared
 
             // get string to be used for grade extraction
             string gradeUsageString;
-            string bgu = (S.OutputC()) ? FAI[1].Name + "->gu" : FAI[1].Name + ".gu()";
+            string bgu;
+            if (S.OutputC()) {
+                bgu = FAI[1].Name + "->gu";
+            } 
+            else if (S.OutputCSharpOrJava()) {
+                bgu = FAI[1].Name + ".to_" + FAI[1].MangledTypeName + "().gu()";
+            } 
+            else {
+                bgu = FAI[1].Name + ".gu()";
+            } 
+
             string groupBitmapType = (S.OutputCSharp() ? "GroupBitmap" : "int");
             if (!gmv.IsGroupedByGrade(S.m_dimension))
             {

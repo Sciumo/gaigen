@@ -155,20 +155,22 @@ Maybe fix the float type stuff
 			
 			V testing code for C# and Java, test everything, fix all bugs
 			
-			-> GMV functions need to be over the interface, not the multivectors themselves!!!!
+			V GMV functions need to be over the interface, not the multivectors themselves!!!!
 			
-			OM code in D:\temp\TestG25\test seems broken
+			V complete all tests on windows
 			
-			complete all tests on windows
+			-> OM code in TestG25_test_broken_om seems broken
 				
+			Test doxygen for C# and Java on Windows
+			
 			makefile, test scripts for all platforms
 				make sure all scripts work, including 'clean'
 				Also, on OSX and Linux!
 				make sure all tests pass!
 				
-			Test doxygen for C# and Java
-			
 			Release first version with 'functional but incomplete' C# and Java support
+			
+			Then finish the following:
 			
 			GMV log 3d for C# (done?), for Java, too, add testing functions
 			
