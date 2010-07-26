@@ -2410,7 +2410,7 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 	<%gomName%> randomOM;
 	<%gmvName%>[] randomVectors = new <%gmvName%>[<%S.m_dimension%>];
 	<%gmvName%>[] OMrandomVectors = new <%gmvName%>[<%S.m_dimension%>];
-	<%gmvName%> op1, op2, tmp, dif;
+	<%gmvName%> op1, op2, dif;
 	int basisVectorBitmap = -1;
 	int vectorGrade = 1;
 
@@ -2434,21 +2434,20 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 		op1 = randomVectors[0];
 		op2 = OMrandomVectors[0];
 		for (d = 1; d < nbRandomVectors; d++) {
-			tmp = <%opGmvFuncName%>(op1, randomVectors[d]);
-			op1 = tmp;
+			op1 = <%opGmvFuncName%>(op1, randomVectors[d]);
 			
-			tmp = <%opGmvFuncName%>(op2, OMrandomVectors[d]);
-			op2 = tmp;
+			op2 = <%opGmvFuncName%>(op2, OMrandomVectors[d]);
 		}
 		
 		// apply OM to op1
-		tmp = <%targetFuncName%>(randomOM, op1);
-		op1 = tmp;
+		op1 = <%targetFuncName%>(randomOM, op1);
 		
+		Console.WriteLine("op1 = " + op1);
+		Console.WriteLine("op2 = " + op2);
 		// test equality
 		dif = <%subtractGmvFuncName%>(op1, op2);
 		if (dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {
-			Console.WriteLine("<%targetFuncName%>() test failed");
+			Console.WriteLine("<%targetFuncName%>() test failed (largest coordinate = " + dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() + ")");
 			return 0; // failure
 		}
 	}
@@ -2524,7 +2523,7 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 		// test equality
 		dif = <%subtractGmvFuncName%>(mv2, mv3);
 		if (dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > (<%FT.DoubleToString(S, FT.PrecisionEpsilon() * 100.0)%> )) {
-			Console.WriteLine("<%targetFuncName%>() test failed\n");
+			Console.WriteLine("<%targetFuncName%>() test failed (largest coordinate = " + dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() + ")");
 			return 0; // failure
 		}
 	}
