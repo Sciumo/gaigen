@@ -543,7 +543,7 @@ ${CODEBLOCK ParseExceptionSource_CSharp}
 using System;
 
 namespace <%S.m_namespace%>_ns {
-	/// <summary>This exception is throws by parse() when there is an error in the input.</summary>
+	/// <summary>This exception is thrown by parse() when there is an error in the input.</summary>
     public class ParseException : Exception
     {
         public ParseException(String message)

@@ -140,7 +140,7 @@ ${ENDCODEBLOCK}
 // ALGEBRA_NAME = name of algebra
 ${CODEBLOCK makefile_c_cpp_vs}
 
-# <%ALGEBRA_NAME%> makefile for Microsoft C++ (run nmake)
+# <%ALGEBRA_NAME%> makefile for Microsoft C and C++ (run nmake)
 
 !include <win32.mak>
 
@@ -189,7 +189,7 @@ test.exe: \
 	$(conlibs) <%if (!SV.BuiltInParser) {%>antlr3c.lib<%}%>
 
 clean:
-  del test.exe *.obj *.g <%ALGEBRA_NAME%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>.h <%ALGEBRA_NAME%>Parser.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>Lexer.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_parse_%SV.GmvName%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_test_main.<%SV.OutputLanguage%> <%if (SV.RandomGenerator == "mt") {%><%ALGEBRA_NAME%>_mt.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_mt.h<%}%>
+  del test.exe *.obj *.g <%ALGEBRA_NAME%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>.h <%ALGEBRA_NAME%>Parser.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>Lexer.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_parse_<%SV.GmvName%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_test_main.<%SV.OutputLanguage%> <%if (SV.RandomGenerator == "mt") {%><%ALGEBRA_NAME%>_mt.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_mt.h<%}%> doxyfile
  
 ${ENDCODEBLOCK}
 
@@ -287,10 +287,11 @@ test: \
 
 
 clean:
-	rm -f test *.o *.g <%ALGEBRA_NAME%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>.h \
+	rm -f test *.o *.g <%ALGEBRA_NAME%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>.h doxyfile \
 	<%ALGEBRA_NAME%>Parser.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>Lexer.<%SV.OutputLanguage%> \
 	<%ALGEBRA_NAME%>_parse_<%SV.GmvName%>.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_test_main.<%SV.OutputLanguage%> \
 	<%if (SV.RandomGenerator == "mt") {%><%ALGEBRA_NAME%>_mt.<%SV.OutputLanguage%> <%ALGEBRA_NAME%>_mt.h<%}%>
+	 
 
 ${ENDCODEBLOCK}
 
@@ -314,6 +315,7 @@ test.exe:
 clean:
   del *.cs
   del test.exe
+  del doxyfile
 <%if (!SV.BuiltInParser) {%>
   del *.g
   del Antlr3.Runtime.dll
@@ -351,6 +353,7 @@ clean:
 <%}%>
   IF EXIST test.bat del /q test.bat
   IF EXIST <%ALGEBRA_NAME%>_pkg rmdir /q /s <%ALGEBRA_NAME%>_pkg
+  IF EXIST doxyfile del doxyfile
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_java_unix}

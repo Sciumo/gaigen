@@ -299,7 +299,7 @@ namespace G25.CG.Shared
                     if (cgd.m_gmvGomPartFuncNames.ContainsKey(key) &&
                         cgd.m_gmvGomPartFuncNames[key])
                     {
-                        string allocCcode = "cc[" + dstGroup + "] = new " + FT.type + "[" + gmv.Group(dstGroup).Length + "];";
+                        string allocCcode = "if (cc[" + dstGroup + "] == null) cc[" + dstGroup + "] = new " + FT.type + "[" + gmv.Group(dstGroup).Length + "];";
                         SB.AppendLine("\t" + allocCcode);
 
                         SB.AppendLine("\t" + funcName + "(" + FAI[0].Name + ", bc[" + srcGroup + "], cc[" + dstGroup + "]);");

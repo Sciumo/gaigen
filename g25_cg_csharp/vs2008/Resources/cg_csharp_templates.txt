@@ -225,7 +225,7 @@ ${CODEBLOCK sourceToString}
 	/// </summary>
 	/// <param name="fp">floating point format. Use 'null' for the default format (see setStringFormat()).</param>
 	public static string String(<%G25.CG.CSharp.MvInterface.GetMvInterfaceName(S, FT)%> value, string fp) {
-		<%gmvName%> obj = value.To_<%gmvName%>();
+		<%gmvName%> obj = value.to_<%gmvName%>();
 		System.Text.StringBuilder result = new System.Text.StringBuilder();
 		int ia = 0; // global index into coordinates (runs from 0 to <%(gmv.NbCoordinates-1)%>)
 		int cnt = 0; // how many coordinates printed so far
@@ -346,7 +346,7 @@ ${CODEBLOCK mvInterface}
     /// <summary>
     /// Converts this multivector to a '<%gmvName%>'.
     /// </summary>
-    <%gmvName%> To_<%gmvName%>();
+    <%gmvName%> to_<%gmvName%>();
 ${ENDCODEBLOCK}
 
 // gmvName = name of gmv type
@@ -354,7 +354,7 @@ ${CODEBLOCK GMVmvInterfaceImpl}
     /// <summary>	
     /// Converts this multivector to a 'mv' (implementation of interface '<%gmvName%>_interface')
     /// </summary>
-    public <%gmvName%> To_<%gmvName%>()
+    public <%gmvName%> to_<%gmvName%>()
     {
         return this;
     }
@@ -365,7 +365,7 @@ ${CODEBLOCK SMVmvInterfaceImpl}
     /// <summary>	
     /// Converts this multivector to a 'mv' (implementation of interface '<%gmvName%>_interface')
     /// </summary>
-    public <%gmvName%> To_<%gmvName%>()
+    public <%gmvName%> to_<%gmvName%>()
     {
         return new <%gmvName%>(this);
     }

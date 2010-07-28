@@ -148,118 +148,37 @@ Maybe fix the float type stuff
 			
 			
 			V constants
-			
+
 			V runtime geometric product
-			
+
 			V log (3D)
-			
+
 			V testing code for C# and Java, test everything, fix all bugs
-			
+
 			V GMV functions need to be over the interface, not the multivectors themselves!!!!
-			
+
 			V complete all tests on windows
-			
-			-> OM code in TestG25_test_broken_om seems broken
-				-> apply om to vectors, and all vectors that come out are the same???
-				-> the OM is not singular. Something else must go wrong . . .
-				
-				
-				
-*************************************************************************************
-static int test_applyOM_dont_mangle_1508(int NB_TESTS_SCALER) 
-{
-	int NB_LOOPS = 100 + NB_TESTS_SCALER / 32;
-	double[] OMmatrix = new double[5 * 5];
-	int i, d, d2;
-	int nbRandomVectors;
-	om randomOM;
-	mv[] randomVectors = new mv[5];
-	mv[] OMrandomVectors = new mv[5];
-	mv op1, op2, dif;
-	int basisVectorBitmap = -1;
-	int vectorGrade = 1;
 
-	for (i = 0; i < NB_LOOPS; i++) {
-		// init random outermorphism matrix
-		for (d2 = 0; d2 < 5 * 5; d2++)
-			OMmatrix[d2] = genrand();
-		
-		for (int a = 0; a < 5; a++) {
-			double[] sc = new double[5];
-			for (int b = 0; b < 5; b++) {
-				sc[b] = OMmatrix[b * 5 + a];
-			}
+			V Test doxygen for C# and Java on Windows
 			
-			dualSphere s = new dualSphere(dualSphere.coord_no_e1_e2_e3_ni, sc); 
-			Console.WriteLine("s" + a + " = " + s.toString_e20() + ",");
-		}
+			-> makefiles, test scripts for all platforms
+				OSX first, then Linux
+				
+				
+			Release version 2.5.2 with 'functional but incomplete' C# and Java support
 			
 			
-		// init random OM
-		randomOM = new om(OMmatrix);
-		
-		// get n < 5 random vectors stored in GMV
-		nbRandomVectors = 3; //(int)(5.0 * genrand());
-		if (nbRandomVectors < 1) nbRandomVectors = 1;
-		for (d = 0; d < nbRandomVectors; d++) {
-			randomVectors[d] = random_blade_dont_mangle_74_returns_mv(genrand(), vectorGrade, basisVectorBitmap);
-			OMrandomVectors[d] = applyOM(randomOM, randomVectors[d]);
+			AND THEN finish the following:
 			
-			Console.WriteLine("a" + d + " = " + randomVectors[d].toString_e20() + ",");
-			Console.WriteLine("b" + d + " = " + OMrandomVectors[d].toString_e20()) + ",";
+				GMV log 3d for C# (done?), for Java, too, add testing functions
 
-		}
-		
-		// compute outer product of randomVectors, OMrandomVectors
-		op1 = randomVectors[0];
-		op2 = OMrandomVectors[0];
-		for (d = 1; d < nbRandomVectors; d++) {
-			op1 = op(op1, randomVectors[d]);
-			
-			op2 = op(op2, OMrandomVectors[d]);
-			
-		}
-		
-		// apply OM to op1
-		op1 = applyOM(randomOM, op1);
-		
-		Console.WriteLine("op1 = " + op1.toString_e20());
-		Console.WriteLine("op2 = " + op2.toString_e20());
-		// test equality
-		dif = subtract(op1, op2);
-		if (dif.largestCoordinate() > 1E-14) {
-			randomOM = new om(OMmatrix);
-			OMrandomVectors[0] = applyOM(randomOM, randomVectors[0]);
-			Console.WriteLine("applyOM() test failed (largest coordinate = " + dif.largestCoordinate() + ")");
-			return 0; // failure
-		}
-	}
-		
-	return 1; // success
-}
-*************************************************************************************
-				
-				
-			Test doxygen for C# and Java on Windows
-			
-			makefile, test scripts for all platforms
-				make sure all scripts work, including 'clean'
-				Also, on OSX and Linux!
-				make sure all tests pass!
-				
-			Release first version with 'functional but incomplete' C# and Java support
-			
-			Then finish the following:
-			
-			GMV log 3d for C# (done?), for Java, too, add testing functions
-			
-			C# operators
-			
-			Java and C# report usage
-			
-			Java and C# GMV, SMV member function shortcuts (for regular functions)
-				
-			Java and C# SMV converters as constructors (SMV->SMV and such)
+				C# operators
+
+				Java and C# report usage
+
+				Java and C# GMV, SMV member function shortcuts (for regular functions)
+
+				Java and C# SMV converters as constructors (SMV->SMV and such)
 			
 			
 				

@@ -2435,15 +2435,12 @@ static int <%testFuncName%>(int NB_TESTS_SCALER)
 		op2 = OMrandomVectors[0];
 		for (d = 1; d < nbRandomVectors; d++) {
 			op1 = <%opGmvFuncName%>(op1, randomVectors[d]);
-			
 			op2 = <%opGmvFuncName%>(op2, OMrandomVectors[d]);
 		}
 		
 		// apply OM to op1
 		op1 = <%targetFuncName%>(randomOM, op1);
 		
-		Console.WriteLine("op1 = " + op1);
-		Console.WriteLine("op2 = " + op2);
 		// test equality
 		dif = <%subtractGmvFuncName%>(op1, op2);
 		if (dif.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > <%FT.DoubleToString(S, FT.PrecisionEpsilon())%>) {

@@ -329,7 +329,7 @@ namespace G25.CG.Shared
 
             // emit template
             cgd.m_cog.ClearOutput(); // get rid of any junk other users may have left behind
-            cgd.m_cog.EmitTemplate("doxyfile", "Namespace=", S.m_namespace);
+            cgd.m_cog.EmitTemplate("doxyfile", "S=", S, "Namespace=", S.m_namespace);
 
             // write all to file
             System.IO.StreamWriter W = null;
