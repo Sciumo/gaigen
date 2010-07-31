@@ -21,7 +21,7 @@ V -largest coordinate function for GMVs or for all types?
 V -point-point distance
 V -point-point distance squared
 V write to multiple StringBuilders at the same time (decl here, def there).
-V write code for each function in parallel (yeaaahaaaa)
+V write code for each function in parallel 
 V FindFunction() should have simpler access, in the form of GetFunctionName(...) which auto mangles everything . . .  
 V dependency stuff (just complain that user should add
 	V the dependency stuff also fills in the blank in FGS? That would make stuff a lot easier . . .
