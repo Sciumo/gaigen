@@ -193,7 +193,7 @@ namespace G25.CG.Java
                 "randomNumberSeedFunctionNames=", randomNumberTimeSeedFuncs.ToArray());
 
             // close class
-            G25.CG.Shared.Util.WriteCloseClass(SB, S, S.m_namespace);
+            G25.CG.Shared.Util.WriteCloseClass(SB, S, "TestSuite");
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);                    

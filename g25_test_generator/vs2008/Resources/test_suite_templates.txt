@@ -323,7 +323,7 @@ clean:
 ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_csharp_unix}
-# <%ALGEBRA_NAME%> makefile for Microsoft C# (run make)
+# <%ALGEBRA_NAME%> makefile for C# on OS X and Linux (run make)
 
 # TO DO
 
@@ -334,7 +334,7 @@ ${ENDCODEBLOCK}
 // SPEC_NAME = name of specification (without .xml)
 // ALGEBRA_NAME = name of algebra
 ${CODEBLOCK makefile_java_vs}
-# <%ALGEBRA_NAME%> makefile for Java (run nmake)
+# <%ALGEBRA_NAME%> makefile for Java on Windows / Visual Studio (run nmake)
 
 all: test.bat
 
@@ -356,12 +356,32 @@ clean:
   IF EXIST doxyfile del doxyfile
 ${ENDCODEBLOCK}
 
+
+// SV = SpecVars
+// SPEC_NAME = name of specification (without .xml)
+// ALGEBRA_NAME = name of algebra
 ${CODEBLOCK makefile_java_unix}
-# <%ALGEBRA_NAME%> makefile for  Java (run make)
+# <%ALGEBRA_NAME%> makefile for Java on OS X / Linux (run make)
 
-# TO DO
+all: test.sh
 
-
+test.sh: 
+	g25 <%SPEC_NAME%>.xml
+<%if (!SV.BuiltInParser) {%>
+	java org.antlr.Tool <%ALGEBRA_NAME%>_pkg/<%ALGEBRA_NAME%>.g
+	g25_copy_resource antlr-runtime-3.2.jar .
+<%}%>
+	javac <%if (!SV.BuiltInParser) {%>-sourcepath antlr-runtime-3.2.jar <%}%><%ALGEBRA_NAME%>_pkg/*.java
+	echo java -classpath .<%if (!SV.BuiltInParser) {%>:antlr-runtime-3.2.jar<%}%> <%ALGEBRA_NAME%>_pkg.TestSuite > test.sh
+	chmod +x test.sh
+	  
+clean:
+<%if (!SV.BuiltInParser) {%>
+	rm -f antlr-runtime-3.2.jar
+<%}%>
+	rm -f test.sh
+	rmdir -rf <%ALGEBRA_NAME%>_pkg
+	rm doxyfile
 ${ENDCODEBLOCK}
 
 
