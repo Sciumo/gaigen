@@ -1,3 +1,6 @@
+Something is wrong with the example in /tmp and in 
+MBP:e8ga_java_8xVxxA_x_x_Ymv_2df_libc_scalarClass
+
 This is my personal to-do list
 
 
