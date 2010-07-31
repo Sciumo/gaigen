@@ -324,10 +324,24 @@ ${ENDCODEBLOCK}
 
 ${CODEBLOCK makefile_csharp_unix}
 # <%ALGEBRA_NAME%> makefile for C# on OS X and Linux (run make)
+all: test.exe
 
-# TO DO
-
-
+test.exe:
+	g25 <%SPEC_NAME%>.xml
+<%if (!SV.BuiltInParser) {%>
+	g25_copy_resource Antlr3.Runtime.dll .
+	java org.antlr.Tool <%ALGEBRA_NAME%>.g
+<%}%>
+	gmcs /t:exe /out:test.exe <%if (!SV.BuiltInParser) {%>/r:Antlr3.Runtime.dll <%} %>*.cs
+  
+clean:
+	rm -f *.cs
+	rm -f test.exe
+	rm -f doxyfile
+<%if (!SV.BuiltInParser) {%>
+	rm -f *.g
+	rm -f Antlr3.Runtime.dll
+<%}%>
 ${ENDCODEBLOCK}
 
 // SV = SpecVars
