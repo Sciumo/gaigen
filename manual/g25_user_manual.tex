@@ -308,7 +308,7 @@ To build Gaigen 2.5 from source, first download the source code as a tarball {\t
 or from SourceForge SVN.
 
 Using Visual Studio or MonoDevelop, open the main project {\tt g25.sln} in {\tt g25/vs2008}.
-(When using MonoDevelop you will get a warning that the Windows installer project cannot be loaded).
+(When using MonoDevelop you will get a warning that the Windows installer project cannot be loaded; please ignore).
 Do {\tt Build->Build Solution} to build all. 
 
 If you want to build from the command line on Windows, open a Visual Studio Command Prompt and
@@ -324,6 +324,8 @@ cd ../../g25_diff/vs2008
 xbuild g25_diff.csproj /p:Configuration=Release
 cd ../../g25_test_generator/vs2008
 xbuild g25_test_generator.csproj /p:Configuration=Release
+cd ../../g25_copy_resource/vs2008
+xbuild g25_copy_resource.csproj /p:Configuration=Release
 \end{verbatim}
 
 Installers / packagers for each platform are in {\tt g25/setup\_win}, 

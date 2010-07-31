@@ -596,8 +596,8 @@ namespace G25.CG.Shared
         /// </summary>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Results go here. Also intermediate data for code generation. Also contains plugins and cog.</param>
-        public static void WriteSetIdentity(Specification S, G25.CG.Shared.CGdata cgd)
-        {
+       public static void WriteSetIdentity(Specification S, G25.CG.Shared.CGdata cgd)
+       {
             foreach (G25.FloatType FT in S.m_floatTypes)
             {
                 foreach (G25.SOM som in S.m_SOM)
@@ -829,6 +829,7 @@ namespace G25.CG.Shared
             {
                 foreach (G25.SOM som in S.m_SOM)
                 {
+					WriteSetMatrix(S, cgd, FT, som, transpose);
                 }
             }
         }

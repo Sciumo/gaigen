@@ -19,7 +19,7 @@ On OSX:
  - rebuild all
  - go to g25/setup_osx
  - sudo ./package_script
- - upload g25.pkg
+ - upload g25.pkg to sourceforge
  - select the 'OSX' platform for the .pkg 
  - svn commit
 
