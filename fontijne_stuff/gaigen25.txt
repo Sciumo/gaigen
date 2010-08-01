@@ -1,7 +1,3 @@
-Something is wrong with the example in /tmp and in 
-MBP:e8ga_java_8xVxxA_x_x_Ymv_2df_libc_scalarClass
-    e8ga_java_8xVxxA_x_x_Ymv_2df_libc_scalarClass
-
 This is my personal to-do list
 
 
@@ -166,8 +162,10 @@ Maybe fix the float type stuff
 			V Test doxygen for C# and Java on Windows
 			
 			-> makefiles, test scripts for all platforms
-				OSX first, then Linux
-				
+				V OSX first
+				then Linux
+			
+			check manual, make sure latest version is included in distribution
 				
 			Release version 2.5.2 with 'functional but incomplete' C# and Java support
 			
