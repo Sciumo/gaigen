@@ -615,8 +615,13 @@ namespace g25_test_generator
             SB.AppendLine("");
             SB.AppendLine("cd " + specName);
             SB.AppendLine("echo \"Testing " + specName + " \"");
-            if (IsUnix()) SB.AppendLine("./test");
-            else
+            if (IsUnix()) {
+				if (SV.OutputLanguage == G25.XML.XML_JAVA)
+					SB.AppendLine("sh ./test.sh");
+				else 
+					SB.AppendLine("./test"); // OK for CSharp?
+			}
+			else
             {
                 if (SV.OutputLanguage == G25.XML.XML_JAVA)
                     SB.AppendLine("call test.bat");
