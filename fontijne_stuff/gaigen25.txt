@@ -163,7 +163,9 @@ Maybe fix the float type stuff
 			
 			-> makefiles, test scripts for all platforms
 				V OSX first
-				then Linux
+				Linux:
+					in test.sh: running ./test doesn't work for missing for C# on Linux
+					need to run mono ./test.exe 
 			
 			check manual, make sure latest version is included in distribution
 				
