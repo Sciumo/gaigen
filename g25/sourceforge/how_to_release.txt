@@ -1,3 +1,7 @@
+Write release notes for the to-be-released version.
+Create new folder on sourceforge.
+Set release notes.
+
 On Windows, do  
  - svn update
  - increment the version number 
