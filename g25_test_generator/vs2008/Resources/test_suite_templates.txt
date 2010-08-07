@@ -395,7 +395,7 @@ clean:
 <%}%>
 	rm -f test.sh
 	rm -rf <%ALGEBRA_NAME%>_pkg
-	rm doxyfile
+	rm -f doxyfile
 ${ENDCODEBLOCK}
 
 

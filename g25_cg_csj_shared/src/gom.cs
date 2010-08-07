@@ -88,7 +88,7 @@ namespace G25.CG.CSJ
 
             Dictionary<double, List<string>> nonZero = G25.CG.Shared.OMinit.GetGomIdentityInitCode(S, S.m_GOM, omName, matrixName);
 
-            string className = FT.GetMangledName(S, S.m_GOM.Name);
+            //string className = FT.GetMangledName(S, S.m_GOM.Name);
             string funcName = Util.GetFunctionName(S, "setIdentity");
             SB.AppendLine("\t" + Keywords.PublicAccessModifier(S) + " void " + funcName + "() {");
             for (int g = 1; g < S.m_GOM.Domain.Length; g++)

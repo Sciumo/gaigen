@@ -228,7 +228,8 @@ namespace g25_test_generator
 
         public static void WriteXmlTestScript(StringBuilder SB, List<string> commands)
         {
-            SB.AppendLine("@echo off");
+			if (IsWindows())
+	            SB.AppendLine("@echo off");
             AppendCommands(SB, commands);
             SB.AppendLine("exit /B 0");
             SB.AppendLine(":error");
@@ -618,8 +619,9 @@ namespace g25_test_generator
             if (IsUnix()) {
 				if (SV.OutputLanguage == G25.XML.XML_JAVA)
 					SB.AppendLine("sh ./test.sh");
-				else 
-					SB.AppendLine("./test"); // OK for CSharp?
+				else if (SV.OutputLanguage == G25.XML.XML_CSHARP)
+					SB.AppendLine("mono ./test.exe");
+				else SB.AppendLine("./test"); 
 			}
 			else
             {
@@ -643,11 +645,12 @@ namespace g25_test_generator
             SB.AppendLine("cd " + specName);
             SB.AppendLine("g25 -d true -f " + fileListName + " " + specName + ".xml");
             SB.AppendLine("mkdir " + xmlTestdirName);
-            SB.AppendLine("g25 -d true -s " + xmlTestdirName + "\\" + specName + ".xml " + specName + ".xml");
+			
+            SB.AppendLine("g25 -d true -s " + xmlTestdirName + System.IO.Path.DirectorySeparatorChar + specName + ".xml " + specName + ".xml");
             SB.AppendLine("cd " + xmlTestdirName);
             SB.AppendLine("g25 -d true -f " + fileListName + " " + specName + ".xml");
 
-            SB.AppendLine("g25_diff " + fileListName + " ..\\" + fileListName);
+            SB.AppendLine("g25_diff " + fileListName + " .." + System.IO.Path.DirectorySeparatorChar + fileListName);
             SB.AppendLine("if not %errorlevel%==0 goto :error");
 
             SB.AppendLine("cd .."); // leave xmlTestdirName

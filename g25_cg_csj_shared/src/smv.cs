@@ -252,7 +252,7 @@ namespace G25.CG.CSJ
 
             cgd.m_defSB.AppendLine("");
 
-            string className = FT.GetMangledName(S, smv.Name);
+            //string className = FT.GetMangledName(S, smv.Name);
             string funcName = GMV.GetSetFuncName(S);
             bool mustCast = false;
 
@@ -292,7 +292,7 @@ namespace G25.CG.CSJ
 
             cgd.m_defSB.AppendLine("");
 
-            string className = FT.GetMangledName(S, smv.Name);
+            //string className = FT.GetMangledName(S, smv.Name);
             string funcName = GMV.GetSetFuncName(S);
             bool mustCast = false;
 
@@ -337,7 +337,7 @@ namespace G25.CG.CSJ
 
             cgd.m_defSB.AppendLine("");
 
-            string className = FT.GetMangledName(S, smv.Name);
+            //string className = FT.GetMangledName(S, smv.Name);
             string funcName = GMV.GetSetFuncName(S);
             bool mustCast = false;
 
@@ -378,7 +378,7 @@ namespace G25.CG.CSJ
         {
             cgd.m_defSB.AppendLine("");
 
-            string className = FT.GetMangledName(S, smv.Name);
+            //string className = FT.GetMangledName(S, smv.Name);
             string funcName = GMV.GetSetFuncName(S);
             bool mustCast = false;
 
@@ -414,7 +414,7 @@ namespace G25.CG.CSJ
                 cgd.m_defSB.AppendLine("");
 
                 //string srcClassName = srcFT.GetMangledName(smv.Name);
-                string dstClassName = dstFT.GetMangledName(S, smv.Name);
+                //string dstClassName = dstFT.GetMangledName(S, smv.Name);
                 string funcName = GMV.GetSetFuncName(S);
                 bool mustCast = dstFT.MustCastIfAssigned(S, srcFT);
 
@@ -447,7 +447,7 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
             string srcClassName = FT.GetMangledName(S, gmv.Name);
 
-            string dstClassName = FT.GetMangledName(S, smv.Name);
+            //string dstClassName = FT.GetMangledName(S, smv.Name);
 
             bool dstPtr = false;
             string[] smvAccessStr = G25.CG.Shared.CodeUtil.GetAccessStr(S, smv, G25.CG.Shared.SmvUtil.THIS, dstPtr);
@@ -539,7 +539,7 @@ namespace G25.CG.CSJ
 
             RefGA.BasisBlade maxBasisBlade = smv.AbsoluteLargestConstantBasisBlade();
 
-            string className = FT.GetMangledName(S, smv.Name);
+            //string className = FT.GetMangledName(S, smv.Name);
 
             for (int _returnBitmap = 0; _returnBitmap <= 1; _returnBitmap++)
             {

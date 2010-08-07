@@ -82,7 +82,7 @@ namespace G25.CG.CSJ
             int nbTabs = 1;
             new G25.CG.Shared.Comment("sets this to 0.").Write(SB, S, nbTabs);
 
-            string className = FT.GetMangledName(S, gmv.Name);
+   //         string className = FT.GetMangledName(S, gmv.Name);
             string funcName = GetSetFuncName(S); 
 
             string funcDecl = "\tpublic void " + funcName + "()";
@@ -113,7 +113,7 @@ namespace G25.CG.CSJ
             new G25.CG.Shared.Comment("sets this to scalar value.").Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
-            string className = FT.GetMangledName(S, gmv.Name);
+//            string className = FT.GetMangledName(S, gmv.Name);
             string funcName = GetSetFuncName(S); 
 
             string funcDecl = "\tpublic void " + funcName + "(" + FT.type + " val)";
@@ -141,15 +141,14 @@ namespace G25.CG.CSJ
         public static void WriteSetCompressedArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             int nbTabs = 1;
-            List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
-                new Tuple<string, string>("gu", "bitwise or of the GROUPs and GRADEs which are present in 'arr'."),
-                new Tuple<string, string>("arr", "compressed coordinates.")
-            };
-            new G25.CG.Shared.Comment("sets this coordinates in 'arr'.").Write(SB, S, nbTabs);
+            new G25.CG.Shared.Comment("sets this coordinates in 'arr'.").
+				AddParamComment("gu", "bitwise or of the GROUPs and GRADEs which are present in 'arr'.").
+				AddParamComment("arr", "compressed coordinates.").
+					Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
 
-            string className = FT.GetMangledName(S, gmv.Name);
+            //string className = FT.GetMangledName(S, gmv.Name);
             string funcName = GetSetFuncName(S);
 
             string groupBitmapStr = GetGroupBitmapType(S);
@@ -190,17 +189,16 @@ namespace G25.CG.CSJ
         public static void WriteSetExpandedArray(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT)
         {
             int nbTabs = 1;
-            List<Tuple<string, string>> paramComments = new List<Tuple<string, string>> {
-                new Tuple<string, string>("arr", "coordinates.")
-            };
-            new G25.CG.Shared.Comment("sets this coordinates in 'arr'. \n'arr' is kept, so changes to 'arr' will be reflected in the value of this multivector. Make sure 'arr' has length " + S.m_GMV.NbGroups + " and each subarray has the length of the respective group/grade").Write(SB, S, nbTabs);
+            new G25.CG.Shared.Comment("sets this coordinates in 'arr'. \n'arr' is kept, so changes to 'arr' will be reflected in the value of this multivector. Make sure 'arr' has length " + S.m_GMV.NbGroups + " and each subarray has the length of the respective group/grade").
+				AddParamComment("arr", "coordinates.").
+				Write(SB, S, nbTabs);
 
             G25.GMV gmv = S.m_GMV;
 
-            string className = FT.GetMangledName(S, gmv.Name);
+            //string className = FT.GetMangledName(S, gmv.Name);
             string funcName = GetSetFuncName(S);
 
-            string groupBitmapStr = GetGroupBitmapType(S);
+            //string groupBitmapStr = GetGroupBitmapType(S);
 
             string funcDecl = "\tpublic void " + funcName + "(" + FT.type + "[][] arr)";
 
@@ -229,7 +227,7 @@ namespace G25.CG.CSJ
             {
                 string srcClassName = srcFT.GetMangledName(S, gmv.Name);
 
-                string dstClassName = dstFT.GetMangledName(S, gmv.Name);
+                //string dstClassName = dstFT.GetMangledName(S, gmv.Name);
 
                 string funcName = GetSetFuncName(S); 
 
@@ -281,7 +279,7 @@ namespace G25.CG.CSJ
             G25.GMV gmv = S.m_GMV;
             bool gmvParityPure = (S.m_GMV.MemoryAllocationMethod == G25.GMV.MEM_ALLOC_METHOD.PARITY_PURE);
 
-            string dstClassName = FT.GetMangledName(S, gmv.Name);
+            //string dstClassName = FT.GetMangledName(S, gmv.Name);
             for (int s = 0; s < S.m_SMV.Count; s++)
             {
                 G25.SMV smv = S.m_SMV[s];

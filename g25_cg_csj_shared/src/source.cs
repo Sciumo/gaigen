@@ -178,7 +178,7 @@ namespace G25.CG.CSJ
         {
             string accessModifierArr = Keywords.ConstArrayAccessModifier(S);
 
-            G25.GMV gmv = S.m_GMV;
+            //G25.GMV gmv = S.m_GMV;
 
             // size of multivector based on grade usage bitmap
             SB.AppendLine("\tpublic " + accessModifierArr + " int[] MvSize = initMvSize();");
