@@ -49,6 +49,7 @@ namespace g25_test_generator
         public const string CLEAN_CMD = "clean";
         public const string TEST_CMD = "test";
         public const string XML_TEST_CMD = "xml_test";
+        public const string DOXYGEN_CMD = "doxygen";
 
         public static List<string> Languages = new List<string> { 
             G25.XML.XML_C, 
@@ -92,6 +93,7 @@ namespace g25_test_generator
             commands[CLEAN_CMD] = new List<string>();
             commands[TEST_CMD] = new List<string>();
             commands[XML_TEST_CMD] = new List<string>();
+            commands[DOXYGEN_CMD] = new List<string>();
 
             // generate the specifications, collect commands
             try
@@ -289,6 +291,15 @@ namespace g25_test_generator
 				if (IsUnix()) SB.Append("#!/bin/sh\n\n");
                 WriteXmlTestScript(SB, commands[XML_TEST_CMD]);
                 string runScriptFlename = System.IO.Path.Combine(OutputDirectory, "xml_test." + GetScriptExtension());
+                G25.CG.Shared.Util.WriteFile(runScriptFlename, SB.ToString());
+            }
+
+            { // doxygen
+                StringBuilder SB = new StringBuilder();
+                if (IsUnix()) SB.Append("#!/bin/sh\n\n");
+                AppendCommands(SB, commands[DOXYGEN_CMD]);
+                //WriteDoxygenScript(SB, commands[]);
+                string runScriptFlename = System.IO.Path.Combine(OutputDirectory, "doxygen." + GetScriptExtension());
                 G25.CG.Shared.Util.WriteFile(runScriptFlename, SB.ToString());
             }
         }
@@ -590,6 +601,7 @@ namespace g25_test_generator
             commands[TEST_CMD].Add(GenerateRunCommands(cog, specName, SV));
             commands[CLEAN_CMD].Add(GenerateMakeCommands(cog, specName, SV, " clean"));
             commands[XML_TEST_CMD].Add(GenerateXmlTestCommands(cog, specName, SV));
+            commands[DOXYGEN_CMD].Add(GenerateDoxygenCommands(cog, specName, SV));
 
             return specName;
         }
@@ -679,6 +691,19 @@ namespace g25_test_generator
             SB.AppendLine("cd .."); // leave xmlTestdirName
 
             SB.AppendLine("cd .."); // leave algebra dir
+
+            return SB.ToString();
+        }
+
+        public static string GenerateDoxygenCommands(CoG cog, string specName, SpecVars SV)
+        {
+            StringBuilder SB = new StringBuilder();
+
+            SB.AppendLine("");
+            SB.AppendLine("cd " + specName);
+            SB.AppendLine("echo \"Running doxygen for " + specName + " \"");
+            SB.AppendLine("doxygen");
+            SB.AppendLine("cd ..");
 
             return SB.ToString();
         }
