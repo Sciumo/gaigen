@@ -1,0 +1,17 @@
+This is the first release with support for C# and Java.
+
+Some stuff still needs to be added for those languages.
+Most importantly, currently you can write (for example)
+c3ga.gp(x, y)
+but not
+x.gp(y) which some might prefer.
+And for C#, there are no operator bindings yet.
+
+Other fixes included
+-fixed various test scripts for Linux and OSX.
+-added doxygen test scripts.
+-fixed bugs in various functions.
+-reduced code size of outermorphism initialization.
+
+The target of next release will be to add the missing C#
+and Java features. 
