@@ -228,12 +228,24 @@ namespace g25_test_generator
 
         public static void WriteXmlTestScript(StringBuilder SB, List<string> commands)
         {
-			if (IsWindows())
+			if (IsWindows()) {
 	            SB.AppendLine("@echo off");
+			}
+			else {
+           		SB.AppendLine("#!/bin/sh");
+				SB.AppendLine("");
+			}
+			
             AppendCommands(SB, commands);
-            SB.AppendLine("exit /B 0");
-            SB.AppendLine(":error");
-            SB.AppendLine("exit /B -1");
+			
+			if (IsWindows()) {
+	            SB.AppendLine("exit /B 0");
+	            SB.AppendLine(":error");
+	            SB.AppendLine("exit /B -1");
+			}
+			else {
+				SB.AppendLine("exit 0");
+			}
         }
 
         public static void WriteTopLevelScripts(CoG cog, Dictionary<string, List<string>> commands)
@@ -651,7 +663,18 @@ namespace g25_test_generator
             SB.AppendLine("g25 -d true -f " + fileListName + " " + specName + ".xml");
 
             SB.AppendLine("g25_diff " + fileListName + " .." + System.IO.Path.DirectorySeparatorChar + fileListName);
-            SB.AppendLine("if not %errorlevel%==0 goto :error");
+			
+			if (IsWindows()) {
+            	SB.AppendLine("if not %errorlevel%==0 goto :error");
+			}
+			else {
+				SB.AppendLine("if [ $? -eq 0 ]; ");
+				SB.AppendLine("then");
+				SB.AppendLine("echo \"XML test ok\"");			
+				SB.AppendLine("else");			
+				SB.AppendLine("\texit $?");			
+				SB.AppendLine("fi");			
+			}
 
             SB.AppendLine("cd .."); // leave xmlTestdirName
 
