@@ -329,7 +329,7 @@ namespace RefGA
         /// Constuctor for multivector with symbolic scalar value
         /// </summary>
         /// <param name="symName">Name of symbolic scalar.</param>
-        public Multivector(String symName)
+        public Multivector(string symName)
         {
             m_basisBlades = new BasisBlade[1] {new BasisBlade(symName)};
             m_hashCode = ComputeHashCode();

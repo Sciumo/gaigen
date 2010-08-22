@@ -211,6 +211,8 @@ namespace RefGA
 
             int System.Collections.IComparer.Compare(Object x, Object y)
             {
+                if (x == y) return 0; // compare references first
+
                 Type xT = x.GetType();
                 Type yT = y.GetType();
 

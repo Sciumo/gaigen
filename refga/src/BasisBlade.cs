@@ -191,8 +191,8 @@ namespace RefGA
             }
             { // now try symbolic part:
                 System.Collections.IComparer SSAC = new Util.SimplifySymbolicArrayComparer();
-                int l1 = symScale.Length;
-                int l2 = B.symScale.Length;
+                int l1 = (symScale == null) ? 0 : symScale.Length;
+                int l2 = (B.symScale == null) ? 0 : B.symScale.Length;
                 for (int i = 0; ((i < l1) && (i < l2)); i++)
                 {
                     // compare both arrays of scalar values:

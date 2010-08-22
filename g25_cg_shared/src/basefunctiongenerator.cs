@@ -191,6 +191,7 @@ namespace G25.CG.Shared
                 {
                     Console.WriteLine("Temporary code (for developing test templates)");
                     Console.WriteLine(E.Message);
+                    Console.WriteLine("In: " + m_fgs.m_outputName);
                 }
             }
             m_cgd.m_generatedTestFunctions = funcNames;

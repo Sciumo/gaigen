@@ -15,6 +15,7 @@
 // Copyright 2008-2010, Daniel Fontijne, University of Amsterdam -- fontijne@science.uva.nl
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -38,7 +39,8 @@ namespace G25.CG.Shared.Func
     ///     optionInfinity="ni" floatType="double"/>
     /// <function name="randomCgaPoint" floatType="float"/>
     /// </code>
-    /// 
+    /// Todo: add code for flat point (grade 2 is assumed to be flat point)
+    /// return cgaPoint(vector((no . pt) / (no^ni.pt)) - no^ni)
     /// </summary>
     public class CgaPoint : G25.CG.Shared.BaseFunctionGenerator
     {
@@ -57,10 +59,22 @@ namespace G25.CG.Shared.Func
                 (!IsRandom(S, F));
         }
 
-        /// <returns>true when input to function has one argument which is not a floating point type.</returns>
+        /// <returns>true when input to function has one argument which is a SMV of grade 1.</returns>
         public bool IsVectorBased(Specification S, G25.fgs F, FloatType FT)
         {
-            return F.MatchNbArguments(1) && (!IsCoordBased(S, F, FT));
+            if (!(F.ArgumentTypeNames.Length == 1) && (!IsCoordBased(S, F, FT))) return false;
+            G25.SMV smv = S.GetSMV(F.ArgumentTypeNames[0]);
+            if (smv == null) return false;
+            return (smv.LowestGrade() == 1) && (smv.HighestGrade() == 1);
+        }
+
+        /// <returns>true when input to function has one argument which is a SMV of grade 2.</returns>
+        public bool IsFlatPointBased(Specification S, G25.fgs F, FloatType FT)
+        {
+            if (!(F.ArgumentTypeNames.Length == 1) && (!IsCoordBased(S, F, FT))) return false;
+            G25.SMV smv = S.GetSMV(F.ArgumentTypeNames[0]);
+            if (smv == null) return false;
+            return (smv.LowestGrade() == 2) && (smv.HighestGrade() == 2);
         }
 
         /// <returns>the RefGA.Multivector which represents the origin ("no" by default, but can be set by <c>optionOrigin="..."</c>).</returns>
@@ -92,11 +106,14 @@ namespace G25.CG.Shared.Func
 
         // constants, intermediate results
         protected int NB_ARGS; ///< 1 float (random), 1 (vector), or dimension of algebra (coordinates)
+        protected RefGA.Multivector m_pointPairVectorValue; ///< vector extracted from point pair (symbolic multivector)
         protected RefGA.Multivector m_returnValue; ///< returned value (symbolic multivector)
         protected Dictionary<string, string> m_randomScalarFunc = new Dictionary<string, string>(); ///< = mangled name of random scalar func 
         protected Dictionary<string, string> m_cgaPointFunc = new Dictionary<string, string>(); ///< = mangled name of random scalar func 
         protected Dictionary<string, string> m_funcName = new Dictionary<string, string>();  ///< generated function name with full mangling, etc
         protected G25.VariableType m_vectorType;
+
+        private const string VECTOR_NAME = "_v_";
 
         /// <summary>
         /// Checks if this FunctionGenerator can implement a certain function.
@@ -160,6 +177,31 @@ namespace G25.CG.Shared.Func
                     vectorValue = tmpFAI[0].MultivectorValue[0];
                     m_vectorType = tmpFAI[0].Type;
                 }
+                else if (IsFlatPointBased(m_specification, m_fgs, FT))
+                {
+                    RefGA.BasisBlade.InnerProductType lc = RefGA.BasisBlade.InnerProductType.LEFT_CONTRACTION;
+                    RefGA.Multivector noni = RefGA.Multivector.OuterProduct(no, ni);
+                    // scale = no^ni . pointPair
+                    RefGA.Multivector scale =
+                        RefGA.Multivector.InnerProduct(noni, tmpFAI[0].MultivectorValue[0], m_M, lc).ScalarPart();
+                    // sphere = no . pointPair
+                    RefGA.Multivector sphere = RefGA.Multivector.InnerProduct(no, tmpFAI[0].MultivectorValue[0], m_M, lc);
+                    // normalizedSphere = sphere / scale
+                    // TODO: only divide if 'scale' is not known to be 1!
+                    RefGA.Multivector normalizedSphere = RefGA.Multivector.gp(sphere, RefGA.Symbolic.UnaryScalarOp.Inverse(scale));
+                    // keep only euclidean vectors
+                    RefGA.Multivector euclMultivector = getSumOfUnitEuclideanBasisVectors();
+                    // vector = sphere-noni
+                    m_pointPairVectorValue = RefGA.Multivector.hp(normalizedSphere, euclMultivector);
+                    // round vector
+                    if (m_G25M.m_round) m_pointPairVectorValue = m_pointPairVectorValue.Round(1e-14);
+
+                    // get type
+                    m_vectorType = (G25.SMV)G25.CG.Shared.SpecializedReturnType.FindTightestMatch(m_specification, m_pointPairVectorValue, FT);
+                    // get 'value' (just a reference to the name of the variable where m_pointPairVectorValue will be stored.
+                    bool pointer = false;
+                    vectorValue = Symbolic.SMVtoSymbolicMultivector(m_specification, (G25.SMV)m_vectorType, VECTOR_NAME, pointer);
+                }
                 else
                 {
                     throw new G25.UserException("Invalid arguments specified.", XML.FunctionToXmlString(m_specification, m_fgs));
@@ -177,6 +219,7 @@ namespace G25.CG.Shared.Func
             if (m_fgs.m_returnTypeName.Length == 0)
                 m_fgs.m_returnTypeName = G25.CG.Shared.SpecializedReturnType.GetReturnType(m_specification, m_cgd, m_fgs, FT, m_returnValue).GetName();
         } // end of CompleteFGS()
+
 
         /// <summary>
         /// This function should check the dependencies of this function. If dependencies are
@@ -245,9 +288,6 @@ namespace G25.CG.Shared.Func
                     G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT,
                         m_specification.m_GMV.Name, computeMultivectorValue);
 
-                    // change the output name (only required for language 'C' because no overloading)
-                    //string funcName = m_fgs.OutputName;
-
                     // because of lack of overloading, function names include names of argument types
                     G25.fgs CF = G25.CG.Shared.Util.AppendTypenameToFuncName(m_specification, FT, m_fgs, FAI);
 
@@ -256,8 +296,27 @@ namespace G25.CG.Shared.Func
                     // generate comment
                     Comment comment = new Comment(m_fgs.AddUserComment("Returns conformal point."));
 
+                    int nbTabs = 1;
+                    bool mustCast = false;
+                    List<G25.CG.Shared.Instruction> I = new List<G25.CG.Shared.Instruction>();
+
+                    if (IsFlatPointBased(m_specification, m_fgs, FT))
+                    {
+                        string smvTypeName = FT.GetMangledName(m_specification, m_vectorType.GetName());
+                        if (m_specification.OutputCppOrC())
+                            I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " " + VECTOR_NAME + ";"));
+                        else I.Add(new G25.CG.Shared.VerbatimCodeInstruction(nbTabs, smvTypeName + " " + VECTOR_NAME + " = new " + smvTypeName + "();"));
+                        bool ptr = false;
+                        bool declare = false;
+                        I.Add(new G25.CG.Shared.AssignInstruction(nbTabs, m_vectorType, FT, mustCast, m_pointPairVectorValue, VECTOR_NAME, ptr, declare));
+                    }
+                    I.Add(new G25.CG.Shared.ReturnInstruction(nbTabs, m_specification.GetType(m_fgs.m_returnTypeName), FT, mustCast, m_returnValue));
+
+                    bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+                    G25.CG.Shared.Functions.WriteFunction(m_specification, m_cgd, CF, m_specification.m_inlineFunctions, staticFunc, CF.OutputName, FAI, I, comment);
+
                     // write out the function:
-                    G25.CG.Shared.Functions.WriteSpecializedFunction(m_specification, m_cgd, CF, FT, FAI, m_returnValue, comment);
+                    //G25.CG.Shared.Functions.WriteSpecializedFunction(m_specification, m_cgd, CF, FT, FAI, m_returnValue, comment);
                 }
             }
         } // end of WriteFunction
@@ -330,6 +389,23 @@ namespace G25.CG.Shared.Func
 
             return testFuncNames;
         } // end of WriteTestFunction()
+
+        /// <summary>
+        /// Returns (for example) e1 + e2 + e3, but not no and ni.
+        /// </summary>
+        private RefGA.Multivector getSumOfUnitEuclideanBasisVectors()
+        {
+            int euclBitmap = m_G25M.GetEuclideanBasisVectorBitmap();
+            ArrayList L = new ArrayList();
+            for (int i = 0; (1 << i) <= euclBitmap; i++)
+            {
+                if ((euclBitmap & (1 << i)) != 0)
+                {
+                    L.Add(new RefGA.BasisBlade((uint)(1 << i)));
+                }
+            }
+            return new RefGA.Multivector(L);
+        }
 
     } // end of class CgaPoint
 } // end of namespace G25.CG.Shared.Func

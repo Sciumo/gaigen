@@ -4,11 +4,11 @@ Set release notes.
 
 On Windows, do  
  - svn update
+ - compile the user manual
+ - open g25/vs2008/g25.sln
  - increment the version number 
  	- in g25/src/Program.cs
  	- in alt-enter -> InstallG25 project -> description (say NO to change product code or whatever)
- - compile the user manual
- - open g25/vs2008/g25.sln
  - make sure project is set to 'Release' configuration.
  - rebuild the InstalG25 project
  - create a new release folder on SourceForge

@@ -161,18 +161,16 @@ Maybe fix the float type stuff
 
 			V Test doxygen for C# and Java on Windows
 			
-			-> makefiles, test scripts for all platforms
-				V OSX first
-				Linux:
-					in test.sh: running ./test doesn't work for missing for C# on Linux
-					need to run mono ./test.exe 
+			V makefiles, test scripts for all platforms
+				
+			V Release version 2.5.2 with 'functional but incomplete' C# and Java support
 			
 			check manual, make sure latest version is included in distribution
 				
-			Release version 2.5.2 with 'functional but incomplete' C# and Java support
 			
 			
 			AND THEN finish the following:
+				check that converters are present
 			
 				GMV log 3d for C# (done?), for Java, too, add testing functions
 
@@ -193,7 +191,9 @@ Maybe fix the float type stuff
 	Python version: ask Liam Candy (liam.candy AT gmail DOT com)
 	Fortran 77 version: Philip Kuntz (cloraphyl AT gmx DOT com)
 	
-	
+	add a section to manual which describes typical usage (add functions as needed, grows quickly in beginning, then gets more complete as you progress).
+		also recommend copy-paste printfs to GAViewer (works for all languages) REMINDER FOR PRECISION!
+		underscore constructors (or explicit once, in C# and Java)
 	
 	Announce on GA net
 	

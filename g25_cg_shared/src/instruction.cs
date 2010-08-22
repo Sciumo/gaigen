@@ -312,7 +312,7 @@ namespace G25.CG.Shared
         /// <param name="name">Name of assigned variable.</param>
         /// <param name="ptr">Is the assigned variable a pointer?</param>
         /// <param name="declareVariable">If true, code for declaring the variable is also generated.</param>
-        public AssignInstruction(int nbTabs, G25.VariableType T, G25.FloatType FT, bool mustCast, RefGA.Multivector value, String name, bool ptr, bool declareVariable)
+        public AssignInstruction(int nbTabs, G25.VariableType T, G25.FloatType FT, bool mustCast, RefGA.Multivector value, string name, bool ptr, bool declareVariable)
             : 
             base(nbTabs, T, FT, mustCast, value)
         {
