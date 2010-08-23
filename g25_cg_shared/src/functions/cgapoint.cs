@@ -112,6 +112,7 @@ namespace G25.CG.Shared.Func
         protected Dictionary<string, string> m_cgaPointFunc = new Dictionary<string, string>(); ///< = mangled name of random scalar func 
         protected Dictionary<string, string> m_funcName = new Dictionary<string, string>();  ///< generated function name with full mangling, etc
         protected G25.VariableType m_vectorType;
+        protected G25.VariableType m_flatPointType;
 
         private const string VECTOR_NAME = "_v_";
 
@@ -179,16 +180,21 @@ namespace G25.CG.Shared.Func
                 }
                 else if (IsFlatPointBased(m_specification, m_fgs, FT))
                 {
+                    m_flatPointType = tmpFAI[0].Type as G25.SMV;
                     RefGA.BasisBlade.InnerProductType lc = RefGA.BasisBlade.InnerProductType.LEFT_CONTRACTION;
                     RefGA.Multivector noni = RefGA.Multivector.OuterProduct(no, ni);
                     // scale = no^ni . pointPair
                     RefGA.Multivector scale =
                         RefGA.Multivector.InnerProduct(noni, tmpFAI[0].MultivectorValue[0], m_M, lc).ScalarPart();
+                    if (m_G25M.m_round) scale = scale.Round(1e-14);
+
                     // sphere = no . pointPair
                     RefGA.Multivector sphere = RefGA.Multivector.InnerProduct(no, tmpFAI[0].MultivectorValue[0], m_M, lc);
                     // normalizedSphere = sphere / scale
-                    // TODO: only divide if 'scale' is not known to be 1!
-                    RefGA.Multivector normalizedSphere = RefGA.Multivector.gp(sphere, RefGA.Symbolic.UnaryScalarOp.Inverse(scale));
+
+                    bool needToNormalize = (scale.HasSymbolicScalars() || (scale.RealScalarPart() != 1.0));
+                    RefGA.Multivector normalizedSphere = (needToNormalize) ? RefGA.Multivector.gp(sphere, RefGA.Symbolic.UnaryScalarOp.Inverse(scale)) : sphere;
+
                     // keep only euclidean vectors
                     RefGA.Multivector euclMultivector = getSumOfUnitEuclideanBasisVectors();
                     // vector = sphere-noni
@@ -324,7 +330,9 @@ namespace G25.CG.Shared.Func
         protected Dictionary<string, string> m_randomScalarFuncName = new Dictionary<string, string>();
         protected Dictionary<string, string> m_randomVectorFuncName = new Dictionary<string, string>();
         protected Dictionary<string, string> m_spFuncName = new Dictionary<string, string>();
-
+        protected Dictionary<string, string> m_opFuncName = new Dictionary<string, string>();
+        protected Dictionary<string, string> m_randomFlatPointFuncName = new Dictionary<string, string>();
+        
         /// <summary>
         /// This function checks the dependencies for the _testing_ code of this function. If dependencies are
         /// missing, the function adds the required functions (this is done simply by asking for them . . .).
@@ -337,16 +345,24 @@ namespace G25.CG.Shared.Func
                 string defaultReturnTypeName = null;
                 FloatType FT = m_specification.GetFloatType(floatName);
 
-                m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new String[0], FT.type, FT, null);
+                m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new string[0], FT.type, FT, null);
 
-                if (m_vectorType != null)
+                if (IsFlatPointBased(m_specification, m_fgs, FT))
                 {
-                    m_randomVectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_vectorType.GetName(), new String[0], defaultReturnTypeName, FT, null);
-                    m_randomVectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_vectorType.GetName(), new String[0], defaultReturnTypeName, FT, null);
+                    m_randomFlatPointFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_flatPointType.GetName(), new string[0], defaultReturnTypeName, FT, null);
+                    m_opFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "op", new string[2] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, defaultReturnTypeName, FT, null);
                 }
-                else m_randomVectorFuncName[FT.type] = "not_set";
+                else
+                {
+                    if (m_vectorType != null)
+                    {
+                        m_randomVectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_vectorType.GetName(), new string[0], defaultReturnTypeName, FT, null);
+                        m_randomVectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + m_vectorType.GetName(), new string[0], defaultReturnTypeName, FT, null);
+                    }
+                    else m_randomVectorFuncName[FT.type] = "not_set";
 
-                m_spFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "sp", new String[] { m_fgs.m_returnTypeName, m_fgs.m_returnTypeName }, defaultReturnTypeName, FT, m_G25M.m_name);
+                    m_spFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "sp", new string[] { m_fgs.m_returnTypeName, m_fgs.m_returnTypeName }, defaultReturnTypeName, FT, m_G25M.m_name);
+                }
             }
         }
 
@@ -374,17 +390,29 @@ namespace G25.CG.Shared.Func
                 argTable["FT"] = FT;
                 argTable["testFuncName"] = testFuncName;
                 argTable["targetFuncName"] = m_funcName[FT.type];
-                argTable["coordBased"] = IsCoordBased(m_specification, m_fgs, FT);
-                argTable["vectorBased"] = IsVectorBased(m_specification, m_fgs, FT);
-                argTable["random"] = IsRandom(m_specification, m_fgs);
+                argTable["randomScalarFuncName"] = m_randomScalarFuncName[FT.type];
                 argTable["cgaPointName"] = FT.GetMangledName(m_specification, m_fgs.m_returnTypeName);
                 argTable["cgaPointType"] = m_specification.GetType(m_fgs.m_returnTypeName);
-                argTable["vectorName"] = (m_vectorType == null) ? "not_set" : FT.GetMangledName(m_specification, m_vectorType.GetName());
-                argTable["randomScalarFuncName"] = m_randomScalarFuncName[FT.type];
-                argTable["randomVectorFuncName"] = m_randomVectorFuncName[FT.type];
-                argTable["spFuncName"] = m_spFuncName[FT.type];
 
-                m_cgd.m_cog.EmitTemplate(defSB, "testCgaPoint", argTable);
+                if (IsFlatPointBased(m_specification, m_fgs, FT))
+                {
+                    argTable["flatPointName"] = FT.GetMangledName(m_specification, m_flatPointType.GetName());
+                    argTable["opFuncName"] = m_opFuncName[FT.type];
+                    argTable["gmvName"] = FT.GetMangledName(m_specification, m_specification.m_GMV.Name);
+                    argTable["randomFpName"] = m_randomFlatPointFuncName[FT.type];
+                    m_cgd.m_cog.EmitTemplate(defSB, "testCgaPointFromFlatPoint", argTable);
+                }
+                else
+                {
+                    argTable["coordBased"] = IsCoordBased(m_specification, m_fgs, FT);
+                    argTable["vectorBased"] = IsVectorBased(m_specification, m_fgs, FT);
+                    argTable["random"] = IsRandom(m_specification, m_fgs);
+                    argTable["vectorName"] = (m_vectorType == null) ? "not_set" : FT.GetMangledName(m_specification, m_vectorType.GetName());
+                    argTable["randomVectorFuncName"] = m_randomVectorFuncName[FT.type];
+                    argTable["spFuncName"] = m_spFuncName[FT.type];
+                    m_cgd.m_cog.EmitTemplate(defSB, "testCgaPoint", argTable);
+                }
+
             }
 
             return testFuncNames;

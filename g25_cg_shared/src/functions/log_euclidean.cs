@@ -292,14 +292,14 @@ namespace G25.CG.Shared.Func
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 
-                m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new String[0], FT.type, FT, null);
+                m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new string[0], FT.type, FT, null);
 
                 if (m_gmvFunc)
                 {
-                    m_randomBladeFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_blade", new String[0], m_specification.m_GMV.Name, FT, null);
-                    m_expFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new String[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, m_G25M.m_name);
-                    m_opFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "op", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
-                    m_subtractGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
+                    m_randomBladeFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_blade", new string[0], m_specification.m_GMV.Name, FT, null);
+                    m_expFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new string[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, m_G25M.m_name);
+                    m_opFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "op", new string[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
+                    m_subtractGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new string[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
                 }
                 else if (m_smv != null)
                 {
@@ -309,9 +309,9 @@ namespace G25.CG.Shared.Func
 
                     string defaultReturnTypeName = null;
                     string bivectorName = (m_returnType as G25.SMV).Name;
-                    m_randomBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + (m_returnType as G25.SMV).Name, new String[0], defaultReturnTypeName, FT, null);
-                    m_expBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new String[] { bivectorName }, m_smv.Name, FT, m_G25M.m_name);
-                    m_subtractRotorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new String[] { m_smv.Name, m_smv.Name }, m_smv.Name, FT, null);
+                    m_randomBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + (m_returnType as G25.SMV).Name, new string[0], defaultReturnTypeName, FT, null);
+                    m_expBivectorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "exp", new string[] { bivectorName }, m_smv.Name, FT, m_G25M.m_name);
+                    m_subtractRotorFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "subtract", new string[] { m_smv.Name, m_smv.Name }, m_smv.Name, FT, null);
                 }
             }
         }

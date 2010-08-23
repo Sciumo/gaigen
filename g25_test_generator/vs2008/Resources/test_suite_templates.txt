@@ -2290,6 +2290,7 @@ memAlloc="<%if (SV.GmvMemAlloc ==  G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>dynamic<
   <smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
   <smv name="freeBivector" type="blade">e1^e2^ni e2^e3^ni e3^e1^ni</smv>
   <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>  
+  <smv name="normalizedFlatPoint" type="blade">e1^ni e2^ni e3^ni no^ni=1</smv>
   <smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
   <smv name="line" type="blade">e1^e2^ni  e1^e3^ni e2^e3^ni e1^no^ni e2^no^ni e3^no^ni</smv>
   <smv name="circle" type="blade">no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
@@ -2351,6 +2352,8 @@ memAlloc="<%if (SV.GmvMemAlloc ==  G25.GMV.MEM_ALLOC_METHOD.DYNAMIC) {%>dynamic<
 
   <function name="cgaPoint" arg1="vectorE3GA" floatType="<%SV.FloatTypes[0]%>"/>
   <function name="cgaPoint" arg1="<%SV.FloatTypes[0]%>" arg2="<%SV.FloatTypes[0]%>" arg3="<%SV.FloatTypes[0]%>" optionOrigin="no" optionInfinity="ni" floatType="<%SV.FloatTypes[0]%>"/>
+  <function name="cgaPoint" arg1="normalizedFlatPoint"/>
+  <function name="cgaPoint" arg1="flatPoint"/>
   <function name="randomCgaPoint" floatType="<%SV.FloatTypes[0]%>"/>
   
   <function name="cgaPointDistance" arg1="normalizedPoint" arg2="normalizedPoint" floatType="<%SV.FloatTypes[0]%>"/>

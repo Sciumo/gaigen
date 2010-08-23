@@ -92,6 +92,8 @@
     <Compile Include="ni_t_f.cs" />
     <Compile Include="noni_t.cs" />
     <Compile Include="noni_t_f.cs" />
+    <Compile Include="normalizedFlatPoint.cs" />
+    <Compile Include="normalizedFlatPoint_f.cs" />
     <Compile Include="normalizedPoint.cs" />
     <Compile Include="normalizedPoint_f.cs" />
     <Compile Include="normalizedTranslator.cs" />

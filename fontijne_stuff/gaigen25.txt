@@ -183,7 +183,8 @@ Maybe fix the float type stuff
 				Java and C# SMV converters as constructors (SMV->SMV and such)
 			
 			
-				
+	allow for declare & assign variable instruction (in C, a pre-processing step is needed)
+		Then find all places where this is needed.
 
 	SourceForge website HTML pages
 	

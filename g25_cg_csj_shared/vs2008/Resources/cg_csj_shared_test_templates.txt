@@ -1474,6 +1474,49 @@ ${ENDCODEBLOCK}
 // FT = float type
 // testFuncName = name of testing function
 // targetFuncName = name of function to test
+// flatPointName = input type of target func
+// cgaPointType = point type
+// cgaPointName = name of point type returned by target func
+// opFuncName = name of outer product two gmv
+// gmvName = name of GMV type
+// randomScalarFuncName
+${CODEBLOCK testCgaPointFromFlatPoint}
+static int <%testFuncName%>(int NB_TESTS_SCALER) {
+	int NB_LOOPS = 100 + NB_TESTS_SCALER / <%cgaPointType.NbCoordinates%>;
+	
+	<%flatPointName%> fp;
+	<%cgaPointName%> pt;
+	<%gmvName%> gmvL;
+	<%gmvName%> gmvPt;
+	<%gmvName%> gmvFp;
+	int i;
+
+	for (i = 0; i < NB_LOOPS; i++) {
+		fp = <%randomFpName%>(<%FT.DoubleToString(S, 0.1)%> + <%randomScalarFuncName%>());
+
+		pt = <%targetFuncName%>(fp);
+
+		gmvPt = new <%gmvName%>(pt);
+		gmvFp = new <%gmvName%>(fp);
+
+		gmvL = <%opFuncName%>(gmvPt, gmvFp);
+		
+		// check if 'l' is zero.
+		if (gmvL.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() > (<%FT.DoubleToString(S, FT.PrecisionEpsilon() * 10.0)%> )) {
+			Console.WriteLine("<%targetFuncName%>() test failed (largest coordinates of line = " + gmvL.<%G25.CG.CSJ.Util.GetFunctionName(S, "LargestCoordinate")%>() + ")");
+			return 0; // failure
+		}
+	}
+
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
 // squared = whether distance or distance squared is being computed
 // gmvName = name of GMV type
 // fabs

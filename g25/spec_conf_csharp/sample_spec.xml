@@ -57,6 +57,7 @@
   <smv name="weirdType" type="multivector">no e2^ni e2^e3^no no^e1^e2^e3 no^e1^e2^e3^ni</smv>
   <smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
   <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
+  <smv name="normalizedFlatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
   <smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
   <smv name="circle" type="blade"> no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
   <smv name="sphere" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3</smv>
@@ -126,6 +127,8 @@
   <function name="cgaPoint" arg1="vectorE3GA" floatType="double"/>
   <function name="cgaPoint" arg1="double" arg2="double" arg3="double" floatType="double"/>
   <function name="cgaPoint" arg1="float" arg2="float" arg3="float" optionOrigin="no" optionInfinity="ni" floatType="float"/>
+  <function name="cgaPoint" arg1="normalizedFlatPoint" floatType="double"/>
+  <function name="cgaPoint" arg1="flatPoint" floatType="double"/>
   <function name="randomCgaPoint" floatType="float"/>
 
   <function name="cgaPointDistance" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>

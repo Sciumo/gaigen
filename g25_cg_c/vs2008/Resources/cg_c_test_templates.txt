@@ -1224,6 +1224,49 @@ ${ENDCODEBLOCK}
 // FT = float type
 // testFuncName = name of testing function
 // targetFuncName = name of function to test
+// flatPointName = input type of target func
+// cgaPointType = point type
+// cgaPointName = name of point type returned by target func
+// opFuncName = name of outer product two gmv
+// gmvName = name of GMV type
+// randomScalarFuncName
+${CODEBLOCK testCgaPointFromFlatPoint}
+int <%testFuncName%>(int NB_TESTS_SCALER) {
+	const int NB_LOOPS = 100 + NB_TESTS_SCALER / <%cgaPointType.NbCoordinates%>;
+	
+	<%flatPointName%> fp;
+	<%cgaPointName%> pt;
+	<%gmvName%> gmvL;
+	<%gmvName%> gmvPt;
+	<%gmvName%> gmvFp;
+	int i;
+
+	for (i = 0; i < NB_LOOPS; i++) {
+		<%randomFpName%>(&fp, <%FT.DoubleToString(S, 0.1)%> + <%randomScalarFuncName%>());
+
+		<%targetFuncName%>(&pt, &fp);
+
+		<%cgaPointName%>_to_<%gmvName%>(&gmvPt, &pt);
+		<%flatPointName%>_to_<%gmvName%>(&gmvFp, &fp);
+
+		<%opFuncName%>(&gmvL, &gmvPt, &gmvFp);
+		
+		// check if 'l' is zero.
+		if (<%gmvName%>_largestCoordinate(&gmvL) > <%FT.DoubleToString(S, 10.0 * FT.PrecisionEpsilon())%>) {
+			printf("<%targetFuncName%>() test failed (largest coordinate of line = %e)\n", <%gmvName%>_largestCoordinate(&gmvL));
+			return 0; // failure
+		}
+	}
+
+	return 1; // success
+}
+${ENDCODEBLOCK}
+
+
+// S = Specification
+// FT = float type
+// testFuncName = name of testing function
+// targetFuncName = name of function to test
 // squared = whether distance or distance squared is being computed
 // gmvName = name of GMV type
 // fabs

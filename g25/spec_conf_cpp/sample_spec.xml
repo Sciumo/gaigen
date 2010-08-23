@@ -50,15 +50,18 @@
   
   <smv name="scalar" type="blade">scalar</smv>
 
+  <smv name="vectorE2GA" type="blade">e1 e2</smv>
   <smv name="vectorE3GA" type="blade">e1 e2 e3<comment>Use this type to store 3-D vectors</comment></smv>
 
   <smv name="expVectorE3GA" type="blade">scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</smv>
 
   <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
+  <smv name="normalizedPoint2D" type="blade">no=1 e1 e2 ni</smv>
   <smv name="dualSphere" type="blade">no e1 e2 e3 ni</smv>
   <smv name="dualPlane" type="blade">e1 e2 e3 ni</smv>
   <smv name="weirdType" type="multivector">no e2^ni e2^e3^no no^e1^e2^e3 no^e1^e2^e3^ni</smv>
   <smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
+  <smv name="flatPoint2D" type="blade">e1^ni e2^ni no^ni</smv>
   <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
   <smv name="normalizedFlatPoint" type="blade">e1^ni e2^ni e3^ni no^ni=1</smv>
   <smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
@@ -129,7 +132,9 @@
   <function name="cgaPoint" arg1="vectorE3GA" floatType="double"/>
   <function name="cgaPoint" arg1="double" arg2="double" arg3="double" floatType="double"/>
   <function name="cgaPoint" arg1="float" arg2="float" arg3="float" optionOrigin="no" optionInfinity="ni" floatType="float"/>
-  <function name="cgaPoint" arg1="normalizedFlatPoint" floatType="double"/>
+<!--  <function name="cgaPoint" arg1="normalizedFlatPoint" floatType="double"/>
+  <function name="cgaPoint" arg1="flatPoint" floatType="double"/> -->
+  <function name="cgaPoint" arg1="flatPoint2D" floatType="double"/>
   <function name="randomCgaPoint" floatType="float"/>
 
   <function name="cgaPointDistance" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
@@ -222,6 +227,7 @@
   <function name="norm2" outputName="normE2" arg1="mv" metric="euclidean" floatType="float"/>
   <function name="norm2" arg1="mv" metric="default"/>
   <function name="norm" arg1="dualSphere" floatType="double"/>
+  <function name="norm" arg1="normalizedFlatPoint"/>
   <function name="norm2" arg1="dualSphere" floatType="double"/>
   <function name="norm" outputName="normE" arg1="dualSphere" metric="euclidean" floatType="double"/>
   <function name="norm2" outputName="normE2" arg1="dualSphere" metric="euclidean" floatType="double"/>
@@ -310,6 +316,7 @@
   <function name="random_sphere"/>
   <function name="random_weirdType"/>
   <function name="random_flatPoint"/>
+  <function name="random_normalizedFlatPoint"/>
 
   <function name="norm" arg1="flatPoint" floatType="double"/>
   <function name="norm" arg1="flatPoint" floatType="float"/>

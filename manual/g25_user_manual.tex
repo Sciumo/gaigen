@@ -800,19 +800,28 @@ For odd versors, returns $\gav{V} \gp \hat{\gav{X}} \gp \gav{VI}$.\\
 
 \subsubsection*{cgaPoint}
 
-Returns a conformal point. The position of the point can be specified
-using coordinates or as a vector.
+Returns a (normalized) conformal point. 
+The position of the point can be specified as
+\begin{itemize}
+\item coordinates,
+\item avector,
+\item a `flat point' (the outer product of a conformal point and infinity).
+\end{itemize}
 \begin{verbatim}
 <function name="cgaPoint" arg1="vectorE3GA"/>
 <function name="cgaPoint" arg1="double" arg2="double" arg3="double" 
           floatType="double"/>
 <function name="cgaPoint" arg1="float" arg2="float" arg3="float" 
           optionOrigin="no"  optionInfinity="ni" floatType="float"/>
+<function name="cgaPoint" arg1="flatPoint"/>
+<function name="cgaPoint" arg1="normalizedFlatPoint"/>
 \end{verbatim}
 
 \subsubsection*{randomCgaPoint}
 
 Returns a conformal point at a random position.
+The point lies inside a cube centered around the origin.
+The first and only argument to the function is 'radius' of the cube.
 \begin{verbatim}
 <function name="randomCgaPoint"/>
 \end{verbatim}

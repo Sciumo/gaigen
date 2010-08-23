@@ -77,6 +77,7 @@
   <smv name="weirdType" type="multivector">no e2^ni e2^e3^no no^e1^e2^e3 no^e1^e2^e3^ni</smv>
   <smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
   <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
+  <smv name="normalizedFlatPoint" type="blade">e1^ni e2^ni e3^ni no^ni=1</smv>
   <smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
   <smv name="circle" type="blade"> no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
   <smv name="sphere" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3</smv>
@@ -138,6 +139,9 @@
   <function name="_normalizedPoint" arg1="vectorE3GA" argName1="V"/>
   <function name="_rotor" arg1="pointPair" floatType="double"/>
   <function name="_dualSphere" outputName="pointToSphere" arg1="normalizedPoint" argName1="P" floatType="float"/>
+
+  <function name="cgaPoint" arg1="normalizedFlatPoint" floatType="double"/>
+  <function name="cgaPoint" arg1="flatPoint" floatType="double"/>
 
   <function name="equals" arg1="mv" arg2="mv" arg3="double" floatType="double"/>
   <function name="equals" arg1="vectorE3GA" arg2="dualSphere" arg3="double" floatType="double"/>
@@ -246,8 +250,6 @@
 
   <function name="log" arg1="rotorE3GA" optionType="euclidean" floatType="double"/>
   <function name="log" arg1="mv" optionType="euclidean" floatType="double"/>
-  <function name="log" outputName="logRT" arg1="RBM" optionType="conformalRT" floatType="double"/>
-  <function name="log" outputName="logRT" arg1="mv" optionType="conformalRT" floatType="double"/>
 
   <function name="norm" outputName="normE" arg1="mv" metric="euclidean"/>
   <function name="norm" arg1="mv" metric="default"/>
