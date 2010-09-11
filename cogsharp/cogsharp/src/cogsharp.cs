@@ -181,14 +181,14 @@
  * public class CoG_3532804186 : CoGsharp.CoGclass {
  * 	public CoG_3532804186() {
  * 	}
- * 	public String GetTemplate() {
+ * 	public string GetTemplate() {
  * 		return
  * 			"\r\n<%using System.Collections%>\r\nThe Hashtable contains <%" + 
  * 			"HT.Count%> entries.\r\nThe key->value of the entries is:\r\n\r" + 
  * 			"\n<%foreach (DictionaryEntry DE in HT) {%>\r\n<%DE.Key%> -> <" + 
  * 			"%DE.Value%>.\r\n<%}%>\r\n\r\nThat's all\r\n";
  * 	}
- * 	public String GetArguments() {
+ * 	public string GetArguments() {
  * 		return "System.Collections.Hashtable HT";
  * 	}
  * 	public void Emit(System.Text.StringBuilder __SB__, System.Collections.Hashtable HT) {
@@ -263,10 +263,10 @@ namespace CoGsharp
     public interface CoGclass
     {
         /** returns the template code that this class generates */
-        String GetTemplate();
+        string GetTemplate();
 
         /** returns a string that represents the arguments used to generate this class */
-        String GetArguments();
+        string GetArguments();
     }
 
     /// <summary>
@@ -300,8 +300,8 @@ namespace CoGsharp
             m_templates = new System.Collections.Hashtable();
             m_loadedCoGclasses = new System.Collections.Hashtable();
 
-            m_tempDir = GetTempDir();//System.IO.Path.GetTempPath() + "cogsharp";
-//			Console.WriteLine("CoG temp dir: " + m_tempDir);
+            m_tempDir = GetTempDir();
+			Console.WriteLine("CoG temp dir: " + m_tempDir);
 			
             if (!System.IO.Directory.Exists(m_tempDir))
             {
@@ -346,9 +346,9 @@ namespace CoGsharp
         /// Returns all emitted output since the past call to ClearOutput() or GetOutputAndClear(),
         /// and clears m_output
         /// </summary>
-        public String GetOutputAndClear()
+        public string GetOutputAndClear()
         {
-            String tmpStr = GetOutput();
+            string tmpStr = GetOutput();
             ClearOutput();
             return tmpStr;
         }
@@ -359,7 +359,7 @@ namespace CoGsharp
         /// <param name="templateName">Name of template</param>
         /// <param name="arg1Name">Name of argument 1 (may optionally end in '=')</param>
         /// <param name="arg1">argument 1</param>
-        public void EmitTemplate(String templateName, String arg1Name, Object arg1)
+        public void EmitTemplate(string templateName, string arg1Name, Object arg1)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(arg1Name, arg1);
@@ -374,8 +374,8 @@ namespace CoGsharp
         /// <param name="arg1">argument 1</param>
         /// <param name="arg2Name">Name of argument 2 (may optionally end in '=')</param>
         /// <param name="arg2">argument 2</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -393,9 +393,9 @@ namespace CoGsharp
         /// <param name="arg2">argument 2</param>
         /// <param name="arg3Name">Name of argument 3 (may optionally end in '=')</param>
         /// <param name="arg3">argument 3</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -416,9 +416,9 @@ namespace CoGsharp
         /// <param name="arg3">argument 3</param>
         /// <param name="arg4Name">Name of argument 4 (may optionally end in '=')</param>
         /// <param name="arg4">argument 4</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -441,10 +441,10 @@ namespace CoGsharp
         /// <param name="arg4">argument 4</param>
         /// <param name="arg5Name">Name of argument 5 (may optionally end in '=')</param>
         /// <param name="arg5">argument 5</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -470,10 +470,10 @@ namespace CoGsharp
         /// <param name="arg5">argument 5</param>
         /// <param name="arg6Name">Name of argument 6 (may optionally end in '=')</param>
         /// <param name="arg6">argument 6</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -501,11 +501,11 @@ namespace CoGsharp
         /// <param name="arg6">argument 6</param>
         /// <param name="arg7Name">Name of argument 7 (may optionally end in '=')</param>
         /// <param name="arg7">argument 7</param>
-        public void EmitTemplate(String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6,
-            String arg7Name, Object arg7)
+        public void EmitTemplate(string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6,
+            string arg7Name, Object arg7)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -537,11 +537,11 @@ namespace CoGsharp
         /// <param name="arg7">argument 7</param>
         /// <param name="arg8Name">Name of argument 8 (may optionally end in '=')</param>
         /// <param name="arg8">argument 8</param>
-        public void EmitTemplate(String templateName, 
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6,
-            String arg7Name, Object arg7, String arg8Name, Object arg8)
+        public void EmitTemplate(string templateName, 
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6,
+            string arg7Name, Object arg7, string arg8Name, Object arg8)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -557,7 +557,7 @@ namespace CoGsharp
         /// </summary>
         /// <param name="templateName">Name of template</param>
         /// <param name="outputSB">Where the output goes.</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName)
+        public void EmitTemplate(StringBuilder outputSB, string templateName)
         {
             EmitTemplate(outputSB, templateName, new System.Collections.Hashtable());
         }
@@ -569,7 +569,7 @@ namespace CoGsharp
         /// <param name="outputSB">Where the output goes.</param>
         /// <param name="arg1Name">Name of argument 1 (may optionally end in '=')</param>
         /// <param name="arg1">argument 1</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName, String arg1Name, Object arg1)
+        public void EmitTemplate(StringBuilder outputSB, string templateName, string arg1Name, Object arg1)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(arg1Name, arg1);
@@ -585,8 +585,8 @@ namespace CoGsharp
         /// <param name="arg1">argument 1</param>
         /// <param name="arg2Name">Name of argument 2 (may optionally end in '=')</param>
         /// <param name="arg2">argument 2</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -605,9 +605,9 @@ namespace CoGsharp
         /// <param name="arg2">argument 2</param>
         /// <param name="arg3Name">Name of argument 3 (may optionally end in '=')</param>
         /// <param name="arg3">argument 3</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -629,9 +629,9 @@ namespace CoGsharp
         /// <param name="arg3">argument 3</param>
         /// <param name="arg4Name">Name of argument 4 (may optionally end in '=')</param>
         /// <param name="arg4">argument 4</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -655,10 +655,10 @@ namespace CoGsharp
         /// <param name="arg4">argument 4</param>
         /// <param name="arg5Name">Name of argument 5 (may optionally end in '=')</param>
         /// <param name="arg5">argument 5</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -685,10 +685,10 @@ namespace CoGsharp
         /// <param name="arg5">argument 5</param>
         /// <param name="arg6Name">Name of argument 6 (may optionally end in '=')</param>
         /// <param name="arg6">argument 6</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -717,11 +717,11 @@ namespace CoGsharp
         /// <param name="arg6">argument 6</param>
         /// <param name="arg7Name">Name of argument 7 (may optionally end in '=')</param>
         /// <param name="arg7">argument 7</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6,
-            String arg7Name, Object arg7)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6,
+            string arg7Name, Object arg7)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -754,11 +754,11 @@ namespace CoGsharp
         /// <param name="arg7">argument 7</param>
         /// <param name="arg8Name">Name of argument 8 (may optionally end in '=')</param>
         /// <param name="arg8">argument 8</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName,
-            String arg1Name, Object arg1, String arg2Name, Object arg2,
-            String arg3Name, Object arg3, String arg4Name, Object arg4,
-            String arg5Name, Object arg5, String arg6Name, Object arg6,
-            String arg7Name, Object arg7, String arg8Name, Object arg8)
+        public void EmitTemplate(StringBuilder outputSB, string templateName,
+            string arg1Name, Object arg1, string arg2Name, Object arg2,
+            string arg3Name, Object arg3, string arg4Name, Object arg4,
+            string arg5Name, Object arg5, string arg6Name, Object arg6,
+            string arg7Name, Object arg7, string arg8Name, Object arg8)
         {
             // get table of arguments
             System.Collections.Hashtable argTable = GetHashtableOfArguments(
@@ -775,7 +775,7 @@ namespace CoGsharp
         /// </summary>
         /// <param name="templateName">Name of template</param>
         /// <param name="argTable">Hashtable contains argument keys, Object value</param>
-        public void EmitTemplate(String templateName, System.Collections.Hashtable argTable)
+        public void EmitTemplate(string templateName, System.Collections.Hashtable argTable)
         {
             EmitTemplate(m_output, templateName, argTable);
         }
@@ -787,15 +787,15 @@ namespace CoGsharp
         /// <param name="templateName">Name of template</param>
         /// <param name="argTable">Hashtable contains argument keys, Object value</param>
         /// <param name="outputSB">Where the output goes.</param>
-        public void EmitTemplate(StringBuilder outputSB, String templateName, System.Collections.Hashtable argTable)
+        public void EmitTemplate(StringBuilder outputSB, string templateName, System.Collections.Hashtable argTable)
         {
             // get template
             if (!m_templates.Contains(templateName))
                 throw new Exception("CoGsharp.EmitTemplate(): no template named " + templateName);
-            String templateString = (String)m_templates[templateName];
+            string templateString = (string)m_templates[templateName];
 
             // get argument description string 
-            String argString = GenerateArgsString(argTable);
+            string argString = GenerateArgsString(argTable);
 
             // get hashcode for template + arguments
             uint hashCode = (uint)(templateString.GetHashCode() ^ argString.GetHashCode());
@@ -816,7 +816,7 @@ namespace CoGsharp
         /// <param name="argString">The argument string to be used with the template (from GenerateArgsString()) </param>
         /// <param name="hashCode">Combined hashcode for both templateString and argString</param>
         /// <returns>the requested class</returns>
-        private CoGclass GetCoGclass(String templateName, String templateString, String argString, uint hashCode)
+        private CoGclass GetCoGclass(string templateName, string templateString, string argString, uint hashCode)
         {
             // look in cache first
             lock(m_loadedCoGclasses) {
@@ -836,7 +836,7 @@ namespace CoGsharp
                 uint h = hashCode;
                 while (true)
                 { // while we can continue loading assemblies
-                    String filename = GetCoGclassFilename(h);
+                    string filename = GetCoGclassFilename(h);
                     try
                     {
                         Assembly ass = Assembly.LoadFile(filename);
@@ -867,11 +867,11 @@ namespace CoGsharp
         }
 
 
-        private String GetCoGclassFilename(uint hashCode)
+        private string GetCoGclassFilename(uint hashCode)
         {
             return m_tempDir + System.IO.Path.DirectorySeparatorChar + "cogclass_" + hashCode.ToString() + ".dll";
         }
-        private String GetCoGcsFilename(uint hashCode)
+        private string GetCoGcsFilename(uint hashCode)
         {
             return m_tempDir + System.IO.Path.DirectorySeparatorChar + "cogclass_" + hashCode.ToString() + ".cs";
         }
@@ -893,10 +893,10 @@ namespace CoGsharp
             }
         }
 
-        private CoGclass GenerateCoGclass(String templateName, String templateString, String argString, uint hashCode)
+        private CoGclass GenerateCoGclass(string templateName, string templateString, string argString, uint hashCode)
         {
             // first find empty position for hashcode
-            String csFilename;
+            string csFilename;
 
             // find a hashCode which is 'free', starting at user-supplied hashcode
             lock (m_generatedHashCodes)
@@ -914,10 +914,10 @@ namespace CoGsharp
                 m_generatedHashCodes[hashCode] = hashCode;
             }
 
-            String dllFilename = GetCoGclassFilename(hashCode);
+            string dllFilename = GetCoGclassFilename(hashCode);
 
             // build code:
-            String className = "CoG_" + hashCode.ToString();
+            string className = "CoG_" + hashCode.ToString();
             StringBuilder code = new StringBuilder();
             code.Append("// Generated by CoGsharp from template '" + templateName + "' on " + DateTime.Now.ToString() + "\n");
             code.Append("using System;\n");
@@ -932,12 +932,12 @@ namespace CoGsharp
             code.Append("\tpublic " + className + "() {\n");
             code.Append("\t}\n");
 
-            code.Append("\tpublic String GetTemplate() {\n");
+            code.Append("\tpublic string GetTemplate() {\n");
             code.Append("\t\treturn\n" + LongStringToCode(templateString, 3) + "\t\t\t;\n");
             code.Append("\t}\n");
 
 
-            code.Append("\tpublic String GetArguments() {\n");
+            code.Append("\tpublic string GetArguments() {\n");
             code.Append("\t\treturn\n" + LongStringToCode(argString, 3) + "\t\t\t;\n");
             code.Append("\t}\n");
 
@@ -961,11 +961,11 @@ namespace CoGsharp
            		ICodeCompiler compiler = new CSharpCodeProvider().CreateCompiler();
 	            CompilerParameters compilerParameters = new CompilerParameters();
 	            compilerParameters.ReferencedAssemblies.Add("System.dll");
-	            String CoGassemblyName = GetType().Assembly.Location;
+	            string CoGassemblyName = GetType().Assembly.Location;
 	
 	            compilerParameters.ReferencedAssemblies.Add(CoGassemblyName);
 	
-	            foreach (String str in m_referencedAssemblies)
+	            foreach (string str in m_referencedAssemblies)
 	                compilerParameters.ReferencedAssemblies.Add(str);
 	
 	            compilerParameters.GenerateInMemory = false;
@@ -1001,7 +1001,7 @@ namespace CoGsharp
         /// Called multiple times by EmitTemplateCode, EmitTemplateUsing, EmitTemplateImplements.
         /// Scans the entire template and emits either regular code, import directives or interface implements
         /// </summary>
-        static private void EmitTemplateCodeOrImport(StringBuilder SB, String str, EMIT_TYPE what)
+        static private void EmitTemplateCodeOrImport(StringBuilder SB, string str, EMIT_TYPE what)
         {
             // search for <%  %> \<\%  \%\>
             // correct \<\% to <%  and \%\> to %>
@@ -1061,7 +1061,7 @@ namespace CoGsharp
                     ncbIdx += "<%".Length; // skip over <%
                     int ecbIdx = str.IndexOf("%>", ncbIdx);
                     if (ecbIdx < 0) ecbIdx = str.Length;
-                    String code = str.Substring(ncbIdx, ecbIdx - ncbIdx);
+                    string code = str.Substring(ncbIdx, ecbIdx - ncbIdx);
 
                     // if the code returns void, emit it differently than when it returns a value
                     if (what == EMIT_TYPE.EMIT_USING)
@@ -1075,7 +1075,7 @@ namespace CoGsharp
                     {
                         if (IsImplements(code))
                         {
-                            String tmp = code.Substring(code.IndexOf("implements") + "implements".Length + 1);
+                            string tmp = code.Substring(code.IndexOf("implements") + "implements".Length + 1);
                             SB.Append(", " + tmp);
                         }
                     }
@@ -1104,7 +1104,7 @@ namespace CoGsharp
 
 
         /// <returns>true if 'code' is a using directive</returns>
-        private static bool IsUsing(String code)
+        private static bool IsUsing(string code)
         {
             if (code.Length == 0) return false;
 
@@ -1123,14 +1123,14 @@ namespace CoGsharp
                 int tidx = idx + 1;
                 while ((tidx < code.Length) &&
                 Char.IsLetter(code[tidx])) tidx++;
-                String token = code.Substring(idx, tidx - idx);
+                string token = code.Substring(idx, tidx - idx);
                 if (token == "using") return true;
             }
             return false;
         }
 
         /// <returns>true if 'code' is a implements directive</returns>
-        private static bool IsImplements(String code)
+        private static bool IsImplements(string code)
         {
             if (code.Length == 0) return false;
 
@@ -1149,7 +1149,7 @@ namespace CoGsharp
                 int tidx = idx + 1;
                 while ((tidx < code.Length) &&
                 Char.IsLetter(code[tidx])) tidx++;
-                String token = code.Substring(idx, tidx);
+                string token = code.Substring(idx, tidx);
                 if (token == "implements") return true;
             }
             return false;
@@ -1167,7 +1167,7 @@ namespace CoGsharp
 
 
         /// <returns>true if 'code' would return void</returns>
-        private static bool ReturnsVoid(String code)
+        private static bool ReturnsVoid(string code)
         {
             // detects for, do, while, if, else, case, switch, break, default, throw, catch, {, }
             if (code.Length == 0) return false;
@@ -1213,7 +1213,7 @@ namespace CoGsharp
                 while ((tidx < code.Length) &&
                     IsCSharpIdentifierPart(code[tidx])) tidx++;
 
-                String token = code.Substring(idx, tidx - idx);
+                string token = code.Substring(idx, tidx - idx);
 
                 // detect keywords
                 if (token.Equals("import") ||
@@ -1239,7 +1239,7 @@ namespace CoGsharp
         /// <summary>
         /// Iterates over entries in 'H', returns a string "typeName1 argName1, typeName2 argName2, etc"
         /// </summary>
-        private static String GenerateArgsString(System.Collections.Hashtable H)
+        private static string GenerateArgsString(System.Collections.Hashtable H)
         {
             StringBuilder SB = new StringBuilder();
             foreach (DictionaryEntry DE in H)
@@ -1271,7 +1271,7 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1)
+            string a1Name, Object a1)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1280,7 +1280,7 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2)
+            string a1Name, Object a1, string a2Name, Object a2)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1290,8 +1290,8 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1302,8 +1302,8 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3, String a4Name, Object a4)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3, string a4Name, Object a4)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1315,9 +1315,9 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3, String a4Name, Object a4,
-            String a5Name, Object a5)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3, string a4Name, Object a4,
+            string a5Name, Object a5)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1330,9 +1330,9 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3, String a4Name, Object a4,
-            String a5Name, Object a5, String a6Name, Object a6)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3, string a4Name, Object a4,
+            string a5Name, Object a5, string a6Name, Object a6)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1346,10 +1346,10 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3, String a4Name, Object a4,
-            String a5Name, Object a5, String a6Name, Object a6,
-            String a7Name, Object a7)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3, string a4Name, Object a4,
+            string a5Name, Object a5, string a6Name, Object a6,
+            string a7Name, Object a7)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1364,10 +1364,10 @@ namespace CoGsharp
 
         /// <returns>a hashtable which contains key, value pairs of (a1Name, a1)</returns>
         private static System.Collections.Hashtable GetHashtableOfArguments(
-            String a1Name, Object a1, String a2Name, Object a2,
-            String a3Name, Object a3, String a4Name, Object a4,
-            String a5Name, Object a5, String a6Name, Object a6,
-            String a7Name, Object a7, String a8Name, Object a8)
+            string a1Name, Object a1, string a2Name, Object a2,
+            string a3Name, Object a3, string a4Name, Object a4,
+            string a5Name, Object a5, string a6Name, Object a6,
+            string a7Name, Object a7, string a8Name, Object a8)
         {
             System.Collections.Hashtable M = new System.Collections.Hashtable();
             M[RemoveAssignSign(a1Name)] = a1;
@@ -1390,7 +1390,7 @@ namespace CoGsharp
          * to EmitTemplate(). The user can call CoGsharp.EmitTemplate("MyTemplate", "argName1=", someObject) 
          * which should make the code a bit more readable.</remarks>
          */
-        private static String RemoveAssignSign(String str)
+        private static string RemoveAssignSign(string str)
         {
             int idx = str.LastIndexOf('=');
             if (idx >= 0)
@@ -1403,7 +1403,7 @@ namespace CoGsharp
         }
 
 
-        private static String LongStringToCode(String str, int nbTabs)
+        private static string LongStringToCode(string str, int nbTabs)
         {
             StringBuilder SB = new StringBuilder(str.Length * 2);
             int cnt = 0; // cnt = length of current line
@@ -1480,11 +1480,11 @@ namespace CoGsharp
 
         /// <summary>
         /// Loads templates from a stream. The function first reads the entire stream and
-        /// then processes the data by calling LoadTemplates(String S, String source).
+        /// then processes the data by calling LoadTemplates(string S, string source).
         /// </summary>
         /// <param name="R">The stream</param>
         /// <param name="source">The source of the stream (e.g., the filename).</param>
-        public void LoadTemplates(StreamReader R, String source)
+        public void LoadTemplates(StreamReader R, string source)
         {
             StringBuilder SB = new StringBuilder();
 
@@ -1595,7 +1595,7 @@ namespace CoGsharp
         }
 
         /// <summary>
-        /// Contains all loaded raw templates; maps from String (template name) to String (template value)
+        /// Contains all loaded raw templates; maps from string (template name) to string (template value)
         /// </summary>
         private System.Collections.Hashtable m_templates;
 
@@ -1614,14 +1614,14 @@ namespace CoGsharp
         /// <summary>
         /// Path to temp directory where all generated .cs and .dll files are stored (and searched).
         /// </summary>
-        private String m_tempDir;
+        private string m_tempDir;
 
         /// <summary>
         /// List of assemblies that should be referenced by compiled code.
         /// 
         /// Use AddReference() and RemoveReference() to add/remove entries.
         /// </summary>
-        private List<String> m_referencedAssemblies = new List<String>();
+        private List<string> m_referencedAssemblies = new List<string>();
 
         /// <summary>
         /// Hashcodes for which .cs files have been generated. Used to avoid
