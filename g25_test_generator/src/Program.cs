@@ -935,7 +935,7 @@ namespace g25_test_generator
 		}
 		
 		public static System.PlatformID GetPlatformID() {
-			// temporary hack until mono gets it's platform ID right:
+			// temporary hack until Mono gets it's platform ID right:
 			if ((Environment.OSVersion.Platform == PlatformID.Unix) && 
 			    (Environment.OSVersion.Version.Major == 10)) return PlatformID.MacOSX;
 			else return Environment.OSVersion.Platform;

@@ -300,7 +300,7 @@ namespace CoGsharp
             m_templates = new System.Collections.Hashtable();
             m_loadedCoGclasses = new System.Collections.Hashtable();
 
-            m_tempDir = System.IO.Path.GetTempPath() + "cogsharp";
+            m_tempDir = GetTempDir();//System.IO.Path.GetTempPath() + "cogsharp";
 //			Console.WriteLine("CoG temp dir: " + m_tempDir);
 			
             if (!System.IO.Directory.Exists(m_tempDir))
@@ -315,11 +315,21 @@ namespace CoGsharp
                 }
             }
         }
+		
+		public string GetTempDir() {
+			
+			return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + 
+					System.IO.Path.DirectorySeparatorChar + 
+					"cogsharp";
+				
+//				return System.IO.Path.GetTempPath() + "cogsharp";
+		}
+		
 
         /// <summary>
         /// Returns all emitted output since the past call to ClearOutput() or GetOutputAndClear().
         /// </summary>
-        public String GetOutput()
+        public string GetOutput()
         {
             return m_output.ToString();
         }
