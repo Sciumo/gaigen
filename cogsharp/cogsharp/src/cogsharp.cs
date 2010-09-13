@@ -301,7 +301,7 @@ namespace CoGsharp
             m_loadedCoGclasses = new System.Collections.Hashtable();
 
             m_tempDir = GetTempDir();
-			Console.WriteLine("CoG temp dir: " + m_tempDir);
+			//Console.WriteLine("CoG temp dir: " + m_tempDir);
 			
             if (!System.IO.Directory.Exists(m_tempDir))
             {
@@ -321,8 +321,10 @@ namespace CoGsharp
 			return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + 
 					System.IO.Path.DirectorySeparatorChar + 
 					"cogsharp";
-				
-//				return System.IO.Path.GetTempPath() + "cogsharp";
+
+            // Do not use System.IO.Path.GetTempPath() one because OSX will delete all on reboot.
+            // Also, compiled dlls will be shared between users and could cause problems / hacking.
+            //	return System.IO.Path.GetTempPath() + "cogsharp"; 
 		}
 		
 

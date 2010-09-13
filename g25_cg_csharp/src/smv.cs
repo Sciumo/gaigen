@@ -94,6 +94,36 @@ namespace G25.CG.CSharp
             // write get/set coords
             G25.CG.CSJ.SMV.WriteGetSetCoord(SB, S, cgd, FT, smv);
 
+            // put this code in csj shared
+            // how to get back from csj shared to c#
+            // or also put the operator stuff in csj shared?
+            // Get some generic code to loop over all functions in S.m_functions
+            // then do something when first type is this
+            foreach (G25.fgs F in S.m_functions)
+            {
+                if (F.NbArguments >= 1) {
+                    Console.WriteLine("func name: " + F.m_outputName + " -- first arg type: " + F.GetArgumentTypeName(0, ""));
+                    // use this to write decl: (get all FAI except the first)
+//                            public static void WriteDeclaration(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd,
+  //          bool inline, bool staticFunc, string returnType, string functionName,
+    //        FuncArgInfo returnArgument, FuncArgInfo[] arguments)
+                    // then just forward the call to Namespace.function
+                    // also write the operator
+                    // take care of the special operators
+                    
+
+                    if (F.IsConverter(S))
+                    { // is 'F' a converter (underscore constructor)?
+
+                    }
+                    else
+                    {
+                       
+                    }
+                }
+            }
+            
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

@@ -151,7 +151,7 @@ namespace G25
                 m_metricName.GetHashCode();
 
             {
-                String[] options = OptionsToStringArray();
+                string[] options = OptionsToStringArray();
                 for (int i = 0; i < options.Length; i++)
                     hashCode ^= options[i].GetHashCode() << i;
             }
@@ -392,7 +392,7 @@ namespace G25
         /// <param name="argIdx">Index of argument.</param>
         /// <param name="defaultTypeName">Default typename, used when user has not specified any argument.</param>
         /// <returns>typename of argument 'argIdx'.</returns>
-        public string GetArgumentTypeName(int argIdx, String defaultTypeName)
+        public string GetArgumentTypeName(int argIdx, string defaultTypeName)
         {
             if ((argIdx < 0) || (NbArguments == 0)) return defaultTypeName;
             else if (argIdx < NbArguments) return ArgumentTypeNames[argIdx];
@@ -608,7 +608,7 @@ namespace G25
         /// <summary>
         /// Name of metric used for metric products.
         /// </summary>
-        protected readonly String m_metricName;
+        protected readonly string m_metricName;
         /// <summary>
         /// Optional extra comments. Does not influence hashcode or comparison with other fgs.
         /// </summary>
