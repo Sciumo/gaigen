@@ -64,6 +64,7 @@
     <Compile Include="..\src\cg_data.cs" />
     <Compile Include="..\src\threads.cs" />
     <Compile Include="..\src\om_init.cs" />
+    <Compile Include="..\src\shortcut.cs" />
     <Compile Include="..\src\smv_util.cs" />
     <Compile Include="..\src\report_usage.cs" />
     <Compile Include="..\src\functions\addsubtract.cs">

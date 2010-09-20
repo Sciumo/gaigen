@@ -117,7 +117,6 @@ namespace G25.CG.Shared
             {
                 G25.fgs F = functionFGS[f];
 
-                bool foundSuitablePlugin = false;
                 foreach (G25.CG.Shared.BaseFunctionGenerator P in plugins) // check all C plugins
                 {
                     if (P.CanImplement(S, F)) // ask them if they can handle 'F'
@@ -126,11 +125,11 @@ namespace G25.CG.Shared
                         functionGenerators[f] = System.Activator.CreateInstance(P.GetType()) as BaseFunctionGenerator;
                         functionCgd[f] = new G25.CG.Shared.CGdata(cgd); // m_errors and m_missingDependencies will be shared with main cgd!
                         functionGenerators[f].Init(S, F, functionCgd[f]);
-                        foundSuitablePlugin = true;
+                        F.SetSupportedByPlugin();
                         break;
                     }
                 }
-                if (!foundSuitablePlugin)
+                if (!F.GetSupportedByPlugin())
                 {// no plugin could do 'F': complain about it
                     System.Console.WriteLine("Warning no suitable plugin for function " + F.Name + "; XML specification: ");
                     System.Console.WriteLine("    " + XML.FunctionToXmlString(S, F));

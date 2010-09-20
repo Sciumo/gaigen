@@ -552,6 +552,19 @@ namespace G25
             m_argumentArr[argIdx] = value;
         }
 
+        public bool GetSupportedByPlugin()
+        {
+            return supportedByPlugin;
+        }
+
+        /// <summary>
+        /// Sets 'supportedByPlugin' to true.
+        /// </summary>
+        public void SetSupportedByPlugin()
+        {
+            supportedByPlugin = true;
+        }
+
         /// <summary>
         /// The name of the requested function (this name must be 'recognized' by the code generator).
         /// </summary>
@@ -620,6 +633,11 @@ namespace G25
         protected readonly Dictionary<string, string> m_options;
 
         protected readonly int m_hashCode;
+
+        /// <summary>
+        /// Sets to true when a plugin can generate code for this fgs
+        /// </summary>
+        protected bool supportedByPlugin;
 
     } // end of class fgs
 } // end of namespace G25
