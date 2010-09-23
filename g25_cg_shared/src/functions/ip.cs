@@ -141,7 +141,17 @@ namespace G25.CG.Shared.Func
             m_smv2 = tmpFAI[1].Type as G25.SMV;
 
             // compute intermediate results, set return type
-            if (m_gmvFunc) m_fgs.m_returnTypeName = m_gmv.Name;// gmv * gmv = gmv
+            if (m_gmvFunc)
+            {
+                if (m_ipType != RefGA.BasisBlade.InnerProductType.SCALAR_PRODUCT)
+                {
+                    m_fgs.m_returnTypeName = m_gmv.Name;// gmv * gmv = gmv
+                }
+                else
+                {
+                    m_fgs.ReturnTypeName = FT.type;
+                }
+            }
             else
             {
                 // compute return value
@@ -154,6 +164,10 @@ namespace G25.CG.Shared.Func
                 if ((m_fgs.ReturnTypeName.Length == 0) && (m_ipType != RefGA.BasisBlade.InnerProductType.SCALAR_PRODUCT))
                 {
                     m_fgs.ReturnTypeName = G25.CG.Shared.SpecializedReturnType.GetReturnType(m_specification, m_cgd, m_fgs, FT, m_returnValue).GetName();
+                }
+                else
+                {
+                    m_fgs.ReturnTypeName = FT.type;
                 }
             }
         }

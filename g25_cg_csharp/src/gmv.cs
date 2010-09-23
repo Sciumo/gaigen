@@ -137,7 +137,6 @@ namespace G25.CG.CSharp
             // write 'largest coordinate' functions
             G25.CG.CSJ.GMV.WriteLargestCoordinates(SB, S, cgd, FT);
 
-            
             // write compress functions
             G25.CG.CSJ.GMV.WriteCompress(SB, S, cgd, FT);
 
@@ -146,6 +145,10 @@ namespace G25.CG.CSharp
 
             // write multivector interface implementation
             G25.CG.CSJ.GMV.WriteMultivectorInterface(SB, S, cgd, FT);
+
+
+            // write shortcuts for functions
+            G25.CG.Shared.Shortcut.WriteFunctionShortcuts(SB, S, cgd, FT, gmv);
 
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);

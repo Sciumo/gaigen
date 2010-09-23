@@ -32,7 +32,8 @@ namespace G25
         /// <param name="typename">name of the float type (e.g., "float" or "double").</param>
         /// <param name="prefix">prefix which should be applied to typename (e.g. float_vector)</param>
         /// <param name="suffix">suffix which should be applied to typename (e.g. vector_f)</param>
-        public FloatType(String typename, String prefix, String suffix) {
+        public FloatType(string typename, string prefix, string suffix)
+        {
             m_floatType = typename;
             m_floatTypeCastStr = "(" + typename + ")";
             m_floatPrefix = (prefix == null) ? "" : prefix;
@@ -62,6 +63,8 @@ namespace G25
         /// <summary>
         /// Adds prefix and suffix to type according to the floating point type used, unless the
         /// String already has the prefix or suffix.
+        /// 
+        /// Also detects 'boolean' type and adjusts it to output language.
         /// </summary>
         /// <returns>'typeName' mangled according to floating point type 'floatTypeIndex'.</returns>
         public string GetMangledName(Specification S, string typeName)
@@ -73,6 +76,14 @@ namespace G25
             // This change (for example) "double" -> "float"
             if (S.IsFloatType(typeName))
                 return type;
+
+            if (typeName.Equals(Specification.BOOLEAN))
+            {
+                return S.OutputJava() ? typeName : "bool";
+            }
+            else if (typeName.Equals(Specification.INTEGER)) {
+                return typeName;
+            }
 
             if ((prefix.Length > 0) && (!typeName.StartsWith(prefix)))
                 typeName = prefix + typeName;

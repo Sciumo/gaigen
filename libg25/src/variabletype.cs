@@ -1,6 +1,8 @@
 namespace G25
 {
 
+
+
     /// <summary>
     /// Type of variable used by Gaigen 2 (scalars, multivectors, outermorphisms)
     /// </summary>

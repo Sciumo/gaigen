@@ -170,11 +170,14 @@ Maybe fix the float type stuff
 			
 			AND THEN finish the following:
 			
-				-> C# operators
-				 + Java and C# GMV, SMV member function shortcuts (for regular functions)
-				for each class that is generated, check all functions
-				also pick up the converters and generator code
+				-> Java and C# GMV, SMV member function shortcuts (for regular functions)
+					for each class that is generated, check all functions
+					also pick up the converters and generator code
+					TODO: add extra argument of extract grade somehow . . .
+					
+				C# operators
 				
+				explicit converters for C#
 					
 				check that converters are present
 
@@ -242,8 +245,9 @@ Correcting design mistakes / reducing amount of code.
 	Each type has its own float type, mangled name, etc
 	Each coordinate can (in theory) have its own float type
 	
--> one FGS for each function (not shared between float types)
 -> FGS final output name goes into separate field, not into m_outputName
+	In fact, the FGS are constants, and are transformed into a different class
+	were all the details are filled in, with proper types and everything.
 -> rename NonConstBasisBlade & such to 'VariableBasisBlade'
 	
 -?be able to get dependency right for the template code (to simplify the test stuff)

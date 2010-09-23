@@ -143,6 +143,9 @@ namespace G25
         public const string CONSTANT_TYPE_SUFFIX = "_t";
 
 
+        public const string BOOLEAN = "boolean";
+        public const string INTEGER = "int";
+
 
         /// <summary>
         /// Used as the name of the auto-generated euclidean metric.
@@ -708,7 +711,7 @@ namespace G25
 
 
         /// <returns>true if 'typeName' is a floating point type listed in m_floatTypes.</returns>
-        public bool IsFloatType(String typeName)
+        public bool IsFloatType(string typeName)
         {
             foreach (FloatType FT in m_floatTypes)
                 if (FT.type == typeName) return true;

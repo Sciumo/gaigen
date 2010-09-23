@@ -77,7 +77,7 @@ namespace G25
             string[] floatNames,
             string metricName,
             string comment, 
-            Dictionary<String, String> options)
+            Dictionary<string, string> options)
         {
             // check if optional arguments have been specified:
             if (outputName == null) outputName = name;

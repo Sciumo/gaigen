@@ -142,6 +142,9 @@ namespace G25.CG.Java
             // write multivector interface implementation
             G25.CG.CSJ.GMV.WriteMultivectorInterface(SB, S, cgd, FT);
 
+            // write shortcuts for functions
+            G25.CG.Shared.Shortcut.WriteFunctionShortcuts(SB, S, cgd, FT, gmv);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 
