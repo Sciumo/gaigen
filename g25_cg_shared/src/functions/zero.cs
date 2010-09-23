@@ -71,7 +71,7 @@ namespace G25.CG.Shared.Func
             bool computeMultivectorValue = true;
             G25.CG.Shared.FuncArgInfo[] tmpFAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_specification.m_GMV.Name, computeMultivectorValue);
 
-            m_fgs.ReturnTypeName = Specification.BOOLEAN;
+            m_fgs.ReturnTypeName = BooleanType.BOOLEAN;
 
             m_gmvFunc = !tmpFAI[0].IsScalarOrSMV();
             m_smv = tmpFAI[0].Type as G25.SMV;

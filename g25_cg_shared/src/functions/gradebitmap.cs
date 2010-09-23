@@ -71,7 +71,7 @@ namespace G25.CG.Shared.Func
             bool computeMultivectorValue = true;
             G25.CG.Shared.FuncArgInfo[] tmpFAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_specification.m_GMV.Name, computeMultivectorValue);
 
-            m_fgs.ReturnTypeName = Specification.INTEGER;
+            m_fgs.ReturnTypeName = IntegerType.INTEGER;
 
             m_gmvFunc = !tmpFAI[0].IsScalarOrSMV();
             m_smv = tmpFAI[0].Type as G25.SMV;
@@ -169,7 +169,7 @@ namespace G25.CG.Shared.Func
             m_funcName[FT.type] = CF.OutputName;
 
             // setup return type and argument:
-            String returnTypeName = "int";
+            string returnTypeName = G25.IntegerType.INTEGER;
             G25.CG.Shared.FuncArgInfo returnArgument = null;
 
             // write function

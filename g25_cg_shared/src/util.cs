@@ -394,7 +394,7 @@ namespace G25.CG.Shared
         /// <param name="S">Specification (used for output language).</param>
         /// <param name="FT">Float type of function.</param>
         /// <param name="funcName">The function name.</param>
-        /// <param name="typeNames">Typenames of function arguments.</param>
+        /// <param name="typeNames">Typenames of function arguments. Some entries may be null.</param>
         /// <returns>new name.</returns>
         public static string AppendTypenameToFuncName(Specification S, G25.FloatType FT, string funcName, string[] typeNames)
         {
@@ -404,13 +404,30 @@ namespace G25.CG.Shared
             {
                 foreach (string tn in typeNames)
                 {
-                    SB.Append("_");
-                    SB.Append(tn);
+                    if (tn != null)
+                    {
+                        SB.Append("_");
+                        SB.Append(tn);
+                    }
                 }
             }
 
             return FT.GetMangledName(S, SB.ToString());
         }
+
+        public static bool DontAppendTypename(VariableType type) {
+            return ((type is G25.BooleanType) ||
+                (type is G25.GroupBitmapType) ||
+                (type is G25.IntegerType));
+        }
+
+        public static bool DontAppendTypename(string typeName)
+        {
+            return (typeName.Equals(G25.BooleanType.BOOLEAN) ||
+                      typeName.Equals(G25.GroupBitmapType.GROUP_BITMAP) ||
+                      typeName.Equals(G25.IntegerType.INTEGER));
+        }
+
 
         /// <summary>
         /// Appends the non-mangled typenames of the type of all arguments to the <c>m_outputName</c> in <c>F</c>.
@@ -428,7 +445,12 @@ namespace G25.CG.Shared
             {
                 string[] typeNames = new string[FAI.Length];
                 for (int i = 0; i < FAI.Length; i++)
+                {
+                    if (DontAppendTypename(FAI[i].TypeName))
+                        continue;
+
                     typeNames[i] = FAI[i].MangledTypeName;
+                }
 
                 return new G25.fgs(F, AppendTypenameToFuncName(S, FT, F.OutputName, typeNames));
             }

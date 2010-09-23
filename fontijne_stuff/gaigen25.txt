@@ -173,7 +173,9 @@ Maybe fix the float type stuff
 				-> Java and C# GMV, SMV member function shortcuts (for regular functions)
 					for each class that is generated, check all functions
 					also pick up the converters and generator code
-					TODO: add extra argument of extract grade somehow . . .
+					-> do it GOM and SOM too
+					
+				then run large test (-r 1000)
 					
 				C# operators
 				

@@ -40,26 +40,6 @@ namespace G25
             m_floatSuffix = (suffix == null) ? "" : suffix;
         }
 
-  /*      /// <summary>
-        /// Adds prefix and suffix to type according to the floating point type used, unless the
-        /// String already has the prefix or suffix.
-        /// </summary>
-        /// <returns>'typeName' mangled according to floating point type 'floatTypeIndex'.</returns>
-        public string GetMangledNameOld(string typeName)
-        {
-            if (typeName.Contains(G25.Specification.DONT_MANGLE)) return typeName;
-
-            // if the name already contains the floating point type, do not add any prefix/suffix (this will cause trouble sometimes when the name is in the typeName unintendedly. . .)
-            if (typeName.Contains(type)) return typeName;
-
-            if ((prefix.Length > 0) && (!typeName.StartsWith(prefix)))
-                typeName = prefix + typeName;
-            if ((suffix.Length > 0) && (!typeName.EndsWith(suffix)))
-                typeName = typeName + suffix;
-
-            return typeName;
-        }*/
-
         /// <summary>
         /// Adds prefix and suffix to type according to the floating point type used, unless the
         /// String already has the prefix or suffix.
@@ -77,12 +57,16 @@ namespace G25
             if (S.IsFloatType(typeName))
                 return type;
 
-            if (typeName.Equals(Specification.BOOLEAN))
+            if (typeName.Equals(BooleanType.BOOLEAN))
             {
                 return S.OutputJava() ? typeName : "bool";
             }
-            else if (typeName.Equals(Specification.INTEGER)) {
+            else if (typeName.Equals(IntegerType.INTEGER)) {
                 return typeName;
+            }
+            else if (typeName.Equals(GroupBitmapType.GROUP_BITMAP))
+            {
+                return S.OutputCSharp() ? typeName : IntegerType.INTEGER;
             }
 
             if ((prefix.Length > 0) && (!typeName.StartsWith(prefix)))
@@ -99,9 +83,9 @@ namespace G25
         /// <param name="S">Specification (used for output language).</param>
         /// <param name="value">Floating point value to be converted.</param>
         /// <returns>'value' converted to string in output language.</returns>
-        public String DoubleToString(Specification S, double value)
+        public string DoubleToString(Specification S, double value)
         {
-            String str = value.ToString("r"); // "r" stands for round-trip and ensures the value is not lost
+            string str = value.ToString("r"); // "r" stands for round-trip and ensures the value is not lost
 
             // make sure we always have a .something or Esomething part
             if ((str.IndexOf('.') < 0) && 
@@ -149,7 +133,7 @@ namespace G25
         public String prefix { get { return m_floatPrefix; } }
         public String suffix { get { return m_floatSuffix; } }
 
-        public virtual VARIABLE_TYPE GetVariableType() {return VARIABLE_TYPE.SCALAR;}
+        public virtual VARIABLE_TYPE GetVariableType() {return VARIABLE_TYPE.FLOAT;}
 
         public virtual String GetName() { return m_floatType; }
 

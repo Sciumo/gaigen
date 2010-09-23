@@ -183,7 +183,7 @@ namespace G25.CG.Shared.Func
 
                 m_randomScalarFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "random_" + FT.type, new String[0], FT.type, FT, null);
                 m_gpFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "gp", new String[] { m_specification.m_GMV.Name, m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, m_G25M.m_name);
-                m_extractGradeFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "extractGrade", new String[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
+                m_extractGradeFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { m_specification.m_GMV.Name, G25.GroupBitmapType.GROUP_BITMAP }, m_specification.m_GMV.Name, FT, null);
 
                 if (m_gmvFunc)
                 {

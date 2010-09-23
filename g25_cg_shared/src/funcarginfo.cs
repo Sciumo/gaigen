@@ -44,11 +44,12 @@ namespace G25.CG.Shared
             m_typeName = F.GetArgumentTypeName(argIdx, defaultTypeName);
             m_type = S.GetType(m_typeName);
             m_varType = m_type.GetVariableType();
-            if (m_varType != VARIABLE_TYPE.SCALAR) m_floatType = FT;
+            if (m_varType != VARIABLE_TYPE.FLOAT) m_floatType = FT;
             else m_floatType = S.GetFloatType(m_typeName);
 
             // set mangled type name (depends on whether type is scalar or not)
-            if ((m_varType == VARIABLE_TYPE.SCALAR) || (m_varType == VARIABLE_TYPE.ENUM)) {
+            if ((m_varType == VARIABLE_TYPE.FLOAT) || (m_varType == VARIABLE_TYPE.ENUM))
+            {
                 m_mangledTypeName = m_typeName;
             }
             else {
@@ -75,7 +76,7 @@ namespace G25.CG.Shared
                 }
                 else if (m_varType == VARIABLE_TYPE.GMV)
                     m_multivectorValue = Symbolic.GMVtoSymbolicMultivector(S, (G25.GMV)m_type, m_name, m_pointer, -1); // -1 = sym mv for all groups
-                else if (m_varType == VARIABLE_TYPE.SCALAR)
+                else if (m_varType == VARIABLE_TYPE.FLOAT)
                     m_multivectorValue = new RefGA.Multivector[1] { Symbolic.ScalarToSymbolicMultivector(S, (G25.FloatType)m_type, m_name) };
                 else
                 {
@@ -113,7 +114,7 @@ namespace G25.CG.Shared
         /// <returns>true when this is a scalar or specialized multivector.</returns>
         public bool IsScalarOrSMV()
         {
-            return (m_varType == VARIABLE_TYPE.SCALAR) || (m_varType == VARIABLE_TYPE.SMV);
+            return (m_varType == VARIABLE_TYPE.FLOAT) || (m_varType == VARIABLE_TYPE.SMV);
         }
 
         /// <returns>true when this is a scalar or specialized multivector.</returns>
@@ -128,7 +129,7 @@ namespace G25.CG.Shared
         /// <returns>true when this is a scalar.</returns>
         public bool IsScalar()
         {
-            return (m_varType == VARIABLE_TYPE.SCALAR);
+            return (m_varType == VARIABLE_TYPE.FLOAT);
         }
 
         public bool MvInterface { get { return m_mvInterface; } }

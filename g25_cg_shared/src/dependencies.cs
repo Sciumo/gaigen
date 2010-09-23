@@ -96,7 +96,12 @@ namespace G25.CG.Shared
                     // add mangled argument types to function name
                     string[] mangledArgumentTypes = new string[argumentTypes.Length];
                     for (int i = 0; i < argumentTypes.Length; i++)
+                    {
+                        if (Util.DontAppendTypename(argumentTypes[i]))
+                            continue;
+
                         mangledArgumentTypes[i] = (S.IsFloatType(argumentTypes[i])) ? FT.type : FT.GetMangledName(S, argumentTypes[i]);
+                    }
                     mangledFuncName = Util.AppendTypenameToFuncName(S, FT, F.OutputName, mangledArgumentTypes);
                     //mangledFuncName = FT.GetMangledName(S, mangledFuncName);
                 }

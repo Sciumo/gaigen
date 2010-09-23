@@ -37,7 +37,7 @@ namespace G25.CG.Shared
     /// </summary>
     public class CANSparts
     {
-        public const String EXTRACT_GRADE = "extractGrade";
+        public const string EXTRACT_GRADE = "extractGrade";
 
         /// <summary>
         /// Used to determine what type of 'toggle sign type' function
@@ -1323,7 +1323,7 @@ namespace G25.CG.Shared
             {  // if a specific grade is requested, convert it into a group bitmap, and call the grade(A, groupBitmap) function
                 // get name of grade function
                 //bool returnTrueName = false;
-                string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, EXTRACT_GRADE, new string[] { gmv.Name }, FT, null);
+                string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, EXTRACT_GRADE, new string[] { gmv.Name, G25.GroupBitmapType.GROUP_BITMAP }, FT, null);
                 
                 // turn grade into group
                 int groupBitmap = gmv.GradeToGroupBitmap(gradeIdx);
@@ -1396,7 +1396,7 @@ namespace G25.CG.Shared
             if (gradeIdx >= 0)
             {  // if a specific grade is requested, convert it into a group bitmap, and call the grade(A, groupBitmap) function
                 // get name of grade function
-                string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, EXTRACT_GRADE, new string[] { gmv.Name }, FT, null);
+                string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, EXTRACT_GRADE, new string[] { gmv.Name, G25.GroupBitmapType.GROUP_BITMAP }, FT, null);
 
                 // turn grade into group
                 int groupBitmap = gmv.GradeToGroupBitmap(gradeIdx);

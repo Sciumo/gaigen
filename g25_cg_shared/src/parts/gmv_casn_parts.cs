@@ -128,11 +128,11 @@ namespace G25.CG.Shared
             string returnTypeName = null;
             if (S.OutputC()) 
             {
-                returnTypeName = "int";
+                returnTypeName = G25.IntegerType.INTEGER;
             }
             else {
                 if (funcType == G25.CG.Shared.CANSparts.EQUALS_ZERO_GRADEBITMAP_TYPE.GRADE_BITMAP)
-                    returnTypeName = "int";
+                    returnTypeName = G25.IntegerType.INTEGER;
                 else returnTypeName = CodeUtil.GetBoolType(S);
             }
             
@@ -206,7 +206,7 @@ namespace G25.CG.Shared
             }
             else
             {
-                string groupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : "int";
+                string groupBitmapType = (S.OutputCSharp()) ? "GroupBitmap" : G25.IntegerType.INTEGER;
                 string FINAL = (S.OutputJava()) ? "final " : "";
 
                 SB.Append(str.Substring(0, idx));
@@ -265,10 +265,10 @@ namespace G25.CG.Shared
 
             if (gradeIdx < 0) // hack: if grade is func arg, then add it:
             { // add extra argument (int) to select the grade
-                if (S.OutputCppOrC())
-                    tmpCgd.m_declSB = AddGradeArg(S, tmpCgd.m_declSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
-                tmpCgd.m_defSB = AddGradeArg(S, tmpCgd.m_defSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
-                tmpCgd.m_inlineDefSB = AddGradeArg(S, tmpCgd.m_inlineDefSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
+                //if (S.OutputCppOrC())
+                //    tmpCgd.m_declSB = AddGradeArg(S, tmpCgd.m_declSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
+                //tmpCgd.m_defSB = AddGradeArg(S, tmpCgd.m_defSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
+                //tmpCgd.m_inlineDefSB = AddGradeArg(S, tmpCgd.m_inlineDefSB.ToString(), gradeIdx, GROUP_BITMAP_NAME);
             }
 
             cgd.m_declSB.Append(tmpCgd.m_declSB);

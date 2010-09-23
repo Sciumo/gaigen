@@ -29,7 +29,7 @@ namespace G25.CG.Shared.Func
     {
 
         /// <returns>Grade index of 'gradeStr', or -1 if what comes after "grade" is not a number</returns>
-        public int GetGradeIdx(String gradeStr)
+        public int GetGradeIdx(string gradeStr)
         {
             if (gradeStr == G25.CG.Shared.CANSparts.EXTRACT_GRADE) return -1;
 
@@ -90,7 +90,14 @@ namespace G25.CG.Shared.Func
 
             // fill in ArgumentTypeNames
             if (m_fgs.ArgumentTypeNames.Length == 0)
-                m_fgs.m_argumentTypeNames = new String[] { m_gmv.Name };
+                m_fgs.m_argumentTypeNames = new string[] { m_gmv.Name };
+
+            // supplement the extra 'int' argument
+            if ((m_gradeIdx < 0) && (m_fgs.ArgumentTypeNames.Length == 1))
+            {
+                m_fgs.m_argumentTypeNames = new string[] { m_fgs.ArgumentTypeNames[0], G25.GroupBitmapType.GROUP_BITMAP };
+                m_fgs.m_argumentVariableNames = new string[] { m_fgs.m_argumentVariableNames[0], "groupBitmap" };
+            }
 
             // init argument pointers from the completed typenames (language sensitive);
             m_fgs.InitArgumentPtrFromTypeNames(m_specification);
@@ -121,12 +128,12 @@ namespace G25.CG.Shared.Func
         public override void WriteFunction()
         {
 
-            foreach (String floatName in m_fgs.FloatNames)
+            foreach (string floatName in m_fgs.FloatNames)
             {
                 FloatType FT = m_specification.GetFloatType(floatName);
 
                 bool computeMultivectorValue = true;
-                G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, NB_ARGS, FT, m_specification.m_GMV.Name, computeMultivectorValue);
+                G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, Math.Max(NB_ARGS, m_fgs.m_argumentTypeNames.Length), FT, m_specification.m_GMV.Name, computeMultivectorValue);
 
                 // generate comment
                 Comment comment = new Comment(
@@ -188,7 +195,7 @@ namespace G25.CG.Shared.Func
 
                 if (m_gradeIdx >= 0)
                 {
-                    m_gradeGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { m_specification.m_GMV.Name }, m_specification.m_GMV.Name, FT, null);
+                    m_gradeGmvFuncName[FT.type] = G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { m_specification.m_GMV.Name, G25.GroupBitmapType.GROUP_BITMAP }, m_specification.m_GMV.Name, FT, null);
                 }
 
                 if (m_gmvFunc)

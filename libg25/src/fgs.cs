@@ -533,7 +533,8 @@ namespace G25
                 // if it is not a float or a double, then it is a pointer
                 for (; i < m_argumentTypeNames.Length; i++)
                 {
-                    m_argumentPtr[i] = !S.IsFloatType(m_argumentTypeNames[i]);
+                    //m_argumentPtr[i] = !(S.IsFloatType(m_argumentTypeNames[i]);
+                    m_argumentPtr[i] = S.IsGaTypeName(m_argumentTypeNames[i]);
                 }
             }
         }

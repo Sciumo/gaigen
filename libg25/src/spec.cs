@@ -143,8 +143,6 @@ namespace G25
         public const string CONSTANT_TYPE_SUFFIX = "_t";
 
 
-        public const string BOOLEAN = "boolean";
-        public const string INTEGER = "int";
 
 
         /// <summary>
@@ -652,6 +650,15 @@ namespace G25
             if (typeName.Equals("CoordinateOrder"))
                 return new G25.EnumType("CoordinateOrder");
 
+            if (typeName.Equals(IntegerType.INTEGER))
+                return new G25.IntegerType();
+
+            if (typeName.Equals(BooleanType.BOOLEAN))
+                return new G25.BooleanType();
+
+            if (typeName.Equals(GroupBitmapType.GROUP_BITMAP))
+                return new G25.GroupBitmapType();
+
             return null;
         }
 
@@ -666,14 +673,14 @@ namespace G25
         }
 
         /// <returns>true if 'typeName' is a general or specialized multivector name.</returns>
-        public bool IsMultivectorName(String typeName)
+        public bool IsMultivectorName(string typeName)
         {
             return (m_GMV.Name == typeName) || 
                 IsSpecializedMultivectorName(typeName);
         }
 
         /// <returns>specialized multivector with name 'typeName', or null if none found.</returns>
-        public G25.SMV GetSMV(String typeName)
+        public G25.SMV GetSMV(string typeName)
         {
             for (int i = 0; i < m_SMV.Count; i++)
             {
@@ -683,7 +690,7 @@ namespace G25
         }
 
         /// <returns>specialized multivector with name 'typeName', or null if none found.</returns>
-        public G25.SOM GetSOM(String typeName)
+        public G25.SOM GetSOM(string typeName)
         {
             for (int i = 0; i < m_SOM.Count; i++)
             {
@@ -693,7 +700,7 @@ namespace G25
         }
 
         /// <returns>true if 'typeName' is a specialized multivector name.</returns>
-        public bool IsSpecializedOutermorphismName(String typeName)
+        public bool IsSpecializedOutermorphismName(string typeName)
         {
             for (int i = 0; i < m_SOM.Count; i++)
             {
@@ -703,12 +710,16 @@ namespace G25
         }
 
         /// <returns>true if 'typeName' is a general or specialized outermorphism name.</returns>
-        public bool IsOutermorphismName(String typeName)
+        public bool IsOutermorphismName(string typeName)
         {
             return ((m_GOM != null) && (m_GOM.Name == typeName)) ||
                 IsSpecializedOutermorphismName(typeName);
         }
 
+        public bool IsGaTypeName(string typeName)
+        {
+            return IsOutermorphismName(typeName) || IsMultivectorName(typeName);
+        }
 
         /// <returns>true if 'typeName' is a floating point type listed in m_floatTypes.</returns>
         public bool IsFloatType(string typeName)

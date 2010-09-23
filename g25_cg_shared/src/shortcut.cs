@@ -14,9 +14,9 @@
 
 // Copyright 2008-2010, Daniel Fontijne, University of Amsterdam -- fontijne@science.uva.nl
 
-using System;
 using System.Collections.Generic;
 using System.Text;
+using System;
 
 
 namespace G25.CG.Shared
@@ -55,6 +55,7 @@ namespace G25.CG.Shared
                     }
                     catch (Exception ex)
                     {
+                        FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, fgs, fgs.NbArguments, FT, "not set", computeMultivectorValue);
                         if ((type is G25.GMV) && (FT == S.m_floatTypes[0])) // only warn once
                             Console.WriteLine("Warning: cannot generate shortcut to " + fgs.ToString());
                         continue;
@@ -104,8 +105,10 @@ namespace G25.CG.Shared
         /// <param name="SB">Where the code goes.</param>
         /// <param name="S">Used for basis vector names and output language.</param>
         /// <param name="cgd">Not used yet.</param>
-        /// <param name="FT">Float point type of 'SMV'.</param>
-        /// <param name="smv">The specialized multivector for which the struct should be written.</param>
+        /// <param name="FT">Float point type of 'type'.</param>
+        /// <param name="type">The type for which shortcuts should be written.</param>
+        /// <param name="fgs"></param>
+        /// <param name="FAI"></param>
         public static void WriteFunctionShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
             G25.fgs fgs, FuncArgInfo[] FAI)
         {

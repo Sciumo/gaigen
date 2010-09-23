@@ -189,7 +189,7 @@ namespace G25.CG.Shared.Func
                 FloatType FT = m_specification.GetFloatType(floatName);
                 //bool returnTrueName = false;
                 G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "gp", new String[] { m_gmv.Name, m_gmv.Name }, FT, m_G25M.m_name);
-                G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { m_gmv.Name }, FT, null);
+                G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { m_gmv.Name, G25.GroupBitmapType.GROUP_BITMAP }, FT, null);
                 if (IsApplyVersor(m_fgs)) G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "versorInverse", new String[] { m_gmv.Name }, FT, m_G25M.m_name);
                 else if (IsApplyUnitVersor(m_fgs)) G25.CG.Shared.Dependencies.GetDependency(m_specification, m_cgd, "reverse", new String[] { m_gmv.Name }, FT, null);
             }

@@ -376,13 +376,14 @@ namespace G25.CG.Shared
             {
                 for (int i = 0; i < Math.Min(FAI.Length, 2); i++) // max 2 arguments
                 {
+                    
                     char name = (char)((int)'a' + i); // always name vars 'a', 'b' 
                     if (FAI[i].IsScalar())
                     {
                         // 'expand' scalar
                         SB.AppendLine(FT.type + "[][] " + name + "c = new " + FT.type + "[][]{new " + FT.type + "[]{" + FAI[i].Name + "}};");
                     }
-                    else
+                    else if (FAI[i].IsGMV())
                     {
                         // expand general multivector
                         SB.AppendLine(FT.type + "[][] " + name + "c = " + FAI[i].Name + ".to_" + FAI[i].MangledTypeName + "().c();");
@@ -1071,7 +1072,7 @@ namespace G25.CG.Shared
             }
 
             // get grade function
-            string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { gmv.Name }, FT, null);
+            string gradeFuncName = G25.CG.Shared.Dependencies.GetDependency(S, cgd, G25.CG.Shared.CANSparts.EXTRACT_GRADE, new String[] { gmv.Name, G25.GroupBitmapType.GROUP_BITMAP }, FT, null);
 
             // get string to be used for grade extraction
             string gradeUsageString;
