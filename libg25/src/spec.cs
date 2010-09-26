@@ -614,6 +614,23 @@ namespace G25
             m_operators[pos] = newOp;
         }
 
+        /// <returns>A map from function name to operator</returns>
+        public Dictionary<string, List<G25.Operator>> GetOperatorMap()
+        {
+            Dictionary<string, List<G25.Operator>> operatorMap = new Dictionary<string, List<Operator>>();
+            foreach (G25.Operator op in m_operators)
+            {
+                if (!operatorMap.ContainsKey(op.FunctionName))
+                {
+                    operatorMap[op.FunctionName] = new List<Operator>();
+                }
+                operatorMap[op.FunctionName].Add(op);
+            }
+            return operatorMap;
+        }
+
+
+
         /// <returns>true if 'typeName' is a floating point type, general multivector, specialized multivector, general outermorphism or specialized outermorphism name.</returns>
         public bool IsTypeName(String typeName)
         {

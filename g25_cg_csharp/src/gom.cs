@@ -79,6 +79,9 @@ namespace G25.CG.CSharp
             G25.CG.CSJ.GOM.WriteSetVectorImages(S, cgd, FT, true, false); // true, false = matrixMode, transpose
             G25.CG.CSJ.GOM.WriteSOMtoGOMcopy(S, cgd, FT);
 
+            // write shortcuts for functions
+            G25.CG.Shared.Shortcut.WriteFunctionShortcuts(SB, S, cgd, FT, gom);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 

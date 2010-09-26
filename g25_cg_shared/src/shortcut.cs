@@ -42,11 +42,14 @@ namespace G25.CG.Shared
         /// <param name="type">The type for which the function should be written.</param>
         public static void WriteFunctionShortcuts(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type)
         {
+            Dictionary<string, List<G25.Operator>> operatorMap = S.GetOperatorMap();
+
             foreach (G25.fgs fgs in S.m_functions)
             {
                 if (fgs.GetSupportedByPlugin() && (fgs.NbArguments >= 1) && (Array.IndexOf(fgs.FloatNames, FT.type) >= 0))
                 {
 
+                    // get function arguments
                     bool computeMultivectorValue = false;
                     G25.CG.Shared.FuncArgInfo[] FAI = null;
                     try
@@ -55,16 +58,18 @@ namespace G25.CG.Shared
                     }
                     catch (Exception ex)
                     {
-                        FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(S, fgs, fgs.NbArguments, FT, "not set", computeMultivectorValue);
                         if ((type is G25.GMV) && (FT == S.m_floatTypes[0])) // only warn once
                             Console.WriteLine("Warning: cannot generate shortcut to " + fgs.ToString());
                         continue;
                     }
 
+                    // if type matches, write the shortcut, and possibly an operator
                     if (FAI[0].TypeName.Equals(type.GetName()))
                     {
                         WriteFunctionShortcut(SB, S, cgd, FT, type, fgs, FAI);
+                        WriteOperatorShortcut(SB, S, cgd, FT, type, fgs, FAI, operatorMap);
                     }
+                    
                 }
             }
         } // end of function WriteFunctionShortcuts()
@@ -100,7 +105,7 @@ namespace G25.CG.Shared
 
 
         /// <summary>
-        /// Writes all shortcuts for 'type'.
+        /// Writes a shortcut for 'type', 'fgs'.
         /// </summary>
         /// <param name="SB">Where the code goes.</param>
         /// <param name="S">Used for basis vector names and output language.</param>
@@ -144,6 +149,32 @@ namespace G25.CG.Shared
 
         }
 
+        /// <summary>
+        /// Checks if an operator should be written for the combination of 'type' and 'fgs'.
+        /// </summary>
+        /// <param name="SB">Where the code goes.</param>
+        /// <param name="S">Used for basis vector names and output language.</param>
+        /// <param name="cgd">Not used yet.</param>
+        /// <param name="FT">Float point type of 'type'.</param>
+        /// <param name="type">The type for which shortcuts should be written.</param>
+        /// <param name="fgs"></param>
+        /// <param name="FAI"></param>
+        /// <param name="operatorMap"></param>
+        public static void WriteOperatorShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
+            G25.fgs fgs, FuncArgInfo[] FAI, Dictionary<string, List<G25.Operator>> operatorMap) //todo: extra operator for bound ops
+        {
+
+            if (S.OutputJava() || S.OutputC()) return; // cannot override operators in Java or C
+
+            // check for, get entry in operatorMap for fgs.OutputName
+            // check if number of arguments matches
+            // if so, check if operator is already bound
+            // else write operator
+
+            // see http://www.blackwasp.co.uk/CSharpOperatorOverloading.aspx
+
+
+        }
 
     } // end of class Shortcut
 } // end of namepace G25.CG.Shared

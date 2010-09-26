@@ -38,20 +38,6 @@ namespace G25.CG.CPP
             WriteOperators(SB, S, cgd, declOnly);
         }
 
-        private static Dictionary<string, List<G25.Operator>> GetOperatorMap(Specification S)
-        {
-            Dictionary<string, List<G25.Operator>> operatorMap = new Dictionary<string, List<Operator>>();
-            foreach (G25.Operator op in S.m_operators)
-            {
-                if (!operatorMap.ContainsKey(op.FunctionName))
-                {
-                    operatorMap[op.FunctionName] = new List<Operator>();
-                }
-                operatorMap[op.FunctionName].Add(op);
-            }
-            return operatorMap;
-        }
-
         private static string GetFuncDecl(Specification S, bool declOnly, G25.fgs FGS, G25.Operator op, G25.FloatType FT, bool assign, bool constVal, bool returnByReference) 
         {
             StringBuilder SB = new StringBuilder();
@@ -205,7 +191,7 @@ namespace G25.CG.CPP
 
         private static void WriteOperators(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, bool declOnly)
         {
-            Dictionary<string, List<G25.Operator>> operatorMap = GetOperatorMap(S);
+            Dictionary<string, List<G25.Operator>> operatorMap = S.GetOperatorMap();
             Dictionary<string, bool> boundOperators = new Dictionary<string,bool>();
 
             // for all functions, find the matching op, write function
@@ -214,13 +200,13 @@ namespace G25.CG.CPP
                 if (!operatorMap.ContainsKey(FGS.OutputName)) continue;
                 //if (FGS.MetricName != S.m_metric[0].m_name) continue; // only bind for default metric
 
-                // check if all operators are built-in
+                // check if all argument types are built-in
                 bool allArgTypesAreBuiltin = true;
                 for (int i = 0; i < FGS.m_argumentTypeNames.Length; i++)
                     if (!S.IsFloatType(FGS.m_argumentTypeNames[i]))
                         allArgTypesAreBuiltin = false;
 
-                if (allArgTypesAreBuiltin) continue; // cannot override for builtin types
+                if (allArgTypesAreBuiltin) continue; // cannot overload operator for builtin types
 
                 List<G25.Operator> opList = operatorMap[FGS.OutputName];
 

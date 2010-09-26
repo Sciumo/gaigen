@@ -80,6 +80,9 @@ namespace G25.CG.Java
             G25.CG.Shared.OMinit.WriteSetMatrix(S, cgd, FT, som, true); // true = transpose 
             G25.CG.CSJ.SOM.WriteGOMtoSOMcopy(S, cgd, FT, som);
 
+            // write shortcuts for functions
+            G25.CG.Shared.Shortcut.WriteFunctionShortcuts(SB, S, cgd, FT, som);
+
             // close class
             G25.CG.Shared.Util.WriteCloseClass(SB, S, className);
 
