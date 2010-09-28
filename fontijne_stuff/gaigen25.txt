@@ -201,6 +201,7 @@ Maybe fix the float type stuff
 	add a section to manual which describes typical usage (add functions as needed, grows quickly in beginning, then gets more complete as you progress).
 		also recommend copy-paste printfs to GAViewer (works for all languages) REMINDER FOR PRECISION!
 		underscore constructors (or explicit once, in C# and Java)
+		Have programming examples for each language of a simple problem
 	
 	Announce on GA net
 	

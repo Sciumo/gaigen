@@ -43,6 +43,7 @@ namespace G25.CG.Shared
         public static void WriteFunctionShortcuts(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type)
         {
             Dictionary<string, List<G25.Operator>> operatorMap = S.GetOperatorMap();
+            Dictionary<string, bool> boundOperators = new Dictionary<string, bool>();
 
             foreach (G25.fgs fgs in S.m_functions)
             {
@@ -67,7 +68,7 @@ namespace G25.CG.Shared
                     if (FAI[0].TypeName.Equals(type.GetName()))
                     {
                         WriteFunctionShortcut(SB, S, cgd, FT, type, fgs, FAI);
-                        WriteOperatorShortcut(SB, S, cgd, FT, type, fgs, FAI, operatorMap);
+                        WriteOperatorShortcut(SB, S, cgd, FT, type, fgs, FAI, operatorMap, boundOperators);
                     }
                     
                 }
@@ -160,20 +161,87 @@ namespace G25.CG.Shared
         /// <param name="fgs"></param>
         /// <param name="FAI"></param>
         /// <param name="operatorMap"></param>
-        public static void WriteOperatorShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
-            G25.fgs fgs, FuncArgInfo[] FAI, Dictionary<string, List<G25.Operator>> operatorMap) //todo: extra operator for bound ops
+        /// <param name="boundOperators"></param>
+        private static void WriteOperatorShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
+            G25.fgs fgs, FuncArgInfo[] FAI, 
+            Dictionary<string, List<G25.Operator>> operatorMap, Dictionary<string, bool> boundOperators)
         {
 
             if (S.OutputJava() || S.OutputC()) return; // cannot override operators in Java or C
 
             // check for, get entry in operatorMap for fgs.OutputName
+            if (!operatorMap.ContainsKey(fgs.OutputName)) return;
+            List<G25.Operator> opList = operatorMap[fgs.OutputName];
+
             // check if number of arguments matches
-            // if so, check if operator is already bound
-            // else write operator
+            foreach (G25.Operator op in opList)
+            {
+                if (op.NbArguments == fgs.NbArguments)
+                {
+                    // check if this operator already bound to function with the same arguments
+                    string uniqueOpArgId = op.Symbol;
+                    for (int a = 0; a < fgs.NbArguments; a++)
+                        uniqueOpArgId += "~_~" + fgs.m_argumentTypeNames[a];
+                    if (boundOperators.ContainsKey(uniqueOpArgId)) continue;
+                    else boundOperators[uniqueOpArgId] = true;
 
-            // see http://www.blackwasp.co.uk/CSharpOperatorOverloading.aspx
+                    WriteOperatorShortcut(SB, S, cgd, FT, type, fgs, FAI, op);
+                }
+            }
+        }
 
 
+        private static string getOperatorCall(Specification S, G25.fgs fgs, FuncArgInfo[] FAI)
+        {
+            StringBuilder SB = new StringBuilder();
+
+            SB.Append(S.m_namespace);
+            SB.Append(".");
+            SB.Append(fgs.OutputName);
+            SB.Append("(");
+
+            bool comma = false;
+            foreach (G25.CG.Shared.FuncArgInfo fai in FAI)
+            {
+                if (comma) SB.Append(", ");
+                comma = true;
+                SB.Append(fai.Name);
+            }
+            SB.Append(")");
+            return SB.ToString();
+        }
+
+        private static void WriteOperatorShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
+            G25.fgs fgs, FuncArgInfo[] FAI, G25.Operator op)
+        {
+            string operatorCall = getOperatorCall(S, fgs, FAI);
+
+           SB.AppendLine("");
+
+           int nbTabs = 1;
+           // output comment
+           new Comment("operator for " + operatorCall).Write(SB, S, nbTabs);
+
+
+           //SB.Append("\tpublic static " + );
+            bool inline = false;
+            bool staticFunc = true;
+            string returnType = FT.GetMangledName(S, fgs.ReturnTypeName);
+            FuncArgInfo returnArgument = null;
+
+            SB.Append('\t', nbTabs);
+            Functions.WriteDeclaration(SB, S, cgd,
+                inline, staticFunc, returnType, "operator " + op.Symbol,
+                returnArgument, FAI);
+            SB.AppendLine(" {");
+
+            SB.Append('\t', nbTabs+1);
+            SB.Append("return ");
+            SB.Append(operatorCall);
+            SB.AppendLine(";");
+
+            SB.Append('\t', nbTabs);
+            SB.AppendLine("}");
         }
 
     } // end of class Shortcut

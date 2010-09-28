@@ -887,8 +887,6 @@ namespace G25
         /// </summary>
         private void SetDefaultOperatorBindingsCSharp()
         {
-            // todo: this is just the same code as C++
-            // Still have to check whether C# allows the same ops as C++
             AddOperator(Operator.Binary("+", "add"));
             AddOperator(Operator.Binary("-", "subtract"));
             AddOperator(Operator.UnaryPrefix("-", "negate"));
@@ -904,11 +902,8 @@ namespace G25
             AddOperator(Operator.Binary("|", "join"));
 
             AddOperator(Operator.UnaryPrefix("++", "increment"));
-            AddOperator(Operator.UnaryPostfix("++", "increment"));
             AddOperator(Operator.UnaryPrefix("--", "decrement"));
-            AddOperator(Operator.UnaryPostfix("--", "decrement"));
 
-            AddOperator(Operator.UnaryPrefix("*", "dual"));
             AddOperator(Operator.UnaryPrefix("!", "versorInverse"));
             AddOperator(Operator.UnaryPrefix("~", "reverse"));
 
