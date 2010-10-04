@@ -1,0 +1,77 @@
+These are benchmark results in order to decide whether to use
+-native Matlab code
+-mex
+-Java in Matlab
+
+Conclusions so far:
+
+Todo: mex version
+
+Native Matlab can do 46400 calls per second.
+So Native Matlab is really slow!
+
+Pure Java can do 14900000 calls per second.
+Matlab Java can do 37000 calls per second.
+So Matlab Java is really slow!
+
+--------------------------------------------------
+
+Really simple matlab code:
+x = 0.00001; tic,for j=1:100000000, x = x * 1.0000123; end; toc,
+Elapsed time is 0.484767 seconds.
+
+So Matlab console _can_ be fast (about 200 million calls per second).
+
+--------------------------------------------------
+
+Matlab native timing code:
+
+Function is in applyUnitVersor.m
+
+rbm = [1 2 3 4 5 6 7 8];
+pt = [1 2 3 4];
+tic,for j=1:100000, x = applyUnitVersor(rbm, pt); end; toc,
+
+Elapsed time is 2.155959 seconds.
+
+--------------------------------------------------
+
+Matlab / Java timing code:
+
+javaaddpath('C:\loft_nedsense_lighting\loft_c3ga\target\loft_c3ga-1.3-1.jar');
+rbm = C3ga_pkg.RBM(C3ga_pkg.RBM.coord_scalar_e1e2_e2e3_e3e1_e1ni_e2ni_e3ni_e1e2e3ni, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+pt = C3ga_pkg.NormalizedPoint(C3ga_pkg.NormalizedPoint.coord_e1_e2_e3_ni, 1, 2, 3, 4);
+C3ga_pkg.C3ga.applyUnitVersor(rbm, pt);
+
+tic,for j=1:100000, x = C3ga_pkg.C3ga.applyUnitVersor(rbm, pt); end; toc,
+
+Elapsed time is 2.705688 seconds.
+
+--------------------------------------------------
+
+Java timing code:
+
+import C3ga_pkg.C3ga;
+import C3ga_pkg.NormalizedPoint;
+import C3ga_pkg.RBM;
+
+public class TempMain {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		RBM rbm = new RBM(RBM.coord_scalar_e1e2_e2e3_e3e1_e1ni_e2ni_e3ni_e1e2e3ni, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f);
+		NormalizedPoint pt = new NormalizedPoint(C3ga_pkg.NormalizedPoint.coord_e1_e2_e3_ni, 1.0f, 2.0f, 3.0f, 4.0f);
+		NormalizedPoint x;
+
+		double t = System.currentTimeMillis();
+		for (int j = 0; j < 100000000; j++) {
+			x = C3ga.applyUnitVersor(rbm, pt);
+		}
+		System.out.println("how long: " + ((double)(System.currentTimeMillis() - t) / 1000.0));
+	} 
+
+}
+
+6.73 seconds
