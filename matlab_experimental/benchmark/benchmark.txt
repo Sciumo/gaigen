@@ -7,11 +7,13 @@ Conclusions so far:
 
 Todo: mex version
 
-Native Matlab can do 46400 calls per second.
+Mex 'C' Matlab can do 207.900 calls per second.
+
+Native Matlab can do 46.400 calls per second.
 So Native Matlab is really slow!
 
-Pure Java can do 14900000 calls per second.
-Matlab Java can do 37000 calls per second.
+Pure Java can do 14.900.000 calls per second.
+Matlab Java can do 37.000 calls per second.
 So Matlab Java is really slow!
 
 --------------------------------------------------
@@ -21,6 +23,13 @@ x = 0.00001; tic,for j=1:100000000, x = x * 1.0000123; end; toc,
 Elapsed time is 0.484767 seconds.
 
 So Matlab console _can_ be fast (about 200 million calls per second).
+
+--------------------------------------------------
+
+Matlab Mex native timing code:
+
+>> tic,for j=1:1000000, x = nativeApplyUnitVersor(rbm, pt); end; toc,
+Elapsed time is 4.816267 seconds.
 
 --------------------------------------------------
 
