@@ -57,7 +57,7 @@ namespace G25
     public class fgs : IComparable  
     {
 
-        public static String RETURN_ARG_NAME = "_dst";
+        public static string RETURN_ARG_NAME = "_dst";
 
         /// <summary>
         /// Constructor.
@@ -245,8 +245,8 @@ namespace G25
                 else if (m_options.Count > B.m_options.Count) return 1;
                 else {
                     // convert options to arrays, then compare:
-                    String[] OA = OptionsToStringArray();
-                    String[] OB = B.OptionsToStringArray();
+                    string[] OA = OptionsToStringArray();
+                    string[] OB = B.OptionsToStringArray();
 
                     if ((C = CompareArrays(OA, OB)) != 0) return C;
                 }
@@ -503,9 +503,41 @@ namespace G25
         /// <returns>true if this fgs is a converter (underscore constructor).</returns>
         public bool IsConverter(Specification S)
         {
-            if ((Name.Length > 0) && (Name[0] == '_'))
+            if (ArgumentTypeNames.Length != 1) return false;
+            else if ((Name.Length > 0) && (Name[0] == '_'))
                 return (S.IsSpecializedMultivectorName(Name.Substring(1)));
             else return false;
+        }
+
+        /// <summary>
+        /// Determines whether this fgs is a converter with source 'type'/'FT'.
+        /// </summary>
+        public bool IsConverterSource(Specification S, G25.SMV smv, FloatType FT) {
+
+            if (!IsConverter(S)) return false;
+            
+            if (!ArgumentTypeNames[0].Equals(smv.GetName())) return false;
+            foreach (string floatName in FloatNames)
+            {
+                if (floatName.Equals(FT.type)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether this fgs is a converter for destination 'type'/'FT'.
+        /// </summary>
+        public bool IsConverterDestination(Specification S, G25.SMV smv, FloatType FT)
+        {
+
+            if (!IsConverter(S)) return false;
+
+            if (!Name.Equals("_" + smv.GetName())) return false;
+            foreach (string floatName in FloatNames)
+            {
+                if (floatName.Equals(FT.type)) return true;
+            }
+            return false;
         }
 
 

@@ -170,31 +170,54 @@ Maybe fix the float type stuff
 			
 			AND THEN finish the following:
 			
-				-> Java and C# GMV, SMV member function shortcuts (for regular functions)
-					for each class that is generated, check all functions
-					also pick up the converters and generator code
-					-> do it GOM and SOM too
+				V Java and C# GMV, SMV member function shortcuts (for regular functions)
 					
-				then run large test (-r 1000)
-					
-				C# operators
+				V C# operators
 				
-				explicit converters for C#
+				V check that converters are present
+				
+				
+				-> explicit converters for C#
+				
+				see in functions.cs
+				
+				public static void WriteReturnFunction(
+            Specification S, G25.CG.Shared.CGdata cgd, 
+            bool inline, bool staticFunc, string functionName,
+            FuncArgInfo[] arguments,
+            FloatType returnFT, bool mustCastDst, G25.VariableType returnType, RefGA.Multivector value)
+            
+				ReturnInstruction RI = new ReturnInstruction(nbTabs, returnType, returnFT, mustCastDst, value);
+				
+    public vectorE3GA toVectorE3GA(normalizedPoint pt)
+    {
+        return c3ga._vectorE3GA(pt);
+    }
 					
-				check that converters are present
+    public static explicit operator vectorE3GA(normalizedPoint pt)
+    {
+        return c3ga._vectorE3GA(pt);
+    }
+    
+    public vectorE3GA(normalizedPoint pt)
+    {
+        // assign values here . . . 
+        // is code from converter easy to copy?
+    }
+    
+					
 
 				Java and C# report usage
 
-
-				Java and C# SMV converters as constructors because this is possible (SMV->SMV and such)
-					for C#, see http://msdn.microsoft.com/en-us/library/xhbhezf4%28v=VS.80%29.aspx
-			
 				GMV log 3d for C# (done?), for Java, too, add testing functions
+
+				then run large test (-r 1000)
+				
 
 
 	SourceForge website HTML pages
 	
-	Matlab version: working on it with Robert Valkenburg
+	Matlab / C version: working on it with Robert Valkenburg
 	Python version: ask Liam Candy (liam.candy AT gmail DOT com)
 	Fortran 77 version: Philip Kuntz (cloraphyl AT gmx DOT com)
 	

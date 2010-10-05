@@ -113,7 +113,7 @@ namespace G25.CG.Shared
         /// <param name="mangledSrcTypename">Source type (e.g. <c>"dualSphere"</c>).</param>
         /// <param name="mangledDstTypename">Destination type (e.g. <c>"vectorE3GA"</c>).</param>
         /// <returns>the name of a converter function.</returns>
-        public static String GetConverterName(G25.Specification S, G25.fgs F, String mangledSrcTypename, String mangledDstTypename)
+        public static string GetConverterName(G25.Specification S, G25.fgs F, string mangledSrcTypename, String mangledDstTypename)
         {
             if ((F != null) && (F.OutputName != F.Name)) return F.OutputName;
 
