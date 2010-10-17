@@ -43,7 +43,6 @@ namespace G25.CG.Shared
             {
                 string rawSrcTypeName = m_fgs.GetArgumentTypeName(0, null); // null = no default name
                 string rawDstTypeName = m_fgs.Name.Substring(1); // dest = function name minus the underscore.
-                //G25.SMV dstSmv = m_specification.GetSMV(rawDstTypeName);
 
                 const int nbArgs = 1;
                 foreach (string floatName in m_fgs.FloatNames) 
@@ -56,18 +55,13 @@ namespace G25.CG.Shared
                     bool computeMultivectorValue = true;
                     G25.CG.Shared.FuncArgInfo[] FAI = G25.CG.Shared.FuncArgInfo.GetAllFuncArgInfo(m_specification, m_fgs, nbArgs, FT, m_specification.m_GMV.Name, computeMultivectorValue);
 
+                    // comment:
+                    Comment comment = GetComment(m_specification, srcTypeName, dstTypeName, FAI[0].Name, m_fgs.Comment);
+                    comment.Write((m_specification.OutputCSharpOrJava()) ? m_defSB : m_declSB, m_specification, 1);
+
                     // if scalar or specialized: generate specialized function
                     // get symbolic result
                     RefGA.Multivector value = FAI[0].MultivectorValue[0];
-
-                    // comment:
-                    m_declSB.Append("/** Converts " + srcTypeName + " to " + dstTypeName + ": " + "dst" + " = " + FAI[0].Name + ".");
-                    if (m_fgs.Comment.Length != 0)
-                    {
-                        m_declSB.AppendLine();
-                        m_declSB.Append(m_fgs.Comment);
-                    }
-                    m_declSB.AppendLine(" */");
 
                     string funcName = G25.CG.Shared.Converter.GetConverterName(m_specification, m_fgs, srcTypeName, dstTypeName);
                     bool mustCast = false;
@@ -113,7 +107,7 @@ namespace G25.CG.Shared
         /// <param name="mangledSrcTypename">Source type (e.g. <c>"dualSphere"</c>).</param>
         /// <param name="mangledDstTypename">Destination type (e.g. <c>"vectorE3GA"</c>).</param>
         /// <returns>the name of a converter function.</returns>
-        public static string GetConverterName(G25.Specification S, G25.fgs F, string mangledSrcTypename, String mangledDstTypename)
+        public static string GetConverterName(G25.Specification S, G25.fgs F, string mangledSrcTypename, string mangledDstTypename)
         {
             if ((F != null) && (F.OutputName != F.Name)) return F.OutputName;
 
@@ -130,6 +124,48 @@ namespace G25.CG.Shared
             }
             
         }
+
+        public static Comment GetComment(Specification S, string srcTypeName, string dstTypeName, string argName, string extraComment)
+        {
+            Comment comment = new Comment("Converts " + srcTypeName + " to " + dstTypeName + ": " + "dst" + " = " + argName + ".");
+            if ((extraComment != null) && (extraComment.Length > 0))
+            {
+                comment = comment.AddSummaryComment(extraComment);
+            }
+            return comment;
+        }
+
+
+        public static void WriteMemberConverter(StringBuilder SB, Specification S, FloatType FT, SMV srcSmv, SMV dstSmv) {
+
+            if (S.OutputCSharp())
+            {
+                WriteExplicitConverterCSharp(SB, S, FT, srcSmv, dstSmv);
+            }
+
+            if (S.OutputCSharpOrJava())
+            {
+                SB.AppendLine("// todo constructor  " + srcSmv.GetName() + " -> " + dstSmv.GetName());
+
+                // for C# write explicit converter
+                // for Java and C#, write constructor
+            }
+
+        }
+
+        private static void WriteExplicitConverterCSharp(StringBuilder SB, Specification S, FloatType FT, SMV srcSmv, SMV dstSmv)
+        {
+            string srcTypeName = FT.GetMangledName(S, srcSmv.GetName());
+            string dstTypeName = FT.GetMangledName(S, dstSmv.GetName());
+            string argName = "x";
+            string extraComment = null;
+            Comment comment = GetComment(S, srcTypeName, dstTypeName, argName, extraComment);
+            comment.Write(SB, S, 1);
+            SB.AppendLine("\tpublic static explicit operator " + dstTypeName + " (" + srcTypeName + " x) {");
+            SB.AppendLine("\t\treturn " + S.m_namespace + "._" + dstTypeName + "(" + argName + ");");
+            SB.AppendLine("\t}");
+        }
+
 
         protected Specification m_specification;
         public G25.CG.Shared.CGdata m_cgd; // todo: this cgd and the SBs below should be handled the same way the functions do!

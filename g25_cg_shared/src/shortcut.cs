@@ -51,14 +51,15 @@ namespace G25.CG.Shared
             {
                 if ((type is G25.SMV) && fgs.IsConverter(S)) 
                 {
+                    G25.SMV smv = (G25.SMV)type;
                     if (fgs.IsConverterSource(S, (G25.SMV)type, FT))
                     {
                         // write converter here . . . 
-                        SB.AppendLine("// converter source here!");
-                    } else if (fgs.IsConverterDestination(S, (G25.SMV)type, FT))
+                        //SB.AppendLine("// converter source here!");
+                    } else if (fgs.IsConverterDestination(S, smv, FT))
                     {
                         // write converter here . . . 
-                        SB.AppendLine("// converter destination here!");
+                        Converter.WriteMemberConverter(SB, S, FT, (G25.SMV)S.GetType(fgs.ArgumentTypeNames[0]), smv);
                     }
                 }
                 else if (fgs.GetSupportedByPlugin() && (fgs.NbArguments >= 1) && (Array.IndexOf(fgs.FloatNames, FT.type) >= 0))

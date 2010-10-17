@@ -173,11 +173,12 @@ Maybe fix the float type stuff
 				V Java and C# GMV, SMV member function shortcuts (for regular functions)
 					
 				V C# operators
+					-> fix trouble with operators you never caught!
 				
 				V check that converters are present
 				
 				
-				-> explicit converters for C#
+				-> explicit converters for C#, converting constructors for Java
 				
 				see in functions.cs
 				
