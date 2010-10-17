@@ -182,6 +182,11 @@ namespace G25.CG.Shared
             Dictionary<string, List<G25.Operator>> operatorMap, Dictionary<string, bool> boundOperators)
         {
 
+            // in SPECIFICATION, 
+            // check for << and >> in C#
+
+            // also, do not convert mv -> mv_if and such in operators!
+
             if (S.OutputJava() || S.OutputC()) return; // cannot override operators in Java or C
 
             // check for, get entry in operatorMap for fgs.OutputName

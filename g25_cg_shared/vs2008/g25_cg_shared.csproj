@@ -59,7 +59,7 @@
     <Compile Include="..\src\specializedreturntype.cs" />
     <Compile Include="..\src\symbolic.cs" />
     <Compile Include="..\src\util.cs" />
-    <Compile Include="..\src\converters.cs" />
+    <Compile Include="..\src\converter.cs" />
     <Compile Include="..\src\dependencies.cs" />
     <Compile Include="..\src\cg_data.cs" />
     <Compile Include="..\src\threads.cs" />
