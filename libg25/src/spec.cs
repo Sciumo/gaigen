@@ -892,8 +892,8 @@ namespace G25
             AddOperator(Operator.UnaryPrefix("-", "negate"));
 
             AddOperator(Operator.Binary("%", "sp"));
-            AddOperator(Operator.Binary("<<", "lc"));
-            AddOperator(Operator.Binary(">>", "rc"));
+            //AddOperator(Operator.Binary("<<", "lc")); // C# does not allow the second argument to be anything else than an integer
+            //AddOperator(Operator.Binary(">>", "rc")); // C# does not allow the second argument to be anything else than an integer
             AddOperator(Operator.Binary("^", "op"));
             AddOperator(Operator.Binary("*", "gp"));
             AddOperator(Operator.Binary("/", "igp"));

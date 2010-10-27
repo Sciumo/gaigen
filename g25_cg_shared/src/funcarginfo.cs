@@ -134,6 +134,8 @@ namespace G25.CG.Shared
 
         public bool MvInterface { get { return m_mvInterface; } }
 
+        public void ClearMvInterface() { m_mvInterface = false; }
+
         /// <summary>Name of argument (e.g., "A").</summary>
         public string Name { get { return m_name; } }
         /// <summary>Name of type, e.g., "float" or "vectorE3GA".</summary>

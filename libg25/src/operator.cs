@@ -99,6 +99,18 @@ namespace G25
             return IsUnary() && (Symbol.Equals("++") || Symbol.Equals("--"));
         }
 
+        /// <returns>true when op symbol is "++".</returns>
+        public bool IsIncrement() {
+            return Symbol.Equals("++");
+        }
+
+        /// <returns>true when op symbol is "--".</returns>
+        public bool IsDecrement()
+        {
+            return Symbol.Equals("--");
+        }
+
+
         /// <summary>Number of arguments for the operator definitions (i.e., 1 or 2).</summary>
         public int NbArguments { get { return m_nbArguments; } }
         /// <summary>For unary operator definitions, whether op is prefix or postfix.</summary>

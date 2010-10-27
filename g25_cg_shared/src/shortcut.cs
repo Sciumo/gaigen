@@ -59,7 +59,7 @@ namespace G25.CG.Shared
                     } else if (fgs.IsConverterDestination(S, smv, FT))
                     {
                         // write converter here . . . 
-                        Converter.WriteMemberConverter(SB, S, FT, (G25.SMV)S.GetType(fgs.ArgumentTypeNames[0]), smv);
+                        Converter.WriteMemberConverter(SB, S, cgd, FT, (G25.SMV)S.GetType(fgs.ArgumentTypeNames[0]), smv);
                     }
                 }
                 else if (fgs.GetSupportedByPlugin() && (fgs.NbArguments >= 1) && (Array.IndexOf(fgs.FloatNames, FT.type) >= 0))
@@ -83,15 +83,25 @@ namespace G25.CG.Shared
                     if (FAI[0].TypeName.Equals(type.GetName()))
                     {
                         WriteFunctionShortcut(SB, S, cgd, FT, type, fgs, FAI);
+                        if (S.OutputCSharpOrJava())
+                            removeMvInterfaces(FAI); // arguments to operators need to be of the multivector type, not the multivector interface type
                         WriteOperatorShortcut(SB, S, cgd, FT, type, fgs, FAI, operatorMap, boundOperators);
                     }
                     
                 }
             }
         } // end of function WriteFunctionShortcuts()
-            
 
-        private static FuncArgInfo[] getTail(FuncArgInfo[] FAI) {
+        private static void removeMvInterfaces(G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+            for (int i = 0; i < FAI.Length; i++)
+            {
+                FAI[i].ClearMvInterface();
+            }
+        }
+
+        private static FuncArgInfo[] getTail(FuncArgInfo[] FAI)
+        {
 
             if (FAI.Length == 0) return null;
             else {
@@ -182,11 +192,6 @@ namespace G25.CG.Shared
             Dictionary<string, List<G25.Operator>> operatorMap, Dictionary<string, bool> boundOperators)
         {
 
-            // in SPECIFICATION, 
-            // check for << and >> in C#
-
-            // also, do not convert mv -> mv_if and such in operators!
-
             if (S.OutputJava() || S.OutputC()) return; // cannot override operators in Java or C
 
             // check for, get entry in operatorMap for fgs.OutputName
@@ -234,16 +239,21 @@ namespace G25.CG.Shared
         private static void WriteOperatorShortcut(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.VariableType type,
             G25.fgs fgs, FuncArgInfo[] FAI, G25.Operator op)
         {
+            // C# does not allow return type of ++ or -- to be different from input type
+            if (S.OutputCSharp() && 
+                (op.IsIncrement() || op.IsDecrement()) &&
+                (fgs.ReturnTypeName != type.GetName()))
+                return;
+            
+
             string operatorCall = getOperatorCall(S, fgs, FAI);
 
-           SB.AppendLine("");
+            SB.AppendLine("");
 
-           int nbTabs = 1;
-           // output comment
-           new Comment("operator for " + operatorCall).Write(SB, S, nbTabs);
+            int nbTabs = 1;
+            // output comment
+            new Comment("operator for " + operatorCall).Write(SB, S, nbTabs);
 
-
-           //SB.Append("\tpublic static " + );
             bool inline = false;
             bool staticFunc = true;
             string returnType = FT.GetMangledName(S, fgs.ReturnTypeName);

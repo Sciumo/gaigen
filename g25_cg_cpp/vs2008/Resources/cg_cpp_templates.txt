@@ -1796,7 +1796,7 @@ This class is used to report usage of converted specialized multivectors.
 
 The class is designed to be pretty safe with multi-threading without locking.
 In the wordt case, some memory leaks occur and some counts are missed. 
-The amount of memory leaked is bounded (goes not grow beyond a certain
+The amount of memory leaked is bounded (does not grow beyond a certain
 point). Since the report-usage functionality is for
 development/debugging only, this is not considered non-harmful.
 */
@@ -1921,7 +1921,7 @@ This class is used to report usage of converted specialized multivectors.
 
 The class is designed to be pretty safe with multi-threading without locking.
 In the wordt case, some memory leaks occur and some counts are missed. 
-The amount of memory leaked is bounded (goes not grow beyond a certain
+The amount of memory leaked is bounded (does not grow beyond a certain
 point). Since the report-usage functionality is for
 development/debugging only, this is not considered non-harmful.
 */

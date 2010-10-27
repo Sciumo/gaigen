@@ -177,36 +177,7 @@ Maybe fix the float type stuff
 				
 				V check that converters are present
 				
-				
-				-> explicit converters for C#, converting constructors for Java
-				
-				see in functions.cs
-				
-				public static void WriteReturnFunction(
-            Specification S, G25.CG.Shared.CGdata cgd, 
-            bool inline, bool staticFunc, string functionName,
-            FuncArgInfo[] arguments,
-            FloatType returnFT, bool mustCastDst, G25.VariableType returnType, RefGA.Multivector value)
-            
-				ReturnInstruction RI = new ReturnInstruction(nbTabs, returnType, returnFT, mustCastDst, value);
-				
-    public vectorE3GA toVectorE3GA(normalizedPoint pt)
-    {
-        return c3ga._vectorE3GA(pt);
-    }
-					
-    public static explicit operator vectorE3GA(normalizedPoint pt)
-    {
-        return c3ga._vectorE3GA(pt);
-    }
-    
-    public vectorE3GA(normalizedPoint pt)
-    {
-        // assign values here . . . 
-        // is code from converter easy to copy?
-    }
-    
-					
+				V explicit converters for C#, converting constructors for Java					
 
 				Java and C# report usage
 

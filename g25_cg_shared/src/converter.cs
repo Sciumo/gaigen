@@ -136,7 +136,7 @@ namespace G25.CG.Shared
         }
 
 
-        public static void WriteMemberConverter(StringBuilder SB, Specification S, FloatType FT, SMV srcSmv, SMV dstSmv) {
+        public static void WriteMemberConverter(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, SMV srcSmv, SMV dstSmv) {
 
             if (S.OutputCSharp())
             {
@@ -145,10 +145,7 @@ namespace G25.CG.Shared
 
             if (S.OutputCSharpOrJava())
             {
-                SB.AppendLine("// todo constructor  " + srcSmv.GetName() + " -> " + dstSmv.GetName());
-
-                // for C# write explicit converter
-                // for Java and C#, write constructor
+                WriteConvertingConstructor(SB, S, cgd, FT, srcSmv, dstSmv);
             }
 
         }
@@ -161,11 +158,32 @@ namespace G25.CG.Shared
             string extraComment = null;
             Comment comment = GetComment(S, srcTypeName, dstTypeName, argName, extraComment);
             comment.Write(SB, S, 1);
-            SB.AppendLine("\tpublic static explicit operator " + dstTypeName + " (" + srcTypeName + " x) {");
+            SB.AppendLine("\tpublic static explicit operator " + dstTypeName + " (" + srcTypeName + " " + argName + ") {");
             SB.AppendLine("\t\treturn " + S.m_namespace + "._" + dstTypeName + "(" + argName + ");");
             SB.AppendLine("\t}");
         }
 
+        private static void WriteConvertingConstructor(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, SMV srcSmv, SMV dstSmv)
+        {
+            string srcTypeName = FT.GetMangledName(S, srcSmv.GetName());
+            string dstTypeName = FT.GetMangledName(S, dstSmv.GetName());
+            string argName = "x";
+            Comment comment = new Comment("Converting constructor, from " + srcTypeName + " to " + dstTypeName);
+            comment.Write(SB, S, 1);
+
+            SB.AppendLine("\tpublic " + dstTypeName + "(" + srcTypeName + " " + argName + ") {");
+
+            int nbTabs = 2;
+            bool declareVariable = false;
+            bool cast = false;
+            bool srcPtr = false;
+            bool dstPtr = false;
+            RefGA.Multivector value = Symbolic.SMVtoSymbolicMultivector(S, srcSmv, argName, srcPtr);
+            AssignInstruction AI = new AssignInstruction(nbTabs, dstSmv, FT, cast, value, SmvUtil.THIS, dstPtr, declareVariable);
+            AI.Write(SB, S, cgd);
+
+            SB.AppendLine("\t}");
+        }
 
         protected Specification m_specification;
         public G25.CG.Shared.CGdata m_cgd; // todo: this cgd and the SBs below should be handled the same way the functions do!
