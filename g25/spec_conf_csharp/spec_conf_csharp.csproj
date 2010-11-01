@@ -110,6 +110,7 @@
     <Compile Include="pseudoscalar_f.cs" />
     <Compile Include="RBM.cs" />
     <Compile Include="RBM_f.cs" />
+    <Compile Include="ReportUsage.cs" />
     <Compile Include="rotor.cs" />
     <Compile Include="rotorE3GA.cs" />
     <Compile Include="rotorE3GA_f.cs" />

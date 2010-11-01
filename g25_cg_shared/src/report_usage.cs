@@ -41,7 +41,7 @@ namespace G25.CG.Shared
         // what arguments are required??
         public static Instruction GetReportInstruction(Specification S, G25.fgs F, FuncArgInfo[] FAI)
         {
-            if ((S.OutputC()) || (S.OutputCSharpOrJava()) || // TEMP DISABLE C# and Java report usage!
+            if ((S.OutputC()) || (S.OutputJava()) || // TEMP DISABLE Java report usage!
                 (!S.m_reportUsage)  ||
                 (FAI.Length == 0)) return new NOPinstruction();
 
@@ -56,6 +56,14 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
+            if (S.OutputCSharp())
+            {
+                for (int i = 0; i < FAI.Length; i++)
+                {
+                    SB.AppendLine("SmvType type_" + FAI[i].Name + " = " + FAI[i].Name + ".to_" + FAI[i].MangledTypeName +"().m_t;");
+                }
+            }
+
             {
                 string MV_CONSTANT = GetSpecializedConstantName(S, S.m_GMV.Name);
                 string INVALID_CONSTANT = GetSpecializedConstantName(S, INVALID);
@@ -68,11 +76,26 @@ namespace G25.CG.Shared
                         SB.AppendLine(" && ");
                         SB.Append("\t");
                     }
-                    SB.Append("(" + FAI[i].Name + ".m_t > " + MV_CONSTANT + ") && (" + FAI[i].Name + ".m_t < " + INVALID_CONSTANT + ")");
+                    if (S.OutputCpp())
+                    {
+                        SB.Append("(" + FAI[i].Name + ".m_t > " + MV_CONSTANT + ") && (" + FAI[i].Name + ".m_t < " + INVALID_CONSTANT + ")");
+                    }
+                    else
+                    {
+                        SB.Append("(type_" + FAI[i].Name + " > SmvType." + MV_CONSTANT + ") && (type_" + FAI[i].Name + " < SmvType." + INVALID_CONSTANT + ")");
+                    }
                 }
                 SB.AppendLine(") {");
 
-                SB.Append("\t\tstd::string reportUsageString = std::string(\"\") + ");
+
+                if (S.OutputCpp())
+                {
+                    SB.Append("\t\tstd::string reportUsageString = std::string(\"\") + ");
+                }
+                else
+                {
+                    SB.Append("\t\tstring reportUsageString = ");
+                }
                 // output XMLstr, replace placeholders with code
                 int XMLstrIdx = 0;
                 int argIdx = 0;
@@ -86,14 +109,28 @@ namespace G25.CG.Shared
                     SB.Append(Util.StringToCode(XMLstr.Substring(XMLstrIdx, nextIdx - XMLstrIdx)));
                     if (argIdx < FAI.Length)
                     {
-                        SB.Append("+ g_" + S.m_namespace + "Typenames[" + FAI[argIdx].Name + ".m_t] + ");
+                        if (S.OutputCpp())
+                        {
+                            SB.Append("+ g_" + S.m_namespace + "Typenames[" + FAI[argIdx].Name + ".m_t] + ");
+                        }
+                        else
+                        {
+                            SB.Append("+ typenames[(int)type_" + FAI[argIdx].Name + "] + ");
+                        }
                     }
 
                     argIdx++;
                     XMLstrIdx = nextIdx + placeHolder.Length;
                 }
                 SB.AppendLine(";");
-                SB.AppendLine("\t\tReportUsage::mergeReport(new ReportUsage(reportUsageString));");
+                if (S.OutputCpp())
+                {
+                    SB.AppendLine("\t\tReportUsage::mergeReport(new ReportUsage(reportUsageString));");
+                }
+                else
+                {
+                    SB.AppendLine("\t\tReportUsage.MergeReport(new ReportUsage(reportUsageString));");
+                }
 
                 SB.AppendLine("}");
             }

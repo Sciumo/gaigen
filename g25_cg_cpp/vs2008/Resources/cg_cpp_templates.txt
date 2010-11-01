@@ -1795,7 +1795,7 @@ ${CODEBLOCK ReportUsageHeader}
 This class is used to report usage of converted specialized multivectors.
 
 The class is designed to be pretty safe with multi-threading without locking.
-In the wordt case, some memory leaks occur and some counts are missed. 
+In the worst case, some memory leaks occur and some counts are missed. 
 The amount of memory leaked is bounded (does not grow beyond a certain
 point). Since the report-usage functionality is for
 development/debugging only, this is not considered non-harmful.
@@ -1918,12 +1918,6 @@ ${ENDCODEBLOCK}
 ${CODEBLOCK NoReportUsageHeader}
 /**
 This class is used to report usage of converted specialized multivectors.
-
-The class is designed to be pretty safe with multi-threading without locking.
-In the wordt case, some memory leaks occur and some counts are missed. 
-The amount of memory leaked is bounded (does not grow beyond a certain
-point). Since the report-usage functionality is for
-development/debugging only, this is not considered non-harmful.
 */
 class ReportUsage {
 	/// prints out error message that ReportUsage is disabled

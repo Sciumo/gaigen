@@ -1318,7 +1318,7 @@ namespace G25
         /// <summary>
         /// Overrides for filenames. A map from default names to custom, user specified names.
         /// </summary>
-        public Dictionary<String, String> m_outputFilenameOverrides = new Dictionary<String, String>();
+        public Dictionary<string, string> m_outputFilenameOverrides = new Dictionary<string, string>();
 
         /// <summary>
         /// Verbatim code fragments that should be inserted into output files.

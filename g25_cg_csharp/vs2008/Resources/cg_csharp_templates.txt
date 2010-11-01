@@ -605,3 +605,73 @@ ${CODEBLOCK parserShortcut}
     }
 ${ENDCODEBLOCK}
 
+${CODEBLOCK reportUsage}
+
+class ReportUsage
+{
+    protected static Dictionary<string, ReportUsage> s_reportUsage = new Dictionary<string, ReportUsage>();
+
+    /// <summary>
+    ///  Adds a report to the global report usage hash table.
+    /// </summary>
+    public static void MergeReport(ReportUsage RU)
+    {
+        if (s_reportUsage.ContainsKey(RU.GetReportString())) {
+            s_reportUsage[RU.GetReportString()].IncrementCount();
+        }
+        else {
+             s_reportUsage.Add(RU.GetReportString(), RU);
+        }
+    }
+
+    /// prints out all reports, sorted by m_str
+    public static string GetReport(bool includeCount)
+    {
+        StringBuilder sb = new StringBuilder();
+        SortedDictionary<string, ReportUsage> sortedReportUsage = new SortedDictionary<string, ReportUsage>(s_reportUsage);
+        foreach (KeyValuePair<string, ReportUsage> kvp in sortedReportUsage ) {
+            ReportUsage ru = kvp.Value;
+            sb.Append(ru.GetReportString());
+            if (includeCount)
+            {
+                sb.AppendFormat("  <!-- used %d time%s -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
+            }
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    public ReportUsage(string xmlStr)
+    {
+        m_str = xmlStr;
+        m_count = 1;
+    }
+
+    public string GetReportString()
+    {
+        return m_str;
+    }
+
+    public int GetReportCount()
+    {
+        return m_count;
+    }
+
+    protected void IncrementCount()
+    {
+        m_count++;
+    }
+
+    /// <summary>
+    /// XML string describing the report.
+    /// </summary>
+    protected string m_str;
+
+    /// <summary>
+    /// Number of times report has been reported.
+    /// </summary>
+    int m_count;
+}
+
+${ENDCODEBLOCK}

@@ -45,6 +45,7 @@
     <Compile Include="..\src\source.cs" />
     <Compile Include="..\src\testsuite.cs" />
     <Compile Include="..\src\util.cs" />
+    <Compile Include="..\src\reportusage.cs" />
     <Compile Include="..\src\functions\addsubtract.cs">
       <Link>functions\addsubtract.cs</Link>
     </Compile>
