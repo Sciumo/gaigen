@@ -41,7 +41,7 @@ namespace G25.CG.Shared
         // what arguments are required??
         public static Instruction GetReportInstruction(Specification S, G25.fgs F, FuncArgInfo[] FAI)
         {
-            if ((S.OutputC()) || (S.OutputJava()) || // TEMP DISABLE Java report usage!
+            if ((S.OutputC()) || 
                 (!S.m_reportUsage)  ||
                 (FAI.Length == 0)) return new NOPinstruction();
 
@@ -56,7 +56,7 @@ namespace G25.CG.Shared
 
             StringBuilder SB = new StringBuilder();
 
-            if (S.OutputCSharp())
+            if (S.OutputCSharpOrJava())
             {
                 for (int i = 0; i < FAI.Length; i++)
                 {
@@ -80,9 +80,13 @@ namespace G25.CG.Shared
                     {
                         SB.Append("(" + FAI[i].Name + ".m_t > " + MV_CONSTANT + ") && (" + FAI[i].Name + ".m_t < " + INVALID_CONSTANT + ")");
                     }
-                    else
+                    else if (S.OutputCSharp())
                     {
                         SB.Append("(type_" + FAI[i].Name + " > SmvType." + MV_CONSTANT + ") && (type_" + FAI[i].Name + " < SmvType." + INVALID_CONSTANT + ")");
+                    }
+                    else if (S.OutputJava())
+                    {
+                        SB.Append("(type_" + FAI[i].Name + ".compareTo(SmvType." + MV_CONSTANT + ") > 0) && (type_" + FAI[i].Name + ".compareTo(SmvType." + INVALID_CONSTANT + ") < 0)");
                     }
                 }
                 SB.AppendLine(") {");
@@ -92,9 +96,13 @@ namespace G25.CG.Shared
                 {
                     SB.Append("\t\tstd::string reportUsageString = std::string(\"\") + ");
                 }
-                else
+                else if (S.OutputCSharp())
                 {
                     SB.Append("\t\tstring reportUsageString = ");
+                }
+                else if (S.OutputJava())
+                {
+                    SB.Append("\t\tString reportUsageString = ");
                 }
                 // output XMLstr, replace placeholders with code
                 int XMLstrIdx = 0;
@@ -113,9 +121,13 @@ namespace G25.CG.Shared
                         {
                             SB.Append("+ g_" + S.m_namespace + "Typenames[" + FAI[argIdx].Name + ".m_t] + ");
                         }
-                        else
+                        else if (S.OutputCSharp())
                         {
                             SB.Append("+ typenames[(int)type_" + FAI[argIdx].Name + "] + ");
+                        }
+                        else if (S.OutputJava())
+                        {
+                            SB.Append("+ typenames[type_" + FAI[argIdx].Name + ".getId()] + ");
                         }
                     }
 
@@ -127,9 +139,13 @@ namespace G25.CG.Shared
                 {
                     SB.AppendLine("\t\tReportUsage::mergeReport(new ReportUsage(reportUsageString));");
                 }
-                else
+                else if (S.OutputCSharp())
                 {
                     SB.AppendLine("\t\tReportUsage.MergeReport(new ReportUsage(reportUsageString));");
+                }
+                else if (S.OutputJava())
+                {
+                    SB.AppendLine("\t\tReportUsage.mergeReport(new ReportUsage(reportUsageString));");
                 }
 
                 SB.AppendLine("}");

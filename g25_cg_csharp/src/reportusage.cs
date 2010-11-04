@@ -70,5 +70,5 @@ namespace G25.CG.CSharp
 
 
     } // end of class GroupBitmap 
-} // end of namespace G25.CG.Java
+} // end of namespace G25.CG.CSharp
 

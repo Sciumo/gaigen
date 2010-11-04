@@ -7,7 +7,7 @@
 	coordStorage="array"
 	defaultOperatorBindings="true"
 	dimension="5"
-  	reportUsage="false"
+  	reportUsage="true"
   	gmvCode="expand"
   	parser="builtin"
   	testSuite="true"
@@ -42,26 +42,26 @@
 <metric name="default">e1.e1=e2.e2=e3.e3=1</metric>
 <metric name="euclidean" round="false">no.no=e1.e1=e2.e2=e3.e3=ni.ni=1</metric>
 
-  <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
-  
-  <smv name="scalar" type="blade">scalar</smv>
+<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
 
-  <smv name="vectorE3GA" type="blade">e1 e2 e3<comment>Use this type to store 3-D vectors</comment></smv>
+<smv name="scalar" type="blade">scalar</smv>
 
-  <smv name="expVectorE3GA" type="blade">scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</smv>
+<smv name="vectorE3GA" type="blade">e1 e2 e3<comment>Use this type to store 3-D vectors</comment></smv>
 
-  <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
-  <smv name="dualSphere" type="blade">no e1 e2 e3 ni</smv>
-  <smv name="dualPlane" type="blade">e1 e2 e3 ni</smv>
-  <smv name="weirdType" type="multivector">no e2^ni e2^e3^no no^e1^e2^e3 no^e1^e2^e3^ni</smv>
-  <smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
-  <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
-  <smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
-  <smv name="circle" type="blade"> no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
-  <smv name="sphere" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3</smv>
+<smv name="expVectorE3GA" type="blade">scalar e1 e2 e3 e1^e2 e2^e3 e3^e1 e1^e2^e3</smv>
 
-  
-  <smv name="pseudoscalar" type="blade">no^e1^e2^e3^ni</smv>
+<smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
+<smv name="dualSphere" type="blade">no e1 e2 e3 ni</smv>
+<smv name="dualPlane" type="blade">e1 e2 e3 ni</smv>
+<smv name="weirdType" type="multivector">no e2^ni e2^e3^no no^e1^e2^e3 no^e1^e2^e3^ni</smv>
+<smv name="freeVector" type="blade">e1^ni e2^ni e3^ni</smv>
+<smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
+<smv name="pointPair" type="blade">no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni</smv>
+<smv name="circle" type="blade"> no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
+<smv name="sphere" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3</smv>
+
+
+<smv name="pseudoscalar" type="blade">no^e1^e2^e3^ni</smv>
 
 <smv name="no" const="true" type="blade">no=1</smv>
 <smv name="e1" const="true" type="blade">e1=1</smv>
@@ -77,15 +77,15 @@
   
 <smv name="rotorE3GA" type="versor">scalar e1^e2 e2^e3 e3^e1</smv>
 <smv name="normalizedTranslator" type="versor">scalar=1.0 e1^ni e2^ni e3^ni</smv>
-  <smv name="translator" type="versor">scalar e1^ni e2^ni e3^ni</smv>
-  
-  <smv name="RBM" type="versor">scalar e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni e1^e2^e3^ni</smv>
+<smv name="translator" type="versor">scalar e1^ni e2^ni e3^ni</smv>
 
-  <smv name="rotor" type="versor">
-    scalar
-    no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
-    e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
-  </smv>
+<smv name="RBM" type="versor">scalar e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni e1^e2^e3^ni</smv>
+
+<smv name="rotor" type="versor">
+scalar
+no^e1 no^e2 no^e3 e1^e2 e2^e3 e3^e1 e1^ni e2^ni e3^ni no^ni
+e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni no^e1^e2^e3
+</smv>
 
 
 <constant name="e1Alt" type="vectorE3GA">e1=1 e2=0 e3=0</constant>

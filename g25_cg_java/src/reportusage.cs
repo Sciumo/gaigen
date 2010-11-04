@@ -21,19 +21,23 @@ using System.Text;
 namespace G25.CG.Java
 {
     /// <summary>
-    /// Handles code generation for the type of specialized multivectors 
+    /// Handles code generation for the 'report usage' code
     /// </summary>
-    public class SmvType
+    public class ReportUsage
     {
+
         public static string GetRawSourceFilename(Specification S)
         {
-            return MainGenerator.GetClassOutputPath(S, "SmvType");
+            return MainGenerator.GetClassOutputPath(S, "ReportUsage");
         }
 
         public static List<string> GenerateCode(Specification S, G25.CG.Shared.CGdata cgd)
         {
             // get filename, list of generated filenames
             List<string> generatedFiles = new List<string>();
+
+            if (!S.m_reportUsage) return generatedFiles;
+
             string sourceFilename = S.GetOutputPath(GetRawSourceFilename(S));
             generatedFiles.Add(sourceFilename);
 
@@ -47,24 +51,14 @@ namespace G25.CG.Java
             // open namespace
             G25.CG.Shared.Util.WriteOpenNamespace(SB, S);
 
-            SB.AppendLine("public enum " + G25.CG.CSJ.GMV.SMV_TYPE + " {");
+            // using ...
+            //Util.WriteGenericUsing(SB, S);
+            SB.AppendLine("import java.util.Hashtable;");
+            //SB.AppendLine("using System.Text;");
 
-            Dictionary<string, int> STD = G25.CG.Shared.SmvUtil.GetSpecializedTypeDictionary(S);
 
-            STD.Add("invalid", STD.Count);
-            STD.Add("none", -1);
 
-            bool appendComma = false;
-            foreach (KeyValuePair<string, int> kvp in STD)
-            {
-                string name = G25.CG.Shared.ReportUsage.GetSpecializedConstantName(S, kvp.Key);
-                if (appendComma) SB.AppendLine(",");
-                SB.Append("\t" + name + "(" + kvp.Value + ", \"" + kvp.Key + "\")");
-                appendComma = true;
-            }
-            SB.AppendLine(";");
-
-            cgd.m_cog.EmitTemplate(SB, "SmvTypeEnum");
+            cgd.m_cog.EmitTemplate(SB, "reportUsage");
 
             // close namespace
             G25.CG.Shared.Util.WriteCloseNamespace(SB, S);
@@ -76,6 +70,6 @@ namespace G25.CG.Java
         }
 
 
-    } // end of class SmvType 
+    } // end of class GroupBitmap 
 } // end of namespace G25.CG.Java
 

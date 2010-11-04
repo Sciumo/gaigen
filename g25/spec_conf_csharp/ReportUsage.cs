@@ -50,7 +50,7 @@ class ReportUsage
             sb.Append(ru.GetReportString());
             if (includeCount)
             {
-                sb.AppendFormat("  <!-- used %d time%s -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
+                sb.AppendFormat("  <!-- used {0} time{1} -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
             }
             sb.AppendLine();
         }
