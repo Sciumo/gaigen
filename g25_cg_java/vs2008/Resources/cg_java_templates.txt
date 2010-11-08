@@ -593,7 +593,7 @@ ${ENDCODEBLOCK}
 
 ${CODEBLOCK reportUsage}
 
-class ReportUsage
+class ReportUsage implements Comparable<ReportUsage>
 {
     protected static Hashtable<String, ReportUsage> s_reportUsage = new Hashtable<String, ReportUsage>();
 
@@ -602,31 +602,34 @@ class ReportUsage
     /// </summary>
     public static void mergeReport(ReportUsage RU)
     {
-      /*  if (s_reportUsage.containsKey(RU.GetReportString())) {
-            s_reportUsage[RU.GetReportString()].IncrementCount();
+        if (s_reportUsage.containsKey(RU.getReportString())) {
+            s_reportUsage.get(RU.getReportString()).incrementCount();
         }
         else {
-             s_reportUsage.Add(RU.GetReportString(), RU);
-        }*/
+             s_reportUsage.put(RU.getReportString(), RU);
+        }
     }
 
     /// prints out all reports, sorted by m_str
-    public static String GetReport(boolean includeCount)
+    public static String getReport(boolean includeCount)
     {
-        /*StringBuilder sb = new StringBuilder();
-        SortedDictionary<string, ReportUsage> sortedReportUsage = new SortedDictionary<string, ReportUsage>(s_reportUsage);
-        foreach (KeyValuePair<string, ReportUsage> kvp in sortedReportUsage ) {
-            ReportUsage ru = kvp.Value;
-            sb.Append(ru.GetReportString());
+        StringBuilder sb = new StringBuilder();
+        
+        TreeSet<ReportUsage> sortedSet = new TreeSet<ReportUsage>();
+        for (Map.Entry<String, ReportUsage> kvp : s_reportUsage.entrySet()) {
+        	sortedSet.add(kvp.getValue());
+        }
+        
+        for (ReportUsage ru : sortedSet) {
+            sb.append(ru.getReportString());
             if (includeCount)
             {
-                sb.AppendFormat("  <!-- used {0} time{1} -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
+                sb.append("  <!-- used " + ru.getReportCount() + " time" + ((ru.getReportCount() == 1) ? "" : "s") + " -->");
             }
-            sb.AppendLine();
+            sb.append("\n");
         }
 
-        return sb.ToString();*/
-        return "";
+        return sb.toString();
     }
 
     public ReportUsage(String xmlStr)
@@ -635,6 +638,12 @@ class ReportUsage
         m_count = 1;
     }
 
+	@Override
+	public int compareTo(ReportUsage arg0) {
+		
+		return m_str.compareTo(((ReportUsage)arg0).getReportString());
+	}
+	
     public String getReportString()
     {
         return m_str;

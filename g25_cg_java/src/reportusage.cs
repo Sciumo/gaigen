@@ -54,8 +54,8 @@ namespace G25.CG.Java
             // using ...
             //Util.WriteGenericUsing(SB, S);
             SB.AppendLine("import java.util.Hashtable;");
-            //SB.AppendLine("using System.Text;");
-
+            SB.AppendLine("import java.util.TreeSet;");
+            SB.AppendLine("import java.util.Map;");
 
 
             cgd.m_cog.EmitTemplate(SB, "reportUsage");
