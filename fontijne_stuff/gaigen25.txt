@@ -124,12 +124,13 @@ Maybe fix the float type stuff
 				
 				V explicit converters for C#, converting constructors for Java					
 
-				-> Java and C# report usage
-					check if the dont_mangled etc stuff is going into the XML output (dont want that)
+				V Java and C# report usage
 
-				GMV log 3d for C# (done?), for Java, too, add testing functions
+				GMV log 3d for C# (done?), for Java, too, and add testing functions
 
 				then run large test (-r 1000)
+					D:\temp\TestG25\c3ga_csharp_5xAxxB_x_x_Dmultivector_1d_libc_scalarClass
+					 has a problem!
 				
 
 
@@ -139,7 +140,7 @@ Maybe fix the float type stuff
 	Python version: ask Liam Candy (liam.candy AT gmail DOT com)
 	Fortran 77 version: Philip Kuntz (cloraphyl AT gmx DOT com)
 	
-	add a section to manual which describes typical usage (add functions as needed, grows quickly in beginning, then gets more complete as you progress).
+	add a section to the manual which describes typical usage (add functions as needed, grows quickly in beginning, then gets more complete as you progress).
 		also recommend copy-paste printfs to GAViewer (works for all languages) REMINDER FOR PRECISION!
 		underscore constructors (or explicit once, in C# and Java)
 		Have programming examples for each language of a simple problem

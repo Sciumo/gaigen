@@ -59,7 +59,7 @@ namespace G25.CG.Shared
                     } else if (fgs.IsConverterDestination(S, smv, FT))
                     {
                         // write converter here . . . 
-                        Converter.WriteMemberConverter(SB, S, cgd, FT, (G25.SMV)S.GetType(fgs.ArgumentTypeNames[0]), smv);
+                        Converter.WriteMemberConverter(SB, S, cgd, FT, fgs, (G25.SMV)S.GetType(fgs.ArgumentTypeNames[0]), smv);
                     }
                 }
                 else if (fgs.GetSupportedByPlugin() && (fgs.NbArguments >= 1) && (Array.IndexOf(fgs.FloatNames, FT.type) >= 0))

@@ -136,21 +136,22 @@ namespace G25.CG.Shared
         }
 
 
-        public static void WriteMemberConverter(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, SMV srcSmv, SMV dstSmv) {
+        public static void WriteMemberConverter(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.fgs fgs, SMV srcSmv, SMV dstSmv)
+        {
 
             if (S.OutputCSharp())
             {
-                WriteExplicitConverterCSharp(SB, S, FT, srcSmv, dstSmv);
+                WriteExplicitConverterCSharp(SB, S, FT, fgs, srcSmv, dstSmv);
             }
 
             if (S.OutputCSharpOrJava())
             {
-                WriteConvertingConstructor(SB, S, cgd, FT, srcSmv, dstSmv);
+                WriteConvertingConstructor(SB, S, cgd, FT, fgs, srcSmv, dstSmv);
             }
 
         }
 
-        private static void WriteExplicitConverterCSharp(StringBuilder SB, Specification S, FloatType FT, SMV srcSmv, SMV dstSmv)
+        private static void WriteExplicitConverterCSharp(StringBuilder SB, Specification S, FloatType FT, G25.fgs fgs, SMV srcSmv, SMV dstSmv)
         {
             string srcTypeName = FT.GetMangledName(S, srcSmv.GetName());
             string dstTypeName = FT.GetMangledName(S, dstSmv.GetName());
@@ -159,11 +160,11 @@ namespace G25.CG.Shared
             Comment comment = GetComment(S, srcTypeName, dstTypeName, argName, extraComment);
             comment.Write(SB, S, 1);
             SB.AppendLine("\tpublic static explicit operator " + dstTypeName + " (" + srcTypeName + " " + argName + ") {");
-            SB.AppendLine("\t\treturn " + S.m_namespace + "._" + dstTypeName + "(" + argName + ");");
+            SB.AppendLine("\t\treturn " + S.m_namespace + "." + fgs.m_outputName + /*dstTypeName*/ "(" + argName + ");");
             SB.AppendLine("\t}");
         }
 
-        private static void WriteConvertingConstructor(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, SMV srcSmv, SMV dstSmv)
+        private static void WriteConvertingConstructor(StringBuilder SB, Specification S, G25.CG.Shared.CGdata cgd, FloatType FT, G25.fgs fgs, SMV srcSmv, SMV dstSmv)
         {
             string srcTypeName = FT.GetMangledName(S, srcSmv.GetName());
             string dstTypeName = FT.GetMangledName(S, dstSmv.GetName());
