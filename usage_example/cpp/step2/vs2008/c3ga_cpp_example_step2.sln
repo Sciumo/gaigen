@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "c3ga_cpp_example_step2", "c3ga_cpp_example_step2.vcproj", "{0357D3B7-4A5D-4A90-8D47-D5ECD153C841}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0357D3B7-4A5D-4A90-8D47-D5ECD153C841}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0357D3B7-4A5D-4A90-8D47-D5ECD153C841}.Debug|Win32.Build.0 = Debug|Win32
+		{0357D3B7-4A5D-4A90-8D47-D5ECD153C841}.Release|Win32.ActiveCfg = Release|Win32
+		{0357D3B7-4A5D-4A90-8D47-D5ECD153C841}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

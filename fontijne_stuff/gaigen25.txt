@@ -1,75 +1,6 @@
 This is my personal to-do list
 
 
-todo next:
-
-V -all types IDs (SMV) + strings, so we can report about them, and GMV can have type field.
-V -mv struct 
-V -set/release functions
-V-#define GRADE values
-V-make array of grade values, nb grades
-V-make array of grade size, nb grades
-V-make array of group sizes, nb groups
-V-compress
-V-expand
-V -extract coordinates
-	V double mv_e1(mv val) (either 0 or the coord)
-V -make some kind of map of the geometric product (group X group -> group)
-V -all parts of the geometric product (group X group X group)
-V -sas_mv
-V -largest coordinate function for GMVs or for all types?	
-V -point-point distance
-V -point-point distance squared
-V write to multiple StringBuilders at the same time (decl here, def there).
-V write code for each function in parallel 
-V FindFunction() should have simpler access, in the form of GetFunctionName(...) which auto mangles everything . . .  
-V dependency stuff (just complain that user should add
-	V the dependency stuff also fills in the blank in FGS? That would make stuff a lot easier . . .
-V cog should emit straight to stringbuilder!
-
-V gmv base code (struct, other requirements)
-V gmv versions of all functions so far
-	V gp & friends: with scalar
-	
-	V AddSubtract: hard coded OR
-	V ToggleSign: use the same stuff as for gp (toggle sign of one grade part)
-	V Dual: also generate dual code from ToggleSign. It can reuse the existing stuff most of the time.
-	V Grade: allow for bitmap and grade0(...) functions? Use ToggleSign stuff
-	V Norm: use geometric product parts 
-	V versor inverse, unit : use norm, and scaling copy
-	V ApplyVersor: simply use gp? two gps (V X V), and then scale and copy like unit, apply inverse through scaling?
-	V SinCosExp: custom algos from templates
-V set scalar for SMV (if it has a scalar part)
-V -allow for comments on fgs functions
-V if it causes trouble often, generate a float-returning version of norm() and such when a scalar SMV is defined
-V -handle missing types properly
-V have proper error handling and reporting.
-V 1. Insert verbatim code (for includes, etc) at the right places.
-V 2  V Have choice of random generator: rand of mt
-   V Have random blade and versor generators, optionally with type:
-   V Have randomPoint for conformal model (get a random vectorE3GA(
-V 3. divide by scalar function
-V gmv code which does not use full expanded code 
-V 'Hadamard product' for multivectors
-V 'inverse Hadamard product' for multivectors
-V outermorphism stuff
-V add pointer type to VariableType, and fix the gom/som init from matrix function hack.
-V tostring
-V parser/lexer ANTLR 3?
-V something is wrong with runtime GP code (norm)
-V something is wrong with both parsers
-V equals function
-V zero function
-V random SMV for all types, even if may fail
-V warn about none-parity pure mixup of types and gmv mem alloc
-V add hyperbolic sinh, cosh
-V -implement constants		
-V testing code
-V avoid clashes of cogsharp names while compiling (or at least detect them, and make up another name)
-V C++ version 
-V C# version 
-V Java version 
-
 check quality of documentation
 
 --
@@ -89,50 +20,25 @@ Maybe fix the float type stuff
 
 -add include/import element in XML
 
-	-> Write C# and Java output.
-			
-			
-			V constants
+	V Write C# and Java output.
 
-			V runtime geometric product
+	-> in cpp (or other languages too?), always write converters from general type to specialized types?
+		_line(mv)
 
-			V log (3D)
-
-			V testing code for C# and Java, test everything, fix all bugs
-
-			V GMV functions need to be over the interface, not the multivectors themselves!!!!
-
-			V complete all tests on windows
-
-			V Test doxygen for C# and Java on Windows
-			
-			V makefiles, test scripts for all platforms
-				
-			V Release version 2.5.2 with 'functional but incomplete' C# and Java support
-			
-			V check manual, make sure latest version is included in distribution
-				
-			
-			AND THEN finish the following:
-			
-				V Java and C# GMV, SMV member function shortcuts (for regular functions)
-					
-				V C# operators
-					-> fix trouble with operators you never caught!
-				
-				V check that converters are present
-				
-				V explicit converters for C#, converting constructors for Java					
-
-				V Java and C# report usage
-
-				GMV log 3d for C# (done?), for Java, too, and add testing functions
-
-				then run large test (-r 1000)
-					D:\temp\TestG25\c3ga_csharp_5xAxxB_x_x_Dmultivector_1d_libc_scalarClass
-					 has a problem!
+	-> small usage example for each language.
+		-create 5 points
+		-create line and plane out of them
+		-compute their intersection
+		Stages:
+			step 1: everything = mv type
+			step 2: assign to specialized types
+			step 3: use report usage to extract the types used?
+			step 4: everything is specialized
+		-write a small PDF
+		-have makefiles for each language (project for VS)
 				
 
+	GMV log 3d for C# (done?), for Java, too, and add testing functions
 
 	SourceForge website HTML pages
 	
