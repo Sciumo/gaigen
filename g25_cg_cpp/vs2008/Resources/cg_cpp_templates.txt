@@ -652,7 +652,7 @@ ${CODEBLOCK SMVconstructors}
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline <%className%>(<%gmvClassName%> &A, int filler) {set(A);}
+	inline <%className%>(const <%gmvClassName%> &A, int filler) {set(A);}
 
 <%if (smv.NbNonConstBasisBlade > 0) {%>
 	/// Constructs a new <%className%>. Coordinate values come from 'A'.

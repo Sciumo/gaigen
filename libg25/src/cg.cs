@@ -31,7 +31,7 @@ namespace G25
     public interface CodeGenerator
     {
         /// <returns>what language this code generator generates for (case insensitive).</returns>
-        String Language();
+        string Language();
 
         /// <summary>
         /// Should generate the code according to the specification of the algebra.
@@ -55,33 +55,8 @@ namespace G25
     public interface CodeGeneratorPlugin
     {
         /// <returns>what language this code generator generates for (case insensitive).</returns>
-        String Language();
+        string Language();
     } // end of interface CodeGeneratorPlugin
-
-    // temp classes for some testing
-    public class TmpCppGenerator : G25.CodeGenerator
-    {
-        public String Language()
-        {
-            return "cpp";
-        }
-
-        public List<string> GenerateCode(Specification S, List<CodeGeneratorPlugin> plugins)
-        {
-            return null;
-        }
-    }
-
-    // temp classes for some testing
-    public class TmpCppGeneratorPlugin : G25.CodeGeneratorPlugin
-    {
-        public String Language()
-        {
-            return "cpp";
-        }
-    }
-    
-
 
     /// <summary>
     /// This class loads and stores code generation classes (plugins) for a certain language.

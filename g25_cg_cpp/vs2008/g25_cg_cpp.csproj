@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\src\main.cs" />
+    <Compile Include="..\src\converter.cs" />
     <Compile Include="..\src\functions.cs" />
     <Compile Include="..\src\gmv.cs" />
     <Compile Include="..\src\gom.cs" />

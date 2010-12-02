@@ -41,6 +41,10 @@ namespace G25.CG.CPP
         {
             CoGsharp.CoG cog = InitCog(S);
 
+            // for C++: add converters from any MV -> SMV (like _vector(mv))
+            Converter.AddDefaultConverters(S);
+
+
             CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);
             cgd.SetDependencyPrefix("missing_function_"); // this makes sure that the user sees the function call is a missing dependency
             G25.CG.Shared.FunctionGeneratorInfo FGI = (S.m_generateTestSuite) ? new G25.CG.Shared.FunctionGeneratorInfo() : null; // the fields in this variable are set by Functions.WriteFunctions() and reused by TestSuite.GenerateCode()

@@ -43,6 +43,7 @@ namespace G25.CG.Shared
             {
                 string rawSrcTypeName = m_fgs.GetArgumentTypeName(0, null); // null = no default name
                 string rawDstTypeName = m_fgs.Name.Substring(1); // dest = function name minus the underscore.
+                bool srcIsGMV = m_specification.m_GMV.GetName().Equals(rawSrcTypeName);
 
                 const int nbArgs = 1;
                 foreach (string floatName in m_fgs.FloatNames) 
@@ -59,12 +60,15 @@ namespace G25.CG.Shared
                     Comment comment = GetComment(m_specification, srcTypeName, dstTypeName, FAI[0].Name, m_fgs.Comment);
                     comment.Write((m_specification.OutputCSharpOrJava()) ? m_defSB : m_declSB, m_specification, 1);
 
-                    // if scalar or specialized: generate specialized function
-                    // get symbolic result
-                    RefGA.Multivector value = FAI[0].MultivectorValue[0];
-
                     string funcName = G25.CG.Shared.Converter.GetConverterName(m_specification, m_fgs, srcTypeName, dstTypeName);
-                    bool mustCast = false;
+
+                    if (srcIsGMV)
+                    {
+                        writeGmvToSmvConverter(FT, srcTypeName, dstTypeName, comment, funcName, FAI);
+                    }
+
+                    // if scalar or specialized: generate specialized function: first get symbolic result
+                    RefGA.Multivector value = FAI[0].MultivectorValue[0];
 
                     G25.CG.Shared.CGdata localCGD = new G25.CG.Shared.CGdata(m_cgd, m_declSB, m_defSB, m_inlineDefSB);
 
@@ -72,6 +76,7 @@ namespace G25.CG.Shared
                         new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, rawDstTypeName, false); // false = compute value
 
                     bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+                    bool mustCast = false;
                     if (m_specification.OutputC())
                     {
                         Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
@@ -98,6 +103,22 @@ namespace G25.CG.Shared
             }
 
         } // end of function WriteConverter()
+
+        protected void writeGmvToSmvConverter(FloatType FT, string srcTypeName, string dstTypeName, Comment comment, string funcName,  G25.CG.Shared.FuncArgInfo[] FAI) {
+
+            // verbatim code
+            List<Instruction> instructions = new List<Instruction>();
+            int nbTabs = 2;
+            instructions.Add(new VerbatimCodeInstruction(nbTabs, "return " + srcTypeName + "(" + FAI[0].Name + ");");
+            
+        public static void WriteFunction(
+            Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
+            bool inline, bool staticFunc, string returnType, string functionName,
+            FuncArgInfo returnArgument, FuncArgInfo[] arguments,
+            System.Collections.Generic.List<Instruction> instructions, Comment comment)
+
+        }
+
 
         /// <summary>
         /// Returns the name of a converter function. For example, <c>"dualSphere_to_vectorE3GA"</c>.

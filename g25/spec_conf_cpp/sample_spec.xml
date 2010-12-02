@@ -348,4 +348,5 @@
   <function name="applyOM" arg1="om" arg2="mv" floatType="double"/>
 
   <function name="_vectorE3GA" arg1="normalizedPoint"/>
+  <function name="_vectorE3GA" arg1="mv"/>
 </g25spec>
