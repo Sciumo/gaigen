@@ -22,8 +22,17 @@ Maybe fix the float type stuff
 
 	V Write C# and Java output.
 
-	-> in cpp (or other languages too?), always write converters from general type to specialized types?
-		_line(mv)
+	V in cpp always write converters from general type to specialized types?
+	
+	-> Find the weird problem in D:\temp\TestG25\e3ga_csharp_3xAxxA_x_x_Dmv_2df_libc_scalar
+		Why doesn't it see the rotor_f version for _bivector_f???
+		AHA! The mangling is missing!
+		
+	
+	V find out why test code generation is so slow
+		-> it was a cogsharp directory filled with junk
+		maybe clear cogsharp on a new install?
+		
 
 	-> small usage example for each language.
 		-create 5 points

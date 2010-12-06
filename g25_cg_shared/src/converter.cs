@@ -64,31 +64,35 @@ namespace G25.CG.Shared
 
                     if (srcIsGMV)
                     {
+                        // convert GMV to SMV
                         writeGmvToSmvConverter(FT, srcTypeName, dstTypeName, comment, funcName, FAI);
-                    }
-
-                    // if scalar or specialized: generate specialized function: first get symbolic result
-                    RefGA.Multivector value = FAI[0].MultivectorValue[0];
-
-                    G25.CG.Shared.CGdata localCGD = new G25.CG.Shared.CGdata(m_cgd, m_declSB, m_defSB, m_inlineDefSB);
-
-                    G25.CG.Shared.FuncArgInfo returnArgument =
-                        new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, rawDstTypeName, false); // false = compute value
-
-                    bool staticFunc = Functions.OutputStaticFunctions(m_specification);
-                    bool mustCast = false;
-                    if (m_specification.OutputC())
-                    {
-                        Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
-                            "void", null, funcName, returnArgument, FAI, FT, mustCast, returnArgument.Type as G25.SMV,
-                            returnArgument.Name,
-                            returnArgument.Pointer, value);
                     }
                     else
                     {
-                        Functions.WriteReturnFunction(
-                               m_specification, localCGD, m_specification.m_inlineSet, staticFunc, 
-                               funcName, FAI, FT, mustCast, returnArgument.Type as G25.SMV, value);
+                        // convert SMV/scalar to SMV
+                        // if scalar or specialized: generate specialized function: first get symbolic result
+                        RefGA.Multivector value = FAI[0].MultivectorValue[0];
+
+                        G25.CG.Shared.CGdata localCGD = new G25.CG.Shared.CGdata(m_cgd, m_declSB, m_defSB, m_inlineDefSB);
+
+                        G25.CG.Shared.FuncArgInfo returnArgument =
+                            new G25.CG.Shared.FuncArgInfo(m_specification, m_fgs, -1, FT, rawDstTypeName, false); // false = compute value
+
+                        bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+                        bool mustCast = false;
+                        if (m_specification.OutputC())
+                        {
+                            Functions.WriteAssignmentFunction(m_specification, localCGD, m_specification.m_inlineSet, staticFunc,
+                                "void", null, funcName, returnArgument, FAI, FT, mustCast, returnArgument.Type as G25.SMV,
+                                returnArgument.Name,
+                                returnArgument.Pointer, value);
+                        }
+                        else
+                        {
+                            Functions.WriteReturnFunction(
+                                   m_specification, localCGD, m_specification.m_inlineSet, staticFunc,
+                                   funcName, FAI, FT, mustCast, returnArgument.Type as G25.SMV, value);
+                        }
                     }
                 }
             }
@@ -108,14 +112,15 @@ namespace G25.CG.Shared
 
             // verbatim code
             List<Instruction> instructions = new List<Instruction>();
-            int nbTabs = 2;
-            instructions.Add(new VerbatimCodeInstruction(nbTabs, "return " + srcTypeName + "(" + FAI[0].Name + ");");
-            
-        public static void WriteFunction(
-            Specification S, G25.CG.Shared.CGdata cgd, G25.fgs F, 
-            bool inline, bool staticFunc, string returnType, string functionName,
-            FuncArgInfo returnArgument, FuncArgInfo[] arguments,
-            System.Collections.Generic.List<Instruction> instructions, Comment comment)
+            int nbTabs = 1;
+            instructions.Add(new VerbatimCodeInstruction(nbTabs, "return " + dstTypeName + "(" + FAI[0].Name + ", 0);"));
+            G25.CG.Shared.CGdata localCGD = new G25.CG.Shared.CGdata(m_cgd, m_declSB, m_defSB, m_inlineDefSB);
+
+            string returnType = dstTypeName;
+            bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+            FuncArgInfo returnArgument = null;
+            Functions.WriteFunction(m_specification, localCGD, this.m_fgs, m_specification.m_inlineSet,
+                staticFunc, returnType, funcName, returnArgument, FAI, instructions, comment);
 
         }
 
