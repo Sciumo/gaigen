@@ -207,7 +207,8 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="cd $(InputDir)&#x0D;&#x0A;g25 $(InputFileName)"
+					Description="g25 $(InputFileName)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;g25 $(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.cpp;$(InputDir)\c3ga_parse_mv.cpp"
 				/>
 			</FileConfiguration>
@@ -216,7 +217,8 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="cd $(InputDir)"
+					Description="g25 $(InputFileName)"
+					CommandLine="cd $(InputDir)&#x0D;&#x0A;"
 					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.cpp;$(InputDir)\c3ga_parse_mv.cpp"
 				/>
 			</FileConfiguration>

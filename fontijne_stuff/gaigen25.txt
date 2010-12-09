@@ -24,13 +24,9 @@ Maybe fix the float type stuff
 
 	V in cpp always write converters from general type to specialized types?
 	
-	-> Find the weird problem in D:\temp\TestG25\e3ga_csharp_3xAxxA_x_x_Dmv_2df_libc_scalar
-		Why doesn't it see the rotor_f version for _bivector_f???
-		AHA! The mangling is missing!
 		
 	
-	V find out why test code generation is so slow
-		-> it was a cogsharp directory filled with junk
+	V find out why test code generation is so slow -> it was a cogsharp directory filled with junk
 		maybe clear cogsharp on a new install?
 		
 
@@ -41,16 +37,21 @@ Maybe fix the float type stuff
 		Stages:
 			step 1: everything = mv type
 			step 2: assign to specialized types
-			step 3: use report usage to extract the types used?
+			step 3: use report usage to extract the functions used?
 			step 4: everything is specialized
 		-write a small PDF
 		-have makefiles for each language (project for VS)
-				
 
-	GMV log 3d for C# (done?), for Java, too, and add testing functions
+	Update user manual
+		usage examples
+		converter stuff
+		
+	Release new version
 
 	SourceForge website HTML pages
 	
+	GMV log 3d for C# (done?), for Java, too, and add testing functions
+
 	Matlab / C version: working on it with Robert Valkenburg
 	Python version: ask Liam Candy (liam.candy AT gmail DOT com)
 	Fortran 77 version: Philip Kuntz (cloraphyl AT gmx DOT com)

@@ -838,7 +838,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline normalizedPoint(mv &A, int filler) {set(A);}
+	inline normalizedPoint(const mv &A, int filler) {set(A);}
 
 	/// Constructs a new normalizedPoint. Coordinate values come from 'A'.
 	inline normalizedPoint(const CoordinateOrder co, const float A[4]) {set(co, A);}
@@ -973,7 +973,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline no_t(mv &A, int filler) {set(A);}
+	inline no_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (no_t).
@@ -1078,7 +1078,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e1_t(mv &A, int filler) {set(A);}
+	inline e1_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e1_t).
@@ -1183,7 +1183,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e2_t(mv &A, int filler) {set(A);}
+	inline e2_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e2_t).
@@ -1288,7 +1288,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e3_t(mv &A, int filler) {set(A);}
+	inline e3_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e3_t).
@@ -1393,7 +1393,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline ni_t(mv &A, int filler) {set(A);}
+	inline ni_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (ni_t).

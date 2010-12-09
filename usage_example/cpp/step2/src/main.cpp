@@ -7,7 +7,8 @@ using namespace c3ga;
 This small example creates a line and a plane from points.
 It then computes the intersection point of the line and the plane.
 
-In this step, all GA variables are stored in 'mv' (the multivector type).
+In this step, all GA variables are stored in specialized multivector types,
+such as 'line', 'plane' and 'flatPoint'.
 */
 int main(int argc, char *argv[]) {
 

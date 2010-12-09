@@ -186,7 +186,7 @@ namespace G25.CG.Shared
             Comment comment = GetComment(S, srcTypeName, dstTypeName, argName, extraComment);
             comment.Write(SB, S, 1);
             SB.AppendLine("\tpublic static explicit operator " + dstTypeName + " (" + srcTypeName + " " + argName + ") {");
-            SB.AppendLine("\t\treturn " + S.m_namespace + "." + fgs.m_outputName + /*dstTypeName*/ "(" + argName + ");");
+            SB.AppendLine("\t\treturn " + S.m_namespace + "." + FT.GetMangledName(S, fgs.m_outputName) + /*dstTypeName*/ "(" + argName + ");");
             SB.AppendLine("\t}");
         }
 

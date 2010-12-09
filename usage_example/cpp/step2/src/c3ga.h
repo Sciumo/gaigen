@@ -862,7 +862,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline normalizedPoint(mv &A, int filler) {set(A);}
+	inline normalizedPoint(const mv &A, int filler) {set(A);}
 
 	/// Constructs a new normalizedPoint. Coordinate values come from 'A'.
 	inline normalizedPoint(const CoordinateOrder co, const float A[4]) {set(co, A);}
@@ -1010,7 +1010,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline flatPoint(mv &A, int filler) {set(A);}
+	inline flatPoint(const mv &A, int filler) {set(A);}
 
 	/// Constructs a new flatPoint. Coordinate values come from 'A'.
 	inline flatPoint(const CoordinateOrder co, const float A[4]) {set(co, A);}
@@ -1162,7 +1162,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline line(mv &A, int filler) {set(A);}
+	inline line(const mv &A, int filler) {set(A);}
 
 	/// Constructs a new line. Coordinate values come from 'A'.
 	inline line(const CoordinateOrder co, const float A[6]) {set(co, A);}
@@ -1316,7 +1316,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline plane(mv &A, int filler) {set(A);}
+	inline plane(const mv &A, int filler) {set(A);}
 
 	/// Constructs a new plane. Coordinate values come from 'A'.
 	inline plane(const CoordinateOrder co, const float A[4]) {set(co, A);}
@@ -1449,7 +1449,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline no_t(mv &A, int filler) {set(A);}
+	inline no_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (no_t).
@@ -1554,7 +1554,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e1_t(mv &A, int filler) {set(A);}
+	inline e1_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e1_t).
@@ -1659,7 +1659,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e2_t(mv &A, int filler) {set(A);}
+	inline e2_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e2_t).
@@ -1764,7 +1764,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline e3_t(mv &A, int filler) {set(A);}
+	inline e3_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (e3_t).
@@ -1869,7 +1869,7 @@ public:
 	/// are silently dropped.
 	/// \param filler This argument can have any value; it's role
 	/// is only to prevent the compiler from using this constructor as a converter.
-	inline ni_t(mv &A, int filler) {set(A);}
+	inline ni_t(const mv &A, int filler) {set(A);}
 
 
 	/// Assignment operator (ni_t).
@@ -2160,7 +2160,32 @@ float _float(const ni_t &x);
 /// Returns scalar part of  ni_t
 inline float _Float(const ni_t &x) {return _float(x); };
 	/// Converts mv to line: dst = a.
+/// Converts mv to line: dst = a.
 line _line(const mv &a);
+	/// Converts mv to normalizedPoint: dst = a. Automatically generated converter
+/// Converts mv to normalizedPoint: dst = a. Automatically generated converter
+normalizedPoint _normalizedPoint(const mv &a);
+	/// Converts mv to flatPoint: dst = a. Automatically generated converter
+/// Converts mv to flatPoint: dst = a. Automatically generated converter
+flatPoint _flatPoint(const mv &a);
+	/// Converts mv to plane: dst = a. Automatically generated converter
+/// Converts mv to plane: dst = a. Automatically generated converter
+plane _plane(const mv &a);
+	/// Converts mv to no_t: dst = a. Automatically generated converter
+/// Converts mv to no_t: dst = a. Automatically generated converter
+no_t _no_t(const mv &a);
+	/// Converts mv to e1_t: dst = a. Automatically generated converter
+/// Converts mv to e1_t: dst = a. Automatically generated converter
+e1_t _e1_t(const mv &a);
+	/// Converts mv to e2_t: dst = a. Automatically generated converter
+/// Converts mv to e2_t: dst = a. Automatically generated converter
+e2_t _e2_t(const mv &a);
+	/// Converts mv to e3_t: dst = a. Automatically generated converter
+/// Converts mv to e3_t: dst = a. Automatically generated converter
+e3_t _e3_t(const mv &a);
+	/// Converts mv to ni_t: dst = a. Automatically generated converter
+/// Converts mv to ni_t: dst = a. Automatically generated converter
+ni_t _ni_t(const mv &a);
 /// Returns mv + mv.
 mv add(const mv &a, const mv &b);
 /// Returns mv - mv.
@@ -3072,15 +3097,75 @@ inline float _float(const ni_t &x) {
 }
 inline line _line(const mv &a)
 {
-	return line(line::coord_e1e2ni_e1e3ni_e2e3ni_e1noni_e2noni_e3noni,
-			0.0f, // e1_e2_ni
-			0.0f, // e1_e3_ni
-			0.0f, // e2_e3_ni
-			0.0f, // e1_no_ni
-			0.0f, // e2_no_ni
-			0.0f // e3_no_ni
-		);
-
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_line\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return line(a, 0);
+}
+inline normalizedPoint _normalizedPoint(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_normalizedPoint\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return normalizedPoint(a, 0);
+}
+inline flatPoint _flatPoint(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_flatPoint\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return flatPoint(a, 0);
+}
+inline plane _plane(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_plane\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return plane(a, 0);
+}
+inline no_t _no_t(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_no_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return no_t(a, 0);
+}
+inline e1_t _e1_t(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_e1_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return e1_t(a, 0);
+}
+inline e2_t _e2_t(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_e2_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return e2_t(a, 0);
+}
+inline e3_t _e3_t(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_e3_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return e3_t(a, 0);
+}
+inline ni_t _ni_t(const mv &a)
+{
+	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
+			std::string reportUsageString = std::string("") + "<function name=\"_ni_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter\"/>";
+			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
+	}
+	return ni_t(a, 0);
 }
 inline normalizedPoint cgaPoint(const float a, const float b, const float c)
 {

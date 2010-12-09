@@ -30,7 +30,6 @@ namespace G25.CG.CPP
     {
         public static void AddDefaultConverters(Specification S)
         {
-            return;
 
             // get a 'set' of SMVs for which converters are present
             Dictionary<string, fgs> converterPresent = new Dictionary<string, fgs>();
