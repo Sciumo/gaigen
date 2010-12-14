@@ -37,7 +37,7 @@ Maybe fix the float type stuff
 		Stages:
 			step 1: everything = mv type
 			step 2: assign to specialized types
-			step 3: use report usage to extract the functions used?
+			step 3: use report usage to extract the functions used? -> be precise in write-up of process, especially the that dual(line) pointPair, because dualLine type is not present
 			step 4: everything is specialized
 		-write a small PDF
 		-have makefiles for each language (project for VS)
@@ -45,6 +45,8 @@ Maybe fix the float type stuff
 	Update user manual
 		usage examples
 		converter stuff
+		
+	Package usage_example somehow (separate download.zip / download.tar.gz?)		
 		
 	Release new version
 

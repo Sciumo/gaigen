@@ -67,8 +67,11 @@ namespace G25.CG.Shared
                         // convert GMV to SMV
                         writeGmvToSmvConverter(FT, srcTypeName, dstTypeName, comment, funcName, FAI);
                     }
-                    else
-                    {
+                    else if (srcTypeName == dstTypeName) {
+                        // convert to the same type
+                        writeSmvPassThroughConverter(FT, srcTypeName, comment, funcName, FAI);
+                    }
+                    else {
                         // convert SMV/scalar to SMV
                         // if scalar or specialized: generate specialized function: first get symbolic result
                         RefGA.Multivector value = FAI[0].MultivectorValue[0];
@@ -124,6 +127,22 @@ namespace G25.CG.Shared
 
         }
 
+        protected void writeSmvPassThroughConverter(FloatType FT, string smvTypeName, Comment comment, string funcName, G25.CG.Shared.FuncArgInfo[] FAI)
+        {
+
+            // verbatim code
+            List<Instruction> instructions = new List<Instruction>();
+            int nbTabs = 1;
+            instructions.Add(new VerbatimCodeInstruction(nbTabs, "return " + FAI[0].Name + ";"));
+            G25.CG.Shared.CGdata localCGD = new G25.CG.Shared.CGdata(m_cgd, m_declSB, m_defSB, m_inlineDefSB);
+
+            string returnType = smvTypeName;
+            bool staticFunc = Functions.OutputStaticFunctions(m_specification);
+            FuncArgInfo returnArgument = null;
+            Functions.WriteFunction(m_specification, localCGD, this.m_fgs, m_specification.m_inlineSet,
+                staticFunc, returnType, funcName, returnArgument, FAI, instructions, comment);
+
+        }
 
         /// <summary>
         /// Returns the name of a converter function. For example, <c>"dualSphere_to_vectorE3GA"</c>.

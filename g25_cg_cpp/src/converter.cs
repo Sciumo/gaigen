@@ -28,10 +28,12 @@ namespace G25.CG.CPP
     /// </summary>
     class Converter
     {
-        public static void AddDefaultConverters(Specification S)
+        private const string COMMENT = " Automatically generated converter.";
+
+        public static void AddDefaultGmvConverters(Specification S)
         {
 
-            // get a 'set' of SMVs for which converters are present
+            // get a 'set' of SMVs for which converters to GMV are present
             Dictionary<string, fgs> converterPresent = new Dictionary<string, fgs>();
             foreach (fgs F in S.m_functions)
             {
@@ -50,7 +52,7 @@ namespace G25.CG.CPP
                 floatNames[i] = S.m_floatTypes[i].type;
 
 
-            // loop over all SMVs, if no converter is present, add it
+            // loop over all SMVs, if no converter to GMV is present, add it
             foreach (G25.SMV smv in S.m_SMV)
             {
                 if (converterPresent.ContainsKey(smv.Name)) continue;
@@ -59,17 +61,58 @@ namespace G25.CG.CPP
                 string returnTypeName = null;
                 string[] argumentTypeNames = new string[] {S.m_GMV.Name};
                 string[] argumentVariableNames = null;
-                string comment = " Automatically generated converter";
                 string metricName = null;
                 Dictionary<string, string> options = null;
                 fgs F = new fgs("_" + smv.Name, outputName, returnTypeName,
                     argumentTypeNames, argumentVariableNames,
-                    floatNames, metricName, comment, options);
+                    floatNames, metricName, COMMENT, options);
                 S.m_functions.Add(F);
 
             }
 
         }
+
+        public static void AddDefaultSmvConverters(Specification S)
+        {
+
+            // get a 'set' of SMVs for which converters to the same type are present
+            Dictionary<string, fgs> converterPresent = new Dictionary<string, fgs>();
+            foreach (fgs F in S.m_functions)
+            {
+                if (F.IsConverter(S))
+                {
+                    if (F.GetArgumentTypeName(0, null) == F.Name.Substring(1))
+                    {
+                        converterPresent.Add(F.Name.Substring(1), F);
+                    }
+                }
+            }
+
+            // get array of float type names, for use below
+            string[] floatNames = new string[S.m_floatTypes.Count];
+            for (int i = 0; i < S.m_floatTypes.Count; i++)
+                floatNames[i] = S.m_floatTypes[i].type;
+
+            // loop over all SMVs, if no converter to GMV is present, add it
+            foreach (G25.SMV smv in S.m_SMV)
+            {
+                if (converterPresent.ContainsKey(smv.Name)) continue;
+
+                string outputName = null;
+                string returnTypeName = null;
+                string[] argumentTypeNames = new string[] { smv.Name };
+                string[] argumentVariableNames = null;
+                string metricName = null;
+                Dictionary<string, string> options = null;
+                fgs F = new fgs("_" + smv.Name, outputName, returnTypeName,
+                    argumentTypeNames, argumentVariableNames,
+                    floatNames, metricName, COMMENT, options);
+                S.m_functions.Add(F);
+
+            }
+
+        }
+
     } // end of class Converter
 } // end of namespace G25.CG.CPP
 

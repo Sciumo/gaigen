@@ -42,7 +42,9 @@ namespace G25.CG.CPP
             CoGsharp.CoG cog = InitCog(S);
 
             // for C++: add converters from any MV -> SMV (like _vector(mv))
-            Converter.AddDefaultConverters(S);
+            Converter.AddDefaultGmvConverters(S);
+            // for C++: add converters from any SMV -> SMV (like _vector(vector))
+            Converter.AddDefaultSmvConverters(S);
 
 
             CG.Shared.CGdata cgd = new G25.CG.Shared.CGdata(plugins, cog);

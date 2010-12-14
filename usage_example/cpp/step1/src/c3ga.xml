@@ -7,10 +7,10 @@
 	coordStorage="array"
 	defaultOperatorBindings="true"
 	dimension="5"
-  	reportUsage="true"
-  	gmvCode="expand"
-  	parser="builtin"
-  	testSuite="false"
+  reportUsage="false"
+  gmvCode="expand"
+  parser="builtin"
+  testSuite="false"
 >
 
 <inline 
