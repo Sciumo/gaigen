@@ -29,6 +29,8 @@ Maybe fix the float type stuff
 	V find out why test code generation is so slow -> it was a cogsharp directory filled with junk
 		maybe clear cogsharp on a new install?
 		
+	-> Finish C++ usage example.
+	-> Write C usage example.
 
 	-> small usage example for each language.
 		-create 5 points
@@ -52,6 +54,7 @@ Maybe fix the float type stuff
 
 	SourceForge website HTML pages
 	
+	Have 'C' functions return the return argument?
 	GMV log 3d for C# (done?), for Java, too, and add testing functions
 
 	Matlab / C version: working on it with Robert Valkenburg

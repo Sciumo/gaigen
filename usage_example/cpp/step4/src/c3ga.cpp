@@ -89,14 +89,15 @@ const char *g_c3gaTypenames[] =
 	"normalizedPoint",
 	"flatPoint",
 	"line",
+	"dualLine",
 	"plane",
+	"pointPair",
+	"circle",
 	"no_t",
 	"e1_t",
 	"e2_t",
 	"e3_t",
-	"ni_t",
-	"pointPair",
-	"circle"
+	"ni_t"
 };
 no_t no;
 e1_t e1;
@@ -105,29 +106,8 @@ e3_t e3;
 ni_t ni;
 
 
-ReportUsage *ReportUsage::s_reportTree = NULL;
-
-void ReportUsage::mergeReport(ReportUsage *RU) {
-	if (ReportUsage::s_reportTree == NULL) ReportUsage::s_reportTree = RU;
-	else ReportUsage::s_reportTree->mergeReportInternal(RU);
-}
-
-/// prints out all reports, sorted by m_str
 void ReportUsage::printReport(FILE *F /*= stdout*/, bool includeCount /* = true */) {
-	if (ReportUsage::s_reportTree == NULL) return;
-	// collect all into std::map
-	std::map<std::string, const ReportUsage*> M;
-	ReportUsage::s_reportTree->getMap(M);
-
-	for (std::map<std::string, const ReportUsage*>::const_iterator I = M.begin();
-		I != M.end(); I++) 
-	{
-		int dummyArg = 0; // prevents compiler warning on some platforms
-		fprintf(F, I->second->m_str.c_str(), dummyArg);
-		int cnt = I->second->m_count;
-		if (includeCount) fprintf(F, "  <!-- used %d time%s -->\n", cnt , (cnt == 1) ? "" : "s");
-		else fprintf(F, "\n");
-	}
+	fprintf(F, "Report usage is disabled");
 }
 
 /* 
@@ -2199,11 +2179,6 @@ void mv::expand(const float *ptrs[6], bool nulls /* = true */) const {
 
 mv add(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"add\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int aidx = 0, bidx = 0, cidx = 0;
 	int gu = a.gu() | b.gu();
 	float c[32];
@@ -2298,11 +2273,6 @@ mv add(const mv &a, const mv &b)
 }
 mv subtract(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"subtract\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int aidx = 0, bidx = 0, cidx = 0;
 	int gu = a.gu() | b.gu();
 	float c[32];
@@ -2450,10 +2420,6 @@ mv extractGrade(const mv &a, const int groupBitmap)
 }
 mv negate(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"negate\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	int gu = a.gu();
 	float c[32];
@@ -2490,10 +2456,6 @@ mv negate(const mv &a)
 }
 mv reverse(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"reverse\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	int gu = a.gu();
 	float c[32];
@@ -2530,10 +2492,6 @@ mv reverse(const mv &a)
 }
 mv gradeInvolution(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"gradeInvolution\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	int gu = a.gu();
 	float c[32];
@@ -2570,10 +2528,6 @@ mv gradeInvolution(const mv &a)
 }
 mv cliffordConjugate(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"cliffordConjugate\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	int gu = a.gu();
 	float c[32];
@@ -2610,11 +2564,6 @@ mv cliffordConjugate(const mv &a)
 }
 mv gp(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"gp\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float c[32];
 	const float* _a[6];
 	const float* _b[6];
@@ -2765,11 +2714,6 @@ mv gp(const mv &a, const mv &b)
 }
 mv op(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"op\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float c[32];
 	const float* _a[6];
 	const float* _b[6];
@@ -2855,11 +2799,6 @@ mv op(const mv &a, const mv &b)
 }
 float sp(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"sp\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float c[1];
 	const float* _a[6];
 	const float* _b[6];
@@ -2900,11 +2839,6 @@ float sp(const mv &a, const mv &b)
 }
 mv mhip(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"mhip\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float c[32];
 	const float* _a[6];
 	const float* _b[6];
@@ -3035,11 +2969,6 @@ mv mhip(const mv &a, const mv &b)
 }
 mv lc(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"lc\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float c[32];
 	const float* _a[6];
 	const float* _b[6];
@@ -3125,10 +3054,6 @@ mv lc(const mv &a, const mv &b)
 }
 float norm(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"norm\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float n2 = 0.0f;
 	float c[1];
 	const float* _a[6];
@@ -3168,10 +3093,6 @@ float norm(const mv &a)
 }
 mv unit(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"unit\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	float n = norm_returns_scalar(a);
 	int gu = a.gu();
@@ -3209,28 +3130,14 @@ mv unit(const mv &a)
 }
 mv applyVersor(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"applyVersor\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return extractGrade(gp(gp(a, b), versorInverse(a)), b.gu());
 }
 mv applyUnitVersor(const mv &a, const mv &b)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID) && 
-		(b.m_t > C3GA_MV) && (b.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"applyUnitVersor\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" arg2=\""+ g_c3gaTypenames[b.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return extractGrade(gp(gp(a, b), reverse(a)), b.gu());
 }
 mv versorInverse(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"versorInverse\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	float n2 = norm2_returns_scalar(a);
 	int gu = a.gu();
@@ -3382,10 +3289,6 @@ bool zero(const mv &a, const float b)
 }
 mv dual(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"dual\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	float c[32];
 	c3ga::zero_N(c, 32);
@@ -3422,10 +3325,6 @@ mv dual(const mv &a)
 }
 mv undual(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"undual\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	int idx = 0;
 	float c[32];
 	c3ga::zero_N(c, 32);
@@ -3559,10 +3458,6 @@ mv gp(const mv &a, const float b)
 }
 float norm2(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"norm2\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	float n2 = 0.0f;
 	float c[1];
 	const float* _a[6];

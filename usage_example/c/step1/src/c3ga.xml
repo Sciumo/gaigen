@@ -2,10 +2,10 @@
 
 <g25spec 
 	license="gpl" 
-	language="cpp"
+	language="c"
 	namespace="c3ga"
 	coordStorage="array"
-	defaultOperatorBindings="true"
+	defaultOperatorBindings="false"
 	dimension="5"
 	reportUsage="false"
 	gmvCode="expand"
@@ -35,15 +35,8 @@
 <metric name="default" round="true">no.ni=-1</metric>
 <metric name="default">e1.e1=e2.e2=e3.e3=1</metric>
 
-<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
-
+<mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="full"/>
 <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
-<smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
-<smv name="line" type="blade">e1^e2^ni e1^e3^ni e2^e3^ni e1^no^ni e2^no^ni e3^no^ni</smv>
-<smv name="dualLine" type="blade">e1^e2 e1^e3 e2^e3 e1^ni e2^ni e3^ni</smv>
-<smv name="plane" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni</smv>
-<smv name="pointPair" type="multivector">no^e1 no^e2 e1^e2 no^e3 e1^e3 e2^e3 no^ni e1^ni e2^ni e3^ni</smv>
-<smv name="circle" type="multivector">no^e1^e2 no^e1^e3 no^e2^e3 e1^e2^e3 no^e1^ni no^e2^ni e1^e2^ni no^e3^ni e1^e3^ni e2^e3^ni</smv>
 
 <smv name="no" const="true" type="blade">no=1</smv>
 <smv name="e1" const="true" type="blade">e1=1</smv>
@@ -51,8 +44,7 @@
 <smv name="e3" const="true" type="blade">e3=1</smv>
 <smv name="ni" const="true" type="blade">ni=1</smv>
 
-
- 
+  
 <function name="add" arg1="mv" arg2="mv"/>
 <function name="subtract" arg1="mv" arg2="mv"/>
 
@@ -92,12 +84,4 @@
 <function name="norm2" arg1="mv"/>
 <function name="sas" arg1="mv" arg2="float" arg3="float"/>
 
-
-<function name="op" arg1="normalizedPoint" arg2="normalizedPoint"/>
-<function name="op" arg1="pointPair" arg2="ni_t"/>
-<function name="op" arg1="pointPair" arg2="normalizedPoint"/>
-<function name="dual" arg1="line"/>
-<function name="op" arg1="circle" arg2="ni_t"/>
-<function name="lc" arg1="dualLine" arg2="plane"/>
-  
 </g25spec>

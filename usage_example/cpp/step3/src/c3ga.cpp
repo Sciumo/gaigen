@@ -94,9 +94,7 @@ const char *g_c3gaTypenames[] =
 	"e1_t",
 	"e2_t",
 	"e3_t",
-	"ni_t",
-	"pointPair",
-	"circle"
+	"ni_t"
 };
 no_t no;
 e1_t e1;

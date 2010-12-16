@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="c3ga_cpp_example_step4"
-	ProjectGUID="{5CAB0594-2B8B-4757-81F8-06FDE3B96978}"
-	RootNamespace="c3ga_cpp_example_step4"
+	Name="c3ga_c_example_step1"
+	ProjectGUID="{26521966-91AF-4850-9E88-B97F76AC3C15}"
+	RootNamespace="c3ga_c_example_step1"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -171,15 +171,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\src\c3ga.cpp"
+				RelativePath="..\src\c3ga.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\c3ga_parse_mv.cpp"
+				RelativePath="..\src\c3ga_parse_mv.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\main.cpp"
+				RelativePath="..\src\main.c"
 				>
 			</File>
 		</Filter>
@@ -209,7 +209,7 @@
 					Name="VCCustomBuildTool"
 					Description="g25 $(InputFileName)"
 					CommandLine="cd $(InputDir)&#x0D;&#x0A;g25 $(InputFileName)"
-					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.cpp;$(InputDir)\c3ga_parse_mv.cpp"
+					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.c;$(InputDir)\c3ga_parse_mv.c"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -219,7 +219,7 @@
 					Name="VCCustomBuildTool"
 					Description="g25 $(InputFileName)"
 					CommandLine="cd $(InputDir)&#x0D;&#x0A;g25 $(InputFileName)"
-					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.cpp;$(InputDir)\c3ga_parse_mv.cpp"
+					Outputs="$(InputDir)\c3ga.h;$(InputDir)\c3ga.c;$(InputDir)\c3ga_parse_mv.c"
 				/>
 			</FileConfiguration>
 		</File>

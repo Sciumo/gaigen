@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string.h>
 #include <math.h>
 #include <string>
-#include <map>
 namespace c3ga {
 
 // group: 1
@@ -123,42 +122,19 @@ extern const int c3ga_basisElementGradeByBitmap[32];
 /// This array of group of each basis elements in the general multivector
 /// Use it to answer: 'what is the group of basis element bitmap [x]'?
 extern const int c3ga_basisElementGroupByBitmap[32];
-
-// These constants define a unique number for each specialized multivector type.
-// They are used to report usage of non-optimized functions.
-typedef enum {
-	C3GA_NONE = -1,
-	C3GA_MV = 0,
-	C3GA_FLOAT = 1,
-	C3GA_NORMALIZEDPOINT = 2,
-	C3GA_FLATPOINT = 3,
-	C3GA_LINE = 4,
-	C3GA_PLANE = 5,
-	C3GA_NO_T = 6,
-	C3GA_E1_T = 7,
-	C3GA_E2_T = 8,
-	C3GA_E3_T = 9,
-	C3GA_NI_T = 10,
-	C3GA_POINTPAIR = 11,
-	C3GA_CIRCLE = 12,
-	C3GA_INVALID
-} SMV_TYPE;
-
-/// For each specialized multivector type, the mangled typename.
-/// This is used to report usage of non-optimized functions.
-extern const char *g_c3gaTypenames[];
 class mv;
 class normalizedPoint;
 class flatPoint;
 class line;
+class dualLine;
 class plane;
+class pointPair;
+class circle;
 class no_t;
 class e1_t;
 class e2_t;
 class e3_t;
 class ni_t;
-class pointPair;
-class circle;
 
 /**
 This function alters the formatting of 'string()'.
@@ -209,8 +185,6 @@ public:
 	int m_gu; 
 	/// the coordinates (array is allocated using realloc())
 	float *m_c; 
-	/// Specialized multivector type. Used to report about non-optimized function usage.
-	SMV_TYPE m_t; 
 public:
 
 	/// Floating point type used by mv 
@@ -237,8 +211,14 @@ public:
 	inline mv(const flatPoint&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a line to a mv.
 	inline mv(const line&A)  : m_c(NULL), m_gu(0) {set(A);}
+	/// Converts a dualLine to a mv.
+	inline mv(const dualLine&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a plane to a mv.
 	inline mv(const plane&A)  : m_c(NULL), m_gu(0) {set(A);}
+	/// Converts a pointPair to a mv.
+	inline mv(const pointPair&A)  : m_c(NULL), m_gu(0) {set(A);}
+	/// Converts a circle to a mv.
+	inline mv(const circle&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a no_t to a mv.
 	inline mv(const no_t&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a e1_t to a mv.
@@ -249,10 +229,6 @@ public:
 	inline mv(const e3_t&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a ni_t to a mv.
 	inline mv(const ni_t&A)  : m_c(NULL), m_gu(0) {set(A);}
-	/// Converts a pointPair to a mv.
-	inline mv(const pointPair&A)  : m_c(NULL), m_gu(0) {set(A);}
-	/// Converts a circle to a mv.
-	inline mv(const circle&A)  : m_c(NULL), m_gu(0) {set(A);}
 
 	/// Destructor (frees dynamically allocated memory).
 	~mv() {if (m_c != NULL) free(m_c);}
@@ -270,7 +246,13 @@ public:
 	/// Assignment operator (mv).
 	inline mv &operator=(const line &A) {set(A); return *this;}
 	/// Assignment operator (mv).
+	inline mv &operator=(const dualLine &A) {set(A); return *this;}
+	/// Assignment operator (mv).
 	inline mv &operator=(const plane &A) {set(A); return *this;}
+	/// Assignment operator (mv).
+	inline mv &operator=(const pointPair &A) {set(A); return *this;}
+	/// Assignment operator (mv).
+	inline mv &operator=(const circle &A) {set(A); return *this;}
 	/// Assignment operator (mv).
 	inline mv &operator=(const no_t &A) {set(A); return *this;}
 	/// Assignment operator (mv).
@@ -281,10 +263,6 @@ public:
 	inline mv &operator=(const e3_t &A) {set(A); return *this;}
 	/// Assignment operator (mv).
 	inline mv &operator=(const ni_t &A) {set(A); return *this;}
-	/// Assignment operator (mv).
-	inline mv &operator=(const pointPair &A) {set(A); return *this;}
-	/// Assignment operator (mv).
-	inline mv &operator=(const circle &A) {set(A); return *this;}
 
 	/// Sets this mv to 0.
 	void set();
@@ -307,8 +285,14 @@ public:
 	void set(const flatPoint &A);
 	/// Sets this mv to the value of line A
 	void set(const line &A);
+	/// Sets this mv to the value of dualLine A
+	void set(const dualLine &A);
 	/// Sets this mv to the value of plane A
 	void set(const plane &A);
+	/// Sets this mv to the value of pointPair A
+	void set(const pointPair &A);
+	/// Sets this mv to the value of circle A
+	void set(const circle &A);
 	/// Sets this mv to the value of no_t A
 	void set(const no_t &A);
 	/// Sets this mv to the value of e1_t A
@@ -319,10 +303,6 @@ public:
 	void set(const e3_t &A);
 	/// Sets this mv to the value of ni_t A
 	void set(const ni_t &A);
-	/// Sets this mv to the value of pointPair A
-	void set(const pointPair &A);
-	/// Sets this mv to the value of circle A
-	void set(const circle &A);
 	/// Returns the scalar coordinate of this mv.
 	inline float get_scalar() const {
 		return (m_gu & 1) ? m_c[c3ga_mvSize[m_gu & 0] + 0] : 0.0f;
@@ -1281,6 +1261,166 @@ public:
 	inline const float *getC(CoordinateOrder) const { return m_c;}
 }; // end of class line
 
+/// This class can hold a specialized multivector of type dualLine.
+/// 
+/// The coordinates are stored in type float.
+/// 
+/// The variable non-zero coordinates are:
+///   - coordinate e1^e2  (array index: E1_E2 = 0)
+///   - coordinate e1^e3  (array index: E1_E3 = 1)
+///   - coordinate e2^e3  (array index: E2_E3 = 2)
+///   - coordinate e1^ni  (array index: E1_NI = 3)
+///   - coordinate e2^ni  (array index: E2_NI = 4)
+///   - coordinate e3^ni  (array index: E3_NI = 5)
+/// 
+/// The type has no constant coordinates.
+/// 
+/// 
+class dualLine
+{
+public:
+	/// The coordinates (stored in an array).
+	float m_c[6]; // e1^e2, e1^e3, e2^e3, e1^ni, e2^ni, e3^ni
+public:
+
+	/// Floating point type used by dualLine 
+	typedef float Float;
+	/// Array indices of dualLine coordinates.
+	typedef enum {
+		/// index of coordinate for e1^e2 in dualLine
+		E1_E2 = 0, 
+		/// index of coordinate for e1^e3 in dualLine
+		E1_E3 = 1, 
+		/// index of coordinate for e2^e3 in dualLine
+		E2_E3 = 2, 
+		/// index of coordinate for e1^ni in dualLine
+		E1_NI = 3, 
+		/// index of coordinate for e2^ni in dualLine
+		E2_NI = 4, 
+		/// index of coordinate for e3^ni in dualLine
+		E3_NI = 5, 
+	} ArrayIndex;
+	typedef enum {
+		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
+		coord_e1e2_e1e3_e2e3_e1ni_e2ni_e3ni
+	} CoordinateOrder;
+
+	/// Constructs a new dualLine with variable coordinates set to 0.
+	inline dualLine() {set();}
+
+	/// Copy constructor.
+	inline dualLine(const dualLine &A) {set(A);}
+
+
+
+	/// Constructs a new dualLine from mv.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	/// \param filler This argument can have any value; it's role
+	/// is only to prevent the compiler from using this constructor as a converter.
+	inline dualLine(const mv &A, int filler) {set(A);}
+
+	/// Constructs a new dualLine. Coordinate values come from 'A'.
+	inline dualLine(const CoordinateOrder co, const float A[6]) {set(co, A);}
+	
+	/// Constructs a new dualLine with each coordinate specified.
+	inline dualLine(const CoordinateOrder co,  float e1_e2, float e1_e3, float e2_e3, float e1_ni, float e2_ni, float e3_ni) {
+		set(co, e1_e2, e1_e3, e2_e3, e1_ni, e2_ni, e3_ni);
+	}
+
+	/// Assignment operator (dualLine).
+	inline dualLine &operator=(const dualLine &A) {if (this != &A) {set(A);} return *this;}
+	
+		
+
+	/// Assignment operator (mv).
+	inline dualLine &operator=(const mv &A) {set(A); return *this;}
+
+
+	/// Sets variable coordinates of 'this' to 0.
+	void set();
+	/// Sets this to 'A'.
+	void set(const dualLine &A);
+
+
+	/// Sets this to 'A'.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	void set(const mv &A);
+
+
+	/// Sets this to 'A'.
+	void set(const CoordinateOrder, const float A[6]);
+	
+	/// Sets this to coordinates specified.
+	void set(const CoordinateOrder,  float e1_e2, float e1_e3, float e2_e3, float e1_ni, float e2_ni, float e3_ni);
+
+	/// returns the absolute largest coordinate.
+	float largestCoordinate() const;
+	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
+	float largestBasisBlade(unsigned int &bm) const;
+	
+
+	/// Returns a string representation (const char*) of this multivector.
+	/// Not multi-threading safe.
+	/// \param fp how floats are printed (e.g., "%f");
+	inline const char * c_str(const char *fp = NULL) const {
+		static char buf[2048]; // not MT-safe
+		return ::c3ga::c_str(*this, buf, 2048, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	/// Not multi-threading safe.
+	inline const char * c_str_f() const {return c_str("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e
+	/// Not multi-threading safe.
+	inline const char * c_str_e() const {return c_str("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
+	/// Not multi-threading safe.
+	inline const char * c_str_e20() const {return c_str("%2.20e");}
+
+	/// Returns a string representation (const char*) of this multivector.
+	inline std::string toString(const char *fp = NULL) const {
+		return ::c3ga::toString(*this, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	inline std::string toString_f() const {return toString("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e.
+	inline std::string toString_e() const {return toString("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20.
+	inline std::string toString_e20() const {return toString("%2.20e");}
+
+	/// Returns the e1^e2 coordinate.
+	inline float get_e1_e2() const { return m_c[0];}
+	/// Sets the e1^e2 coordinate.
+	inline void set_e1_e2(float e1_e2) { m_c[0] = e1_e2;}
+	/// Returns the e1^e3 coordinate.
+	inline float get_e1_e3() const { return m_c[1];}
+	/// Sets the e1^e3 coordinate.
+	inline void set_e1_e3(float e1_e3) { m_c[1] = e1_e3;}
+	/// Returns the e2^e3 coordinate.
+	inline float get_e2_e3() const { return m_c[2];}
+	/// Sets the e2^e3 coordinate.
+	inline void set_e2_e3(float e2_e3) { m_c[2] = e2_e3;}
+	/// Returns the e1^ni coordinate.
+	inline float get_e1_ni() const { return m_c[3];}
+	/// Sets the e1^ni coordinate.
+	inline void set_e1_ni(float e1_ni) { m_c[3] = e1_ni;}
+	/// Returns the e2^ni coordinate.
+	inline float get_e2_ni() const { return m_c[4];}
+	/// Sets the e2^ni coordinate.
+	inline void set_e2_ni(float e2_ni) { m_c[4] = e2_ni;}
+	/// Returns the e3^ni coordinate.
+	inline float get_e3_ni() const { return m_c[5];}
+	/// Sets the e3^ni coordinate.
+	inline void set_e3_ni(float e3_ni) { m_c[5] = e3_ni;}
+	/// Returns the scalar coordinate (which is always 0).
+	inline float get_scalar() const { return 0.0f;}
+	/// Returns array of coordinates.
+	inline const float *getC(CoordinateOrder) const { return m_c;}
+}; // end of class dualLine
+
 /// This class can hold a specialized multivector of type plane.
 /// 
 /// The coordinates are stored in type float.
@@ -1426,6 +1566,382 @@ public:
 	/// Returns array of coordinates.
 	inline const float *getC(CoordinateOrder) const { return m_c;}
 }; // end of class plane
+
+/// This class can hold a specialized multivector of type pointPair.
+/// 
+/// The coordinates are stored in type float.
+/// 
+/// The variable non-zero coordinates are:
+///   - coordinate no^e1  (array index: NO_E1 = 0)
+///   - coordinate no^e2  (array index: NO_E2 = 1)
+///   - coordinate e1^e2  (array index: E1_E2 = 2)
+///   - coordinate no^e3  (array index: NO_E3 = 3)
+///   - coordinate e1^e3  (array index: E1_E3 = 4)
+///   - coordinate e2^e3  (array index: E2_E3 = 5)
+///   - coordinate no^ni  (array index: NO_NI = 6)
+///   - coordinate e1^ni  (array index: E1_NI = 7)
+///   - coordinate e2^ni  (array index: E2_NI = 8)
+///   - coordinate e3^ni  (array index: E3_NI = 9)
+/// 
+/// The type has no constant coordinates.
+/// 
+/// 
+class pointPair
+{
+public:
+	/// The coordinates (stored in an array).
+	float m_c[10]; // no^e1, no^e2, e1^e2, no^e3, e1^e3, e2^e3, no^ni, e1^ni, e2^ni, e3^ni
+public:
+
+	/// Floating point type used by pointPair 
+	typedef float Float;
+	/// Array indices of pointPair coordinates.
+	typedef enum {
+		/// index of coordinate for no^e1 in pointPair
+		NO_E1 = 0, 
+		/// index of coordinate for no^e2 in pointPair
+		NO_E2 = 1, 
+		/// index of coordinate for e1^e2 in pointPair
+		E1_E2 = 2, 
+		/// index of coordinate for no^e3 in pointPair
+		NO_E3 = 3, 
+		/// index of coordinate for e1^e3 in pointPair
+		E1_E3 = 4, 
+		/// index of coordinate for e2^e3 in pointPair
+		E2_E3 = 5, 
+		/// index of coordinate for no^ni in pointPair
+		NO_NI = 6, 
+		/// index of coordinate for e1^ni in pointPair
+		E1_NI = 7, 
+		/// index of coordinate for e2^ni in pointPair
+		E2_NI = 8, 
+		/// index of coordinate for e3^ni in pointPair
+		E3_NI = 9, 
+	} ArrayIndex;
+	typedef enum {
+		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
+		coord_noe1_noe2_e1e2_noe3_e1e3_e2e3_noni_e1ni_e2ni_e3ni
+	} CoordinateOrder;
+
+	/// Constructs a new pointPair with variable coordinates set to 0.
+	inline pointPair() {set();}
+
+	/// Copy constructor.
+	inline pointPair(const pointPair &A) {set(A);}
+
+
+
+	/// Constructs a new pointPair from mv.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	/// \param filler This argument can have any value; it's role
+	/// is only to prevent the compiler from using this constructor as a converter.
+	inline pointPair(const mv &A, int filler) {set(A);}
+
+	/// Constructs a new pointPair. Coordinate values come from 'A'.
+	inline pointPair(const CoordinateOrder co, const float A[10]) {set(co, A);}
+	
+	/// Constructs a new pointPair with each coordinate specified.
+	inline pointPair(const CoordinateOrder co,  float no_e1, float no_e2, float e1_e2, float no_e3, float e1_e3, float e2_e3, float no_ni, float e1_ni, float e2_ni, float e3_ni) {
+		set(co, no_e1, no_e2, e1_e2, no_e3, e1_e3, e2_e3, no_ni, e1_ni, e2_ni, e3_ni);
+	}
+
+	/// Assignment operator (pointPair).
+	inline pointPair &operator=(const pointPair &A) {if (this != &A) {set(A);} return *this;}
+	
+		
+
+	/// Assignment operator (mv).
+	inline pointPair &operator=(const mv &A) {set(A); return *this;}
+
+
+	/// Sets variable coordinates of 'this' to 0.
+	void set();
+	/// Sets this to 'A'.
+	void set(const pointPair &A);
+
+
+	/// Sets this to 'A'.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	void set(const mv &A);
+
+
+	/// Sets this to 'A'.
+	void set(const CoordinateOrder, const float A[10]);
+	
+	/// Sets this to coordinates specified.
+	void set(const CoordinateOrder,  float no_e1, float no_e2, float e1_e2, float no_e3, float e1_e3, float e2_e3, float no_ni, float e1_ni, float e2_ni, float e3_ni);
+
+	/// returns the absolute largest coordinate.
+	float largestCoordinate() const;
+	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
+	float largestBasisBlade(unsigned int &bm) const;
+	
+
+	/// Returns a string representation (const char*) of this multivector.
+	/// Not multi-threading safe.
+	/// \param fp how floats are printed (e.g., "%f");
+	inline const char * c_str(const char *fp = NULL) const {
+		static char buf[2048]; // not MT-safe
+		return ::c3ga::c_str(*this, buf, 2048, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	/// Not multi-threading safe.
+	inline const char * c_str_f() const {return c_str("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e
+	/// Not multi-threading safe.
+	inline const char * c_str_e() const {return c_str("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
+	/// Not multi-threading safe.
+	inline const char * c_str_e20() const {return c_str("%2.20e");}
+
+	/// Returns a string representation (const char*) of this multivector.
+	inline std::string toString(const char *fp = NULL) const {
+		return ::c3ga::toString(*this, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	inline std::string toString_f() const {return toString("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e.
+	inline std::string toString_e() const {return toString("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20.
+	inline std::string toString_e20() const {return toString("%2.20e");}
+
+	/// Returns the no^e1 coordinate.
+	inline float get_no_e1() const { return m_c[0];}
+	/// Sets the no^e1 coordinate.
+	inline void set_no_e1(float no_e1) { m_c[0] = no_e1;}
+	/// Returns the no^e2 coordinate.
+	inline float get_no_e2() const { return m_c[1];}
+	/// Sets the no^e2 coordinate.
+	inline void set_no_e2(float no_e2) { m_c[1] = no_e2;}
+	/// Returns the e1^e2 coordinate.
+	inline float get_e1_e2() const { return m_c[2];}
+	/// Sets the e1^e2 coordinate.
+	inline void set_e1_e2(float e1_e2) { m_c[2] = e1_e2;}
+	/// Returns the no^e3 coordinate.
+	inline float get_no_e3() const { return m_c[3];}
+	/// Sets the no^e3 coordinate.
+	inline void set_no_e3(float no_e3) { m_c[3] = no_e3;}
+	/// Returns the e1^e3 coordinate.
+	inline float get_e1_e3() const { return m_c[4];}
+	/// Sets the e1^e3 coordinate.
+	inline void set_e1_e3(float e1_e3) { m_c[4] = e1_e3;}
+	/// Returns the e2^e3 coordinate.
+	inline float get_e2_e3() const { return m_c[5];}
+	/// Sets the e2^e3 coordinate.
+	inline void set_e2_e3(float e2_e3) { m_c[5] = e2_e3;}
+	/// Returns the no^ni coordinate.
+	inline float get_no_ni() const { return m_c[6];}
+	/// Sets the no^ni coordinate.
+	inline void set_no_ni(float no_ni) { m_c[6] = no_ni;}
+	/// Returns the e1^ni coordinate.
+	inline float get_e1_ni() const { return m_c[7];}
+	/// Sets the e1^ni coordinate.
+	inline void set_e1_ni(float e1_ni) { m_c[7] = e1_ni;}
+	/// Returns the e2^ni coordinate.
+	inline float get_e2_ni() const { return m_c[8];}
+	/// Sets the e2^ni coordinate.
+	inline void set_e2_ni(float e2_ni) { m_c[8] = e2_ni;}
+	/// Returns the e3^ni coordinate.
+	inline float get_e3_ni() const { return m_c[9];}
+	/// Sets the e3^ni coordinate.
+	inline void set_e3_ni(float e3_ni) { m_c[9] = e3_ni;}
+	/// Returns the scalar coordinate (which is always 0).
+	inline float get_scalar() const { return 0.0f;}
+	/// Returns array of coordinates.
+	inline const float *getC(CoordinateOrder) const { return m_c;}
+}; // end of class pointPair
+
+/// This class can hold a specialized multivector of type circle.
+/// 
+/// The coordinates are stored in type float.
+/// 
+/// The variable non-zero coordinates are:
+///   - coordinate no^e1^e2  (array index: NO_E1_E2 = 0)
+///   - coordinate no^e1^e3  (array index: NO_E1_E3 = 1)
+///   - coordinate no^e2^e3  (array index: NO_E2_E3 = 2)
+///   - coordinate e1^e2^e3  (array index: E1_E2_E3 = 3)
+///   - coordinate no^e1^ni  (array index: NO_E1_NI = 4)
+///   - coordinate no^e2^ni  (array index: NO_E2_NI = 5)
+///   - coordinate e1^e2^ni  (array index: E1_E2_NI = 6)
+///   - coordinate no^e3^ni  (array index: NO_E3_NI = 7)
+///   - coordinate e1^e3^ni  (array index: E1_E3_NI = 8)
+///   - coordinate e2^e3^ni  (array index: E2_E3_NI = 9)
+/// 
+/// The type has no constant coordinates.
+/// 
+/// 
+class circle
+{
+public:
+	/// The coordinates (stored in an array).
+	float m_c[10]; // no^e1^e2, no^e1^e3, no^e2^e3, e1^e2^e3, no^e1^ni, no^e2^ni, e1^e2^ni, no^e3^ni, e1^e3^ni, e2^e3^ni
+public:
+
+	/// Floating point type used by circle 
+	typedef float Float;
+	/// Array indices of circle coordinates.
+	typedef enum {
+		/// index of coordinate for no^e1^e2 in circle
+		NO_E1_E2 = 0, 
+		/// index of coordinate for no^e1^e3 in circle
+		NO_E1_E3 = 1, 
+		/// index of coordinate for no^e2^e3 in circle
+		NO_E2_E3 = 2, 
+		/// index of coordinate for e1^e2^e3 in circle
+		E1_E2_E3 = 3, 
+		/// index of coordinate for no^e1^ni in circle
+		NO_E1_NI = 4, 
+		/// index of coordinate for no^e2^ni in circle
+		NO_E2_NI = 5, 
+		/// index of coordinate for e1^e2^ni in circle
+		E1_E2_NI = 6, 
+		/// index of coordinate for no^e3^ni in circle
+		NO_E3_NI = 7, 
+		/// index of coordinate for e1^e3^ni in circle
+		E1_E3_NI = 8, 
+		/// index of coordinate for e2^e3^ni in circle
+		E2_E3_NI = 9, 
+	} ArrayIndex;
+	typedef enum {
+		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
+		coord_noe1e2_noe1e3_noe2e3_e1e2e3_noe1ni_noe2ni_e1e2ni_noe3ni_e1e3ni_e2e3ni
+	} CoordinateOrder;
+
+	/// Constructs a new circle with variable coordinates set to 0.
+	inline circle() {set();}
+
+	/// Copy constructor.
+	inline circle(const circle &A) {set(A);}
+
+
+
+	/// Constructs a new circle from mv.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	/// \param filler This argument can have any value; it's role
+	/// is only to prevent the compiler from using this constructor as a converter.
+	inline circle(const mv &A, int filler) {set(A);}
+
+	/// Constructs a new circle. Coordinate values come from 'A'.
+	inline circle(const CoordinateOrder co, const float A[10]) {set(co, A);}
+	
+	/// Constructs a new circle with each coordinate specified.
+	inline circle(const CoordinateOrder co,  float no_e1_e2, float no_e1_e3, float no_e2_e3, float e1_e2_e3, float no_e1_ni, float no_e2_ni, float e1_e2_ni, float no_e3_ni, float e1_e3_ni, float e2_e3_ni) {
+		set(co, no_e1_e2, no_e1_e3, no_e2_e3, e1_e2_e3, no_e1_ni, no_e2_ni, e1_e2_ni, no_e3_ni, e1_e3_ni, e2_e3_ni);
+	}
+
+	/// Assignment operator (circle).
+	inline circle &operator=(const circle &A) {if (this != &A) {set(A);} return *this;}
+	
+		
+
+	/// Assignment operator (mv).
+	inline circle &operator=(const mv &A) {set(A); return *this;}
+
+
+	/// Sets variable coordinates of 'this' to 0.
+	void set();
+	/// Sets this to 'A'.
+	void set(const circle &A);
+
+
+	/// Sets this to 'A'.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	void set(const mv &A);
+
+
+	/// Sets this to 'A'.
+	void set(const CoordinateOrder, const float A[10]);
+	
+	/// Sets this to coordinates specified.
+	void set(const CoordinateOrder,  float no_e1_e2, float no_e1_e3, float no_e2_e3, float e1_e2_e3, float no_e1_ni, float no_e2_ni, float e1_e2_ni, float no_e3_ni, float e1_e3_ni, float e2_e3_ni);
+
+	/// returns the absolute largest coordinate.
+	float largestCoordinate() const;
+	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
+	float largestBasisBlade(unsigned int &bm) const;
+	
+
+	/// Returns a string representation (const char*) of this multivector.
+	/// Not multi-threading safe.
+	/// \param fp how floats are printed (e.g., "%f");
+	inline const char * c_str(const char *fp = NULL) const {
+		static char buf[2048]; // not MT-safe
+		return ::c3ga::c_str(*this, buf, 2048, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	/// Not multi-threading safe.
+	inline const char * c_str_f() const {return c_str("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e
+	/// Not multi-threading safe.
+	inline const char * c_str_e() const {return c_str("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
+	/// Not multi-threading safe.
+	inline const char * c_str_e20() const {return c_str("%2.20e");}
+
+	/// Returns a string representation (const char*) of this multivector.
+	inline std::string toString(const char *fp = NULL) const {
+		return ::c3ga::toString(*this, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	inline std::string toString_f() const {return toString("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e.
+	inline std::string toString_e() const {return toString("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20.
+	inline std::string toString_e20() const {return toString("%2.20e");}
+
+	/// Returns the no^e1^e2 coordinate.
+	inline float get_no_e1_e2() const { return m_c[0];}
+	/// Sets the no^e1^e2 coordinate.
+	inline void set_no_e1_e2(float no_e1_e2) { m_c[0] = no_e1_e2;}
+	/// Returns the no^e1^e3 coordinate.
+	inline float get_no_e1_e3() const { return m_c[1];}
+	/// Sets the no^e1^e3 coordinate.
+	inline void set_no_e1_e3(float no_e1_e3) { m_c[1] = no_e1_e3;}
+	/// Returns the no^e2^e3 coordinate.
+	inline float get_no_e2_e3() const { return m_c[2];}
+	/// Sets the no^e2^e3 coordinate.
+	inline void set_no_e2_e3(float no_e2_e3) { m_c[2] = no_e2_e3;}
+	/// Returns the e1^e2^e3 coordinate.
+	inline float get_e1_e2_e3() const { return m_c[3];}
+	/// Sets the e1^e2^e3 coordinate.
+	inline void set_e1_e2_e3(float e1_e2_e3) { m_c[3] = e1_e2_e3;}
+	/// Returns the no^e1^ni coordinate.
+	inline float get_no_e1_ni() const { return m_c[4];}
+	/// Sets the no^e1^ni coordinate.
+	inline void set_no_e1_ni(float no_e1_ni) { m_c[4] = no_e1_ni;}
+	/// Returns the no^e2^ni coordinate.
+	inline float get_no_e2_ni() const { return m_c[5];}
+	/// Sets the no^e2^ni coordinate.
+	inline void set_no_e2_ni(float no_e2_ni) { m_c[5] = no_e2_ni;}
+	/// Returns the e1^e2^ni coordinate.
+	inline float get_e1_e2_ni() const { return m_c[6];}
+	/// Sets the e1^e2^ni coordinate.
+	inline void set_e1_e2_ni(float e1_e2_ni) { m_c[6] = e1_e2_ni;}
+	/// Returns the no^e3^ni coordinate.
+	inline float get_no_e3_ni() const { return m_c[7];}
+	/// Sets the no^e3^ni coordinate.
+	inline void set_no_e3_ni(float no_e3_ni) { m_c[7] = no_e3_ni;}
+	/// Returns the e1^e3^ni coordinate.
+	inline float get_e1_e3_ni() const { return m_c[8];}
+	/// Sets the e1^e3^ni coordinate.
+	inline void set_e1_e3_ni(float e1_e3_ni) { m_c[8] = e1_e3_ni;}
+	/// Returns the e2^e3^ni coordinate.
+	inline float get_e2_e3_ni() const { return m_c[9];}
+	/// Sets the e2^e3^ni coordinate.
+	inline void set_e2_e3_ni(float e2_e3_ni) { m_c[9] = e2_e3_ni;}
+	/// Returns the scalar coordinate (which is always 0).
+	inline float get_scalar() const { return 0.0f;}
+	/// Returns array of coordinates.
+	inline const float *getC(CoordinateOrder) const { return m_c;}
+}; // end of class circle
 
 /// This class can hold a specialized multivector of type no_t.
 /// 
@@ -1951,382 +2467,6 @@ public:
 	/// Returns the scalar coordinate (which is always 0).
 	inline float get_scalar() const { return 0.0f;}
 }; // end of class ni_t
-
-/// This class can hold a specialized multivector of type pointPair.
-/// 
-/// The coordinates are stored in type float.
-/// 
-/// The variable non-zero coordinates are:
-///   - coordinate no^e1  (array index: NO_E1 = 0)
-///   - coordinate no^e2  (array index: NO_E2 = 1)
-///   - coordinate e1^e2  (array index: E1_E2 = 2)
-///   - coordinate no^e3  (array index: NO_E3 = 3)
-///   - coordinate e1^e3  (array index: E1_E3 = 4)
-///   - coordinate e2^e3  (array index: E2_E3 = 5)
-///   - coordinate no^ni  (array index: NO_NI = 6)
-///   - coordinate e1^ni  (array index: E1_NI = 7)
-///   - coordinate e2^ni  (array index: E2_NI = 8)
-///   - coordinate e3^ni  (array index: E3_NI = 9)
-/// 
-/// The type has no constant coordinates.
-/// 
-/// 
-class pointPair
-{
-public:
-	/// The coordinates (stored in an array).
-	float m_c[10]; // no^e1, no^e2, e1^e2, no^e3, e1^e3, e2^e3, no^ni, e1^ni, e2^ni, e3^ni
-public:
-
-	/// Floating point type used by pointPair 
-	typedef float Float;
-	/// Array indices of pointPair coordinates.
-	typedef enum {
-		/// index of coordinate for no^e1 in pointPair
-		NO_E1 = 0, 
-		/// index of coordinate for no^e2 in pointPair
-		NO_E2 = 1, 
-		/// index of coordinate for e1^e2 in pointPair
-		E1_E2 = 2, 
-		/// index of coordinate for no^e3 in pointPair
-		NO_E3 = 3, 
-		/// index of coordinate for e1^e3 in pointPair
-		E1_E3 = 4, 
-		/// index of coordinate for e2^e3 in pointPair
-		E2_E3 = 5, 
-		/// index of coordinate for no^ni in pointPair
-		NO_NI = 6, 
-		/// index of coordinate for e1^ni in pointPair
-		E1_NI = 7, 
-		/// index of coordinate for e2^ni in pointPair
-		E2_NI = 8, 
-		/// index of coordinate for e3^ni in pointPair
-		E3_NI = 9, 
-	} ArrayIndex;
-	typedef enum {
-		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
-		coord_noe1_noe2_e1e2_noe3_e1e3_e2e3_noni_e1ni_e2ni_e3ni
-	} CoordinateOrder;
-
-	/// Constructs a new pointPair with variable coordinates set to 0.
-	inline pointPair() {set();}
-
-	/// Copy constructor.
-	inline pointPair(const pointPair &A) {set(A);}
-
-
-
-	/// Constructs a new pointPair from mv.
-	/// \param A The value to copy. Coordinates that cannot be represented
-	/// are silently dropped.
-	/// \param filler This argument can have any value; it's role
-	/// is only to prevent the compiler from using this constructor as a converter.
-	inline pointPair(const mv &A, int filler) {set(A);}
-
-	/// Constructs a new pointPair. Coordinate values come from 'A'.
-	inline pointPair(const CoordinateOrder co, const float A[10]) {set(co, A);}
-	
-	/// Constructs a new pointPair with each coordinate specified.
-	inline pointPair(const CoordinateOrder co,  float no_e1, float no_e2, float e1_e2, float no_e3, float e1_e3, float e2_e3, float no_ni, float e1_ni, float e2_ni, float e3_ni) {
-		set(co, no_e1, no_e2, e1_e2, no_e3, e1_e3, e2_e3, no_ni, e1_ni, e2_ni, e3_ni);
-	}
-
-	/// Assignment operator (pointPair).
-	inline pointPair &operator=(const pointPair &A) {if (this != &A) {set(A);} return *this;}
-	
-		
-
-	/// Assignment operator (mv).
-	inline pointPair &operator=(const mv &A) {set(A); return *this;}
-
-
-	/// Sets variable coordinates of 'this' to 0.
-	void set();
-	/// Sets this to 'A'.
-	void set(const pointPair &A);
-
-
-	/// Sets this to 'A'.
-	/// \param A The value to copy. Coordinates that cannot be represented
-	/// are silently dropped.
-	void set(const mv &A);
-
-
-	/// Sets this to 'A'.
-	void set(const CoordinateOrder, const float A[10]);
-	
-	/// Sets this to coordinates specified.
-	void set(const CoordinateOrder,  float no_e1, float no_e2, float e1_e2, float no_e3, float e1_e3, float e2_e3, float no_ni, float e1_ni, float e2_ni, float e3_ni);
-
-	/// returns the absolute largest coordinate.
-	float largestCoordinate() const;
-	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
-	float largestBasisBlade(unsigned int &bm) const;
-	
-
-	/// Returns a string representation (const char*) of this multivector.
-	/// Not multi-threading safe.
-	/// \param fp how floats are printed (e.g., "%f");
-	inline const char * c_str(const char *fp = NULL) const {
-		static char buf[2048]; // not MT-safe
-		return ::c3ga::c_str(*this, buf, 2048, fp);
-	}
-	
-	/// Returns a string representation (const char*) of this multivector using %f.
-	/// Not multi-threading safe.
-	inline const char * c_str_f() const {return c_str("%f");}
-	/// Returns a string representation (const char*) of this multivector using %e
-	/// Not multi-threading safe.
-	inline const char * c_str_e() const {return c_str("%e");}
-	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
-	/// Not multi-threading safe.
-	inline const char * c_str_e20() const {return c_str("%2.20e");}
-
-	/// Returns a string representation (const char*) of this multivector.
-	inline std::string toString(const char *fp = NULL) const {
-		return ::c3ga::toString(*this, fp);
-	}
-	
-	/// Returns a string representation (const char*) of this multivector using %f.
-	inline std::string toString_f() const {return toString("%f");}
-	/// Returns a string representation (const char*) of this multivector using %e.
-	inline std::string toString_e() const {return toString("%e");}
-	/// Returns a string representation (const char*) of this multivector using %e20.
-	inline std::string toString_e20() const {return toString("%2.20e");}
-
-	/// Returns the no^e1 coordinate.
-	inline float get_no_e1() const { return m_c[0];}
-	/// Sets the no^e1 coordinate.
-	inline void set_no_e1(float no_e1) { m_c[0] = no_e1;}
-	/// Returns the no^e2 coordinate.
-	inline float get_no_e2() const { return m_c[1];}
-	/// Sets the no^e2 coordinate.
-	inline void set_no_e2(float no_e2) { m_c[1] = no_e2;}
-	/// Returns the e1^e2 coordinate.
-	inline float get_e1_e2() const { return m_c[2];}
-	/// Sets the e1^e2 coordinate.
-	inline void set_e1_e2(float e1_e2) { m_c[2] = e1_e2;}
-	/// Returns the no^e3 coordinate.
-	inline float get_no_e3() const { return m_c[3];}
-	/// Sets the no^e3 coordinate.
-	inline void set_no_e3(float no_e3) { m_c[3] = no_e3;}
-	/// Returns the e1^e3 coordinate.
-	inline float get_e1_e3() const { return m_c[4];}
-	/// Sets the e1^e3 coordinate.
-	inline void set_e1_e3(float e1_e3) { m_c[4] = e1_e3;}
-	/// Returns the e2^e3 coordinate.
-	inline float get_e2_e3() const { return m_c[5];}
-	/// Sets the e2^e3 coordinate.
-	inline void set_e2_e3(float e2_e3) { m_c[5] = e2_e3;}
-	/// Returns the no^ni coordinate.
-	inline float get_no_ni() const { return m_c[6];}
-	/// Sets the no^ni coordinate.
-	inline void set_no_ni(float no_ni) { m_c[6] = no_ni;}
-	/// Returns the e1^ni coordinate.
-	inline float get_e1_ni() const { return m_c[7];}
-	/// Sets the e1^ni coordinate.
-	inline void set_e1_ni(float e1_ni) { m_c[7] = e1_ni;}
-	/// Returns the e2^ni coordinate.
-	inline float get_e2_ni() const { return m_c[8];}
-	/// Sets the e2^ni coordinate.
-	inline void set_e2_ni(float e2_ni) { m_c[8] = e2_ni;}
-	/// Returns the e3^ni coordinate.
-	inline float get_e3_ni() const { return m_c[9];}
-	/// Sets the e3^ni coordinate.
-	inline void set_e3_ni(float e3_ni) { m_c[9] = e3_ni;}
-	/// Returns the scalar coordinate (which is always 0).
-	inline float get_scalar() const { return 0.0f;}
-	/// Returns array of coordinates.
-	inline const float *getC(CoordinateOrder) const { return m_c;}
-}; // end of class pointPair
-
-/// This class can hold a specialized multivector of type circle.
-/// 
-/// The coordinates are stored in type float.
-/// 
-/// The variable non-zero coordinates are:
-///   - coordinate no^e1^e2  (array index: NO_E1_E2 = 0)
-///   - coordinate no^e1^e3  (array index: NO_E1_E3 = 1)
-///   - coordinate no^e2^e3  (array index: NO_E2_E3 = 2)
-///   - coordinate e1^e2^e3  (array index: E1_E2_E3 = 3)
-///   - coordinate no^e1^ni  (array index: NO_E1_NI = 4)
-///   - coordinate no^e2^ni  (array index: NO_E2_NI = 5)
-///   - coordinate e1^e2^ni  (array index: E1_E2_NI = 6)
-///   - coordinate no^e3^ni  (array index: NO_E3_NI = 7)
-///   - coordinate e1^e3^ni  (array index: E1_E3_NI = 8)
-///   - coordinate e2^e3^ni  (array index: E2_E3_NI = 9)
-/// 
-/// The type has no constant coordinates.
-/// 
-/// 
-class circle
-{
-public:
-	/// The coordinates (stored in an array).
-	float m_c[10]; // no^e1^e2, no^e1^e3, no^e2^e3, e1^e2^e3, no^e1^ni, no^e2^ni, e1^e2^ni, no^e3^ni, e1^e3^ni, e2^e3^ni
-public:
-
-	/// Floating point type used by circle 
-	typedef float Float;
-	/// Array indices of circle coordinates.
-	typedef enum {
-		/// index of coordinate for no^e1^e2 in circle
-		NO_E1_E2 = 0, 
-		/// index of coordinate for no^e1^e3 in circle
-		NO_E1_E3 = 1, 
-		/// index of coordinate for no^e2^e3 in circle
-		NO_E2_E3 = 2, 
-		/// index of coordinate for e1^e2^e3 in circle
-		E1_E2_E3 = 3, 
-		/// index of coordinate for no^e1^ni in circle
-		NO_E1_NI = 4, 
-		/// index of coordinate for no^e2^ni in circle
-		NO_E2_NI = 5, 
-		/// index of coordinate for e1^e2^ni in circle
-		E1_E2_NI = 6, 
-		/// index of coordinate for no^e3^ni in circle
-		NO_E3_NI = 7, 
-		/// index of coordinate for e1^e3^ni in circle
-		E1_E3_NI = 8, 
-		/// index of coordinate for e2^e3^ni in circle
-		E2_E3_NI = 9, 
-	} ArrayIndex;
-	typedef enum {
-		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
-		coord_noe1e2_noe1e3_noe2e3_e1e2e3_noe1ni_noe2ni_e1e2ni_noe3ni_e1e3ni_e2e3ni
-	} CoordinateOrder;
-
-	/// Constructs a new circle with variable coordinates set to 0.
-	inline circle() {set();}
-
-	/// Copy constructor.
-	inline circle(const circle &A) {set(A);}
-
-
-
-	/// Constructs a new circle from mv.
-	/// \param A The value to copy. Coordinates that cannot be represented
-	/// are silently dropped.
-	/// \param filler This argument can have any value; it's role
-	/// is only to prevent the compiler from using this constructor as a converter.
-	inline circle(const mv &A, int filler) {set(A);}
-
-	/// Constructs a new circle. Coordinate values come from 'A'.
-	inline circle(const CoordinateOrder co, const float A[10]) {set(co, A);}
-	
-	/// Constructs a new circle with each coordinate specified.
-	inline circle(const CoordinateOrder co,  float no_e1_e2, float no_e1_e3, float no_e2_e3, float e1_e2_e3, float no_e1_ni, float no_e2_ni, float e1_e2_ni, float no_e3_ni, float e1_e3_ni, float e2_e3_ni) {
-		set(co, no_e1_e2, no_e1_e3, no_e2_e3, e1_e2_e3, no_e1_ni, no_e2_ni, e1_e2_ni, no_e3_ni, e1_e3_ni, e2_e3_ni);
-	}
-
-	/// Assignment operator (circle).
-	inline circle &operator=(const circle &A) {if (this != &A) {set(A);} return *this;}
-	
-		
-
-	/// Assignment operator (mv).
-	inline circle &operator=(const mv &A) {set(A); return *this;}
-
-
-	/// Sets variable coordinates of 'this' to 0.
-	void set();
-	/// Sets this to 'A'.
-	void set(const circle &A);
-
-
-	/// Sets this to 'A'.
-	/// \param A The value to copy. Coordinates that cannot be represented
-	/// are silently dropped.
-	void set(const mv &A);
-
-
-	/// Sets this to 'A'.
-	void set(const CoordinateOrder, const float A[10]);
-	
-	/// Sets this to coordinates specified.
-	void set(const CoordinateOrder,  float no_e1_e2, float no_e1_e3, float no_e2_e3, float e1_e2_e3, float no_e1_ni, float no_e2_ni, float e1_e2_ni, float no_e3_ni, float e1_e3_ni, float e2_e3_ni);
-
-	/// returns the absolute largest coordinate.
-	float largestCoordinate() const;
-	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
-	float largestBasisBlade(unsigned int &bm) const;
-	
-
-	/// Returns a string representation (const char*) of this multivector.
-	/// Not multi-threading safe.
-	/// \param fp how floats are printed (e.g., "%f");
-	inline const char * c_str(const char *fp = NULL) const {
-		static char buf[2048]; // not MT-safe
-		return ::c3ga::c_str(*this, buf, 2048, fp);
-	}
-	
-	/// Returns a string representation (const char*) of this multivector using %f.
-	/// Not multi-threading safe.
-	inline const char * c_str_f() const {return c_str("%f");}
-	/// Returns a string representation (const char*) of this multivector using %e
-	/// Not multi-threading safe.
-	inline const char * c_str_e() const {return c_str("%e");}
-	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
-	/// Not multi-threading safe.
-	inline const char * c_str_e20() const {return c_str("%2.20e");}
-
-	/// Returns a string representation (const char*) of this multivector.
-	inline std::string toString(const char *fp = NULL) const {
-		return ::c3ga::toString(*this, fp);
-	}
-	
-	/// Returns a string representation (const char*) of this multivector using %f.
-	inline std::string toString_f() const {return toString("%f");}
-	/// Returns a string representation (const char*) of this multivector using %e.
-	inline std::string toString_e() const {return toString("%e");}
-	/// Returns a string representation (const char*) of this multivector using %e20.
-	inline std::string toString_e20() const {return toString("%2.20e");}
-
-	/// Returns the no^e1^e2 coordinate.
-	inline float get_no_e1_e2() const { return m_c[0];}
-	/// Sets the no^e1^e2 coordinate.
-	inline void set_no_e1_e2(float no_e1_e2) { m_c[0] = no_e1_e2;}
-	/// Returns the no^e1^e3 coordinate.
-	inline float get_no_e1_e3() const { return m_c[1];}
-	/// Sets the no^e1^e3 coordinate.
-	inline void set_no_e1_e3(float no_e1_e3) { m_c[1] = no_e1_e3;}
-	/// Returns the no^e2^e3 coordinate.
-	inline float get_no_e2_e3() const { return m_c[2];}
-	/// Sets the no^e2^e3 coordinate.
-	inline void set_no_e2_e3(float no_e2_e3) { m_c[2] = no_e2_e3;}
-	/// Returns the e1^e2^e3 coordinate.
-	inline float get_e1_e2_e3() const { return m_c[3];}
-	/// Sets the e1^e2^e3 coordinate.
-	inline void set_e1_e2_e3(float e1_e2_e3) { m_c[3] = e1_e2_e3;}
-	/// Returns the no^e1^ni coordinate.
-	inline float get_no_e1_ni() const { return m_c[4];}
-	/// Sets the no^e1^ni coordinate.
-	inline void set_no_e1_ni(float no_e1_ni) { m_c[4] = no_e1_ni;}
-	/// Returns the no^e2^ni coordinate.
-	inline float get_no_e2_ni() const { return m_c[5];}
-	/// Sets the no^e2^ni coordinate.
-	inline void set_no_e2_ni(float no_e2_ni) { m_c[5] = no_e2_ni;}
-	/// Returns the e1^e2^ni coordinate.
-	inline float get_e1_e2_ni() const { return m_c[6];}
-	/// Sets the e1^e2^ni coordinate.
-	inline void set_e1_e2_ni(float e1_e2_ni) { m_c[6] = e1_e2_ni;}
-	/// Returns the no^e3^ni coordinate.
-	inline float get_no_e3_ni() const { return m_c[7];}
-	/// Sets the no^e3^ni coordinate.
-	inline void set_no_e3_ni(float no_e3_ni) { m_c[7] = no_e3_ni;}
-	/// Returns the e1^e3^ni coordinate.
-	inline float get_e1_e3_ni() const { return m_c[8];}
-	/// Sets the e1^e3^ni coordinate.
-	inline void set_e1_e3_ni(float e1_e3_ni) { m_c[8] = e1_e3_ni;}
-	/// Returns the e2^e3^ni coordinate.
-	inline float get_e2_e3_ni() const { return m_c[9];}
-	/// Sets the e2^e3^ni coordinate.
-	inline void set_e2_e3_ni(float e2_e3_ni) { m_c[9] = e2_e3_ni;}
-	/// Returns the scalar coordinate (which is always 0).
-	inline float get_scalar() const { return 0.0f;}
-	/// Returns array of coordinates.
-	inline const float *getC(CoordinateOrder) const { return m_c;}
-}; // end of class circle
 extern no_t no;
 extern e1_t e1;
 extern e2_t e2;
@@ -2336,99 +2476,10 @@ extern ni_t ni;
 
 /**
 This class is used to report usage of converted specialized multivectors.
-
-The class is designed to be pretty safe with multi-threading without locking.
-In the worst case, some memory leaks occur and some counts are missed. 
-The amount of memory leaked is bounded (does not grow beyond a certain
-point). Since the report-usage functionality is for
-development/debugging only, this is not considered non-harmful.
 */
 class ReportUsage {
-public:
-	inline ReportUsage(std::string str, unsigned int initialCount = 1) : 
-		m_hash(computeHash(str)),
-		m_str(str), 
-		m_count(initialCount), 
-		m_left(NULL),
-		m_right(NULL)
-	{
-	}
-
-	static void mergeReport(ReportUsage *RU);
-
-	/// prints out all reports, sorted by m_str
+	/// prints out error message that ReportUsage is disabled
 	static void printReport(FILE *F = stdout, bool includeCount = true);
-
-protected:
-	/// Turns a string into a hashcode which is used to efficiently search the tree
-	static inline int computeHash(const std::string &str) {
-		unsigned int hash = 0x83BA056E; // just a number
-		int shift = 0;
-		const int SHIFT_INC = 7;
-		for (int i = 0; i < (int)str.length(); i++) {
-			hash ^= (unsigned int)(str[i] << shift);
-			shift += SHIFT_INC;
-			if (shift > (sizeof(unsigned int) - SHIFT_INC))
-				shift &= SHIFT_INC;
-		}
-		return hash;
-	}
-
-	/// return true if m_str is equal (checks the hash first)
-	inline bool equals(const ReportUsage *RU) const {
-		if (m_hash != RU->m_hash) return false;
-		else return (m_str == RU->m_str);
-	}
-
-	/// Returns -1 for this < RU, 0 for equals, +1 for this > RU
-	/// First compares the hash, then the string.
-	inline int compare(const ReportUsage *RU) const {
-		if (equals(RU)) return 0;
-		else if (m_hash == RU->m_hash) {
-			return m_str.compare(RU->m_str);
-		}
-		else return (m_hash < RU->m_hash) ? -1 : 1;
-	}
-
-	/// Merges 'RU' with the reports
-	inline void mergeReportInternal(ReportUsage *RU) {
-		if (equals(RU)) { // just increment the count?
-			if ((m_count + RU->m_count) > m_count) // prevent overflow of unsigned int
-				m_count += RU->m_count;
-			delete RU;
-		}
-		else { // either recurse or set m_left or m_right
-			int comp = compare(RU);
-			if (comp < 0) {
-				if (m_left == NULL) m_left = RU;
-				else m_left->mergeReportInternal(RU);
-			}
-			else {
-				if (m_right == NULL) m_right = RU;
-				else m_right->mergeReportInternal(RU);
-			}
-		}
-	}
-
-	inline void getMap(std::map<std::string, const ReportUsage*> &M) const {
-		M[m_str] = this;
-		if (m_left) m_left->getMap(M);
-		if (m_right) m_right->getMap(M);
-	}
-
-	static ReportUsage *s_reportTree;
-
-	/// hashcode of m_str.
-	unsigned int m_hash;
-	/// string describing the report.
-	std::string m_str;
-	/// how many times this report hash been filed.
-	unsigned int m_count;
-
-	/// left branch of tree
-	ReportUsage *m_left;
-	/// right branch of tree
-	ReportUsage *m_right;
 }; // end of class ReportUsage
 
 /** Sets 1 float to zero */
@@ -2527,10 +2578,22 @@ inline float _Float(const flatPoint &x) {return _float(x); };
 float _float(const line &x);
 /// Returns scalar part of  line
 inline float _Float(const line &x) {return _float(x); };
+/// Returns scalar part of  dualLine
+float _float(const dualLine &x);
+/// Returns scalar part of  dualLine
+inline float _Float(const dualLine &x) {return _float(x); };
 /// Returns scalar part of  plane
 float _float(const plane &x);
 /// Returns scalar part of  plane
 inline float _Float(const plane &x) {return _float(x); };
+/// Returns scalar part of  pointPair
+float _float(const pointPair &x);
+/// Returns scalar part of  pointPair
+inline float _Float(const pointPair &x) {return _float(x); };
+/// Returns scalar part of  circle
+float _float(const circle &x);
+/// Returns scalar part of  circle
+inline float _Float(const circle &x) {return _float(x); };
 /// Returns scalar part of  no_t
 float _float(const no_t &x);
 /// Returns scalar part of  no_t
@@ -2551,16 +2614,6 @@ inline float _Float(const e3_t &x) {return _float(x); };
 float _float(const ni_t &x);
 /// Returns scalar part of  ni_t
 inline float _Float(const ni_t &x) {return _float(x); };
-/// Returns scalar part of  pointPair
-float _float(const pointPair &x);
-/// Returns scalar part of  pointPair
-inline float _Float(const pointPair &x) {return _float(x); };
-/// Returns scalar part of  circle
-float _float(const circle &x);
-/// Returns scalar part of  circle
-inline float _Float(const circle &x) {return _float(x); };
-	/// Converts pointPair to flatPoint: dst = a.
-flatPoint _flatPoint(const pointPair &a);
 	/// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
 /// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
 normalizedPoint _normalizedPoint(const mv &a);
@@ -2570,9 +2623,18 @@ flatPoint _flatPoint(const mv &a);
 	/// Converts mv to line: dst = a. Automatically generated converter.
 /// Converts mv to line: dst = a. Automatically generated converter.
 line _line(const mv &a);
+	/// Converts mv to dualLine: dst = a. Automatically generated converter.
+/// Converts mv to dualLine: dst = a. Automatically generated converter.
+dualLine _dualLine(const mv &a);
 	/// Converts mv to plane: dst = a. Automatically generated converter.
 /// Converts mv to plane: dst = a. Automatically generated converter.
 plane _plane(const mv &a);
+	/// Converts mv to pointPair: dst = a. Automatically generated converter.
+/// Converts mv to pointPair: dst = a. Automatically generated converter.
+pointPair _pointPair(const mv &a);
+	/// Converts mv to circle: dst = a. Automatically generated converter.
+/// Converts mv to circle: dst = a. Automatically generated converter.
+circle _circle(const mv &a);
 	/// Converts mv to no_t: dst = a. Automatically generated converter.
 /// Converts mv to no_t: dst = a. Automatically generated converter.
 no_t _no_t(const mv &a);
@@ -2588,12 +2650,6 @@ e3_t _e3_t(const mv &a);
 	/// Converts mv to ni_t: dst = a. Automatically generated converter.
 /// Converts mv to ni_t: dst = a. Automatically generated converter.
 ni_t _ni_t(const mv &a);
-	/// Converts mv to pointPair: dst = a. Automatically generated converter.
-/// Converts mv to pointPair: dst = a. Automatically generated converter.
-pointPair _pointPair(const mv &a);
-	/// Converts mv to circle: dst = a. Automatically generated converter.
-/// Converts mv to circle: dst = a. Automatically generated converter.
-circle _circle(const mv &a);
 	/// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
 /// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
 normalizedPoint _normalizedPoint(const normalizedPoint &a);
@@ -2603,9 +2659,18 @@ flatPoint _flatPoint(const flatPoint &a);
 	/// Converts line to line: dst = a. Automatically generated converter.
 /// Converts line to line: dst = a. Automatically generated converter.
 line _line(const line &a);
+	/// Converts dualLine to dualLine: dst = a. Automatically generated converter.
+/// Converts dualLine to dualLine: dst = a. Automatically generated converter.
+dualLine _dualLine(const dualLine &a);
 	/// Converts plane to plane: dst = a. Automatically generated converter.
 /// Converts plane to plane: dst = a. Automatically generated converter.
 plane _plane(const plane &a);
+	/// Converts pointPair to pointPair: dst = a. Automatically generated converter.
+/// Converts pointPair to pointPair: dst = a. Automatically generated converter.
+pointPair _pointPair(const pointPair &a);
+	/// Converts circle to circle: dst = a. Automatically generated converter.
+/// Converts circle to circle: dst = a. Automatically generated converter.
+circle _circle(const circle &a);
 	/// Converts no_t to no_t: dst = a. Automatically generated converter.
 /// Converts no_t to no_t: dst = a. Automatically generated converter.
 no_t _no_t(const no_t &a);
@@ -2621,12 +2686,6 @@ e3_t _e3_t(const e3_t &a);
 	/// Converts ni_t to ni_t: dst = a. Automatically generated converter.
 /// Converts ni_t to ni_t: dst = a. Automatically generated converter.
 ni_t _ni_t(const ni_t &a);
-	/// Converts pointPair to pointPair: dst = a. Automatically generated converter.
-/// Converts pointPair to pointPair: dst = a. Automatically generated converter.
-pointPair _pointPair(const pointPair &a);
-	/// Converts circle to circle: dst = a. Automatically generated converter.
-/// Converts circle to circle: dst = a. Automatically generated converter.
-circle _circle(const circle &a);
 /// Returns mv + mv.
 mv add(const mv &a, const mv &b);
 /// Returns mv - mv.
@@ -2693,11 +2752,11 @@ line op(const pointPair &a, const ni_t &b);
 /// Returns outer product of pointPair and normalizedPoint.
 circle op(const pointPair &a, const normalizedPoint &b);
 /// Returns dual of line using default metric.
-pointPair dual(const line &a);
+dualLine dual(const line &a);
 /// Returns outer product of circle and ni_t.
 plane op(const circle &a, const ni_t &b);
-/// Returns left contraction of pointPair and plane.
-pointPair lc(const pointPair &a, const plane &b);
+/// Returns left contraction of dualLine and plane.
+flatPoint lc(const dualLine &a, const plane &b);
 /// returns add(a, b)
 inline mv operator+(const mv &a, const mv &b) {
 	return add(a, b);
@@ -2779,7 +2838,7 @@ inline circle operator^(const pointPair &a, const normalizedPoint &b) {
 	return op(a, b);
 }
 /// returns dual(a)
-inline pointPair operator*(const line &a) {
+inline dualLine operator*(const line &a) {
 	return dual(a);
 }
 /// returns op(a, b)
@@ -2787,12 +2846,8 @@ inline plane operator^(const circle &a, const ni_t &b) {
 	return op(a, b);
 }
 /// returns lc(a, b)
-inline pointPair operator<<(const pointPair &a, const plane &b) {
+inline flatPoint operator<<(const dualLine &a, const plane &b) {
 	return lc(a, b);
-}
-/// returns (a = lc(a, b))
-inline pointPair &operator<<=(pointPair &a, const plane &b) {
-	return (a = lc(a, b));
 }
 
 inline void zero_1(float *dst) {
@@ -3034,25 +3089,21 @@ inline void copy_N(float *dst, const float *src, int N) {
 // inline def SB:
 inline void mv::set() {
 	setGroupUsage(0);
-	m_t = C3GA_MV;
 }
 inline void mv::set(float val) {
 	setGroupUsage(1);
 	m_c[0] = val;
-	m_t = C3GA_FLOAT;
 }
 inline void mv::set(int gu, const float *arr) {
 	setGroupUsage(gu);
 	c3ga::copy_N(m_c, arr, c3ga_mvSize[gu]);
 
-	m_t = C3GA_MV;
 }
 inline void mv::set(const mv &src) {
 	setGroupUsage(src.gu());
 	const float*srcC = src.getC();
 	c3ga::copy_N(m_c, srcC, c3ga_mvSize[src.gu()]);
 
-	m_t = src.m_t;
 }
 inline void normalizedPoint::set(const mv &src) {
 	const float *ptr = src.getC();
@@ -3124,6 +3175,32 @@ inline void line::set(const mv &src) {
 		m_c[5] = 0.0f;
 	}
 }
+inline void dualLine::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+		ptr += 5;
+	}
+	if (src.gu() & 4) {
+		m_c[0] = ptr[2];
+		m_c[1] = ptr[4];
+		m_c[2] = ptr[5];
+		m_c[3] = ptr[7];
+		m_c[4] = ptr[8];
+		m_c[5] = ptr[9];
+	}
+	else {
+		m_c[0] = 0.0f;
+		m_c[1] = 0.0f;
+		m_c[2] = 0.0f;
+		m_c[3] = 0.0f;
+		m_c[4] = 0.0f;
+		m_c[5] = 0.0f;
+	}
+}
 inline void plane::set(const mv &src) {
 	const float *ptr = src.getC();
 
@@ -3150,61 +3227,6 @@ inline void plane::set(const mv &src) {
 		m_c[1] = 0.0f;
 		m_c[2] = 0.0f;
 		m_c[3] = 0.0f;
-	}
-}
-inline void no_t::set(const mv &src) {
-	const float *ptr = src.getC();
-
-	if (src.gu() & 1) {
-		ptr += 1;
-	}
-	if (src.gu() & 2) {
-	}
-	else {
-	}
-}
-inline void e1_t::set(const mv &src) {
-	const float *ptr = src.getC();
-
-	if (src.gu() & 1) {
-		ptr += 1;
-	}
-	if (src.gu() & 2) {
-	}
-	else {
-	}
-}
-inline void e2_t::set(const mv &src) {
-	const float *ptr = src.getC();
-
-	if (src.gu() & 1) {
-		ptr += 1;
-	}
-	if (src.gu() & 2) {
-	}
-	else {
-	}
-}
-inline void e3_t::set(const mv &src) {
-	const float *ptr = src.getC();
-
-	if (src.gu() & 1) {
-		ptr += 1;
-	}
-	if (src.gu() & 2) {
-	}
-	else {
-	}
-}
-inline void ni_t::set(const mv &src) {
-	const float *ptr = src.getC();
-
-	if (src.gu() & 1) {
-		ptr += 1;
-	}
-	if (src.gu() & 2) {
-	}
-	else {
 	}
 }
 inline void pointPair::set(const mv &src) {
@@ -3278,6 +3300,61 @@ inline void circle::set(const mv &src) {
 		m_c[9] = 0.0f;
 	}
 }
+inline void no_t::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+	}
+	else {
+	}
+}
+inline void e1_t::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+	}
+	else {
+	}
+}
+inline void e2_t::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+	}
+	else {
+	}
+}
+inline void e3_t::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+	}
+	else {
+	}
+}
+inline void ni_t::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+	}
+	else {
+	}
+}
 inline void mv::set(const normalizedPoint &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
@@ -3286,7 +3363,6 @@ inline void mv::set(const normalizedPoint &src) {
 	ptr[2] = src.m_c[1];
 	ptr[3] = src.m_c[2];
 	ptr[4] = src.m_c[3];
-	m_t = C3GA_NORMALIZEDPOINT;
 }
 inline void mv::set(const flatPoint &src) {
 	setGroupUsage(4);
@@ -3296,7 +3372,6 @@ inline void mv::set(const flatPoint &src) {
 	ptr[7] = src.m_c[0];
 	ptr[8] = src.m_c[1];
 	ptr[9] = src.m_c[2];
-	m_t = C3GA_FLATPOINT;
 }
 inline void mv::set(const line &src) {
 	setGroupUsage(8);
@@ -3308,7 +3383,17 @@ inline void mv::set(const line &src) {
 	ptr[7] = -src.m_c[5];
 	ptr[8] = src.m_c[1];
 	ptr[9] = src.m_c[2];
-	m_t = C3GA_LINE;
+}
+inline void mv::set(const dualLine &src) {
+	setGroupUsage(4);
+	float *ptr = m_c;
+	ptr[0] = ptr[1] = ptr[3] = ptr[6] = 0.0f;
+	ptr[2] = src.m_c[0];
+	ptr[4] = src.m_c[1];
+	ptr[5] = src.m_c[2];
+	ptr[7] = src.m_c[3];
+	ptr[8] = src.m_c[4];
+	ptr[9] = src.m_c[5];
 }
 inline void mv::set(const plane &src) {
 	setGroupUsage(16);
@@ -3318,42 +3403,6 @@ inline void mv::set(const plane &src) {
 	ptr[2] = src.m_c[2];
 	ptr[3] = src.m_c[1];
 	ptr[4] = src.m_c[0];
-	m_t = C3GA_PLANE;
-}
-inline void mv::set(const no_t &src) {
-	setGroupUsage(2);
-	float *ptr = m_c;
-	ptr[0] = 1.0f;
-	ptr[1] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
-	m_t = C3GA_NO_T;
-}
-inline void mv::set(const e1_t &src) {
-	setGroupUsage(2);
-	float *ptr = m_c;
-	ptr[0] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
-	ptr[1] = 1.0f;
-	m_t = C3GA_E1_T;
-}
-inline void mv::set(const e2_t &src) {
-	setGroupUsage(2);
-	float *ptr = m_c;
-	ptr[0] = ptr[1] = ptr[3] = ptr[4] = 0.0f;
-	ptr[2] = 1.0f;
-	m_t = C3GA_E2_T;
-}
-inline void mv::set(const e3_t &src) {
-	setGroupUsage(2);
-	float *ptr = m_c;
-	ptr[0] = ptr[1] = ptr[2] = ptr[4] = 0.0f;
-	ptr[3] = 1.0f;
-	m_t = C3GA_E3_T;
-}
-inline void mv::set(const ni_t &src) {
-	setGroupUsage(2);
-	float *ptr = m_c;
-	ptr[0] = ptr[1] = ptr[2] = ptr[3] = 0.0f;
-	ptr[4] = 1.0f;
-	m_t = C3GA_NI_T;
 }
 inline void mv::set(const pointPair &src) {
 	setGroupUsage(4);
@@ -3368,7 +3417,6 @@ inline void mv::set(const pointPair &src) {
 	ptr[7] = src.m_c[7];
 	ptr[8] = src.m_c[8];
 	ptr[9] = src.m_c[9];
-	m_t = C3GA_POINTPAIR;
 }
 inline void mv::set(const circle &src) {
 	setGroupUsage(8);
@@ -3383,7 +3431,36 @@ inline void mv::set(const circle &src) {
 	ptr[7] = src.m_c[7];
 	ptr[8] = src.m_c[8];
 	ptr[9] = src.m_c[9];
-	m_t = C3GA_CIRCLE;
+}
+inline void mv::set(const no_t &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = 1.0f;
+	ptr[1] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
+}
+inline void mv::set(const e1_t &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
+	ptr[1] = 1.0f;
+}
+inline void mv::set(const e2_t &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = ptr[1] = ptr[3] = ptr[4] = 0.0f;
+	ptr[2] = 1.0f;
+}
+inline void mv::set(const e3_t &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = ptr[1] = ptr[2] = ptr[4] = 0.0f;
+	ptr[3] = 1.0f;
+}
+inline void mv::set(const ni_t &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = ptr[1] = ptr[2] = ptr[3] = 0.0f;
+	ptr[4] = 1.0f;
 }
 
 inline float _float(const mv &x) {
@@ -3401,6 +3478,11 @@ inline void flatPoint::set()
 
 }
 inline void line::set()
+{
+	m_c[0] = m_c[1] = m_c[2] = m_c[3] = m_c[4] = m_c[5] = 0.0f;
+
+}
+inline void dualLine::set()
 {
 	m_c[0] = m_c[1] = m_c[2] = m_c[3] = m_c[4] = m_c[5] = 0.0f;
 
@@ -3446,6 +3528,16 @@ inline void line::set(const CoordinateOrder co, const float _e1_e2_ni, const flo
 	m_c[3] = _e1_no_ni;
 	m_c[4] = _e2_no_ni;
 	m_c[5] = _e3_no_ni;
+
+}
+inline void dualLine::set(const CoordinateOrder co, const float _e1_e2, const float _e1_e3, const float _e2_e3, const float _e1_ni, const float _e2_ni, const float _e3_ni)
+{
+	m_c[0] = _e1_e2;
+	m_c[1] = _e1_e3;
+	m_c[2] = _e2_e3;
+	m_c[3] = _e1_ni;
+	m_c[4] = _e2_ni;
+	m_c[5] = _e3_ni;
 
 }
 inline void plane::set(const CoordinateOrder co, const float _e1_e2_e3_ni, const float _no_e2_e3_ni, const float _no_e1_e3_ni, const float _no_e1_e2_ni)
@@ -3502,6 +3594,16 @@ inline void flatPoint::set(const CoordinateOrder co, const float *A)
 
 }
 inline void line::set(const CoordinateOrder co, const float *A)
+{
+	m_c[0] = A[0];
+	m_c[1] = A[1];
+	m_c[2] = A[2];
+	m_c[3] = A[3];
+	m_c[4] = A[4];
+	m_c[5] = A[5];
+
+}
+inline void dualLine::set(const CoordinateOrder co, const float *A)
 {
 	m_c[0] = A[0];
 	m_c[1] = A[1];
@@ -3574,32 +3676,22 @@ inline void line::set(const line &a)
 	m_c[5] = a.m_c[5];
 
 }
+inline void dualLine::set(const dualLine &a)
+{
+	m_c[0] = a.m_c[0];
+	m_c[1] = a.m_c[1];
+	m_c[2] = a.m_c[2];
+	m_c[3] = a.m_c[3];
+	m_c[4] = a.m_c[4];
+	m_c[5] = a.m_c[5];
+
+}
 inline void plane::set(const plane &a)
 {
 	m_c[0] = a.m_c[0];
 	m_c[1] = a.m_c[1];
 	m_c[2] = a.m_c[2];
 	m_c[3] = a.m_c[3];
-
-}
-inline void no_t::set(const no_t &a)
-{
-
-}
-inline void e1_t::set(const e1_t &a)
-{
-
-}
-inline void e2_t::set(const e2_t &a)
-{
-
-}
-inline void e3_t::set(const e3_t &a)
-{
-
-}
-inline void ni_t::set(const ni_t &a)
-{
 
 }
 inline void pointPair::set(const pointPair &a)
@@ -3628,6 +3720,26 @@ inline void circle::set(const circle &a)
 	m_c[7] = a.m_c[7];
 	m_c[8] = a.m_c[8];
 	m_c[9] = a.m_c[9];
+
+}
+inline void no_t::set(const no_t &a)
+{
+
+}
+inline void e1_t::set(const e1_t &a)
+{
+
+}
+inline void e2_t::set(const e2_t &a)
+{
+
+}
+inline void e3_t::set(const e3_t &a)
+{
+
+}
+inline void ni_t::set(const ni_t &a)
+{
 
 }
 
@@ -3683,6 +3795,25 @@ inline float line::largestBasisBlade(unsigned int &bm) const {
 	if (::fabsf(m_c[5]) > maxValue) { maxValue = ::fabsf(m_c[5]); bm = 25; }
 	return maxValue;
 }
+inline float dualLine::largestCoordinate() const {
+	float maxValue = ::fabsf(m_c[0]);
+	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); }
+	if (::fabsf(m_c[2]) > maxValue) { maxValue = ::fabsf(m_c[2]); }
+	if (::fabsf(m_c[3]) > maxValue) { maxValue = ::fabsf(m_c[3]); }
+	if (::fabsf(m_c[4]) > maxValue) { maxValue = ::fabsf(m_c[4]); }
+	if (::fabsf(m_c[5]) > maxValue) { maxValue = ::fabsf(m_c[5]); }
+	return maxValue;
+}
+inline float dualLine::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = ::fabsf(m_c[0]);
+	bm = 0;
+	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); bm = 10; }
+	if (::fabsf(m_c[2]) > maxValue) { maxValue = ::fabsf(m_c[2]); bm = 12; }
+	if (::fabsf(m_c[3]) > maxValue) { maxValue = ::fabsf(m_c[3]); bm = 18; }
+	if (::fabsf(m_c[4]) > maxValue) { maxValue = ::fabsf(m_c[4]); bm = 20; }
+	if (::fabsf(m_c[5]) > maxValue) { maxValue = ::fabsf(m_c[5]); bm = 24; }
+	return maxValue;
+}
 inline float plane::largestCoordinate() const {
 	float maxValue = ::fabsf(m_c[0]);
 	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); }
@@ -3696,51 +3827,6 @@ inline float plane::largestBasisBlade(unsigned int &bm) const {
 	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); bm = 29; }
 	if (::fabsf(m_c[2]) > maxValue) { maxValue = ::fabsf(m_c[2]); bm = 27; }
 	if (::fabsf(m_c[3]) > maxValue) { maxValue = ::fabsf(m_c[3]); bm = 23; }
-	return maxValue;
-}
-inline float no_t::largestCoordinate() const {
-	float maxValue = 1.0f;
-	return maxValue;
-}
-inline float no_t::largestBasisBlade(unsigned int &bm) const {
-	float maxValue = 1.0f;
-	bm = 1;
-	return maxValue;
-}
-inline float e1_t::largestCoordinate() const {
-	float maxValue = 1.0f;
-	return maxValue;
-}
-inline float e1_t::largestBasisBlade(unsigned int &bm) const {
-	float maxValue = 1.0f;
-	bm = 2;
-	return maxValue;
-}
-inline float e2_t::largestCoordinate() const {
-	float maxValue = 1.0f;
-	return maxValue;
-}
-inline float e2_t::largestBasisBlade(unsigned int &bm) const {
-	float maxValue = 1.0f;
-	bm = 4;
-	return maxValue;
-}
-inline float e3_t::largestCoordinate() const {
-	float maxValue = 1.0f;
-	return maxValue;
-}
-inline float e3_t::largestBasisBlade(unsigned int &bm) const {
-	float maxValue = 1.0f;
-	bm = 8;
-	return maxValue;
-}
-inline float ni_t::largestCoordinate() const {
-	float maxValue = 1.0f;
-	return maxValue;
-}
-inline float ni_t::largestBasisBlade(unsigned int &bm) const {
-	float maxValue = 1.0f;
-	bm = 16;
 	return maxValue;
 }
 inline float pointPair::largestCoordinate() const {
@@ -3797,6 +3883,51 @@ inline float circle::largestBasisBlade(unsigned int &bm) const {
 	if (::fabsf(m_c[9]) > maxValue) { maxValue = ::fabsf(m_c[9]); bm = 28; }
 	return maxValue;
 }
+inline float no_t::largestCoordinate() const {
+	float maxValue = 1.0f;
+	return maxValue;
+}
+inline float no_t::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = 1.0f;
+	bm = 1;
+	return maxValue;
+}
+inline float e1_t::largestCoordinate() const {
+	float maxValue = 1.0f;
+	return maxValue;
+}
+inline float e1_t::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = 1.0f;
+	bm = 2;
+	return maxValue;
+}
+inline float e2_t::largestCoordinate() const {
+	float maxValue = 1.0f;
+	return maxValue;
+}
+inline float e2_t::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = 1.0f;
+	bm = 4;
+	return maxValue;
+}
+inline float e3_t::largestCoordinate() const {
+	float maxValue = 1.0f;
+	return maxValue;
+}
+inline float e3_t::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = 1.0f;
+	bm = 8;
+	return maxValue;
+}
+inline float ni_t::largestCoordinate() const {
+	float maxValue = 1.0f;
+	return maxValue;
+}
+inline float ni_t::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = 1.0f;
+	bm = 16;
+	return maxValue;
+}
 
 inline float _float(const normalizedPoint &x) {
 	return 0.0f;
@@ -3807,7 +3938,16 @@ inline float _float(const flatPoint &x) {
 inline float _float(const line &x) {
 	return 0.0f;
 }
+inline float _float(const dualLine &x) {
+	return 0.0f;
+}
 inline float _float(const plane &x) {
+	return 0.0f;
+}
+inline float _float(const pointPair &x) {
+	return 0.0f;
+}
+inline float _float(const circle &x) {
 	return 0.0f;
 }
 inline float _float(const no_t &x) {
@@ -3825,109 +3965,53 @@ inline float _float(const e3_t &x) {
 inline float _float(const ni_t &x) {
 	return 0.0f;
 }
-inline float _float(const pointPair &x) {
-	return 0.0f;
-}
-inline float _float(const circle &x) {
-	return 0.0f;
-}
-inline flatPoint _flatPoint(const pointPair &a)
-{
-	return flatPoint(flatPoint::coord_e1ni_e2ni_e3ni_noni,
-			a.m_c[7], // e1_ni
-			a.m_c[8], // e2_ni
-			a.m_c[9], // e3_ni
-			a.m_c[6] // no_ni
-		);
-
-}
 inline normalizedPoint _normalizedPoint(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_normalizedPoint\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return normalizedPoint(a, 0);
 }
 inline flatPoint _flatPoint(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_flatPoint\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return flatPoint(a, 0);
 }
 inline line _line(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_line\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return line(a, 0);
+}
+inline dualLine _dualLine(const mv &a)
+{
+	return dualLine(a, 0);
 }
 inline plane _plane(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_plane\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return plane(a, 0);
-}
-inline no_t _no_t(const mv &a)
-{
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_no_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
-	return no_t(a, 0);
-}
-inline e1_t _e1_t(const mv &a)
-{
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_e1_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
-	return e1_t(a, 0);
-}
-inline e2_t _e2_t(const mv &a)
-{
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_e2_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
-	return e2_t(a, 0);
-}
-inline e3_t _e3_t(const mv &a)
-{
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_e3_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
-	return e3_t(a, 0);
-}
-inline ni_t _ni_t(const mv &a)
-{
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_ni_t\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
-	return ni_t(a, 0);
 }
 inline pointPair _pointPair(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_pointPair\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return pointPair(a, 0);
 }
 inline circle _circle(const mv &a)
 {
-	if ((a.m_t > C3GA_MV) && (a.m_t < C3GA_INVALID)) {
-			std::string reportUsageString = std::string("") + "<function name=\"_circle\" arg1=\""+ g_c3gaTypenames[a.m_t] + "\" comment=\" Automatically generated converter.\"/>";
-			ReportUsage::mergeReport(new ReportUsage(reportUsageString));
-	}
 	return circle(a, 0);
+}
+inline no_t _no_t(const mv &a)
+{
+	return no_t(a, 0);
+}
+inline e1_t _e1_t(const mv &a)
+{
+	return e1_t(a, 0);
+}
+inline e2_t _e2_t(const mv &a)
+{
+	return e2_t(a, 0);
+}
+inline e3_t _e3_t(const mv &a)
+{
+	return e3_t(a, 0);
+}
+inline ni_t _ni_t(const mv &a)
+{
+	return ni_t(a, 0);
 }
 inline normalizedPoint _normalizedPoint(const normalizedPoint &a)
 {
@@ -3941,7 +4025,19 @@ inline line _line(const line &a)
 {
 	return a;
 }
+inline dualLine _dualLine(const dualLine &a)
+{
+	return a;
+}
 inline plane _plane(const plane &a)
+{
+	return a;
+}
+inline pointPair _pointPair(const pointPair &a)
+{
+	return a;
+}
+inline circle _circle(const circle &a)
 {
 	return a;
 }
@@ -3962,14 +4058,6 @@ inline e3_t _e3_t(const e3_t &a)
 	return a;
 }
 inline ni_t _ni_t(const ni_t &a)
-{
-	return a;
-}
-inline pointPair _pointPair(const pointPair &a)
-{
-	return a;
-}
-inline circle _circle(const circle &a)
 {
 	return a;
 }
@@ -4032,16 +4120,12 @@ inline circle op(const pointPair &a, const normalizedPoint &b)
 		);
 
 }
-inline pointPair dual(const line &a)
+inline dualLine dual(const line &a)
 {
-	return pointPair(pointPair::coord_noe1_noe2_e1e2_noe3_e1e3_e2e3_noni_e1ni_e2ni_e3ni,
-			0.0f, // no_e1
-			0.0f, // no_e2
+	return dualLine(dualLine::coord_e1e2_e1e3_e2e3_e1ni_e2ni_e3ni,
 			a.m_c[5], // e1_e2
-			0.0f, // no_e3
 			-a.m_c[4], // e1_e3
 			a.m_c[3], // e2_e3
-			0.0f, // no_ni
 			-a.m_c[2], // e1_ni
 			a.m_c[1], // e2_ni
 			-a.m_c[0] // e3_ni
@@ -4058,19 +4142,13 @@ inline plane op(const circle &a, const ni_t &b)
 		);
 
 }
-inline pointPair lc(const pointPair &a, const plane &b)
+inline flatPoint lc(const dualLine &a, const plane &b)
 {
-	return pointPair(pointPair::coord_noe1_noe2_e1e2_noe3_e1e3_e2e3_noni_e1ni_e2ni_e3ni,
-			(-a.m_c[1]*b.m_c[3]-a.m_c[3]*b.m_c[2]), // no_e1
-			(a.m_c[0]*b.m_c[3]-a.m_c[3]*b.m_c[1]), // no_e2
-			(-a.m_c[3]*b.m_c[0]+a.m_c[6]*b.m_c[3]), // e1_e2
-			(a.m_c[0]*b.m_c[2]+a.m_c[1]*b.m_c[1]), // no_e3
-			(a.m_c[1]*b.m_c[0]+a.m_c[6]*b.m_c[2]), // e1_e3
-			(-a.m_c[0]*b.m_c[0]+a.m_c[6]*b.m_c[1]), // e2_e3
-			(-a.m_c[2]*b.m_c[3]-a.m_c[4]*b.m_c[2]-a.m_c[5]*b.m_c[1]), // no_ni
-			(-a.m_c[5]*b.m_c[0]+a.m_c[8]*b.m_c[3]+a.m_c[9]*b.m_c[2]), // e1_ni
-			(a.m_c[4]*b.m_c[0]-a.m_c[7]*b.m_c[3]+a.m_c[9]*b.m_c[1]), // e2_ni
-			(-a.m_c[2]*b.m_c[0]-a.m_c[7]*b.m_c[2]-a.m_c[8]*b.m_c[1]) // e3_ni
+	return flatPoint(flatPoint::coord_e1ni_e2ni_e3ni_noni,
+			(-a.m_c[2]*b.m_c[0]+a.m_c[4]*b.m_c[3]+a.m_c[5]*b.m_c[2]), // e1_ni
+			(a.m_c[1]*b.m_c[0]-a.m_c[3]*b.m_c[3]+a.m_c[5]*b.m_c[1]), // e2_ni
+			(-a.m_c[0]*b.m_c[0]-a.m_c[3]*b.m_c[2]-a.m_c[4]*b.m_c[1]), // e3_ni
+			(-a.m_c[0]*b.m_c[3]-a.m_c[1]*b.m_c[2]-a.m_c[2]*b.m_c[1]) // no_ni
 		);
 
 }

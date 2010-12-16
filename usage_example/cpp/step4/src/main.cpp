@@ -27,15 +27,15 @@ int main(int argc, char *argv[]) {
 	printf("planePt3 = %s,\n", planePt3.c_str());
 
 	// create line and plane out of points
-	line L = _line(linePt1 ^ linePt2 ^ ni);
-	plane P = _plane(planePt1 ^ planePt2 ^ planePt3 ^ ni);
+	line L = linePt1 ^ linePt2 ^ ni;
+	plane P = planePt1 ^ planePt2 ^ planePt3 ^ ni;
 
 	// output text the can be copy-pasted into GAViewer
 	printf("L = %s,\n", L.c_str());
 	printf("P = %s,\n", P.c_str());
 
 	// compute intersection of line and plane
-	flatPoint intersection = _flatPoint(dual(L) << P);
+	flatPoint intersection = dual(L) << P;
 
 	printf("intersection = %s,\n", intersection.c_str());
 

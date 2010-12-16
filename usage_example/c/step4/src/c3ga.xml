@@ -2,7 +2,7 @@
 
 <g25spec 
 	license="gpl" 
-	language="cpp"
+	language="c"
 	namespace="c3ga"
 	coordStorage="array"
 	defaultOperatorBindings="true"

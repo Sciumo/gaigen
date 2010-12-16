@@ -1,0 +1,11 @@
+C++: step 3
+-have to make multiple loops to extract all intermediate types and functions.
+-because no dualLine type, pointPair is returned from dual(L) << P
+
+
+C: general:
+Once 'return argument' is returned from C function, C code will be somewhat easier to write.
+
+C: step 1:
+The function cgaPoint() always returns a normalizedPoint. Need to explicitly
+convert to mv type.

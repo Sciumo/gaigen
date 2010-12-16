@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string.h>
 #include <math.h>
 #include <string>
-#include <map>
 namespace c3ga {
 
 // group: 1
@@ -123,25 +122,6 @@ extern const int c3ga_basisElementGradeByBitmap[32];
 /// This array of group of each basis elements in the general multivector
 /// Use it to answer: 'what is the group of basis element bitmap [x]'?
 extern const int c3ga_basisElementGroupByBitmap[32];
-
-// These constants define a unique number for each specialized multivector type.
-// They are used to report usage of non-optimized functions.
-typedef enum {
-	C3GA_NONE = -1,
-	C3GA_MV = 0,
-	C3GA_FLOAT = 1,
-	C3GA_NORMALIZEDPOINT = 2,
-	C3GA_NO_T = 3,
-	C3GA_E1_T = 4,
-	C3GA_E2_T = 5,
-	C3GA_E3_T = 6,
-	C3GA_NI_T = 7,
-	C3GA_INVALID
-} SMV_TYPE;
-
-/// For each specialized multivector type, the mangled typename.
-/// This is used to report usage of non-optimized functions.
-extern const char *g_c3gaTypenames[];
 class mv;
 class normalizedPoint;
 class no_t;
@@ -199,8 +179,6 @@ public:
 	int m_gu; 
 	/// the coordinates (array is allocated using realloc())
 	float *m_c; 
-	/// Specialized multivector type. Used to report about non-optimized function usage.
-	SMV_TYPE m_t; 
 public:
 
 	/// Floating point type used by mv 
@@ -1468,99 +1446,10 @@ extern ni_t ni;
 
 /**
 This class is used to report usage of converted specialized multivectors.
-
-The class is designed to be pretty safe with multi-threading without locking.
-In the worst case, some memory leaks occur and some counts are missed. 
-The amount of memory leaked is bounded (does not grow beyond a certain
-point). Since the report-usage functionality is for
-development/debugging only, this is not considered non-harmful.
 */
 class ReportUsage {
-public:
-	inline ReportUsage(std::string str, unsigned int initialCount = 1) : 
-		m_hash(computeHash(str)),
-		m_str(str), 
-		m_count(initialCount), 
-		m_left(NULL),
-		m_right(NULL)
-	{
-	}
-
-	static void mergeReport(ReportUsage *RU);
-
-	/// prints out all reports, sorted by m_str
+	/// prints out error message that ReportUsage is disabled
 	static void printReport(FILE *F = stdout, bool includeCount = true);
-
-protected:
-	/// Turns a string into a hashcode which is used to efficiently search the tree
-	static inline int computeHash(const std::string &str) {
-		unsigned int hash = 0x83BA056E; // just a number
-		int shift = 0;
-		const int SHIFT_INC = 7;
-		for (int i = 0; i < (int)str.length(); i++) {
-			hash ^= (unsigned int)(str[i] << shift);
-			shift += SHIFT_INC;
-			if (shift > (sizeof(unsigned int) - SHIFT_INC))
-				shift &= SHIFT_INC;
-		}
-		return hash;
-	}
-
-	/// return true if m_str is equal (checks the hash first)
-	inline bool equals(const ReportUsage *RU) const {
-		if (m_hash != RU->m_hash) return false;
-		else return (m_str == RU->m_str);
-	}
-
-	/// Returns -1 for this < RU, 0 for equals, +1 for this > RU
-	/// First compares the hash, then the string.
-	inline int compare(const ReportUsage *RU) const {
-		if (equals(RU)) return 0;
-		else if (m_hash == RU->m_hash) {
-			return m_str.compare(RU->m_str);
-		}
-		else return (m_hash < RU->m_hash) ? -1 : 1;
-	}
-
-	/// Merges 'RU' with the reports
-	inline void mergeReportInternal(ReportUsage *RU) {
-		if (equals(RU)) { // just increment the count?
-			if ((m_count + RU->m_count) > m_count) // prevent overflow of unsigned int
-				m_count += RU->m_count;
-			delete RU;
-		}
-		else { // either recurse or set m_left or m_right
-			int comp = compare(RU);
-			if (comp < 0) {
-				if (m_left == NULL) m_left = RU;
-				else m_left->mergeReportInternal(RU);
-			}
-			else {
-				if (m_right == NULL) m_right = RU;
-				else m_right->mergeReportInternal(RU);
-			}
-		}
-	}
-
-	inline void getMap(std::map<std::string, const ReportUsage*> &M) const {
-		M[m_str] = this;
-		if (m_left) m_left->getMap(M);
-		if (m_right) m_right->getMap(M);
-	}
-
-	static ReportUsage *s_reportTree;
-
-	/// hashcode of m_str.
-	unsigned int m_hash;
-	/// string describing the report.
-	std::string m_str;
-	/// how many times this report hash been filed.
-	unsigned int m_count;
-
-	/// left branch of tree
-	ReportUsage *m_left;
-	/// right branch of tree
-	ReportUsage *m_right;
 }; // end of class ReportUsage
 
 /** Sets 1 float to zero */
@@ -1671,6 +1560,42 @@ inline float _Float(const e3_t &x) {return _float(x); };
 float _float(const ni_t &x);
 /// Returns scalar part of  ni_t
 inline float _Float(const ni_t &x) {return _float(x); };
+	/// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
+/// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
+normalizedPoint _normalizedPoint(const mv &a);
+	/// Converts mv to no_t: dst = a. Automatically generated converter.
+/// Converts mv to no_t: dst = a. Automatically generated converter.
+no_t _no_t(const mv &a);
+	/// Converts mv to e1_t: dst = a. Automatically generated converter.
+/// Converts mv to e1_t: dst = a. Automatically generated converter.
+e1_t _e1_t(const mv &a);
+	/// Converts mv to e2_t: dst = a. Automatically generated converter.
+/// Converts mv to e2_t: dst = a. Automatically generated converter.
+e2_t _e2_t(const mv &a);
+	/// Converts mv to e3_t: dst = a. Automatically generated converter.
+/// Converts mv to e3_t: dst = a. Automatically generated converter.
+e3_t _e3_t(const mv &a);
+	/// Converts mv to ni_t: dst = a. Automatically generated converter.
+/// Converts mv to ni_t: dst = a. Automatically generated converter.
+ni_t _ni_t(const mv &a);
+	/// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
+/// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
+normalizedPoint _normalizedPoint(const normalizedPoint &a);
+	/// Converts no_t to no_t: dst = a. Automatically generated converter.
+/// Converts no_t to no_t: dst = a. Automatically generated converter.
+no_t _no_t(const no_t &a);
+	/// Converts e1_t to e1_t: dst = a. Automatically generated converter.
+/// Converts e1_t to e1_t: dst = a. Automatically generated converter.
+e1_t _e1_t(const e1_t &a);
+	/// Converts e2_t to e2_t: dst = a. Automatically generated converter.
+/// Converts e2_t to e2_t: dst = a. Automatically generated converter.
+e2_t _e2_t(const e2_t &a);
+	/// Converts e3_t to e3_t: dst = a. Automatically generated converter.
+/// Converts e3_t to e3_t: dst = a. Automatically generated converter.
+e3_t _e3_t(const e3_t &a);
+	/// Converts ni_t to ni_t: dst = a. Automatically generated converter.
+/// Converts ni_t to ni_t: dst = a. Automatically generated converter.
+ni_t _ni_t(const ni_t &a);
 /// Returns mv + mv.
 mv add(const mv &a, const mv &b);
 /// Returns mv - mv.
@@ -2038,25 +1963,21 @@ inline void copy_N(float *dst, const float *src, int N) {
 // inline def SB:
 inline void mv::set() {
 	setGroupUsage(0);
-	m_t = C3GA_MV;
 }
 inline void mv::set(float val) {
 	setGroupUsage(1);
 	m_c[0] = val;
-	m_t = C3GA_FLOAT;
 }
 inline void mv::set(int gu, const float *arr) {
 	setGroupUsage(gu);
 	c3ga::copy_N(m_c, arr, c3ga_mvSize[gu]);
 
-	m_t = C3GA_MV;
 }
 inline void mv::set(const mv &src) {
 	setGroupUsage(src.gu());
 	const float*srcC = src.getC();
 	c3ga::copy_N(m_c, srcC, c3ga_mvSize[src.gu()]);
 
-	m_t = src.m_t;
 }
 inline void normalizedPoint::set(const mv &src) {
 	const float *ptr = src.getC();
@@ -2140,42 +2061,36 @@ inline void mv::set(const normalizedPoint &src) {
 	ptr[2] = src.m_c[1];
 	ptr[3] = src.m_c[2];
 	ptr[4] = src.m_c[3];
-	m_t = C3GA_NORMALIZEDPOINT;
 }
 inline void mv::set(const no_t &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
 	ptr[0] = 1.0f;
 	ptr[1] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
-	m_t = C3GA_NO_T;
 }
 inline void mv::set(const e1_t &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
 	ptr[0] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
 	ptr[1] = 1.0f;
-	m_t = C3GA_E1_T;
 }
 inline void mv::set(const e2_t &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
 	ptr[0] = ptr[1] = ptr[3] = ptr[4] = 0.0f;
 	ptr[2] = 1.0f;
-	m_t = C3GA_E2_T;
 }
 inline void mv::set(const e3_t &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
 	ptr[0] = ptr[1] = ptr[2] = ptr[4] = 0.0f;
 	ptr[3] = 1.0f;
-	m_t = C3GA_E3_T;
 }
 inline void mv::set(const ni_t &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
 	ptr[0] = ptr[1] = ptr[2] = ptr[3] = 0.0f;
 	ptr[4] = 1.0f;
-	m_t = C3GA_NI_T;
 }
 
 inline float _float(const mv &x) {
@@ -2317,6 +2232,54 @@ inline float _float(const e3_t &x) {
 }
 inline float _float(const ni_t &x) {
 	return 0.0f;
+}
+inline normalizedPoint _normalizedPoint(const mv &a)
+{
+	return normalizedPoint(a, 0);
+}
+inline no_t _no_t(const mv &a)
+{
+	return no_t(a, 0);
+}
+inline e1_t _e1_t(const mv &a)
+{
+	return e1_t(a, 0);
+}
+inline e2_t _e2_t(const mv &a)
+{
+	return e2_t(a, 0);
+}
+inline e3_t _e3_t(const mv &a)
+{
+	return e3_t(a, 0);
+}
+inline ni_t _ni_t(const mv &a)
+{
+	return ni_t(a, 0);
+}
+inline normalizedPoint _normalizedPoint(const normalizedPoint &a)
+{
+	return a;
+}
+inline no_t _no_t(const no_t &a)
+{
+	return a;
+}
+inline e1_t _e1_t(const e1_t &a)
+{
+	return a;
+}
+inline e2_t _e2_t(const e2_t &a)
+{
+	return a;
+}
+inline e3_t _e3_t(const e3_t &a)
+{
+	return a;
+}
+inline ni_t _ni_t(const ni_t &a)
+{
+	return a;
 }
 inline normalizedPoint cgaPoint(const float a, const float b, const float c)
 {

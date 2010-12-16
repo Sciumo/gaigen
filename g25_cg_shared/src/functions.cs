@@ -293,7 +293,7 @@ namespace G25.CG.Shared
             if (staticFunc) SB.Append("static ");
 
             SB.Append(G25.CG.Shared.Util.GetInlineString(S, inline, " "));
-            if (returnArgument != null) returnType = "void";
+            if (returnArgument != null) returnType = "void"; // maybe for C write returnType = returnArgument + "*"
             SB.Append(returnType);
             SB.Append(" ");
             SB.Append(functionName);
