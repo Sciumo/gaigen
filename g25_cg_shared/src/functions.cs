@@ -293,7 +293,7 @@ namespace G25.CG.Shared
             if (staticFunc) SB.Append("static ");
 
             SB.Append(G25.CG.Shared.Util.GetInlineString(S, inline, " "));
-            if (returnArgument != null) returnType = "void"; // maybe for C write returnType = returnArgument + "*"
+            if (returnArgument != null) returnType = returnArgument.MangledTypeName + "*"; // maybe for C write returnType = returnArgument + "*"?
             SB.Append(returnType);
             SB.Append(" ");
             SB.Append(functionName);
@@ -456,11 +456,19 @@ namespace G25.CG.Shared
             if (S.m_reportUsage)
                 instructions.Insert(0, ReportUsage.GetReportInstruction(S, F, arguments));
 
+            if (returnArgument != null)
+            {
+                int nbTabs = 1;
+                instructions.Add(new VerbatimCodeInstruction(nbTabs, "return " + returnArgument.Name + ";"));
+            }
+
             // write all instructions
             foreach (Instruction I in instructions)
             {
                 I.Write(defSB, S, cgd);
             }
+
+
 
             // close function
             defSB.AppendLine("}");
@@ -514,7 +522,12 @@ namespace G25.CG.Shared
             AI.Write(defSB, S, cgd);
 
             if (returnVarName != null)
-                defSB.AppendLine("return " + returnVarName + ";");
+            {
+                defSB.AppendLine("\treturn " + returnVarName + ";");
+            } else if (returnArgument != null) {
+                defSB.AppendLine("\treturn " + returnArgument.Name + ";");
+            }
+
             defSB.AppendLine("}");
         } // end of WriteAssignmentFunction()
 

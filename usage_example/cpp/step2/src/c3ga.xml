@@ -47,10 +47,6 @@
 <smv name="e3" const="true" type="blade">e3=1</smv>
 <smv name="ni" const="true" type="blade">ni=1</smv>
 
-<!-- todo: remove this line once default converts are present 
-But first, use it as an example of what a convert should look like -->
-<function name="_line" arg1="mv"/>
-
 <function name="add" arg1="mv" arg2="mv"/>
 <function name="subtract" arg1="mv" arg2="mv"/>
 

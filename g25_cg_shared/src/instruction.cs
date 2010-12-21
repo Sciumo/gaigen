@@ -510,7 +510,7 @@ namespace G25.CG.Shared
         /// </summary>
         /// <param name="nbTabs">How many tabs to put in front of code.</param>
         /// <param name="text">The text to generate.</param>
-        protected VerbatimInstruction(int nbTabs, String text)
+        protected VerbatimInstruction(int nbTabs, string text)
             :
             base(nbTabs)
         {
@@ -521,7 +521,7 @@ namespace G25.CG.Shared
         /// <summary>
         /// List of text (split up at each end of line).
         /// </summary>
-        public List<String> m_text;
+        public List<string> m_text;
 
     }
 

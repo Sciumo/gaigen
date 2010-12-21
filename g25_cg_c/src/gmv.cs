@@ -270,7 +270,7 @@ namespace G25.CG.C
                     // do we inline this func?
                     string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                    string funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
+                    string funcDecl = inlineStr + dstTypeName + "* " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
                     declSB.Append(funcDecl);
                     declSB.AppendLine(";");
@@ -281,6 +281,7 @@ namespace G25.CG.C
                     defSB.AppendLine("\tdst->gu = src->gu;");
                     defSB.AppendLine("\tfor (i = 0; i < " + S.m_namespace + "_mvSize[src->gu]; i++)");
                     defSB.AppendLine("\t\tdst->c[i] = (" + dstFT.type + ")src->c[i];");
+                    defSB.AppendLine("\treturn dst;");
                     defSB.AppendLine("}");
                 }
             }
@@ -317,7 +318,7 @@ namespace G25.CG.C
                     // do we inline this func?
                     String inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                    String funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
+                    String funcDecl = inlineStr + dstTypeName + " *" + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
                     declSB.Append(funcDecl);
                     declSB.AppendLine(";");
@@ -379,6 +380,7 @@ namespace G25.CG.C
                                 defSB.AppendLine("\t}");
                             }
                         }
+                        defSB.AppendLine("\treturn dst;");
                         defSB.AppendLine("}");
                     }
                 } // end of loop over all SMVs
@@ -417,9 +419,9 @@ namespace G25.CG.C
                     string funcName = srcTypeName + "_to_" + dstTypeName;
 
                     // do we inline this func?
-                    String inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
+                    string inlineStr = G25.CG.Shared.Util.GetInlineString(S, S.m_inlineSet, " ");
 
-                    string funcDecl = inlineStr + "void " + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
+                    string funcDecl = inlineStr + dstTypeName + " *" + funcName + "(" + dstTypeName + " *dst, const " + srcTypeName + " *src)";
 
 
                     declSB.Append(funcDecl);

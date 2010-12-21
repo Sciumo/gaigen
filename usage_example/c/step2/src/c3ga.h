@@ -175,6 +175,99 @@ typedef struct
 	/* no = 1*/
 } normalizedPoint;
 
+/** index of coordinate for e1^ni in flatPoint.c */
+#define FLATPOINT_E1_NI 0
+/** index of coordinate for e2^ni in flatPoint.c */
+#define FLATPOINT_E2_NI 1
+/** index of coordinate for e3^ni in flatPoint.c */
+#define FLATPOINT_E3_NI 2
+/** index of coordinate for no^ni in flatPoint.c */
+#define FLATPOINT_NO_NI 3
+
+/**
+ * This struct can hold a specialized multivector of type flatPoint.
+ * 
+ * The coordinates are stored in type  float.
+ * 
+ * The variable non-zero coordinates are:
+ *   - coordinate e1^ni  (array index: FLATPOINT_E1_NI = 0)
+ *   - coordinate e2^ni  (array index: FLATPOINT_E2_NI = 1)
+ *   - coordinate e3^ni  (array index: FLATPOINT_E3_NI = 2)
+ *   - coordinate no^ni  (array index: FLATPOINT_NO_NI = 3)
+ * 
+ * The type has no constant coordinates.
+ * 
+ */
+typedef struct 
+{
+	/** The coordinates (stored in an array). */
+	float c[4]; /* e1^ni, e2^ni, e3^ni, no^ni*/
+} flatPoint;
+
+/** index of coordinate for e1^e2^ni in line.c */
+#define LINE_E1_E2_NI 0
+/** index of coordinate for e1^e3^ni in line.c */
+#define LINE_E1_E3_NI 1
+/** index of coordinate for e2^e3^ni in line.c */
+#define LINE_E2_E3_NI 2
+/** index of coordinate for -1*no^e1^ni in line.c */
+#define LINE_E1_NO_NI 3
+/** index of coordinate for -1*no^e2^ni in line.c */
+#define LINE_E2_NO_NI 4
+/** index of coordinate for -1*no^e3^ni in line.c */
+#define LINE_E3_NO_NI 5
+
+/**
+ * This struct can hold a specialized multivector of type line.
+ * 
+ * The coordinates are stored in type  float.
+ * 
+ * The variable non-zero coordinates are:
+ *   - coordinate e1^e2^ni  (array index: LINE_E1_E2_NI = 0)
+ *   - coordinate e1^e3^ni  (array index: LINE_E1_E3_NI = 1)
+ *   - coordinate e2^e3^ni  (array index: LINE_E2_E3_NI = 2)
+ *   - coordinate -1*no^e1^ni  (array index: LINE_E1_NO_NI = 3)
+ *   - coordinate -1*no^e2^ni  (array index: LINE_E2_NO_NI = 4)
+ *   - coordinate -1*no^e3^ni  (array index: LINE_E3_NO_NI = 5)
+ * 
+ * The type has no constant coordinates.
+ * 
+ */
+typedef struct 
+{
+	/** The coordinates (stored in an array). */
+	float c[6]; /* e1^e2^ni, e1^e3^ni, e2^e3^ni, -1*no^e1^ni, -1*no^e2^ni, -1*no^e3^ni*/
+} line;
+
+/** index of coordinate for e1^e2^e3^ni in plane.c */
+#define PLANE_E1_E2_E3_NI 0
+/** index of coordinate for no^e2^e3^ni in plane.c */
+#define PLANE_NO_E2_E3_NI 1
+/** index of coordinate for no^e1^e3^ni in plane.c */
+#define PLANE_NO_E1_E3_NI 2
+/** index of coordinate for no^e1^e2^ni in plane.c */
+#define PLANE_NO_E1_E2_NI 3
+
+/**
+ * This struct can hold a specialized multivector of type plane.
+ * 
+ * The coordinates are stored in type  float.
+ * 
+ * The variable non-zero coordinates are:
+ *   - coordinate e1^e2^e3^ni  (array index: PLANE_E1_E2_E3_NI = 0)
+ *   - coordinate no^e2^e3^ni  (array index: PLANE_NO_E2_E3_NI = 1)
+ *   - coordinate no^e1^e3^ni  (array index: PLANE_NO_E1_E3_NI = 2)
+ *   - coordinate no^e1^e2^ni  (array index: PLANE_NO_E1_E2_NI = 3)
+ * 
+ * The type has no constant coordinates.
+ * 
+ */
+typedef struct 
+{
+	/** The coordinates (stored in an array). */
+	float c[4]; /* e1^e2^e3^ni, no^e2^e3^ni, no^e1^e3^ni, no^e1^e2^ni*/
+} plane;
+
 
 /**
  * This struct can hold a specialized multivector of type no_t.
@@ -291,6 +384,12 @@ const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_normalizedPoint(const normalizedPoint *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
+const char *toString_flatPoint(const flatPoint *V, char *str, int maxLength, const char *fp);
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
+const char *toString_line(const line *V, char *str, int maxLength, const char *fp);
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
+const char *toString_plane(const plane *V, char *str, int maxLength, const char *fp);
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_no_t(const no_t *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_e1_t(const e1_t *V, char *str, int maxLength, const char *fp);
@@ -385,31 +484,43 @@ void mv_setScalar(mv *M, float val);
 /** Sets a mv to the value in the array. 'gu' is a group usage bitmap. */
 void mv_setArray(mv *M, int gu, const float *arr);
 /** Copies a mv */
-void mv_copy(mv *dst, const mv *src);
+mv* mv_copy(mv *dst, const mv *src);
 /** Copies a mv to a normalizedPoint (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_normalizedPoint(normalizedPoint *dst, const mv *src);
+normalizedPoint *mv_to_normalizedPoint(normalizedPoint *dst, const mv *src);
+/** Copies a mv to a flatPoint (coordinates/basis blades which cannot be represented are silenty lost). */
+flatPoint *mv_to_flatPoint(flatPoint *dst, const mv *src);
+/** Copies a mv to a line (coordinates/basis blades which cannot be represented are silenty lost). */
+line *mv_to_line(line *dst, const mv *src);
+/** Copies a mv to a plane (coordinates/basis blades which cannot be represented are silenty lost). */
+plane *mv_to_plane(plane *dst, const mv *src);
 /** Copies a mv to a no_t (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_no_t(no_t *dst, const mv *src);
+no_t *mv_to_no_t(no_t *dst, const mv *src);
 /** Copies a mv to a e1_t (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_e1_t(e1_t *dst, const mv *src);
+e1_t *mv_to_e1_t(e1_t *dst, const mv *src);
 /** Copies a mv to a e2_t (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_e2_t(e2_t *dst, const mv *src);
+e2_t *mv_to_e2_t(e2_t *dst, const mv *src);
 /** Copies a mv to a e3_t (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_e3_t(e3_t *dst, const mv *src);
+e3_t *mv_to_e3_t(e3_t *dst, const mv *src);
 /** Copies a mv to a ni_t (coordinates/basis blades which cannot be represented are silenty lost). */
-void mv_to_ni_t(ni_t *dst, const mv *src);
+ni_t *mv_to_ni_t(ni_t *dst, const mv *src);
 /** Copies a normalizedPoint to a mv */
-void normalizedPoint_to_mv(mv *dst, const normalizedPoint *src);
+mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src);
+/** Copies a flatPoint to a mv */
+mv *flatPoint_to_mv(mv *dst, const flatPoint *src);
+/** Copies a line to a mv */
+mv *line_to_mv(mv *dst, const line *src);
+/** Copies a plane to a mv */
+mv *plane_to_mv(mv *dst, const plane *src);
 /** Copies a no_t to a mv */
-void no_t_to_mv(mv *dst, const no_t *src);
+mv *no_t_to_mv(mv *dst, const no_t *src);
 /** Copies a e1_t to a mv */
-void e1_t_to_mv(mv *dst, const e1_t *src);
+mv *e1_t_to_mv(mv *dst, const e1_t *src);
 /** Copies a e2_t to a mv */
-void e2_t_to_mv(mv *dst, const e2_t *src);
+mv *e2_t_to_mv(mv *dst, const e2_t *src);
 /** Copies a e3_t to a mv */
-void e3_t_to_mv(mv *dst, const e3_t *src);
+mv *e3_t_to_mv(mv *dst, const e3_t *src);
 /** Copies a ni_t to a mv */
-void ni_t_to_mv(mv *dst, const ni_t *src);
+mv *ni_t_to_mv(mv *dst, const ni_t *src);
 /** Allocates memory to store coordinate group 0 */
 void mv_reserveGroup_0(mv *A);
 /** Allocates memory to store coordinate group 1 */
@@ -560,20 +671,50 @@ float mv_largestBasisBlade(const mv *x, unsigned int *bm);
 
 /** Sets normalizedPoint to zero */
 normalizedPoint* normalizedPoint_setZero(normalizedPoint *_dst);
+/** Sets flatPoint to zero */
+flatPoint* flatPoint_setZero(flatPoint *_dst);
+/** Sets line to zero */
+line* line_setZero(line *_dst);
+/** Sets plane to zero */
+plane* plane_setZero(plane *_dst);
 
 
 /** Sets normalizedPoint to specified coordinates */
 normalizedPoint* normalizedPoint_set(normalizedPoint *_dst, const float _e1, const float _e2, const float _e3, const float _ni);
+/** Sets flatPoint to specified coordinates */
+flatPoint* flatPoint_set(flatPoint *_dst, const float _e1_ni, const float _e2_ni, const float _e3_ni, const float _no_ni);
+/** Sets line to specified coordinates */
+line* line_set(line *_dst, const float _e1_e2_ni, const float _e1_e3_ni, const float _e2_e3_ni, const float _e1_no_ni, const float _e2_no_ni, const float _e3_no_ni);
+/** Sets plane to specified coordinates */
+plane* plane_set(plane *_dst, const float _e1_e2_e3_ni, const float _no_e2_e3_ni, const float _no_e1_e3_ni, const float _no_e1_e2_ni);
 
 /** Sets normalizedPoint to specified coordinates */
 normalizedPoint* normalizedPoint_setArray(normalizedPoint *_dst, const float *A);
+/** Sets flatPoint to specified coordinates */
+flatPoint* flatPoint_setArray(flatPoint *_dst, const float *A);
+/** Sets line to specified coordinates */
+line* line_setArray(line *_dst, const float *A);
+/** Sets plane to specified coordinates */
+plane* plane_setArray(plane *_dst, const float *A);
 
 /** Copies normalizedPoint: a = _dst */
 normalizedPoint* normalizedPoint_copy(normalizedPoint *_dst, const normalizedPoint *a);
+/** Copies flatPoint: a = _dst */
+flatPoint* flatPoint_copy(flatPoint *_dst, const flatPoint *a);
+/** Copies line: a = _dst */
+line* line_copy(line *_dst, const line *a);
+/** Copies plane: a = _dst */
+plane* plane_copy(plane *_dst, const plane *a);
 
 
 /** Returns abs largest coordinate of normalizedPoint */
 float normalizedPoint_largestCoordinate(const normalizedPoint *x);
+/** Returns abs largest coordinate of flatPoint */
+float flatPoint_largestCoordinate(const flatPoint *x);
+/** Returns abs largest coordinate of line */
+float line_largestCoordinate(const line *x);
+/** Returns abs largest coordinate of plane */
+float plane_largestCoordinate(const plane *x);
 /** Returns abs largest coordinate of no_t */
 float no_t_largestCoordinate(const no_t *x);
 /** Returns abs largest coordinate of e1_t */
@@ -587,6 +728,12 @@ float ni_t_largestCoordinate(const ni_t *x);
 
 /** Returns scalar part of  normalizedPoint */
 float normalizedPoint_float(const normalizedPoint *x);
+/** Returns scalar part of  flatPoint */
+float flatPoint_float(const flatPoint *x);
+/** Returns scalar part of  line */
+float line_float(const line *x);
+/** Returns scalar part of  plane */
+float plane_float(const plane *x);
 /** Returns scalar part of  no_t */
 float no_t_float(const no_t *x);
 /** Returns scalar part of  e1_t */
