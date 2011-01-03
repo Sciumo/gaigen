@@ -4,13 +4,14 @@ C++: step 3
 
 
 C: general:
-Once 'return argument' is returned from C function, C code will be somewhat easier to write.
+Not recommended, only for low-level systems works, or for wrapping into
+another language (like Matlab).
 
 C: step 1:
 The function cgaPoint() always returns a normalizedPoint. Need to explicitly
 convert to mv type.
 
-C: with 'C' you already work at such a low level. You are aware of exactly
+C: step 2: with 'C' you already work at such a low level. You are aware of exactly
 what function is being called (since the name is fully qualified and there
 are no hidden type conversions going on). Hence is waste of effect to do step 2 and 3.
 Straight to step 4 (everything is specialized).

@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 
 	// compute intersection of line and plane
 	flatPoint intersection = dual(L) << P;
+	normalizedPoint intersectionPt = cgaPoint(intersection); // example of how to convert to regular CGA point
 
 	printf("intersection = %s,\n", intersection.c_str());
 

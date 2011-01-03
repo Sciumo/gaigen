@@ -85,6 +85,7 @@ const char *g_c3gaTypenames[] =
 	"normalizedPoint",
 	"flatPoint",
 	"line",
+	"dualLine",
 	"plane",
 	"no_t",
 	"e1_t",
@@ -451,6 +452,12 @@ const char *toString_line(const line *V, char *str, int maxLength, const char *f
 {
 	mv tmp;
 	line_to_mv(&tmp,V);
+	return toString_mv(&tmp, str, maxLength, fp);
+}
+const char *toString_dualLine(const dualLine *V, char *str, int maxLength, const char *fp)
+{
+	mv tmp;
+	dualLine_to_mv(&tmp,V);
 	return toString_mv(&tmp, str, maxLength, fp);
 }
 const char *toString_plane(const plane *V, char *str, int maxLength, const char *fp)
@@ -2898,6 +2905,34 @@ line *mv_to_line(line *dst, const mv *src) {
 	}
 	return dst;
 }
+dualLine *mv_to_dualLine(dualLine *dst, const mv *src) {
+	const float *ptr = src->c;
+
+	if (src->gu & 1) {
+		ptr += 1;
+	}
+	if (src->gu & 2) {
+		ptr += 5;
+	}
+	if (src->gu & 4) {
+		dst->c[0] = ptr[2];
+		dst->c[1] = ptr[4];
+		dst->c[2] = ptr[5];
+		dst->c[3] = ptr[7];
+		dst->c[4] = ptr[8];
+		dst->c[5] = ptr[9];
+		ptr += 10;
+	}
+	else {
+		dst->c[0] = 0.0f;
+		dst->c[1] = 0.0f;
+		dst->c[2] = 0.0f;
+		dst->c[3] = 0.0f;
+		dst->c[4] = 0.0f;
+		dst->c[5] = 0.0f;
+	}
+	return dst;
+}
 plane *mv_to_plane(plane *dst, const mv *src) {
 	const float *ptr = src->c;
 
@@ -3002,6 +3037,7 @@ mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src) {
 	ptr[3] = src->c[2];
 	ptr[4] = src->c[3];
 	ptr += 5;
+	return dst;
 }
 mv *flatPoint_to_mv(mv *dst, const flatPoint *src) {
 	float *ptr = dst->c;
@@ -3012,6 +3048,7 @@ mv *flatPoint_to_mv(mv *dst, const flatPoint *src) {
 	ptr[8] = src->c[1];
 	ptr[9] = src->c[2];
 	ptr += 10;
+	return dst;
 }
 mv *line_to_mv(mv *dst, const line *src) {
 	float *ptr = dst->c;
@@ -3024,6 +3061,20 @@ mv *line_to_mv(mv *dst, const line *src) {
 	ptr[8] = src->c[1];
 	ptr[9] = src->c[2];
 	ptr += 10;
+	return dst;
+}
+mv *dualLine_to_mv(mv *dst, const dualLine *src) {
+	float *ptr = dst->c;
+	dst->gu = 4;
+	ptr[0] = ptr[1] = ptr[3] = ptr[6] = 0.0f;
+	ptr[2] = src->c[0];
+	ptr[4] = src->c[1];
+	ptr[5] = src->c[2];
+	ptr[7] = src->c[3];
+	ptr[8] = src->c[4];
+	ptr[9] = src->c[5];
+	ptr += 10;
+	return dst;
 }
 mv *plane_to_mv(mv *dst, const plane *src) {
 	float *ptr = dst->c;
@@ -3034,6 +3085,7 @@ mv *plane_to_mv(mv *dst, const plane *src) {
 	ptr[3] = src->c[1];
 	ptr[4] = src->c[0];
 	ptr += 5;
+	return dst;
 }
 mv *no_t_to_mv(mv *dst, const no_t *src) {
 	float *ptr = dst->c;
@@ -3041,6 +3093,7 @@ mv *no_t_to_mv(mv *dst, const no_t *src) {
 	ptr[0] = 1.0f;
 	ptr[1] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
 	ptr += 5;
+	return dst;
 }
 mv *e1_t_to_mv(mv *dst, const e1_t *src) {
 	float *ptr = dst->c;
@@ -3048,6 +3101,7 @@ mv *e1_t_to_mv(mv *dst, const e1_t *src) {
 	ptr[0] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
 	ptr[1] = 1.0f;
 	ptr += 5;
+	return dst;
 }
 mv *e2_t_to_mv(mv *dst, const e2_t *src) {
 	float *ptr = dst->c;
@@ -3055,6 +3109,7 @@ mv *e2_t_to_mv(mv *dst, const e2_t *src) {
 	ptr[0] = ptr[1] = ptr[3] = ptr[4] = 0.0f;
 	ptr[2] = 1.0f;
 	ptr += 5;
+	return dst;
 }
 mv *e3_t_to_mv(mv *dst, const e3_t *src) {
 	float *ptr = dst->c;
@@ -3062,6 +3117,7 @@ mv *e3_t_to_mv(mv *dst, const e3_t *src) {
 	ptr[0] = ptr[1] = ptr[2] = ptr[4] = 0.0f;
 	ptr[3] = 1.0f;
 	ptr += 5;
+	return dst;
 }
 mv *ni_t_to_mv(mv *dst, const ni_t *src) {
 	float *ptr = dst->c;
@@ -3069,6 +3125,7 @@ mv *ni_t_to_mv(mv *dst, const ni_t *src) {
 	ptr[0] = ptr[1] = ptr[2] = ptr[3] = 0.0f;
 	ptr[4] = 1.0f;
 	ptr += 5;
+	return dst;
 }
 
 void mv_reserveGroup_0(mv *A) {
@@ -3538,6 +3595,12 @@ line* line_setZero(line *_dst)
 
 	return _dst;
 }
+dualLine* dualLine_setZero(dualLine *_dst)
+{
+	_dst->c[0] = _dst->c[1] = _dst->c[2] = _dst->c[3] = _dst->c[4] = _dst->c[5] = 0.0f;
+
+	return _dst;
+}
 plane* plane_setZero(plane *_dst)
 {
 	_dst->c[0] = _dst->c[1] = _dst->c[2] = _dst->c[3] = 0.0f;
@@ -3575,6 +3638,17 @@ line* line_set(line *_dst, const float _e1_e2_ni, const float _e1_e3_ni, const f
 
 	return _dst;
 }
+dualLine* dualLine_set(dualLine *_dst, const float _e1_e2, const float _e1_e3, const float _e2_e3, const float _e1_ni, const float _e2_ni, const float _e3_ni)
+{
+	_dst->c[0] = _e1_e2;
+	_dst->c[1] = _e1_e3;
+	_dst->c[2] = _e2_e3;
+	_dst->c[3] = _e1_ni;
+	_dst->c[4] = _e2_ni;
+	_dst->c[5] = _e3_ni;
+
+	return _dst;
+}
 plane* plane_set(plane *_dst, const float _e1_e2_e3_ni, const float _no_e2_e3_ni, const float _no_e1_e3_ni, const float _no_e1_e2_ni)
 {
 	_dst->c[0] = _e1_e2_e3_ni;
@@ -3604,6 +3678,17 @@ flatPoint* flatPoint_setArray(flatPoint *_dst, const float *A)
 	return _dst;
 }
 line* line_setArray(line *_dst, const float *A)
+{
+	_dst->c[0] = A[0];
+	_dst->c[1] = A[1];
+	_dst->c[2] = A[2];
+	_dst->c[3] = A[3];
+	_dst->c[4] = A[4];
+	_dst->c[5] = A[5];
+
+	return _dst;
+}
+dualLine* dualLine_setArray(dualLine *_dst, const float *A)
 {
 	_dst->c[0] = A[0];
 	_dst->c[1] = A[1];
@@ -3653,6 +3738,17 @@ line* line_copy(line *_dst, const line *a)
 
 	return _dst;
 }
+dualLine* dualLine_copy(dualLine *_dst, const dualLine *a)
+{
+	_dst->c[0] = a->c[0];
+	_dst->c[1] = a->c[1];
+	_dst->c[2] = a->c[2];
+	_dst->c[3] = a->c[3];
+	_dst->c[4] = a->c[4];
+	_dst->c[5] = a->c[5];
+
+	return _dst;
+}
 plane* plane_copy(plane *_dst, const plane *a)
 {
 	_dst->c[0] = a->c[0];
@@ -3680,6 +3776,15 @@ float flatPoint_largestCoordinate(const flatPoint *x) {
 	return maxValue;
 }
 float line_largestCoordinate(const line *x) {
+	float maxValue = fabsf(x->c[0]);
+	if (fabsf(x->c[1]) > maxValue) maxValue = fabsf(x->c[1]);
+	if (fabsf(x->c[2]) > maxValue) maxValue = fabsf(x->c[2]);
+	if (fabsf(x->c[3]) > maxValue) maxValue = fabsf(x->c[3]);
+	if (fabsf(x->c[4]) > maxValue) maxValue = fabsf(x->c[4]);
+	if (fabsf(x->c[5]) > maxValue) maxValue = fabsf(x->c[5]);
+	return maxValue;
+}
+float dualLine_largestCoordinate(const dualLine *x) {
 	float maxValue = fabsf(x->c[0]);
 	if (fabsf(x->c[1]) > maxValue) maxValue = fabsf(x->c[1]);
 	if (fabsf(x->c[2]) > maxValue) maxValue = fabsf(x->c[2]);
@@ -3723,6 +3828,9 @@ float flatPoint_float(const flatPoint *x) {
 	return 0.0f;
 }
 float line_float(const line *x) {
+	return 0.0f;
+}
+float dualLine_float(const dualLine *x) {
 	return 0.0f;
 }
 float plane_float(const plane *x) {
@@ -4624,6 +4732,44 @@ mv* lc_mv_mv(mv *_dst, const mv *a, const mv *b)
 	compress(c, _dst->c, &(_dst->gu), 0.0f, 63);
 	return _dst;
 }
+flatPoint* lc_dualLine_plane(flatPoint *_dst, const dualLine *a, const plane *b)
+{
+	_dst->c[0] = (-a->c[2]*b->c[0]+a->c[4]*b->c[3]+a->c[5]*b->c[2]);
+	_dst->c[1] = (a->c[1]*b->c[0]-a->c[3]*b->c[3]+a->c[5]*b->c[1]);
+	_dst->c[2] = (-a->c[0]*b->c[0]-a->c[3]*b->c[2]-a->c[4]*b->c[1]);
+	_dst->c[3] = (-a->c[0]*b->c[3]-a->c[1]*b->c[2]-a->c[2]*b->c[1]);
+
+	return _dst;
+}
+flatPoint* op_normalizedPoint_ni_t(flatPoint *_dst, const normalizedPoint *a, const ni_t *b)
+{
+	_dst->c[0] = a->c[0];
+	_dst->c[1] = a->c[1];
+	_dst->c[2] = a->c[2];
+	_dst->c[3] = 1.0f;
+
+	return _dst;
+}
+line* op_normalizedPoint_flatPoint(line *_dst, const normalizedPoint *a, const flatPoint *b)
+{
+	_dst->c[0] = (a->c[0]*b->c[1]-a->c[1]*b->c[0]);
+	_dst->c[1] = (a->c[0]*b->c[2]-a->c[2]*b->c[0]);
+	_dst->c[2] = (a->c[1]*b->c[2]-a->c[2]*b->c[1]);
+	_dst->c[3] = -(-a->c[0]*b->c[3]+b->c[0]);
+	_dst->c[4] = -(-a->c[1]*b->c[3]+b->c[1]);
+	_dst->c[5] = -(-a->c[2]*b->c[3]+b->c[2]);
+
+	return _dst;
+}
+plane* op_normalizedPoint_line(plane *_dst, const normalizedPoint *a, const line *b)
+{
+	_dst->c[0] = (a->c[0]*b->c[2]-a->c[1]*b->c[1]+a->c[2]*b->c[0]);
+	_dst->c[1] = (a->c[1]*b->c[5]-a->c[2]*b->c[4]+b->c[2]);
+	_dst->c[2] = (a->c[0]*b->c[5]-a->c[2]*b->c[3]+b->c[1]);
+	_dst->c[3] = (a->c[0]*b->c[4]-a->c[1]*b->c[3]+b->c[0]);
+
+	return _dst;
+}
 float norm_mv(const mv *a)
 {
 	float n2 = 0.0f;
@@ -4946,6 +5092,17 @@ mv* undual_mv(mv *_dst, const mv *a)
 	}
 	
 	compress(c, _dst->c, &(_dst->gu), 0.0f, 63);
+	return _dst;
+}
+dualLine* dual_line(dualLine *_dst, const line *a)
+{
+	_dst->c[0] = a->c[5];
+	_dst->c[1] = -a->c[4];
+	_dst->c[2] = a->c[3];
+	_dst->c[3] = -a->c[2];
+	_dst->c[4] = a->c[1];
+	_dst->c[5] = -a->c[0];
+
 	return _dst;
 }
 

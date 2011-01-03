@@ -11,14 +11,12 @@ In this step, all GA variables are stored in 'mv' (the multivector type).
 int main(int argc, char *argv[]) {
 
 	normalizedPoint linePt1, linePt2, planePt1, planePt2, planePt3;
-	line L;
+	line L, tmpL;
 	plane P;
-	mv tmp1, tmp2, mv_ni;
-	mv intersection;
+	flatPoint fp, intersection;
+	dualLine dl;
+	mv tmp1;
 	char buf[BUF_LEN];
-
-	// get 'ni' as mv
-	ni_t_to_mv(&mv_ni, &ni);
 
 	// get five points
 	cgaPoint_float_float_float(&linePt1, 1.0f, 0.0f, 0.0f);
@@ -35,21 +33,18 @@ int main(int argc, char *argv[]) {
 	printf("planePt2 = %s,\n", toString_mv(normalizedPoint_to_mv(&tmp1, &planePt2), buf, BUF_LEN, "%2.2f"));
 	printf("planePt3 = %s,\n", toString_mv(normalizedPoint_to_mv(&tmp1, &planePt3), buf, BUF_LEN, "%2.2f"));
 
-	// todo: maybe go straight to specialized?
-
 	// create line and plane out of points
-	op_mv_mv(&L, op_mv_mv(&tmp1, &linePt1, &linePt2), &mv_ni);
-	op_mv_mv(&P, op_mv_mv(&tmp2, op_mv_mv(&tmp1, &planePt1, &planePt2), &planePt3), &mv_ni);
+	op_normalizedPoint_flatPoint(&L, &linePt1, op_normalizedPoint_ni_t(&fp, &linePt2, &ni));
+	op_normalizedPoint_line(&P, &planePt1, op_normalizedPoint_flatPoint(&tmpL, &planePt2, op_normalizedPoint_ni_t(&fp, &planePt3, &ni)));
 
 	// output text the can be copy-pasted into GAViewer
-	printf("L = %s,\n", toString_mv(&L, buf, BUF_LEN, "%2.2f")); 
-	printf("P = %s,\n", toString_mv(&P, buf, BUF_LEN, "%2.2f")); 
+	printf("L = %s,\n", toString_mv(line_to_mv(&tmp1, &L), buf, BUF_LEN, "%2.2f")); 
+	printf("P = %s,\n", toString_mv(plane_to_mv(&tmp1, &P), buf, BUF_LEN, "%2.2f")); 
 
 	// compute intersection of line and plane
-	dual_mv(&tmp1, &L);
-	lc_mv_mv(&intersection, &tmp1, &P);
+	lc_dualLine_plane(&intersection, dual_line(&dl, &L), &P);
 
-	printf("intersection = %s,\n", toString_mv(&intersection, buf, BUF_LEN, "%2.2f"));
+	printf("intersection = %s,\n", toString_mv(flatPoint_to_mv(&tmp1, &intersection), buf, BUF_LEN, "%2.2f"));
 
 	return 0;
 }

@@ -86,6 +86,7 @@ const char *g_c3gaTypenames[] =
 {
 	"mv",
 	"float",
+	"vectorE3GA",
 	"normalizedPoint",
 	"flatPoint",
 	"line",

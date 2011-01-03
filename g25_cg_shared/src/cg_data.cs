@@ -230,7 +230,10 @@ namespace G25.CG.Shared
         {
             lock (m_errors)
             {
-                m_errors.AddRange(cgd.m_errors);
+                if (m_errors != cgd.m_errors)
+                {
+                    m_errors.AddRange(cgd.m_errors);
+                }
             }
         }
 

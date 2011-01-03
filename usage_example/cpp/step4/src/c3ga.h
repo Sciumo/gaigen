@@ -123,6 +123,7 @@ extern const int c3ga_basisElementGradeByBitmap[32];
 /// Use it to answer: 'what is the group of basis element bitmap [x]'?
 extern const int c3ga_basisElementGroupByBitmap[32];
 class mv;
+class vectorE3GA;
 class normalizedPoint;
 class flatPoint;
 class line;
@@ -205,6 +206,8 @@ public:
 	/// \param coordinates compressed coordinates.
 	inline mv(int gu, const float *coordinates)  : m_c(NULL), m_gu(0) {set(gu, coordinates);}
 
+	/// Converts a vectorE3GA to a mv.
+	inline mv(const vectorE3GA&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a normalizedPoint to a mv.
 	inline mv(const normalizedPoint&A)  : m_c(NULL), m_gu(0) {set(A);}
 	/// Converts a flatPoint to a mv.
@@ -239,6 +242,8 @@ public:
 	inline mv &operator=(const float &scalar) {set(scalar); return *this;}
 	
 	
+	/// Assignment operator (mv).
+	inline mv &operator=(const vectorE3GA &A) {set(A); return *this;}
 	/// Assignment operator (mv).
 	inline mv &operator=(const normalizedPoint &A) {set(A); return *this;}
 	/// Assignment operator (mv).
@@ -279,6 +284,8 @@ public:
 	/// \param coordinates compressed coordinates.
 	void set(int gu, const float *coordinates);
 	
+	/// Sets this mv to the value of vectorE3GA A
+	void set(const vectorE3GA &A);
 	/// Sets this mv to the value of normalizedPoint A
 	void set(const normalizedPoint &A);
 	/// Sets this mv to the value of flatPoint A
@@ -805,6 +812,145 @@ public:
 		}
 	}
 }; // end of class mv
+
+/// This class can hold a specialized multivector of type vectorE3GA.
+/// 
+/// The coordinates are stored in type float.
+/// 
+/// The variable non-zero coordinates are:
+///   - coordinate e1  (array index: E1 = 0)
+///   - coordinate e2  (array index: E2 = 1)
+///   - coordinate e3  (array index: E3 = 2)
+/// 
+/// The type has no constant coordinates.
+/// 
+/// 
+class vectorE3GA
+{
+public:
+	/// The coordinates (stored in an array).
+	float m_c[3]; // e1, e2, e3
+public:
+
+	/// Floating point type used by vectorE3GA 
+	typedef float Float;
+	/// Array indices of vectorE3GA coordinates.
+	typedef enum {
+		/// index of coordinate for e1 in vectorE3GA
+		E1 = 0, 
+		/// index of coordinate for e2 in vectorE3GA
+		E2 = 1, 
+		/// index of coordinate for e3 in vectorE3GA
+		E3 = 2, 
+	} ArrayIndex;
+	typedef enum {
+		/// the order of coordinates (this is the type of the first argument of coordinate-handling functions)
+		coord_e1_e2_e3
+	} CoordinateOrder;
+
+	/// Constructs a new vectorE3GA with variable coordinates set to 0.
+	inline vectorE3GA() {set();}
+
+	/// Copy constructor.
+	inline vectorE3GA(const vectorE3GA &A) {set(A);}
+
+
+
+	/// Constructs a new vectorE3GA from mv.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	/// \param filler This argument can have any value; it's role
+	/// is only to prevent the compiler from using this constructor as a converter.
+	inline vectorE3GA(const mv &A, int filler) {set(A);}
+
+	/// Constructs a new vectorE3GA. Coordinate values come from 'A'.
+	inline vectorE3GA(const CoordinateOrder co, const float A[3]) {set(co, A);}
+	
+	/// Constructs a new vectorE3GA with each coordinate specified.
+	inline vectorE3GA(const CoordinateOrder co,  float e1, float e2, float e3) {
+		set(co, e1, e2, e3);
+	}
+
+	/// Assignment operator (vectorE3GA).
+	inline vectorE3GA &operator=(const vectorE3GA &A) {if (this != &A) {set(A);} return *this;}
+	
+		
+
+	/// Assignment operator (mv).
+	inline vectorE3GA &operator=(const mv &A) {set(A); return *this;}
+
+
+	/// Sets variable coordinates of 'this' to 0.
+	void set();
+	/// Sets this to 'A'.
+	void set(const vectorE3GA &A);
+
+
+	/// Sets this to 'A'.
+	/// \param A The value to copy. Coordinates that cannot be represented
+	/// are silently dropped.
+	void set(const mv &A);
+
+
+	/// Sets this to 'A'.
+	void set(const CoordinateOrder, const float A[3]);
+	
+	/// Sets this to coordinates specified.
+	void set(const CoordinateOrder,  float e1, float e2, float e3);
+
+	/// returns the absolute largest coordinate.
+	float largestCoordinate() const;
+	/// returns the absolute largest coordinate, and the corresponding basis blade bitmap.
+	float largestBasisBlade(unsigned int &bm) const;
+	
+
+	/// Returns a string representation (const char*) of this multivector.
+	/// Not multi-threading safe.
+	/// \param fp how floats are printed (e.g., "%f");
+	inline const char * c_str(const char *fp = NULL) const {
+		static char buf[2048]; // not MT-safe
+		return ::c3ga::c_str(*this, buf, 2048, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	/// Not multi-threading safe.
+	inline const char * c_str_f() const {return c_str("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e
+	/// Not multi-threading safe.
+	inline const char * c_str_e() const {return c_str("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20 (which is lossless for doubles)
+	/// Not multi-threading safe.
+	inline const char * c_str_e20() const {return c_str("%2.20e");}
+
+	/// Returns a string representation (const char*) of this multivector.
+	inline std::string toString(const char *fp = NULL) const {
+		return ::c3ga::toString(*this, fp);
+	}
+	
+	/// Returns a string representation (const char*) of this multivector using %f.
+	inline std::string toString_f() const {return toString("%f");}
+	/// Returns a string representation (const char*) of this multivector using %e.
+	inline std::string toString_e() const {return toString("%e");}
+	/// Returns a string representation (const char*) of this multivector using %e20.
+	inline std::string toString_e20() const {return toString("%2.20e");}
+
+	/// Returns the e1 coordinate.
+	inline float get_e1() const { return m_c[0];}
+	/// Sets the e1 coordinate.
+	inline void set_e1(float e1) { m_c[0] = e1;}
+	/// Returns the e2 coordinate.
+	inline float get_e2() const { return m_c[1];}
+	/// Sets the e2 coordinate.
+	inline void set_e2(float e2) { m_c[1] = e2;}
+	/// Returns the e3 coordinate.
+	inline float get_e3() const { return m_c[2];}
+	/// Sets the e3 coordinate.
+	inline void set_e3(float e3) { m_c[2] = e3;}
+	/// Returns the scalar coordinate (which is always 0).
+	inline float get_scalar() const { return 0.0f;}
+	/// Returns array of coordinates.
+	inline const float *getC(CoordinateOrder) const { return m_c;}
+}; // end of class vectorE3GA
 
 /// This class can hold a specialized multivector of type normalizedPoint.
 /// 
@@ -2566,6 +2712,10 @@ mv mv_compress(const float *c, float epsilon = 0.0f, int gu = 63);
 mv mv_compress(int nbBlades, const unsigned int *bitmaps, const float *coords);
 
 
+/// Returns scalar part of  vectorE3GA
+float _float(const vectorE3GA &x);
+/// Returns scalar part of  vectorE3GA
+inline float _Float(const vectorE3GA &x) {return _float(x); };
 /// Returns scalar part of  normalizedPoint
 float _float(const normalizedPoint &x);
 /// Returns scalar part of  normalizedPoint
@@ -2614,6 +2764,9 @@ inline float _Float(const e3_t &x) {return _float(x); };
 float _float(const ni_t &x);
 /// Returns scalar part of  ni_t
 inline float _Float(const ni_t &x) {return _float(x); };
+	/// Converts mv to vectorE3GA: dst = a. Automatically generated converter.
+/// Converts mv to vectorE3GA: dst = a. Automatically generated converter.
+vectorE3GA _vectorE3GA(const mv &a);
 	/// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
 /// Converts mv to normalizedPoint: dst = a. Automatically generated converter.
 normalizedPoint _normalizedPoint(const mv &a);
@@ -2650,6 +2803,9 @@ e3_t _e3_t(const mv &a);
 	/// Converts mv to ni_t: dst = a. Automatically generated converter.
 /// Converts mv to ni_t: dst = a. Automatically generated converter.
 ni_t _ni_t(const mv &a);
+	/// Converts vectorE3GA to vectorE3GA: dst = a. Automatically generated converter.
+/// Converts vectorE3GA to vectorE3GA: dst = a. Automatically generated converter.
+vectorE3GA _vectorE3GA(const vectorE3GA &a);
 	/// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
 /// Converts normalizedPoint to normalizedPoint: dst = a. Automatically generated converter.
 normalizedPoint _normalizedPoint(const normalizedPoint &a);
@@ -2692,6 +2848,8 @@ mv add(const mv &a, const mv &b);
 mv subtract(const mv &a, const mv &b);
 /// Returns conformal point.
 normalizedPoint cgaPoint(const float a, const float b, const float c);
+/// Returns conformal point.
+normalizedPoint cgaPoint(const flatPoint &a);
 /// Returns grade groupBitmap of  mv.
 mv extractGrade(const mv &a, const int groupBitmap);
 /// Returns negation of mv.
@@ -3105,6 +3263,23 @@ inline void mv::set(const mv &src) {
 	c3ga::copy_N(m_c, srcC, c3ga_mvSize[src.gu()]);
 
 }
+inline void vectorE3GA::set(const mv &src) {
+	const float *ptr = src.getC();
+
+	if (src.gu() & 1) {
+		ptr += 1;
+	}
+	if (src.gu() & 2) {
+		m_c[0] = ptr[1];
+		m_c[1] = ptr[2];
+		m_c[2] = ptr[3];
+	}
+	else {
+		m_c[0] = 0.0f;
+		m_c[1] = 0.0f;
+		m_c[2] = 0.0f;
+	}
+}
 inline void normalizedPoint::set(const mv &src) {
 	const float *ptr = src.getC();
 
@@ -3355,6 +3530,14 @@ inline void ni_t::set(const mv &src) {
 	else {
 	}
 }
+inline void mv::set(const vectorE3GA &src) {
+	setGroupUsage(2);
+	float *ptr = m_c;
+	ptr[0] = ptr[4] = 0.0f;
+	ptr[1] = src.m_c[0];
+	ptr[2] = src.m_c[1];
+	ptr[3] = src.m_c[2];
+}
 inline void mv::set(const normalizedPoint &src) {
 	setGroupUsage(2);
 	float *ptr = m_c;
@@ -3467,6 +3650,11 @@ inline float _float(const mv &x) {
 	return ((x.gu() & 1) != 0) ? x.getC()[0] : 0.0f;
 }
 
+inline void vectorE3GA::set()
+{
+	m_c[0] = m_c[1] = m_c[2] = 0.0f;
+
+}
 inline void normalizedPoint::set()
 {
 	m_c[0] = m_c[1] = m_c[2] = m_c[3] = 0.0f;
@@ -3504,6 +3692,13 @@ inline void circle::set()
 }
 
 
+inline void vectorE3GA::set(const CoordinateOrder co, const float _e1, const float _e2, const float _e3)
+{
+	m_c[0] = _e1;
+	m_c[1] = _e2;
+	m_c[2] = _e3;
+
+}
 inline void normalizedPoint::set(const CoordinateOrder co, const float _e1, const float _e2, const float _e3, const float _ni)
 {
 	m_c[0] = _e1;
@@ -3577,6 +3772,13 @@ inline void circle::set(const CoordinateOrder co, const float _no_e1_e2, const f
 
 }
 
+inline void vectorE3GA::set(const CoordinateOrder co, const float *A)
+{
+	m_c[0] = A[0];
+	m_c[1] = A[1];
+	m_c[2] = A[2];
+
+}
 inline void normalizedPoint::set(const CoordinateOrder co, const float *A)
 {
 	m_c[0] = A[0];
@@ -3650,6 +3852,13 @@ inline void circle::set(const CoordinateOrder co, const float *A)
 
 }
 
+inline void vectorE3GA::set(const vectorE3GA &a)
+{
+	m_c[0] = a.m_c[0];
+	m_c[1] = a.m_c[1];
+	m_c[2] = a.m_c[2];
+
+}
 inline void normalizedPoint::set(const normalizedPoint &a)
 {
 	m_c[0] = a.m_c[0];
@@ -3744,6 +3953,19 @@ inline void ni_t::set(const ni_t &a)
 }
 
 
+inline float vectorE3GA::largestCoordinate() const {
+	float maxValue = ::fabsf(m_c[0]);
+	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); }
+	if (::fabsf(m_c[2]) > maxValue) { maxValue = ::fabsf(m_c[2]); }
+	return maxValue;
+}
+inline float vectorE3GA::largestBasisBlade(unsigned int &bm) const {
+	float maxValue = ::fabsf(m_c[0]);
+	bm = 0;
+	if (::fabsf(m_c[1]) > maxValue) { maxValue = ::fabsf(m_c[1]); bm = 4; }
+	if (::fabsf(m_c[2]) > maxValue) { maxValue = ::fabsf(m_c[2]); bm = 8; }
+	return maxValue;
+}
 inline float normalizedPoint::largestCoordinate() const {
 	float maxValue = 1.0f;
 	if (::fabsf(m_c[0]) > maxValue) { maxValue = ::fabsf(m_c[0]); }
@@ -3929,6 +4151,9 @@ inline float ni_t::largestBasisBlade(unsigned int &bm) const {
 	return maxValue;
 }
 
+inline float _float(const vectorE3GA &x) {
+	return 0.0f;
+}
 inline float _float(const normalizedPoint &x) {
 	return 0.0f;
 }
@@ -3964,6 +4189,10 @@ inline float _float(const e3_t &x) {
 }
 inline float _float(const ni_t &x) {
 	return 0.0f;
+}
+inline vectorE3GA _vectorE3GA(const mv &a)
+{
+	return vectorE3GA(a, 0);
 }
 inline normalizedPoint _normalizedPoint(const mv &a)
 {
@@ -4012,6 +4241,10 @@ inline e3_t _e3_t(const mv &a)
 inline ni_t _ni_t(const mv &a)
 {
 	return ni_t(a, 0);
+}
+inline vectorE3GA _vectorE3GA(const vectorE3GA &a)
+{
+	return a;
 }
 inline normalizedPoint _normalizedPoint(const normalizedPoint &a)
 {
@@ -4068,6 +4301,20 @@ inline normalizedPoint cgaPoint(const float a, const float b, const float c)
 			b, // e2
 			c, // e3
 			(0.5f*a*a+0.5f*b*b+0.5f*c*c) // ni
+		);
+}
+inline normalizedPoint cgaPoint(const flatPoint &a)
+{
+	vectorE3GA _v_;
+	_v_.m_c[0] = a.m_c[0]/((a.m_c[3]));
+	_v_.m_c[1] = a.m_c[1]/((a.m_c[3]));
+	_v_.m_c[2] = a.m_c[2]/((a.m_c[3]));
+
+	return normalizedPoint(normalizedPoint::coord_e1_e2_e3_ni,
+			_v_.m_c[0], // e1
+			_v_.m_c[1], // e2
+			_v_.m_c[2], // e3
+			(0.5f*_v_.m_c[0]*_v_.m_c[0]+0.5f*_v_.m_c[1]*_v_.m_c[1]+0.5f*_v_.m_c[2]*_v_.m_c[2]) // ni
 		);
 }
 inline float norm_returns_scalar(const mv &a) {

@@ -204,6 +204,11 @@ namespace G25.CG.Shared.Func
 
                     // get type
                     m_vectorType = (G25.SMV)G25.CG.Shared.SpecializedReturnType.FindTightestMatch(m_specification, m_pointPairVectorValue, FT);
+                    if (m_vectorType == null)
+                    {
+                        throw new G25.UserException("Missing Euclidean vector type; cannot construct conformal point from " + m_fgs.ArgumentTypeNames[0], XML.FunctionToXmlString(m_specification, m_fgs));
+                    }
+
                     // get 'value' (just a reference to the name of the variable where m_pointPairVectorValue will be stored.
                     bool pointer = false;
                     vectorValue = Symbolic.SMVtoSymbolicMultivector(m_specification, (G25.SMV)m_vectorType, VECTOR_NAME, pointer);

@@ -136,6 +136,7 @@
   <function name="cgaPoint" arg1="flatPoint" floatType="double"/> -->
   <function name="cgaPoint" arg1="flatPoint2D" floatType="double"/>
   <function name="randomCgaPoint" floatType="float"/>
+  <function name="cgaPoint" arg1="flatPoint"/>
 
   <function name="cgaPointDistance" arg1="normalizedPoint" arg2="normalizedPoint" floatType="float"/>
   <function name="cgaPointDistance" arg1="dualSphere" arg2="dualSphere" floatType="double"/>
@@ -349,4 +350,5 @@
 
   <function name="_vectorE3GA" arg1="normalizedPoint"/>
   <function name="_vectorE3GA" arg1="mv"/>
+  
 </g25spec>

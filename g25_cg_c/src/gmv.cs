@@ -467,9 +467,9 @@ namespace G25.CG.C
                             }
 
                         }
-                        
 
-                        // find out which elements of those groups are not written (or maybe generate assign code?)
+
+                        defSB.AppendLine("\treturn dst;");
 
                         defSB.AppendLine("}");
                     }

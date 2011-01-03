@@ -39,9 +39,10 @@
 <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
 <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
 <smv name="line" type="blade">e1^e2^ni e1^e3^ni e2^e3^ni e1^no^ni e2^no^ni e3^no^ni</smv>
+<smv name="dualLine" type="blade">e1^e2 e1^e3 e2^e3 e1^ni e2^ni e3^ni</smv>
 <smv name="plane" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni</smv>
 
-  <smv name="no" const="true" type="blade">no=1</smv>
+<smv name="no" const="true" type="blade">no=1</smv>
 <smv name="e1" const="true" type="blade">e1=1</smv>
 <smv name="e2" const="true" type="blade">e2=1</smv>
 <smv name="e3" const="true" type="blade">e3=1</smv>
@@ -66,6 +67,12 @@
 <function name="mhip" arg1="mv" arg2="mv"/>
 <function name="lc" arg1="mv" arg2="mv"/>
 
+<function name="lc" arg1="dualLine" arg2="plane"/>
+  
+<function name="op" arg1="normalizedPoint" arg2="ni"/>
+<function name="op" arg1="normalizedPoint" arg2="flatPoint"/>
+<function name="op" arg1="normalizedPoint" arg2="line"/>
+
 <function name="norm" arg1="mv"/>
   
 <function name="unit" arg1="mv"/>
@@ -81,6 +88,8 @@
   
 <function name="dual" arg1="mv"/>
 <function name="undual" arg1="mv"/>
+
+<function name="dual" arg1="line"/>
 
 <function name="exp" arg1="mv"/>
 <function name="gp" arg1="mv" arg2="float"/>

@@ -2,6 +2,7 @@
 #include "c3ga.h"
 
 #define BUF_LEN 1024
+
 /*
 This small example creates a line and a plane from points.
 It then computes the intersection point of the line and the plane.
@@ -19,17 +20,12 @@ int main(int argc, char *argv[]) {
 	// get 'ni' as mv
 	ni_t_to_mv(&mv_ni, &ni);
 
-	// get five points
-	cgaPoint_float_float_float(&tmpPt, 1.0f, 0.0f, 0.0f);
-	normalizedPoint_to_mv(&linePt1, &tmpPt);
-	cgaPoint_float_float_float(&tmpPt, 1.0f, 1.0f, 0.0f);
-	normalizedPoint_to_mv(&linePt2, &tmpPt);
-	cgaPoint_float_float_float(&tmpPt, 1.0f, 2.0f, 0.0f);
-	normalizedPoint_to_mv(&planePt1, &tmpPt);
-	cgaPoint_float_float_float(&tmpPt, 1.0f, 2.0f, 1.0f);
-	normalizedPoint_to_mv(&planePt2, &tmpPt);
-	cgaPoint_float_float_float(&tmpPt, 0.0f, 2.0f, 1.0f);
-	normalizedPoint_to_mv(&planePt3, &tmpPt);
+	// get five points (note: need to convert from 'normalizedPoint' to 'mv')
+	normalizedPoint_to_mv(&linePt1, cgaPoint_float_float_float(&tmpPt, 1.0f, 0.0f, 0.0f));
+	normalizedPoint_to_mv(&linePt2, cgaPoint_float_float_float(&tmpPt, 1.0f, 1.0f, 0.0f));
+	normalizedPoint_to_mv(&planePt1, cgaPoint_float_float_float(&tmpPt, 1.0f, 2.0f, 0.0f));
+	normalizedPoint_to_mv(&planePt2, cgaPoint_float_float_float(&tmpPt, 1.0f, 2.0f, 1.0f));
+	normalizedPoint_to_mv(&planePt3, cgaPoint_float_float_float(&tmpPt, 0.0f, 2.0f, 1.0f));
 
 	// output text the can be copy-pasted into GAViewer
 	// warning: c_str() is not multi-threading safe (for that, use toString() instead).

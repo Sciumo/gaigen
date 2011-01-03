@@ -239,6 +239,41 @@ typedef struct
 	float c[6]; /* e1^e2^ni, e1^e3^ni, e2^e3^ni, -1*no^e1^ni, -1*no^e2^ni, -1*no^e3^ni*/
 } line;
 
+/** index of coordinate for e1^e2 in dualLine.c */
+#define DUALLINE_E1_E2 0
+/** index of coordinate for e1^e3 in dualLine.c */
+#define DUALLINE_E1_E3 1
+/** index of coordinate for e2^e3 in dualLine.c */
+#define DUALLINE_E2_E3 2
+/** index of coordinate for e1^ni in dualLine.c */
+#define DUALLINE_E1_NI 3
+/** index of coordinate for e2^ni in dualLine.c */
+#define DUALLINE_E2_NI 4
+/** index of coordinate for e3^ni in dualLine.c */
+#define DUALLINE_E3_NI 5
+
+/**
+ * This struct can hold a specialized multivector of type dualLine.
+ * 
+ * The coordinates are stored in type  float.
+ * 
+ * The variable non-zero coordinates are:
+ *   - coordinate e1^e2  (array index: DUALLINE_E1_E2 = 0)
+ *   - coordinate e1^e3  (array index: DUALLINE_E1_E3 = 1)
+ *   - coordinate e2^e3  (array index: DUALLINE_E2_E3 = 2)
+ *   - coordinate e1^ni  (array index: DUALLINE_E1_NI = 3)
+ *   - coordinate e2^ni  (array index: DUALLINE_E2_NI = 4)
+ *   - coordinate e3^ni  (array index: DUALLINE_E3_NI = 5)
+ * 
+ * The type has no constant coordinates.
+ * 
+ */
+typedef struct 
+{
+	/** The coordinates (stored in an array). */
+	float c[6]; /* e1^e2, e1^e3, e2^e3, e1^ni, e2^ni, e3^ni*/
+} dualLine;
+
 /** index of coordinate for e1^e2^e3^ni in plane.c */
 #define PLANE_E1_E2_E3_NI 0
 /** index of coordinate for no^e2^e3^ni in plane.c */
@@ -388,6 +423,8 @@ const char *toString_flatPoint(const flatPoint *V, char *str, int maxLength, con
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_line(const line *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
+const char *toString_dualLine(const dualLine *V, char *str, int maxLength, const char *fp);
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_plane(const plane *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_no_t(const no_t *V, char *str, int maxLength, const char *fp);
@@ -491,6 +528,8 @@ normalizedPoint *mv_to_normalizedPoint(normalizedPoint *dst, const mv *src);
 flatPoint *mv_to_flatPoint(flatPoint *dst, const mv *src);
 /** Copies a mv to a line (coordinates/basis blades which cannot be represented are silenty lost). */
 line *mv_to_line(line *dst, const mv *src);
+/** Copies a mv to a dualLine (coordinates/basis blades which cannot be represented are silenty lost). */
+dualLine *mv_to_dualLine(dualLine *dst, const mv *src);
 /** Copies a mv to a plane (coordinates/basis blades which cannot be represented are silenty lost). */
 plane *mv_to_plane(plane *dst, const mv *src);
 /** Copies a mv to a no_t (coordinates/basis blades which cannot be represented are silenty lost). */
@@ -509,6 +548,8 @@ mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src);
 mv *flatPoint_to_mv(mv *dst, const flatPoint *src);
 /** Copies a line to a mv */
 mv *line_to_mv(mv *dst, const line *src);
+/** Copies a dualLine to a mv */
+mv *dualLine_to_mv(mv *dst, const dualLine *src);
 /** Copies a plane to a mv */
 mv *plane_to_mv(mv *dst, const plane *src);
 /** Copies a no_t to a mv */
@@ -675,6 +716,8 @@ normalizedPoint* normalizedPoint_setZero(normalizedPoint *_dst);
 flatPoint* flatPoint_setZero(flatPoint *_dst);
 /** Sets line to zero */
 line* line_setZero(line *_dst);
+/** Sets dualLine to zero */
+dualLine* dualLine_setZero(dualLine *_dst);
 /** Sets plane to zero */
 plane* plane_setZero(plane *_dst);
 
@@ -685,6 +728,8 @@ normalizedPoint* normalizedPoint_set(normalizedPoint *_dst, const float _e1, con
 flatPoint* flatPoint_set(flatPoint *_dst, const float _e1_ni, const float _e2_ni, const float _e3_ni, const float _no_ni);
 /** Sets line to specified coordinates */
 line* line_set(line *_dst, const float _e1_e2_ni, const float _e1_e3_ni, const float _e2_e3_ni, const float _e1_no_ni, const float _e2_no_ni, const float _e3_no_ni);
+/** Sets dualLine to specified coordinates */
+dualLine* dualLine_set(dualLine *_dst, const float _e1_e2, const float _e1_e3, const float _e2_e3, const float _e1_ni, const float _e2_ni, const float _e3_ni);
 /** Sets plane to specified coordinates */
 plane* plane_set(plane *_dst, const float _e1_e2_e3_ni, const float _no_e2_e3_ni, const float _no_e1_e3_ni, const float _no_e1_e2_ni);
 
@@ -694,6 +739,8 @@ normalizedPoint* normalizedPoint_setArray(normalizedPoint *_dst, const float *A)
 flatPoint* flatPoint_setArray(flatPoint *_dst, const float *A);
 /** Sets line to specified coordinates */
 line* line_setArray(line *_dst, const float *A);
+/** Sets dualLine to specified coordinates */
+dualLine* dualLine_setArray(dualLine *_dst, const float *A);
 /** Sets plane to specified coordinates */
 plane* plane_setArray(plane *_dst, const float *A);
 
@@ -703,6 +750,8 @@ normalizedPoint* normalizedPoint_copy(normalizedPoint *_dst, const normalizedPoi
 flatPoint* flatPoint_copy(flatPoint *_dst, const flatPoint *a);
 /** Copies line: a = _dst */
 line* line_copy(line *_dst, const line *a);
+/** Copies dualLine: a = _dst */
+dualLine* dualLine_copy(dualLine *_dst, const dualLine *a);
 /** Copies plane: a = _dst */
 plane* plane_copy(plane *_dst, const plane *a);
 
@@ -713,6 +762,8 @@ float normalizedPoint_largestCoordinate(const normalizedPoint *x);
 float flatPoint_largestCoordinate(const flatPoint *x);
 /** Returns abs largest coordinate of line */
 float line_largestCoordinate(const line *x);
+/** Returns abs largest coordinate of dualLine */
+float dualLine_largestCoordinate(const dualLine *x);
 /** Returns abs largest coordinate of plane */
 float plane_largestCoordinate(const plane *x);
 /** Returns abs largest coordinate of no_t */
@@ -732,6 +783,8 @@ float normalizedPoint_float(const normalizedPoint *x);
 float flatPoint_float(const flatPoint *x);
 /** Returns scalar part of  line */
 float line_float(const line *x);
+/** Returns scalar part of  dualLine */
+float dualLine_float(const dualLine *x);
 /** Returns scalar part of  plane */
 float plane_float(const plane *x);
 /** Returns scalar part of  no_t */
@@ -797,6 +850,22 @@ mv* mhip_mv_mv(mv *_dst, const mv *a, const mv *b);
  */
 mv* lc_mv_mv(mv *_dst, const mv *a, const mv *b);
 /**
+ * Returns left contraction of dualLine and plane.
+ */
+flatPoint* lc_dualLine_plane(flatPoint *_dst, const dualLine *a, const plane *b);
+/**
+ * Returns outer product of normalizedPoint and ni_t.
+ */
+flatPoint* op_normalizedPoint_ni_t(flatPoint *_dst, const normalizedPoint *a, const ni_t *b);
+/**
+ * Returns outer product of normalizedPoint and flatPoint.
+ */
+line* op_normalizedPoint_flatPoint(line *_dst, const normalizedPoint *a, const flatPoint *b);
+/**
+ * Returns outer product of normalizedPoint and line.
+ */
+plane* op_normalizedPoint_line(plane *_dst, const normalizedPoint *a, const line *b);
+/**
  * Returns norm of mv using default metric.
  */
 float norm_mv(const mv *a);
@@ -837,6 +906,10 @@ mv* dual_mv(mv *_dst, const mv *a);
  * Returns undual of mv using default metric.
  */
 mv* undual_mv(mv *_dst, const mv *a);
+/**
+ * Returns dual of line using default metric.
+ */
+dualLine* dual_line(dualLine *_dst, const line *a);
 
 /** Computes exp of mv.
  */

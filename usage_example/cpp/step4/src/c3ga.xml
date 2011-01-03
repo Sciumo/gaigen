@@ -37,6 +37,7 @@
 
 <mv name="mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
 
+<smv name="vectorE3GA" type="blade">e1 e2 e3</smv>
 <smv name="normalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
 <smv name="flatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
 <smv name="line" type="blade">e1^e2^ni e1^e3^ni e2^e3^ni e1^no^ni e2^no^ni e3^no^ni</smv>
@@ -57,6 +58,7 @@
 <function name="subtract" arg1="mv" arg2="mv"/>
 
 <function name="cgaPoint" arg1="float" arg2="float" arg3="float" floatType="float"/>
+<function name="cgaPoint" arg1="flatPoint"/>
 
 <function name="extractGrade" arg1="mv"/>
 
@@ -99,5 +101,6 @@
 <function name="dual" arg1="line"/>
 <function name="op" arg1="circle" arg2="ni_t"/>
 <function name="lc" arg1="dualLine" arg2="plane"/>
+
   
 </g25spec>

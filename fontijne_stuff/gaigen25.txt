@@ -29,8 +29,11 @@ Maybe fix the float type stuff
 	V find out why test code generation is so slow -> it was a cogsharp directory filled with junk
 		maybe clear cogsharp on a new install?
 		
-	-> Finish C++ usage example.
-	-> Write C usage example.
+	V Finish C++ usage example.
+	-> Finish C usage example.
+	Write C# usage example (based on C++)
+	Write Java usage example (based on C++)
+	
 
 	-> small usage example for each language.
 		-create 5 points
@@ -42,13 +45,14 @@ Maybe fix the float type stuff
 			step 3: use report usage to extract the functions used? -> be precise in write-up of process, especially the that dual(line) pointPair, because dualLine type is not present
 			step 4: everything is specialized
 			
-			for C, skip steps 1 and 4
+			for C, skip steps 2 and 3
 		-write a small PDF
-		-have makefiles for each language (project for VS)
+		-have makefiles for each language, platform (project for VS)
 
 	Update user manual
 		usage examples
 		converter stuff
+		shortcuts
 		
 	Package usage_example somehow (separate download.zip / download.tar.gz?)		
 		
