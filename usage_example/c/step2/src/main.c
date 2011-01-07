@@ -10,7 +10,7 @@ In this step, all GA variables are stored in 'mv' (the multivector type).
 */
 int main(int argc, char *argv[]) {
 
-	normalizedPoint linePt1, linePt2, planePt1, planePt2, planePt3;
+	normalizedPoint linePt1, linePt2, planePt1, planePt2, planePt3, intersectionPt;
 	line L, tmpL;
 	plane P;
 	flatPoint fp, intersection;
@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 	cgaPoint_float_float_float(&planePt3, 0.0f, 2.0f, 1.0f);
 
 	// output text the can be copy-pasted into GAViewer
-	// warning: c_str() is not multi-threading safe (for that, use toString() instead).
 	printf("linePt1 = %s,\n", toString_mv(normalizedPoint_to_mv(&tmp1, &linePt1), buf, BUF_LEN, "%2.2f")); 
 	printf("linePt2 = %s,\n", toString_mv(normalizedPoint_to_mv(&tmp1, &linePt2), buf, BUF_LEN, "%2.2f"));
 	printf("planePt1 = %s,\n", toString_mv(normalizedPoint_to_mv(&tmp1, &planePt1), buf, BUF_LEN, "%2.2f"));
@@ -43,6 +42,7 @@ int main(int argc, char *argv[]) {
 
 	// compute intersection of line and plane
 	lc_dualLine_plane(&intersection, dual_line(&dl, &L), &P);
+	cgaPoint_flatPoint(&intersectionPt, &intersection); // example of how to convert to regular CGA point
 
 	printf("intersection = %s,\n", toString_mv(flatPoint_to_mv(&tmp1, &intersection), buf, BUF_LEN, "%2.2f"));
 

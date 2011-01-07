@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
 	normalizedPoint_to_mv(&planePt3, cgaPoint_float_float_float(&tmpPt, 0.0f, 2.0f, 1.0f));
 
 	// output text the can be copy-pasted into GAViewer
-	// warning: c_str() is not multi-threading safe (for that, use toString() instead).
 	printf("linePt1 = %s,\n", toString_mv(&linePt1, buf, BUF_LEN, "%2.2f")); 
 	printf("linePt2 = %s,\n", toString_mv(&linePt2, buf, BUF_LEN, "%2.2f"));
 	printf("planePt1 = %s,\n", toString_mv(&planePt1, buf, BUF_LEN, "%2.2f"));

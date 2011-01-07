@@ -144,6 +144,32 @@ typedef struct
 	float c[32];
 } mv;
 
+/** index of coordinate for e1 in vectorE3GA.c */
+#define VECTORE3GA_E1 0
+/** index of coordinate for e2 in vectorE3GA.c */
+#define VECTORE3GA_E2 1
+/** index of coordinate for e3 in vectorE3GA.c */
+#define VECTORE3GA_E3 2
+
+/**
+ * This struct can hold a specialized multivector of type vectorE3GA.
+ * 
+ * The coordinates are stored in type  float.
+ * 
+ * The variable non-zero coordinates are:
+ *   - coordinate e1  (array index: VECTORE3GA_E1 = 0)
+ *   - coordinate e2  (array index: VECTORE3GA_E2 = 1)
+ *   - coordinate e3  (array index: VECTORE3GA_E3 = 2)
+ * 
+ * The type has no constant coordinates.
+ * 
+ */
+typedef struct 
+{
+	/** The coordinates (stored in an array). */
+	float c[3]; /* e1, e2, e3*/
+} vectorE3GA;
+
 /** index of coordinate for e1 in normalizedPoint.c */
 #define NORMALIZEDPOINT_E1 0
 /** index of coordinate for e2 in normalizedPoint.c */
@@ -417,6 +443,8 @@ extern const char *c3ga_string_minus; /* = \" - \" */
 const char *toString_mv(const mv *V, char *str, int maxLength, const char *fp);
 
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
+const char *toString_vectorE3GA(const vectorE3GA *V, char *str, int maxLength, const char *fp);
+/** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_normalizedPoint(const normalizedPoint *V, char *str, int maxLength, const char *fp);
 /** Writes value of 'V' to 'str' using float point precision 'fp' (e.g. %f). 'maxLength' is the length of 'str'. 'str' is returned. */
 const char *toString_flatPoint(const flatPoint *V, char *str, int maxLength, const char *fp);
@@ -522,6 +550,8 @@ void mv_setScalar(mv *M, float val);
 void mv_setArray(mv *M, int gu, const float *arr);
 /** Copies a mv */
 mv* mv_copy(mv *dst, const mv *src);
+/** Copies a mv to a vectorE3GA (coordinates/basis blades which cannot be represented are silenty lost). */
+vectorE3GA *mv_to_vectorE3GA(vectorE3GA *dst, const mv *src);
 /** Copies a mv to a normalizedPoint (coordinates/basis blades which cannot be represented are silenty lost). */
 normalizedPoint *mv_to_normalizedPoint(normalizedPoint *dst, const mv *src);
 /** Copies a mv to a flatPoint (coordinates/basis blades which cannot be represented are silenty lost). */
@@ -542,6 +572,8 @@ e2_t *mv_to_e2_t(e2_t *dst, const mv *src);
 e3_t *mv_to_e3_t(e3_t *dst, const mv *src);
 /** Copies a mv to a ni_t (coordinates/basis blades which cannot be represented are silenty lost). */
 ni_t *mv_to_ni_t(ni_t *dst, const mv *src);
+/** Copies a vectorE3GA to a mv */
+mv *vectorE3GA_to_mv(mv *dst, const vectorE3GA *src);
 /** Copies a normalizedPoint to a mv */
 mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src);
 /** Copies a flatPoint to a mv */
@@ -710,6 +742,8 @@ float mv_largestCoordinate(const mv *x);
 /** Returns absolute largest coordinate in mv, and the bitmap of the corresponding basis blade (in 'bm'). */
 float mv_largestBasisBlade(const mv *x, unsigned int *bm);
 
+/** Sets vectorE3GA to zero */
+vectorE3GA* vectorE3GA_setZero(vectorE3GA *_dst);
 /** Sets normalizedPoint to zero */
 normalizedPoint* normalizedPoint_setZero(normalizedPoint *_dst);
 /** Sets flatPoint to zero */
@@ -722,6 +756,8 @@ dualLine* dualLine_setZero(dualLine *_dst);
 plane* plane_setZero(plane *_dst);
 
 
+/** Sets vectorE3GA to specified coordinates */
+vectorE3GA* vectorE3GA_set(vectorE3GA *_dst, const float _e1, const float _e2, const float _e3);
 /** Sets normalizedPoint to specified coordinates */
 normalizedPoint* normalizedPoint_set(normalizedPoint *_dst, const float _e1, const float _e2, const float _e3, const float _ni);
 /** Sets flatPoint to specified coordinates */
@@ -733,6 +769,8 @@ dualLine* dualLine_set(dualLine *_dst, const float _e1_e2, const float _e1_e3, c
 /** Sets plane to specified coordinates */
 plane* plane_set(plane *_dst, const float _e1_e2_e3_ni, const float _no_e2_e3_ni, const float _no_e1_e3_ni, const float _no_e1_e2_ni);
 
+/** Sets vectorE3GA to specified coordinates */
+vectorE3GA* vectorE3GA_setArray(vectorE3GA *_dst, const float *A);
 /** Sets normalizedPoint to specified coordinates */
 normalizedPoint* normalizedPoint_setArray(normalizedPoint *_dst, const float *A);
 /** Sets flatPoint to specified coordinates */
@@ -744,6 +782,8 @@ dualLine* dualLine_setArray(dualLine *_dst, const float *A);
 /** Sets plane to specified coordinates */
 plane* plane_setArray(plane *_dst, const float *A);
 
+/** Copies vectorE3GA: a = _dst */
+vectorE3GA* vectorE3GA_copy(vectorE3GA *_dst, const vectorE3GA *a);
 /** Copies normalizedPoint: a = _dst */
 normalizedPoint* normalizedPoint_copy(normalizedPoint *_dst, const normalizedPoint *a);
 /** Copies flatPoint: a = _dst */
@@ -756,6 +796,8 @@ dualLine* dualLine_copy(dualLine *_dst, const dualLine *a);
 plane* plane_copy(plane *_dst, const plane *a);
 
 
+/** Returns abs largest coordinate of vectorE3GA */
+float vectorE3GA_largestCoordinate(const vectorE3GA *x);
 /** Returns abs largest coordinate of normalizedPoint */
 float normalizedPoint_largestCoordinate(const normalizedPoint *x);
 /** Returns abs largest coordinate of flatPoint */
@@ -777,6 +819,8 @@ float e3_t_largestCoordinate(const e3_t *x);
 /** Returns abs largest coordinate of ni_t */
 float ni_t_largestCoordinate(const ni_t *x);
 
+/** Returns scalar part of  vectorE3GA */
+float vectorE3GA_float(const vectorE3GA *x);
 /** Returns scalar part of  normalizedPoint */
 float normalizedPoint_float(const normalizedPoint *x);
 /** Returns scalar part of  flatPoint */
@@ -809,6 +853,10 @@ mv* subtract_mv_mv(mv *_dst, const mv *a, const mv *b);
  * Returns conformal point.
  */
 normalizedPoint* cgaPoint_float_float_float(normalizedPoint *_dst, const float a, const float b, const float c);
+/**
+ * Returns conformal point.
+ */
+normalizedPoint* cgaPoint_flatPoint(normalizedPoint *_dst, const flatPoint *a);
 /**
  * Returns grade groupBitmap of  mv.
  */

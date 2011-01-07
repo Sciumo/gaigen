@@ -30,8 +30,9 @@ Maybe fix the float type stuff
 		maybe clear cogsharp on a new install?
 		
 	V Finish C++ usage example.
-	-> Finish C usage example.
-	Write C# usage example (based on C++)
+	V Finish C usage example.
+	-> add implicit converters from smv to gmv (see http://msdn.microsoft.com/en-us/library/z5z9kes2%28v=vs.71%29.aspx)
+	->Write C# usage example (based on C++)
 	Write Java usage example (based on C++)
 	
 

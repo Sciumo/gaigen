@@ -2794,13 +2794,14 @@ void mv_setArray(mv *M, int gu, const float *arr) {
 	c3ga_float_copy_N(M->c, arr, c3ga_mvSize[gu]);
 
 }
-void mv_copy(mv *dst, const mv *src) {
+mv* mv_copy(mv *dst, const mv *src) {
 	int i;
 	dst->gu = src->gu;
 	for (i = 0; i < c3ga_mvSize[src->gu]; i++)
 		dst->c[i] = (float)src->c[i];
+	return dst;
 }
-void mv_to_normalizedPoint(normalizedPoint *dst, const mv *src) {
+normalizedPoint *mv_to_normalizedPoint(normalizedPoint *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2819,8 +2820,9 @@ void mv_to_normalizedPoint(normalizedPoint *dst, const mv *src) {
 		dst->c[2] = 0.0f;
 		dst->c[3] = 0.0f;
 	}
+	return dst;
 }
-void mv_to_no_t(no_t *dst, const mv *src) {
+no_t *mv_to_no_t(no_t *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2831,8 +2833,9 @@ void mv_to_no_t(no_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
 }
-void mv_to_e1_t(e1_t *dst, const mv *src) {
+e1_t *mv_to_e1_t(e1_t *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2843,8 +2846,9 @@ void mv_to_e1_t(e1_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
 }
-void mv_to_e2_t(e2_t *dst, const mv *src) {
+e2_t *mv_to_e2_t(e2_t *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2855,8 +2859,9 @@ void mv_to_e2_t(e2_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
 }
-void mv_to_e3_t(e3_t *dst, const mv *src) {
+e3_t *mv_to_e3_t(e3_t *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2867,8 +2872,9 @@ void mv_to_e3_t(e3_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
 }
-void mv_to_ni_t(ni_t *dst, const mv *src) {
+ni_t *mv_to_ni_t(ni_t *dst, const mv *src) {
 	const float *ptr = src->c;
 
 	if (src->gu & 1) {
@@ -2879,8 +2885,9 @@ void mv_to_ni_t(ni_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
 }
-void normalizedPoint_to_mv(mv *dst, const normalizedPoint *src) {
+mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = 1.0f;
@@ -2889,41 +2896,47 @@ void normalizedPoint_to_mv(mv *dst, const normalizedPoint *src) {
 	ptr[3] = src->c[2];
 	ptr[4] = src->c[3];
 	ptr += 5;
+	return dst;
 }
-void no_t_to_mv(mv *dst, const no_t *src) {
+mv *no_t_to_mv(mv *dst, const no_t *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = 1.0f;
 	ptr[1] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
 	ptr += 5;
+	return dst;
 }
-void e1_t_to_mv(mv *dst, const e1_t *src) {
+mv *e1_t_to_mv(mv *dst, const e1_t *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = ptr[2] = ptr[3] = ptr[4] = 0.0f;
 	ptr[1] = 1.0f;
 	ptr += 5;
+	return dst;
 }
-void e2_t_to_mv(mv *dst, const e2_t *src) {
+mv *e2_t_to_mv(mv *dst, const e2_t *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = ptr[1] = ptr[3] = ptr[4] = 0.0f;
 	ptr[2] = 1.0f;
 	ptr += 5;
+	return dst;
 }
-void e3_t_to_mv(mv *dst, const e3_t *src) {
+mv *e3_t_to_mv(mv *dst, const e3_t *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = ptr[1] = ptr[2] = ptr[4] = 0.0f;
 	ptr[3] = 1.0f;
 	ptr += 5;
+	return dst;
 }
-void ni_t_to_mv(mv *dst, const ni_t *src) {
+mv *ni_t_to_mv(mv *dst, const ni_t *src) {
 	float *ptr = dst->c;
 	dst->gu = 2;
 	ptr[0] = ptr[1] = ptr[2] = ptr[3] = 0.0f;
 	ptr[4] = 1.0f;
 	ptr += 5;
+	return dst;
 }
 
 void mv_reserveGroup_0(mv *A) {

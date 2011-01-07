@@ -82,6 +82,7 @@ const int c3ga_basisElementGroupByBitmap[32] =
 
 const char *g_c3gaTypenames[] = 
 {
+	"vectorE3GA",
 	"normalizedPoint",
 	"flatPoint",
 	"line",
@@ -436,6 +437,12 @@ void c3ga_setStringFormat(const char *what, const char *format) {
 		c3ga_string_minus = (format) ? format : " - ";
 }
 
+const char *toString_vectorE3GA(const vectorE3GA *V, char *str, int maxLength, const char *fp)
+{
+	mv tmp;
+	vectorE3GA_to_mv(&tmp,V);
+	return toString_mv(&tmp, str, maxLength, fp);
+}
 const char *toString_normalizedPoint(const normalizedPoint *V, char *str, int maxLength, const char *fp)
 {
 	mv tmp;
@@ -2829,6 +2836,25 @@ mv* mv_copy(mv *dst, const mv *src) {
 		dst->c[i] = (float)src->c[i];
 	return dst;
 }
+vectorE3GA *mv_to_vectorE3GA(vectorE3GA *dst, const mv *src) {
+	const float *ptr = src->c;
+
+	if (src->gu & 1) {
+		ptr += 1;
+	}
+	if (src->gu & 2) {
+		dst->c[0] = ptr[1];
+		dst->c[1] = ptr[2];
+		dst->c[2] = ptr[3];
+		ptr += 5;
+	}
+	else {
+		dst->c[0] = 0.0f;
+		dst->c[1] = 0.0f;
+		dst->c[2] = 0.0f;
+	}
+	return dst;
+}
 normalizedPoint *mv_to_normalizedPoint(normalizedPoint *dst, const mv *src) {
 	const float *ptr = src->c;
 
@@ -3026,6 +3052,16 @@ ni_t *mv_to_ni_t(ni_t *dst, const mv *src) {
 	}
 	else {
 	}
+	return dst;
+}
+mv *vectorE3GA_to_mv(mv *dst, const vectorE3GA *src) {
+	float *ptr = dst->c;
+	dst->gu = 2;
+	ptr[0] = ptr[4] = 0.0f;
+	ptr[1] = src->c[0];
+	ptr[2] = src->c[1];
+	ptr[3] = src->c[2];
+	ptr += 5;
 	return dst;
 }
 mv *normalizedPoint_to_mv(mv *dst, const normalizedPoint *src) {
@@ -3577,6 +3613,12 @@ float mv_largestBasisBlade(const mv *x, unsigned int *bm) {
 
 
 
+vectorE3GA* vectorE3GA_setZero(vectorE3GA *_dst)
+{
+	_dst->c[0] = _dst->c[1] = _dst->c[2] = 0.0f;
+
+	return _dst;
+}
 normalizedPoint* normalizedPoint_setZero(normalizedPoint *_dst)
 {
 	_dst->c[0] = _dst->c[1] = _dst->c[2] = _dst->c[3] = 0.0f;
@@ -3609,6 +3651,14 @@ plane* plane_setZero(plane *_dst)
 }
 
 
+vectorE3GA* vectorE3GA_set(vectorE3GA *_dst, const float _e1, const float _e2, const float _e3)
+{
+	_dst->c[0] = _e1;
+	_dst->c[1] = _e2;
+	_dst->c[2] = _e3;
+
+	return _dst;
+}
 normalizedPoint* normalizedPoint_set(normalizedPoint *_dst, const float _e1, const float _e2, const float _e3, const float _ni)
 {
 	_dst->c[0] = _e1;
@@ -3659,6 +3709,14 @@ plane* plane_set(plane *_dst, const float _e1_e2_e3_ni, const float _no_e2_e3_ni
 	return _dst;
 }
 
+vectorE3GA* vectorE3GA_setArray(vectorE3GA *_dst, const float *A)
+{
+	_dst->c[0] = A[0];
+	_dst->c[1] = A[1];
+	_dst->c[2] = A[2];
+
+	return _dst;
+}
 normalizedPoint* normalizedPoint_setArray(normalizedPoint *_dst, const float *A)
 {
 	_dst->c[0] = A[0];
@@ -3709,6 +3767,14 @@ plane* plane_setArray(plane *_dst, const float *A)
 	return _dst;
 }
 
+vectorE3GA* vectorE3GA_copy(vectorE3GA *_dst, const vectorE3GA *a)
+{
+	_dst->c[0] = a->c[0];
+	_dst->c[1] = a->c[1];
+	_dst->c[2] = a->c[2];
+
+	return _dst;
+}
 normalizedPoint* normalizedPoint_copy(normalizedPoint *_dst, const normalizedPoint *a)
 {
 	_dst->c[0] = a->c[0];
@@ -3760,6 +3826,12 @@ plane* plane_copy(plane *_dst, const plane *a)
 }
 
 
+float vectorE3GA_largestCoordinate(const vectorE3GA *x) {
+	float maxValue = fabsf(x->c[0]);
+	if (fabsf(x->c[1]) > maxValue) maxValue = fabsf(x->c[1]);
+	if (fabsf(x->c[2]) > maxValue) maxValue = fabsf(x->c[2]);
+	return maxValue;
+}
 float normalizedPoint_largestCoordinate(const normalizedPoint *x) {
 	float maxValue = 1.0f;
 	if (fabsf(x->c[0]) > maxValue) maxValue = fabsf(x->c[0]);
@@ -3821,6 +3893,9 @@ float ni_t_largestCoordinate(const ni_t *x) {
 	return maxValue;
 }
 
+float vectorE3GA_float(const vectorE3GA *x) {
+	return 0.0f;
+}
 float normalizedPoint_float(const normalizedPoint *x) {
 	return 0.0f;
 }
@@ -4043,6 +4118,20 @@ normalizedPoint* cgaPoint_float_float_float(normalizedPoint *_dst, const float a
 	_dst->c[1] = b;
 	_dst->c[2] = c;
 	_dst->c[3] = (0.5f*a*a+0.5f*b*b+0.5f*c*c);
+
+	return _dst;
+}
+normalizedPoint* cgaPoint_flatPoint(normalizedPoint *_dst, const flatPoint *a)
+{
+	vectorE3GA _v_;
+	_v_.c[0] = a->c[0]/((a->c[3]));
+	_v_.c[1] = a->c[1]/((a->c[3]));
+	_v_.c[2] = a->c[2]/((a->c[3]));
+
+	_dst->c[0] = _v_.c[0];
+	_dst->c[1] = _v_.c[1];
+	_dst->c[2] = _v_.c[2];
+	_dst->c[3] = (0.5f*_v_.c[0]*_v_.c[0]+0.5f*_v_.c[1]*_v_.c[1]+0.5f*_v_.c[2]*_v_.c[2]);
 
 	return _dst;
 }
