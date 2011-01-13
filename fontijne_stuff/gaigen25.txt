@@ -24,8 +24,6 @@ Maybe fix the float type stuff
 
 	V in cpp always write converters from general type to specialized types?
 	
-		
-	
 	V find out why test code generation is so slow -> it was a cogsharp directory filled with junk
 		maybe clear cogsharp on a new install?
 		
@@ -34,6 +32,11 @@ Maybe fix the float type stuff
 	-> add implicit converters from smv to gmv (see http://msdn.microsoft.com/en-us/library/z5z9kes2%28v=vs.71%29.aspx)
 	->Write C# usage example (based on C++)
 	Write Java usage example (based on C++)
+
+	check if locking is required for report usage in Java
+		if not, then explicitly state so in the documentation of the code
+		if so, add locking
+	add '<!-- no general multivector functions usage --> to report when appropriate
 	
 
 	-> small usage example for each language.

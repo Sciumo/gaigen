@@ -593,7 +593,7 @@ ${ENDCODEBLOCK}
 
 ${CODEBLOCK reportUsage}
 
-class ReportUsage implements Comparable<ReportUsage>
+public class ReportUsage implements Comparable<ReportUsage>
 {
     protected static Hashtable<String, ReportUsage> s_reportUsage = new Hashtable<String, ReportUsage>();
 
