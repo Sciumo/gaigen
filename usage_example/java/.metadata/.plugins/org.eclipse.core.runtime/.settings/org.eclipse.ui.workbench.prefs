@@ -1,0 +1,3 @@
+#Mon Jan 24 09:02:53 CET 2011
+eclipse.preferences.version=1
+ENABLED_DECORATORS=org.eclipse.wst.server.ui.decorator\:false,com.mountainminds.eclemma.ui.coverageDecorator\:false,org.eclipse.jdt.ui.override.decorator\:true,org.eclipse.jdt.ui.interface.decorator\:false,org.eclipse.jdt.ui.buildpath.decorator\:true,org.eclipse.mylyn.context.ui.decorator.interest\:true,org.eclipse.mylyn.tasks.ui.decorators.task\:true,org.eclipse.mylyn.team.ui.changeset.decorator\:true,org.eclipse.pde.ui.binaryProjectDecorator\:false,org.eclipse.team.cvs.ui.decorator\:true,org.eclipse.ui.LinkedResourceDecorator\:true,org.eclipse.ui.ContentTypeDecorator\:true,org.eclipse.wst.server.ui.navigatorDecorator\:true,org.tigris.subversion.subclipse.ui.decorator\:true,

@@ -45,8 +45,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="c3ga.cs" />
+    <Compile Include="e1_t.cs" />
+    <Compile Include="e2_t.cs" />
+    <Compile Include="e3_t.cs" />
+    <Compile Include="flatPoint.cs" />
+    <Compile Include="line.cs" />
+    <Compile Include="mv.cs" />
+    <Compile Include="mv_if.cs" />
+    <Compile Include="ni_t.cs" />
+    <Compile Include="normalizedPoint.cs" />
+    <Compile Include="no_t.cs" />
+    <Compile Include="ParseException.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="plane.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportUsage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="c3ga.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -56,4 +74,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)
+g25 c3ga.xml
+</PreBuildEvent>
+  </PropertyGroup>
 </Project>

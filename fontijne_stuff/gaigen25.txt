@@ -29,12 +29,12 @@ Maybe fix the float type stuff
 		
 	V Finish C++ usage example.
 	V Finish C usage example.
-	-> add implicit converters from smv to gmv (see http://msdn.microsoft.com/en-us/library/z5z9kes2%28v=vs.71%29.aspx)
-	->Write C# usage example (based on C++)
-	Write Java usage example (based on C++)
+	V add implicit converters from smv to gmv (see http://msdn.microsoft.com/en-us/library/z5z9kes2%28v=vs.71%29.aspx)
+	V Finish C# usage example.
+	->Write Java usage example (based on C++)
 
 	check if locking is required for report usage in Java
-		if not, then explicitly state so in the documentation of the code
+		if not, then explicitly state so in the documentation of the generated code
 		if so, add locking
 	add '<!-- no general multivector functions usage --> to report when appropriate
 	
@@ -51,12 +51,13 @@ Maybe fix the float type stuff
 			
 			for C, skip steps 2 and 3
 		-write a small PDF
-		-have makefiles for each language, platform (project for VS)
+		-have makefiles for each language, platform (project for VS, eclipse for Java)
 
 	Update user manual
 		usage examples
 		converter stuff
 		shortcuts
+		implicit converters for C#
 		
 	Package usage_example somehow (separate download.zip / download.tar.gz?)		
 		
@@ -64,7 +65,7 @@ Maybe fix the float type stuff
 
 	SourceForge website HTML pages
 	
-	Have 'C' functions return the return argument?
+	V Have 'C' functions return the return argument?
 	GMV log 3d for C# (done?), for Java, too, and add testing functions
 
 	Matlab / C version: working on it with Robert Valkenburg

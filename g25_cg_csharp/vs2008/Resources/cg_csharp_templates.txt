@@ -421,6 +421,14 @@ ${CODEBLOCK SMVconstructors}
 		Set(co<%for (int i = 0; i < smv.NbNonConstBasisBlade; i++) {%>, <%smv.NonConstBasisBlade(i).ToLangString(S.m_basisVectorNames)%><%}%>);
 	}
 <%}%>
+
+    /// <summary>
+	/// Implicit converter from <%className%> to <%gmvClassName%>.
+    /// </summary>
+    public static implicit operator <%gmvClassName%>(<%className%> a)
+    {
+        return new <%gmvClassName%>(a);
+    }
 ${ENDCODEBLOCK}
 
 

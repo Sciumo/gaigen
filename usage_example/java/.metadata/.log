@@ -1,0 +1,75 @@
+!SESSION 2011-01-24 09:02:41.391 -----------------------------------------------
+eclipse.buildId=M20090917-0800
+java.version=1.6.0_17
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.382
+!MESSAGE System property http.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.382
+!MESSAGE System property http.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.382
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.382
+!MESSAGE System property https.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.383
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:02:51.383
+!MESSAGE System property https.proxyPort is not set but should be 80.
+!SESSION 2011-01-24 09:03:02.000 -----------------------------------------------
+eclipse.buildId=M20090917-0800
+java.version=1.6.0_17
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.037
+!MESSAGE System property http.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.037
+!MESSAGE System property http.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.037
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.037
+!MESSAGE System property https.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.038
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:03:06.039
+!MESSAGE System property https.proxyPort is not set but should be 80.
+!SESSION 2011-01-24 09:04:35.802 -----------------------------------------------
+eclipse.buildId=M20090917-0800
+java.version=1.6.0_17
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.813
+!MESSAGE System property http.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.814
+!MESSAGE System property http.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.814
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.814
+!MESSAGE System property https.proxyPort is not set but should be 80.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.815
+!MESSAGE System property https.proxyHost is not set but should be wingate.
+
+!ENTRY org.eclipse.core.net 1 0 2011-01-24 09:04:44.815
+!MESSAGE System property https.proxyPort is not set but should be 80.

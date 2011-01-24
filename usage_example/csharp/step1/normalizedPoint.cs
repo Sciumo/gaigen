@@ -100,6 +100,14 @@ public class normalizedPoint  :  mv_if
 		Set(co, e1, e2, e3, ni);
 	}
 
+    /// <summary>
+	/// Implicit converter from normalizedPoint to mv.
+    /// </summary>
+    public static implicit operator mv(normalizedPoint a)
+    {
+        return new mv(a);
+    }
+
 public void Set()
 {
 	m_c[0] = m_c[1] = m_c[2] = m_c[3] = 0.0f;

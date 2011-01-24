@@ -1,3 +1,10 @@
+General comment:
+I personally use 'reportUsage' feature (step 3) only to detect whether the GMV
+type is still used. Otherwise I add required optimized functions to 
+spec by hand. This avoid the iterative process.
+
+
+
 C++: step 3
 -have to make multiple loops to extract all intermediate types and functions.
 -because no dualLine type, pointPair is returned from dual(L) << P
@@ -29,4 +36,16 @@ This example needs a Euclidean vector type internally.
 
 
 C# step 1:
-Need to explicitly convert points to mv (no automatic conversion (implemented yet) in C#)
+Note the use of implicit conversion
+
+
+C# step 2:
+Note that implicit conversion does not work for operators
+operator normalizedPoint ^ normalizedPoint is not found 
+line = p1 ^ p2 ^ ni needs explicit conversion
+
+C# step 3:
+again the implicit conversion / operator lookup causes problems:
+need to remove the cast (mv)pt ^ (mv)pt.
+Not using operators avoids all these problems.
+Remember to add newly generated types (pointPair.cs and circle.cs) to your project!

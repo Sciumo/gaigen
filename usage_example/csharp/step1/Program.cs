@@ -8,14 +8,20 @@ namespace c3ga_csharp_example_step1
 {
     class Program
     {
+        /*
+        This small example creates a line and a plane from points.
+        It then computes the intersection point of the line and the plane.
+
+        In this step, all GA variables are stored in 'mv' (the multivector type).
+        */
         static void Main(string[] args)
         {
             // get five points
-            mv linePt1 = new mv(c3ga.cgaPoint(1.0f, 0.0f, 0.0f));
-            mv linePt2 = new mv(c3ga.cgaPoint(1.0f, 1.0f, 0.0f));
-            mv planePt1 = new mv(c3ga.cgaPoint(1.0f, 2.0f, 0.0f));
-            mv planePt2 = new mv(c3ga.cgaPoint(1.0f, 2.0f, 1.0f));
-            mv planePt3 = new mv(c3ga.cgaPoint(0.0f, 2.0f, 1.0f));
+            mv linePt1 = c3ga.cgaPoint(1.0f, 0.0f, 0.0f);
+            mv linePt2 = c3ga.cgaPoint(1.0f, 1.0f, 0.0f);
+            mv planePt1 = c3ga.cgaPoint(1.0f, 2.0f, 0.0f);
+            mv planePt2 = c3ga.cgaPoint(1.0f, 2.0f, 1.0f);
+            mv planePt3 = c3ga.cgaPoint(0.0f, 2.0f, 1.0f);
 
             // output text the can be copy-pasted into GAViewer
             Console.WriteLine("linePt1 = " + linePt1 + ",");
@@ -25,8 +31,8 @@ namespace c3ga_csharp_example_step1
             Console.WriteLine("planePt3 = " + planePt3 + ",");
 
             // create line and plane out of points
-            mv L = linePt1 ^ linePt2 ^ new mv(c3ga.ni);
-            mv P = planePt1 ^ planePt2 ^ planePt3 ^ new mv(c3ga.ni);
+            mv L = linePt1 ^ linePt2 ^ c3ga.ni;
+            mv P = planePt1 ^ planePt2 ^ planePt3 ^ c3ga.ni;
 
             // output text the can be copy-pasted into GAViewer
             Console.WriteLine("L = " + L + ",");
