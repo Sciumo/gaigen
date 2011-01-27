@@ -7,7 +7,7 @@ using namespace c3ga;
 This small example creates a line and a plane from points.
 It then computes the intersection point of the line and the plane.
 
-In this step, the 'reportUsage' funtionality is used to extract what
+In this step, the 'reportUsage' functionality is used to extract what
 specialized functions and types are missing.
 */
 int main(int argc, char *argv[]) {

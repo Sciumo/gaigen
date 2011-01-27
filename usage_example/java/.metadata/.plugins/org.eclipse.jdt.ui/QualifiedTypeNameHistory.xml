@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="C3ga_pkg.Mv"/>
+<fullyQualifiedTypeName name="C3ga_pkg.NormalizedPoint"/>
+<fullyQualifiedTypeName name="C3ga_pkg.C3ga"/>
+<fullyQualifiedTypeName name="C3ga_pkg.Line"/>
+<fullyQualifiedTypeName name="C3ga_pkg.Plane"/>
+<fullyQualifiedTypeName name="C3ga_pkg.FlatPoint"/>
+<fullyQualifiedTypeName name="C3ga_pkg.ReportUsage"/>
+</qualifiedTypeNameHistroy>

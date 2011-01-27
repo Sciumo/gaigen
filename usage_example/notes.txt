@@ -3,6 +3,8 @@ I personally use 'reportUsage' feature (step 3) only to detect whether the GMV
 type is still used. Otherwise I add required optimized functions to 
 spec by hand. This avoid the iterative process.
 
+Step 3 general: process is iterative. Both feedback from running program and
+from error compiling the c3ga.xml file.
 
 
 C++: step 3
@@ -49,3 +51,19 @@ again the implicit conversion / operator lookup causes problems:
 need to remove the cast (mv)pt ^ (mv)pt.
 Not using operators avoids all these problems.
 Remember to add newly generated types (pointPair.cs and circle.cs) to your project!
+
+
+
+
+Java general: 
+-used capitals for algebra name (C3ga) and typenames (Mv). Java conventions, not a requirement.
+-used a 'builder' to auto-built C3ga.xml. Do a right-click the project (e.g., Step1), select
+properties, then 'Builders', add a new Builder. If you are not in windows, you will have to
+adjust the 'location' of the g25 program.
+
+Java Step 1: explicit conversion from NormalizedPoint -> Mv required
+
+Java Step 2: explicit conversion from Mv -> Line, and Mv -> Plane required
+
+
+

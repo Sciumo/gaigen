@@ -31,7 +31,9 @@ Maybe fix the float type stuff
 	V Finish C usage example.
 	V add implicit converters from smv to gmv (see http://msdn.microsoft.com/en-us/library/z5z9kes2%28v=vs.71%29.aspx)
 	V Finish C# usage example.
-	->Write Java usage example (based on C++)
+	V Write Java usage example
+	
+	-> in step 4 of C#, add the example of how to convert FlatPoint to NormalizedPoint
 
 	check if locking is required for report usage in Java
 		if not, then explicitly state so in the documentation of the generated code

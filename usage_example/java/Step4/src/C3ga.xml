@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<g25spec 
+	license="gpl" 
+	language="java"
+	namespace="C3ga"
+	coordStorage="array"
+	defaultOperatorBindings="false"
+	dimension="5"
+  reportUsage="false"
+  gmvCode="expand"
+  parser="builtin"
+  testSuite="false"
+>
+
+<inline 
+	constructors="true" 
+	set="true" 
+	assign="false" 
+	operators="true" 
+	functions="true"
+	/>
+
+
+<floatType type="float" suffix=""/>
+
+  <basisVectorNames 
+	name1="no"
+	name2="e1"
+	name3="e2"
+	name4="e3"
+	name5="ni"
+	/>
+	
+<metric name="default" round="true">no.ni=-1</metric>
+<metric name="default">e1.e1=e2.e2=e3.e3=1</metric>
+
+<mv name="Mv" compress="byGrade" coordinateOrder="default" memAlloc="dynamic"/>
+<smv name="NormalizedPoint" type="blade">no=1 e1 e2 e3 ni</smv>
+<smv name="VectorE3GA" type="blade">e1 e2 e3</smv>
+<smv name="FlatPoint" type="blade">e1^ni e2^ni e3^ni no^ni</smv>
+<smv name="Line" type="blade">e1^e2^ni e1^e3^ni e2^e3^ni e1^no^ni e2^no^ni e3^no^ni</smv>
+<smv name="DualLine" type="blade">e1^e2 e1^e3 e2^e3 e1^ni e2^ni e3^ni</smv>
+<smv name="Plane" type="blade">e1^e2^e3^ni no^e2^e3^ni no^e1^e3^ni no^e1^e2^ni</smv>
+
+
+
+<smv name="no" const="true" type="blade">no=1</smv>
+<smv name="e1" const="true" type="blade">e1=1</smv>
+<smv name="e2" const="true" type="blade">e2=1</smv>
+<smv name="e3" const="true" type="blade">e3=1</smv>
+<smv name="ni" const="true" type="blade">ni=1</smv>
+
+  
+<function name="add" arg1="Mv" arg2="Mv"/>
+<function name="subtract" arg1="Mv" arg2="Mv"/>
+
+<function name="cgaPoint" arg1="float" arg2="float" arg3="float" floatType="float"/>
+<function name="cgaPoint" arg1="FlatPoint"/>
+
+<function name="extractGrade" arg1="Mv"/>
+
+<function name="negate" arg1="Mv"/>
+<function name="reverse" arg1="Mv"/>
+<function name="gradeInvolution" arg1="Mv"/>
+<function name="cliffordConjugate" arg1="Mv"/>
+
+<function name="gp" arg1="Mv" arg2="Mv"/>
+<function name="op" arg1="Mv" arg2="Mv"/>
+<function name="sp" arg1="Mv" arg2="Mv"/>
+<function name="mhip" arg1="Mv" arg2="Mv"/>
+<function name="lc" arg1="Mv" arg2="Mv"/>
+
+<function name="norm" arg1="Mv"/>
+  
+<function name="unit" arg1="Mv"/>
+
+<function name="applyVersor" arg1="Mv" arg2="Mv"/>
+<function name="applyUnitVersor" arg1="Mv" arg2="Mv"/>
+
+<function name="versorInverse" arg1="Mv"/>
+
+<function name="equals" arg1="Mv" arg2="Mv" arg3="float" floatType="float"/>
+
+<function name="zero" arg1="Mv" arg2="float" floatType="float"/>
+  
+<function name="dual" arg1="Mv"/>
+<function name="undual" arg1="Mv"/>
+
+<function name="exp" arg1="Mv"/>
+<function name="gp" arg1="Mv" arg2="float"/>
+<function name="norm2" arg1="Mv"/>
+<function name="sas" arg1="Mv" arg2="float" arg3="float"/>
+
+<function name="dual" arg1="Line"/>
+<function name="op" arg1="NormalizedPoint" arg2="ni_t"/>
+<function name="lc" arg1="DualLine" arg2="Plane"/>
+<function name="op" arg1="NormalizedPoint" arg2="FlatPoint"/>
+<function name="op" arg1="NormalizedPoint" arg2="Line"/>
+
+</g25spec>

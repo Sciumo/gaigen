@@ -12,7 +12,7 @@ namespace c3ga_csharp_example_step3
         This small example creates a line and a plane from points.
         It then computes the intersection point of the line and the plane.
 
-        In this step, the 'reportUsage' funtionality is used to extract what
+        In this step, the 'reportUsage' functionality is used to extract what
         specialized functions and types are missing.
         */
         static void Main(string[] args)
