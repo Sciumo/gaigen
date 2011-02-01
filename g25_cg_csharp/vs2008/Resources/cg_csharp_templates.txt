@@ -624,11 +624,13 @@ class ReportUsage
     /// </summary>
     public static void MergeReport(ReportUsage RU)
     {
-        if (s_reportUsage.ContainsKey(RU.GetReportString())) {
-            s_reportUsage[RU.GetReportString()].IncrementCount();
-        }
-        else {
-             s_reportUsage.Add(RU.GetReportString(), RU);
+        lock (s_reportUsage) {
+			if (s_reportUsage.ContainsKey(RU.GetReportString())) {
+				s_reportUsage[RU.GetReportString()].IncrementCount();
+			}
+			else {
+				 s_reportUsage.Add(RU.GetReportString(), RU);
+			}
         }
     }
 
@@ -636,15 +638,20 @@ class ReportUsage
     public static string GetReport(bool includeCount)
     {
         StringBuilder sb = new StringBuilder();
-        SortedDictionary<string, ReportUsage> sortedReportUsage = new SortedDictionary<string, ReportUsage>(s_reportUsage);
-        foreach (KeyValuePair<string, ReportUsage> kvp in sortedReportUsage ) {
-            ReportUsage ru = kvp.Value;
-            sb.Append(ru.GetReportString());
-            if (includeCount)
-            {
-                sb.AppendFormat("  <!-- used {0} time{1} -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
-            }
-            sb.AppendLine();
+        lock (s_reportUsage) {
+			SortedDictionary<string, ReportUsage> sortedReportUsage = new SortedDictionary<string, ReportUsage>(s_reportUsage);
+			foreach (KeyValuePair<string, ReportUsage> kvp in sortedReportUsage ) {
+				ReportUsage ru = kvp.Value;
+				sb.Append(ru.GetReportString());
+				if (includeCount)
+				{
+					sb.AppendFormat("  <!-- used {0} time{1} -->", ru.GetReportCount(), (ru.GetReportCount() == 1) ? "" : "s");
+				}
+				sb.AppendLine();
+			}
+			if (s_reportUsage.Count == 0) {
+					sb.Append("  <!-- no general multivector function usage -->");
+			}
         }
 
         return sb.ToString();

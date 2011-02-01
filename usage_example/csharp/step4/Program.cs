@@ -42,6 +42,8 @@ namespace c3ga_csharp_example_step4
             // compute intersection of line and plane
             flatPoint intersection = c3ga.lc(c3ga.dual(L), P);
 
+            normalizedPoint intersectionPt = c3ga.cgaPoint(intersection); // example of how to convert flatPoint to normalizedPoint
+
             Console.WriteLine("intersection = " + intersection + ",");
 
         }

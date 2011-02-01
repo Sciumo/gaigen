@@ -16,50 +16,45 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 using System;
 namespace c3ga_ns {
-/// <summary>This class can hold a specialized multivector of type flatPoint.
+/// <summary>This class can hold a specialized multivector of type vectorE3GA.
 /// 
 /// The coordinates are stored in type float.
 /// 
 /// The variable non-zero coordinates are:
-///   - coordinate e1^ni  (array index: E1_NI = 0)
-///   - coordinate e2^ni  (array index: E2_NI = 1)
-///   - coordinate e3^ni  (array index: E3_NI = 2)
-///   - coordinate no^ni  (array index: NO_NI = 3)
+///   - coordinate e1  (array index: E1 = 0)
+///   - coordinate e2  (array index: E2 = 1)
+///   - coordinate e3  (array index: E3 = 2)
 /// 
 /// The type has no constant coordinates.
 /// 
 /// 
 /// </summary>
-public class flatPoint  :  mv_if
+public class vectorE3GA  :  mv_if
 { 
 	/// <summary> The coordinates (stored in an array).
 	/// </summary>
-	protected internal float[] m_c = new float[4]; // e1^ni, e2^ni, e3^ni, no^ni
-	/// <summary>Array indices of flatPoint coordinates.
+	protected internal float[] m_c = new float[3]; // e1, e2, e3
+	/// <summary>Array indices of vectorE3GA coordinates.
 	/// </summary>
 
-	/// <summary>index of coordinate for e1^ni in flatPoint
+	/// <summary>index of coordinate for e1 in vectorE3GA
 	/// </summary>
-	public const int E1_NI = 0;
+	public const int E1 = 0;
 
-	/// <summary>index of coordinate for e2^ni in flatPoint
+	/// <summary>index of coordinate for e2 in vectorE3GA
 	/// </summary>
-	public const int E2_NI = 1;
+	public const int E2 = 1;
 
-	/// <summary>index of coordinate for e3^ni in flatPoint
+	/// <summary>index of coordinate for e3 in vectorE3GA
 	/// </summary>
-	public const int E3_NI = 2;
-
-	/// <summary>index of coordinate for no^ni in flatPoint
-	/// </summary>
-	public const int NO_NI = 3;
+	public const int E3 = 2;
 
 	/// <summary>The order of coordinates (this is the type of the first argument of coordinate-handling functions.
 	/// </summary>
 	public enum CoordinateOrder {
-		coord_e1ni_e2ni_e3ni_noni
+		coord_e1_e2_e3
 	};
-	public const CoordinateOrder coord_e1ni_e2ni_e3ni_noni = CoordinateOrder.coord_e1ni_e2ni_e3ni_noni;
+	public const CoordinateOrder coord_e1_e2_e3 = CoordinateOrder.coord_e1_e2_e3;
 
     /// <summary>	
     /// Converts this multivector to a 'mv' (implementation of interface 'mv_interface')
@@ -70,61 +65,60 @@ public class flatPoint  :  mv_if
     }
 
     /// <summary>
-	/// Constructs a new flatPoint with variable coordinates set to 0.
+	/// Constructs a new vectorE3GA with variable coordinates set to 0.
     /// </summary>
-	public flatPoint() {Set();}
+	public vectorE3GA() {Set();}
 
     /// <summary>
 	/// Copy constructor.
     /// </summary>
-	public flatPoint(flatPoint A) {Set(A);}
+	public vectorE3GA(vectorE3GA A) {Set(A);}
 
 
 
     /// <summary>
-	/// Constructs a new flatPoint from mv.
+	/// Constructs a new vectorE3GA from mv.
     /// </summary>
 	/// <param name="A">The value to copy. Coordinates that cannot be represented are silently dropped. </param>
-	public flatPoint(mv A /*, int filler */) {Set(A);}
+	public vectorE3GA(mv A /*, int filler */) {Set(A);}
 
     /// <summary>
-	/// Constructs a new flatPoint. Coordinate values come from 'A'.
+	/// Constructs a new vectorE3GA. Coordinate values come from 'A'.
     /// </summary>
-	public flatPoint(CoordinateOrder co, float[] A) {Set(co, A);}
+	public vectorE3GA(CoordinateOrder co, float[] A) {Set(co, A);}
 	
     /// <summary>
-	/// Constructs a new flatPoint with each coordinate specified.
+	/// Constructs a new vectorE3GA with each coordinate specified.
     /// </summary>
-	public flatPoint(CoordinateOrder co,  float e1_ni, float e2_ni, float e3_ni, float no_ni) {
-		Set(co, e1_ni, e2_ni, e3_ni, no_ni);
+	public vectorE3GA(CoordinateOrder co,  float e1, float e2, float e3) {
+		Set(co, e1, e2, e3);
 	}
 
     /// <summary>
-	/// Implicit converter from flatPoint to mv.
+	/// Implicit converter from vectorE3GA to mv.
     /// </summary>
-    public static implicit operator mv(flatPoint a)
+    public static implicit operator mv(vectorE3GA a)
     {
         return new mv(a);
     }
 
 public void Set()
 {
-	m_c[0] = m_c[1] = m_c[2] = m_c[3] = 0.0f;
+	m_c[0] = m_c[1] = m_c[2] = 0.0f;
 
 }
 
 public void Set(float scalarVal)
 {
-	m_c[0] = m_c[1] = m_c[2] = m_c[3] = 0.0f;
+	m_c[0] = m_c[1] = m_c[2] = 0.0f;
 
 }
 
-public void Set(CoordinateOrder co, float _e1_ni, float _e2_ni, float _e3_ni, float _no_ni)
+public void Set(CoordinateOrder co, float _e1, float _e2, float _e3)
 {
-	m_c[0] = _e1_ni;
-	m_c[1] = _e2_ni;
-	m_c[2] = _e3_ni;
-	m_c[3] = _no_ni;
+	m_c[0] = _e1;
+	m_c[1] = _e2;
+	m_c[2] = _e3;
 
 }
 
@@ -133,31 +127,27 @@ public void Set(CoordinateOrder co, float[] A)
 	m_c[0] = A[0];
 	m_c[1] = A[1];
 	m_c[2] = A[2];
-	m_c[3] = A[3];
 
 }
 
-public void Set(flatPoint a)
+public void Set(vectorE3GA a)
 {
 	m_c[0] = a.m_c[0];
 	m_c[1] = a.m_c[1];
 	m_c[2] = a.m_c[2];
-	m_c[3] = a.m_c[3];
 
 }
 	public void Set(mv src) {
-		if (src.c()[2] != null) {
-			float[] ptr = src.c()[2];
-			m_c[0] = ptr[7];
-			m_c[1] = ptr[8];
-			m_c[2] = ptr[9];
-			m_c[3] = ptr[6];
+		if (src.c()[1] != null) {
+			float[] ptr = src.c()[1];
+			m_c[0] = ptr[1];
+			m_c[1] = ptr[2];
+			m_c[2] = ptr[3];
 		}
 		else {
 			m_c[0] = 0.0f;
 			m_c[1] = 0.0f;
 			m_c[2] = 0.0f;
-			m_c[3] = 0.0f;
 		}
 	}
 
@@ -167,7 +157,6 @@ public void Set(flatPoint a)
 		float maxValue = Math.Abs(m_c[0]);
 		if (Math.Abs(m_c[1]) > maxValue) { maxValue = Math.Abs(m_c[1]); }
 		if (Math.Abs(m_c[2]) > maxValue) { maxValue = Math.Abs(m_c[2]); }
-		if (Math.Abs(m_c[3]) > maxValue) { maxValue = Math.Abs(m_c[3]); }
 		return maxValue;
 	}
 	/// <summary>Returns the absolute largest coordinate,
@@ -176,9 +165,8 @@ public void Set(flatPoint a)
 	public float LargestBasisBlade(int bm)  {
 		float maxValue = Math.Abs(m_c[0]);
 		bm = 0;
-		if (Math.Abs(m_c[1]) > maxValue) { maxValue = Math.Abs(m_c[1]); bm = 20; }
-		if (Math.Abs(m_c[2]) > maxValue) { maxValue = Math.Abs(m_c[2]); bm = 24; }
-		if (Math.Abs(m_c[3]) > maxValue) { maxValue = Math.Abs(m_c[3]); bm = 17; }
+		if (Math.Abs(m_c[1]) > maxValue) { maxValue = Math.Abs(m_c[1]); bm = 4; }
+		if (Math.Abs(m_c[2]) > maxValue) { maxValue = Math.Abs(m_c[2]); bm = 8; }
 		return maxValue;
 	}
 
@@ -221,43 +209,31 @@ public void Set(flatPoint a)
 	public string ToString(string fp) {
 		return c3ga.String(this, fp);
 	}
-	/// <summary>Returns the e1^ni coordinate.
+	/// <summary>Returns the e1 coordinate.
 	/// </summary>
-	public float get_e1_ni() { return m_c[0];}
-	/// <summary>Sets the e1^ni coordinate.
+	public float get_e1() { return m_c[0];}
+	/// <summary>Sets the e1 coordinate.
 	/// </summary>
-	public void set_e1_ni(float e1_ni) { m_c[0] = e1_ni;}
-	/// <summary>Returns the e2^ni coordinate.
+	public void set_e1(float e1) { m_c[0] = e1;}
+	/// <summary>Returns the e2 coordinate.
 	/// </summary>
-	public float get_e2_ni() { return m_c[1];}
-	/// <summary>Sets the e2^ni coordinate.
+	public float get_e2() { return m_c[1];}
+	/// <summary>Sets the e2 coordinate.
 	/// </summary>
-	public void set_e2_ni(float e2_ni) { m_c[1] = e2_ni;}
-	/// <summary>Returns the e3^ni coordinate.
+	public void set_e2(float e2) { m_c[1] = e2;}
+	/// <summary>Returns the e3 coordinate.
 	/// </summary>
-	public float get_e3_ni() { return m_c[2];}
-	/// <summary>Sets the e3^ni coordinate.
+	public float get_e3() { return m_c[2];}
+	/// <summary>Sets the e3 coordinate.
 	/// </summary>
-	public void set_e3_ni(float e3_ni) { m_c[2] = e3_ni;}
-	/// <summary>Returns the no^ni coordinate.
-	/// </summary>
-	public float get_no_ni() { return m_c[3];}
-	/// <summary>Sets the no^ni coordinate.
-	/// </summary>
-	public void set_no_ni(float no_ni) { m_c[3] = no_ni;}
+	public void set_e3(float e3) { m_c[2] = e3;}
 	/// <summary>Returns the scalar coordinate (which is always 0).
 	/// </summary>
 	public float get_scalar() { return 0.0f;}
 	/// <summary>Returns array of coordinates.
 	/// </summary>
-	/// <param name="coordOrder">pass the value 'flatPoint.coord_e1ni_e2ni_e3ni_noni'
+	/// <param name="coordOrder">pass the value 'vectorE3GA.coord_e1_e2_e3'
 	/// </param>
 	public float[] c(CoordinateOrder coordOrder) { return m_c;}
-
-	/// <summary>shortcut to c3ga.cgaPoint(this)
-	/// </summary>
-	public normalizedPoint cgaPoint() {
-		return c3ga.cgaPoint(this);
-	}
-} // end of class flatPoint
+} // end of class vectorE3GA
 } // end of namespace c3ga_ns

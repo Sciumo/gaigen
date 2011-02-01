@@ -29,6 +29,7 @@ public class ReportUsage implements Comparable<ReportUsage>
     /// </summary>
     public static void mergeReport(ReportUsage RU)
     {
+		// Note: s_reportUsage (Hashtable<>) is thread-safe, so no locking required.
         if (s_reportUsage.containsKey(RU.getReportString())) {
             s_reportUsage.get(RU.getReportString()).incrementCount();
         }
@@ -55,6 +56,10 @@ public class ReportUsage implements Comparable<ReportUsage>
             }
             sb.append("\n");
         }
+        
+        if (s_reportUsage.isEmpty()) {
+				sb.append("  <!-- no general multivector function usage -->");
+		}
 
         return sb.toString();
     }

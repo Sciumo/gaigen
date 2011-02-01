@@ -70,6 +70,10 @@ public class mv  :  mv_if
 	public mv(float[][] coordinates) {Set(coordinates);}
 	
     /// <summary>
+	/// Converts a vectorE3GA to a mv.
+    /// </summary>
+	public mv(vectorE3GA A) {Set(A);}
+    /// <summary>
 	/// Converts a normalizedPoint to a mv.
     /// </summary>
 	public mv(normalizedPoint A) {Set(A);}
@@ -224,6 +228,19 @@ public class mv  :  mv_if
 		if (m_c[5] != null) {
 			c3ga.Copy_1(m_c[5], src.m_c[5]);
 		}
+	}
+
+	/// <summary>sets this to vectorE3GA value.
+	/// </summary>
+	public void Set(vectorE3GA src) {
+		AllocateGroups(GroupBitmap.GROUP_1);
+		float[] ptr;
+
+		ptr = m_c[1];
+		ptr[0] = ptr[4] = 0.0f;
+		ptr[1] = src.m_c[0];
+		ptr[2] = src.m_c[1];
+		ptr[3] = src.m_c[2];
 	}
 
 	/// <summary>sets this to normalizedPoint value.

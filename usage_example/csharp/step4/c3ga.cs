@@ -47,18 +47,19 @@ public enum SmvType {
 	C3GA_NONE = -1,
 	C3GA_MV = 0,
 	C3GA_FLOAT = 1,
-	C3GA_NORMALIZEDPOINT = 2,
-	C3GA_FLATPOINT = 3,
-	C3GA_LINE = 4,
-	C3GA_DUALLINE = 5,
-	C3GA_PLANE = 6,
-	C3GA_NO_T = 7,
-	C3GA_E1_T = 8,
-	C3GA_E2_T = 9,
-	C3GA_E3_T = 10,
-	C3GA_NI_T = 11,
-	C3GA_POINTPAIR = 12,
-	C3GA_CIRCLE = 13,
+	C3GA_VECTORE3GA = 2,
+	C3GA_NORMALIZEDPOINT = 3,
+	C3GA_FLATPOINT = 4,
+	C3GA_LINE = 5,
+	C3GA_DUALLINE = 6,
+	C3GA_PLANE = 7,
+	C3GA_NO_T = 8,
+	C3GA_E1_T = 9,
+	C3GA_E2_T = 10,
+	C3GA_E3_T = 11,
+	C3GA_NI_T = 12,
+	C3GA_POINTPAIR = 13,
+	C3GA_CIRCLE = 14,
 	C3GA_INVALID
 }
 
@@ -75,6 +76,7 @@ public class c3ga
 		new string[] {
 			"mv",
 			"float",
+			"vectorE3GA",
 			"normalizedPoint",
 			"flatPoint",
 			"line",
@@ -2581,6 +2583,22 @@ public static normalizedPoint cgaPoint(float a, float b, float c)
 			b, // e2
 			c, // e3
 			(0.5f*a*a+0.5f*b*b+0.5f*c*c) // ni
+		);
+}
+/// <summary>Returns conformal point.
+/// </summary>
+public static normalizedPoint cgaPoint(flatPoint a)
+{
+	vectorE3GA _v_ = new vectorE3GA();
+	_v_.m_c[0] = a.m_c[0]/((a.m_c[3]));
+	_v_.m_c[1] = a.m_c[1]/((a.m_c[3]));
+	_v_.m_c[2] = a.m_c[2]/((a.m_c[3]));
+
+	return new normalizedPoint(normalizedPoint.coord_e1_e2_e3_ni,
+			_v_.m_c[0], // e1
+			_v_.m_c[1], // e2
+			_v_.m_c[2], // e3
+			(0.5f*_v_.m_c[0]*_v_.m_c[0]+0.5f*_v_.m_c[1]*_v_.m_c[1]+0.5f*_v_.m_c[2]*_v_.m_c[2]) // ni
 		);
 }
 /// <summary>Returns grade groupBitmap of  mv.

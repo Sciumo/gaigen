@@ -1,11 +1,17 @@
+
+
 General comment:
 I personally use 'reportUsage' feature (step 3) only to detect whether the GMV
 type is still used. Otherwise I add required optimized functions to 
 spec by hand. This avoid the iterative process.
 
-Step 3 general: process is iterative. Both feedback from running program and
+Step 3 general (but not in C): process is iterative. 
+Both feedback from running program and
 from error compiling the c3ga.xml file.
 
+
+Step 4 (step 2 in C): note the example of how to convert from flatPoint -> normalizedPoint
+(common problem).
 
 C++: step 3
 -have to make multiple loops to extract all intermediate types and functions.
