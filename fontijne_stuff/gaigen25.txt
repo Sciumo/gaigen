@@ -40,6 +40,8 @@ Maybe fix the float type stuff
 
 	v -> small usage example for each language.
 		-> write a small PDF
+		-> edit the PDF, fix all the 'code' style words with a \cd{} tag
+		->finish renaming of step 2 -> step 4 for C
 		-> have makefiles for each language, platform (project for VS, eclipse for Java)
 
 	Update user manual

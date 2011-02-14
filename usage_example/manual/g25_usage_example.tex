@@ -1,0 +1,124 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage{palatino}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{longtable}
+\usepackage{color}
+  
+\newtheorem{theorem}{Theorem}
+\newtheorem{law}{Law}
+\newtheorem{assumption}{Assumption}
+
+\raggedbottom
+
+\newcommand{\dist}{\mbox{distance}}
+\newcommand{\gav}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\bev}[1]{\ensuremath{\mathbf{e}_{#1}}}
+\newcommand{\op}{\wedge}
+\newcommand{\ip}{\cdot}
+\newcommand{\dual}[1]{{#1}^*}
+\newcommand{\gp}{\,}
+\newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\rev}[1]{\widetilde{#1}}
+\newcommand{\no}{\ensuremath{{\bf o}}}
+\renewcommand{\ni}{\ensuremath{{\bf  \infty}}}
+\renewcommand{\no}{\ensuremath{e_{\bf  o}}}
+\renewcommand{\ni}{\ensuremath{e_{\bf  \infty}}}
+\newcommand{\grade}[1]{\mbox{\rm grade}}
+\newcommand{\gradeop}[2]{{\langle {#1}\rangle_{#2}}}
+\newcommand{\NOTE}[1]{\mbox{\bf [[~{#1}~]]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\half}{{\mbox{$\frac{1}{2}$}}}
+
+\definecolor{black}{gray}{0}
+\definecolor{dark}{gray}{0.5}
+\definecolor{red}{rgb}{1,0,0}
+\definecolor{darkred}{rgb}{0.65,0,0}
+\definecolor{blue}{rgb}{0,0,1}
+\definecolor{darkgreen}{rgb}{0,0.65,0}
+\newcommand{\tcb}[1]{\textcolor{blue}{#1}}
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+\newcommand{\tcdr}[1]{\textcolor{darkred}{#1}}
+\newcommand{\tcd}[1]{\textcolor{dark}{#1}}
+\newcommand{\tcdg}[1]{\textcolor{darkgreen}{#1}}
+
+\begin{document}
+
+\title{Gaigen 2.5 Usage Example}
+\author{
+Daniel Fontijne\\EUVISION Technologies
+}
+\date{\today}
+\maketitle
+
+\section{Introduction}
+
+This document describes the small example of usage that is provided for each supported language.
+
+The usage example does the following:
+\begin{itemize}
+\item Create five points.
+\item Use the outer product to form a line and a plane out of the point.
+\item Compute the intersection of the line and the plane.
+\item Print the computed values to the console.
+\end{itemize}
+
+Makesfiles and/or a IDE projects for each major platform. For Java,
+an Eclipse project is provided. For the other languages, Visual Studio projects 
+are provided for C, C++ and C-Sharp on Windows. For Linux and OS X, these three
+languages are covered by makefiles.
+
+For most languages, the usage example is split into four steps. Each of these steps implements
+the above functionality, but differ in the stage of optimization. Step 1 is not optimized
+at all, but flexible in its usage of variables, while step 4 is fully optimized. Step 2 and
+3 are intermediate steps. The steps are:
+
+\begin{enumerate}
+\item All geometric variables are stored in general multivectors (type `mv'). While this is not
+very time- and storage- efficient, it is more flexible.
+\item Geometric variables are stored in specialized multivectors (like `normalizedPoint' and `line'). 
+During computations (like the outer product), these variables are converted to general multivectors. 
+The results of the computations are converted back to a specialized type.
+\item This step shows how to automatically extract what functions to optimize using the 
+`reportUsage' functionality. This is an iterative process. You have to go back and forth between
+compiling and editing the specification XML file.
+\item Geometric variables are stored in specialized multivectors (like `normalizedPoint' and `line'). 
+Functions over these variables are fully optimized.
+\end{enumerate}
+
+Personally, I always jump straight to step 4 and use the `reportUsage' feature of step 3 only to 
+verify that I have not forgotten an optimization. I write the specification (.xml) files along
+with the rest of the program, adding new functions and specialized types as needed.
+
+What follows are language-specific notes.
+
+\section{C}
+
+In general, use the C language version only when there is no other option,
+or for wrapping it into another language (like Matlab).
+
+In C, there is no function overloading, so you are fully aware of exactly what function 
+is being called with what arguments. Thus step 2 and 3 make no sense and have been left out.
+
+In step 1, note that the function cgaPoint() always returns a normalizedPoint. 
+It needs to be explicitlyed convert to the mv type.
+
+At the end of step 2, an example is given of how to convert the flatPoint type to a 
+normalizedPoint (a common annoyance in conformal GA). Note that this example uses a 
+Euclidean vector type internally.
+
+\section{C++}
+ TODO
+ 
+\section{C-Sharp }
+
+TODO
+
+\section{Java}
+
+TODO
+
+\end{document}

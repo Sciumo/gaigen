@@ -13,16 +13,6 @@ from error compiling the c3ga.xml file.
 Step 4 (step 2 in C): note the example of how to convert from flatPoint -> normalizedPoint
 (common problem).
 
-C++: step 3
--have to make multiple loops to extract all intermediate types and functions.
--because no dualLine type, pointPair is returned from dual(L) << P
-
-C++: step 4
-Note the example of how to easily convert the flatPoint to a normalizedPoint.
-This example needs a Euclidean vector type internally.
-
-
-
 
 C: general:
 Not recommended, only for low-level systems works, or for wrapping into
@@ -40,6 +30,20 @@ Straight to step 4 (everything is specialized).
 C++: step 2
 Note the example of how to easily convert the flatPoint to a normalizedPoint.
 This example needs a Euclidean vector type internally.
+
+
+
+
+C++: step 3
+-have to make multiple loops to extract all intermediate types and functions.
+-because no dualLine type, pointPair is returned from dual(L) << P
+
+C++: step 4
+Note the example of how to easily convert the flatPoint to a normalizedPoint.
+This example needs a Euclidean vector type internally.
+
+
+
 
 
 
