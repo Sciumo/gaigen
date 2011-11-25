@@ -44,6 +44,8 @@ Maybe fix the float type stuff
 		->finish renaming of step 2 -> step 4 for C
 		-> have makefiles for each language, platform (project for VS, eclipse for Java)
 
+	- the / operator is not bound to div!
+
 	Update user manual
 		usage examples
 		converter stuff
