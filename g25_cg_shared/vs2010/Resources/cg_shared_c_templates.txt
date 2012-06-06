@@ -1,0 +1,318 @@
+// S = Specification of algebra.
+${CODEBLOCK bitmapGp}
+/** Returns the number of 1 bits in 'i'. */
+unsigned int <%S.m_namespace%>_bitCount(unsigned int i)
+{
+    i = i - ((i >> 1) & 0x55555555);
+    i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
+    i = (i + (i >> 4)) & 0x0F0F0F0F;
+    i = i + (i >> 8);
+    i = i + (i >> 16);
+    return i & 0x0000003F;
+}
+
+/** Returns sign change due to putting the basis blades represented
+ *  by 'a' and 'b' into canonical order.
+ *  The canonical order of a basis blade is the order in which the basis
+ *  vectors are listed in alphabetical order. E.g. 'e1^e2^e4' is in canonical order,
+ *  while 'e1^e4^e2' is not.
+ *
+ *  The returned value is +1 or -1.
+ */
+int <%S.m_namespace%>_canonicalReorderingSign(unsigned int a, unsigned int b)
+{
+    unsigned int sum = 0;
+
+    // Count the number of basis vector flips required to
+    // get a and b into canonical order.
+    a >>= 1;
+    while (a != 0)
+    {
+		sum += <%S.m_namespace%>_bitCount(a & b);
+		a >>= 1;
+    }
+
+    // even number of flips -> return 1
+    // odd number of flips -> return 1
+    return ((sum & 1) == 0) ? 1 : -1;
+}
+
+
+/**
+ * Computes the geometric product of basis blades (bitmaps) 'a' and 'b'.
+ * The returned 'resultBitmap' is the new bitmap, 'resultSign' is the sign.
+ * Input and output blades/bitmaps are assumed to be in canonical order.
+ *
+ * 'metricId' is the ID of the metric which is hard coded into the function:
+<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+	G25.Metric M = S.m_metric[mIdx];
+%>
+ *  metricId = <%mIdx.ToString()%>: <%M.m_name%>
+
+<%}%> */
+void <%S.m_namespace%>_bitmapGp(unsigned int a, unsigned int b, int metricId, unsigned int *resultBitmap, int *resultSign)
+{
+    unsigned int an = a & b;
+    
+<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+	G25.Metric M = S.m_metric[mIdx];
+%>
+<%if (M.m_metric.HasValueOnDiagonal(0.0)) {%>
+    // check here for annihilated basis vectors with 0 metric
+    if ((metricId == <%mIdx%>) && (<%for (int d = 0; d < S.m_dimension; d++) {%>
+<%if (M.m_metric.DiagonalValue(d) == 0.0) {%>
+(an & <%(1<<d).ToString()%>) ||<%}%><%}%> 0)) {
+    	*resultSign = 0;
+    	*resultBitmap = 0;
+    	return;
+    }
+    <%}%>
+<%}%>
+    
+    // compute the bitmap:
+    *resultBitmap = a ^ b;
+
+    // compute the sign change due to reordering:
+    *resultSign = <%S.m_namespace%>_canonicalReorderingSign(a, b);
+
+<%for (int mIdx = 0; mIdx < S.m_metric.Count; mIdx++) {
+	G25.Metric M = S.m_metric[mIdx];
+%>
+<%if (M.m_metric.HasValueOnDiagonal(-1.0)) {%>
+    // check here for annihilated basis vectors with -1 metric
+    if (metricId == <%mIdx%>) {
+<%for (int d = 0; d < S.m_dimension; d++) {%>
+<%if (M.m_metric.DiagonalValue(d) == -1.0) {%>
+        if (an & <%(1<<d).ToString()%>)<%}%><%}%> *resultSign *= -1;
+    }
+<%} /* close for if statement for -1 metric */ %>
+<%} /* close for loop over metrics */ %>
+}   
+${ENDCODEBLOCK}
+
+
+
+// S = Specification of algebra (G25.Specification)
+${CODEBLOCK runtimeGpTablesDefs}
+/** 
+ * Tables for computing the geometric product at runtime. 
+ * The tables are initialized by initRuntimeGpTable() as needed,
+ * or all at once by calling initAllRuntimeGpTables().
+ * The memory (allocated by malloc()) can be freed by calling freeAllRuntimeGpTables().
+ */
+<%foreach (G25.Metric M in S.m_metric)
+{%><%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++){%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+unsigned char *<%S.m_namespace%>_runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%> = NULL;
+<%}%><%}%><%}%><%}%><%}%>
+${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+${CODEBLOCK runtimeGpTable}
+#define RT_GP_T_ALL_DONE 127
+#define RT_GP_T_COORD_DONE 126
+#define RT_GP_T_SKIP_MAX 125
+#define RT_GP_T_SKIP_RESULT_MAX 255
+#define RT_GP_SIGN_BIT 0x80    
+/**
+This function initializes a table which is used to compute the geometric product.
+*table is where the pointer to the table should go.
+metricId is the ID of the metric.
+srcG1 is the grade/group of the first operand.
+srcG2 is the grade/group of the second operand.
+dstG is the grade/group of the destionation (other grades/groups are ignored).
+*/
+int <%S.m_namespace%>_runtimeGpTableMemUsed = 0;
+void <%S.m_namespace%>_initRuntimeGpTable(unsigned char **table, int metricId, int srcG1, int srcG2, int dstG) {
+	int srcG1size, srcG2size, dstGsize, idx, Tlength, i1, i2, iDst, sign1, sign2, signDst, baseIdx1, baseIdx2, baseIdxDst, prevI2, skip;
+	unsigned int bitmap1, bitmap2, bitmapDst;
+	unsigned char *T = NULL;
+	
+	if (*table == NULL) { // only compute this when table is still NULL (another check is done at the bottom of function)
+		// get size of input and destination grades/groups
+		srcG1size = <%S.m_namespace%>_groupSize[srcG1];
+		srcG2size = <%S.m_namespace%>_groupSize[srcG2];
+		dstGsize = <%S.m_namespace%>_groupSize[dstG];
+		baseIdx1 = <%S.m_namespace%>_mvSize[(1<<srcG1)-1];
+		baseIdx2 = <%S.m_namespace%>_mvSize[(1<<srcG2)-1];
+		
+
+		idx = 0; // index into T
+		Tlength = srcG1size * srcG2size * 6; // is this a safe upper bound?
+		T = (unsigned char*)malloc(Tlength);
+		if (T == NULL) {
+			printf("Memory allocation failure for %d bytes in <%S.m_namespace%>_initRuntimeGpTable()\n", Tlength);
+			exit(-1);
+		}
+
+		// Loop over all basis blades of group 1, and then over all basis blade of group 2.
+		// Compute their geometric products. If the result is in the destination group, write a table entry
+		for (i1 = 0; i1 < srcG1size; i1++) {
+			// get bitmap representation and sign of src1 basis blade
+			bitmap1 = <%S.m_namespace%>_basisElementBitmapByIndex[baseIdx1 + i1];
+			sign1 = (int)<%S.m_namespace%>_basisElementSignByIndex[baseIdx1 + i1];
+			
+			prevI2 = 0;
+			for (i2 = 0; i2 < srcG2size; i2++) {
+				// get bitmap representation and sign of src2 basis blade
+				bitmap2 = <%S.m_namespace%>_basisElementBitmapByIndex[baseIdx2 + i2];
+				sign2 = (int)<%S.m_namespace%>_basisElementSignByIndex[baseIdx2 + i2];
+
+				// compute bitmap representation and sign of (dst = src1 src2) basis blade
+				<%S.m_namespace%>_bitmapGp(bitmap1, bitmap2, metricId, &bitmapDst, &signDst);
+				
+				if (signDst == 0) continue; // 0 is due to null metric
+				
+				// check if group of bitmapDst is the destination group.
+				if (dstG != <%S.m_namespace%>_basisElementGroupByBitmap[bitmapDst]) continue; 
+				
+				// get index of bitmapDst inside its group
+				baseIdxDst = <%S.m_namespace%>_mvSize[(1<<dstG)-1];
+				iDst = <%S.m_namespace%>_basisElementIndexByBitmap[bitmapDst] - baseIdxDst;
+				
+				signDst *= sign1 * sign2 * (int)<%S.m_namespace%>_basisElementSignByBitmap[bitmapDst];
+				
+				// write table:
+				// how many positions to skip of to get to the next i2 which will lead to a result
+				skip = i2 - prevI2;
+				do {
+					if (skip >= RT_GP_T_SKIP_MAX) {
+						T[idx++] = (unsigned char)RT_GP_T_SKIP_MAX;
+						skip -= RT_GP_T_SKIP_MAX;
+					}
+					if (skip < RT_GP_T_SKIP_MAX) {
+						T[idx++] = (unsigned char)skip;
+						skip = 0;
+					}
+				} while (skip > 0);
+				prevI2 = i2;
+				
+				// write the sign of the result
+				T[idx-1] |= (unsigned char)((signDst < 0) ? RT_GP_SIGN_BIT : 0);
+
+				// where to write the result
+				do {
+					if (iDst >= RT_GP_T_SKIP_RESULT_MAX) {
+						T[idx++] = (unsigned char)RT_GP_T_SKIP_RESULT_MAX;
+						iDst -= RT_GP_T_SKIP_RESULT_MAX;
+					}
+					if (iDst < RT_GP_T_SKIP_RESULT_MAX) {
+						T[idx++] = (unsigned char)iDst;
+						iDst = 0;
+					}				
+				} while (iDst > 0);
+				
+			} /* end of loop over all basis blade of group 2 */
+			T[idx++] = RT_GP_T_COORD_DONE;
+		} /* end of loop over all basis blade of group 2 */
+		T[idx-1] = RT_GP_T_ALL_DONE; // this overwrites the last RT_GP_T_COORD_DONE
+
+		if (idx <= 4 * Tlength / 5) { // reallocate of more than 80% of memory is wasted
+			unsigned char *tightT = (unsigned char*)malloc(idx); // enough memory (upper bound)
+			if (tightT == NULL) {
+				printf("Memory allocation failure for %d bytes in <%S.m_namespace%>_initRuntimeGpTable()\n", idx);
+				exit(-1);
+			}
+			memcpy(tightT, T, idx);
+			free(T);
+			T = tightT;
+		}
+		else if (idx >= Tlength) {
+			printf("Buffer overflow in <%S.m_namespace%>_initRuntimeGpTable() (%d >= %d)\n", idx, Tlength);
+			exit(-1);		
+		}
+		
+		// If we are in a multi-threaded environment, some other thread may have computed the same table.
+		// We perform this check to minimize memory leaks without locking (which would be system dependent).
+		// Of course, memory leaking is still possible, but it is a one-time leak only.
+		if (*table == NULL) *table = T; 
+		else free(T);
+		
+		<%S.m_namespace%>_runtimeGpTableMemUsed += idx;
+	}
+} /* end of <%S.m_namespace%>_initRuntimeGpTable() */
+${ENDCODEBLOCK}
+
+// S = Specification of algebra (G25.Specification)
+// FT = floating point type (G25.FloatType)
+${CODEBLOCK runtimeComputeGp}
+/**
+Computes the geometric product at runtime using a table 
+(pointed to by *table). If the table is NULL, <%S.m_namespace%>_initRuntimeGpTable() is
+used to initialize it.
+*/
+void <%S.m_namespace%>_runtimeComputeGp_<%FT.type%>(const <%FT.type%> *src1, const <%FT.type%> *src2, <%FT.type%> *dst, 
+	unsigned char **table, int metricId, int g1, int g2, int gdst) 
+{
+	int idx = 0; // index into *table
+	int skip, moreSkip, dstIdx, moreDstIdx;
+	const <%FT.type%> *currentSrc2 = src2; // currentSrc2 will be incremented/reset in the loop below
+	<%FT.type%> sign;
+	
+	if (*table == NULL)
+		<%S.m_namespace%>_initRuntimeGpTable(table, metricId, g1, g2, gdst);
+	
+	while ((*table)[idx] != RT_GP_T_ALL_DONE) { 
+		// get next index into src2;
+		if ((*table)[idx] == RT_GP_T_COORD_DONE) { 
+			// move on to the next coordinate of g1
+			src1++;
+			currentSrc2 = src2;
+			idx++;
+			continue;
+		}
+		else {
+			// skip the right amount of coordinate in group 2
+			skip = ((*table)[idx++] & (0xFF^RT_GP_SIGN_BIT));
+			if (skip == RT_GP_T_SKIP_MAX) {
+				do {
+					moreSkip = ((*table)[idx++] & (0xFF^RT_GP_SIGN_BIT));
+					skip += moreSkip;
+				} while (moreSkip == RT_GP_T_SKIP_MAX);
+			}
+			currentSrc2 += skip;
+			
+			// get the sign of the result (is on the last bit of the previous byte in the table
+			sign = ((*table)[idx-1] & RT_GP_SIGN_BIT) ? <%FT.DoubleToString(S, -1.0)%> : <%FT.DoubleToString(S, 1.0)%>;
+			
+			// get the index in the destination vector
+			dstIdx = (*table)[idx++]; // plus any extra if required
+			if (dstIdx == RT_GP_T_SKIP_RESULT_MAX) {
+				do {
+					moreDstIdx = (*table)[idx++];
+					dstIdx += moreDstIdx;
+				} while (moreDstIdx == RT_GP_T_SKIP_RESULT_MAX);
+			}
+			dst[dstIdx] += sign * (*src1) * (*currentSrc2);
+		}
+	}
+} /* end of <%S.m_namespace%>_runtimeComputeGp_<%FT.type%>() */
+${ENDCODEBLOCK}
+
+${CODEBLOCK runtimeGpInitTables}
+void <%S.m_namespace%>_initAllRuntimeGpTables() {
+<%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
+<%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+	<%S.m_namespace%>_initRuntimeGpTable(&<%S.m_namespace%>_runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%>, <%m%>, <%g1%>, <%g2%>, <%gd%>);
+<%}%><%}%><%}%><%}%><%}%>
+} /* end of <%S.m_namespace%>_initAllRuntimeGpTables() */
+${ENDCODEBLOCK}
+
+${CODEBLOCK runtimeGpFreeTables}
+void <%S.m_namespace%>_freeAllRuntimeGpTables() {
+	unsigned char **T;
+<%for (int m = 0; m < S.m_metric.Count; m++) { G25.Metric M = S.m_metric[m];%>
+<%for (int g1 = 0; g1 < S.m_GMV.NbGroups; g1++) {%><%for (int g2 = 0; g2 < S.m_GMV.NbGroups; g2++) {%><%for (int gd = 0; gd < S.m_GMV.NbGroups; gd++) {%>
+<%if (!S.m_GMV.IsZeroGP(g1, g2, gd)) {%>
+	T = &<%S.m_namespace%>_runtimeGpProductTable_<%M.m_name%>_<%g1.ToString()%>_<%g2.ToString()%>_<%gd.ToString()%>; if (*T != NULL) {free(*T);*T = NULL;}
+<%}%><%}%><%}%><%}%><%}%>
+} /* end of <%S.m_namespace%>_freeAllRuntimeGpTables() */
+${ENDCODEBLOCK}
+
+${CODEBLOCK runtimeGpTablesHeader}
+/** initializes all tables for run-time computation of the geometric product */
+void <%S.m_namespace%>_initAllRuntimeGpTables();
+/** frees memory used by tables for run-time computation of the geometric product */
+void <%S.m_namespace%>_freeAllRuntimeGpTables();
+${ENDCODEBLOCK}
